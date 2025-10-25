@@ -420,7 +420,7 @@ export default function ShopProductDetail() {
       // Navigate to cart page
       router.push('/cart')
     }, 1000)
-  }, [product, quantity, addItem, router, selectedColor, selectedSize])
+  }, [product, quantity, addItem, router, selectedColor, selectedSize, selectedVariant, localizedProduct])
 
   const handleAddToWishlist = useCallback(async () => {
     if (!product) return

@@ -1552,12 +1552,18 @@ export default function ProductForm({
                               </div>
                               
                               <div>
-                                <Label htmlFor={`variant-image-${index}`}>Variant Image URL</Label>
-                                <Input
-                                  id={`variant-image-${index}`}
-                                  value={variant.image}
-                                  onChange={(e) => updateVariant(index, 'image', e.target.value)}
-                                  placeholder="https://example.com/image.jpg"
+                                <Label>Variant Image</Label>
+                                <CloudinaryImageUpload
+                                  onImagesChange={(images) => {
+                                    if (images.length > 0) {
+                                      updateVariant(index, 'image', images[0])
+                                    } else {
+                                      updateVariant(index, 'image', '')
+                                    }
+                                  }}
+                                  currentImages={variant.image ? [variant.image] : []}
+                                  maxImages={1}
+                                  disabled={isSubmitting}
                                 />
                               </div>
                               
