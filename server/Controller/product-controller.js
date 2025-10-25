@@ -343,6 +343,9 @@ exports.createProduct = async (req, res) => {
         // Map frontend data to schema format
         const productData = {
             name: req.body.name.trim(),
+            // Handle variants
+            hasVariants: req.body.hasVariants || false,
+            variants: req.body.variants || [],
             nameAr: req.body.nameAr?.trim(),
             description: req.body.description || req.body.shortDescription || req.body.name,
             descriptionAr: req.body.descriptionAr?.trim(),
@@ -492,6 +495,10 @@ exports.updateProduct = async (req, res) => {
         if (req.body.fullDescription !== undefined) updateData.fullDescription = req.body.fullDescription;
         if (req.body.category !== undefined) updateData.category = req.body.category;
         if (req.body.subcategory !== undefined) updateData.subcategory = req.body.subcategory;
+        
+        // Variants
+        if (req.body.hasVariants !== undefined) updateData.hasVariants = req.body.hasVariants;
+        if (req.body.variants !== undefined) updateData.variants = req.body.variants;
         
         // Pricing
         if (req.body.price !== undefined) updateData.price = parseFloat(req.body.price) || 0;

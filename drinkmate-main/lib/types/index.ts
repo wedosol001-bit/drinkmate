@@ -1,6 +1,40 @@
 // Shared TypeScript types for the DrinkMate application
 
 // Base product interface - unified for all product types
+// Product variant interface
+export interface ProductVariant {
+  _id?: string
+  id?: string
+  name: string
+  nameAr?: string // Arabic name
+  sku?: string
+  price: number
+  originalPrice?: number
+  compareAtPrice?: number // Alias for originalPrice
+  salePrice?: number
+  stock?: number
+  inStock?: boolean
+  image: string
+  images?: Array<{ 
+    url: string; 
+    alt?: string; 
+    isPrimary?: boolean; 
+    order?: number 
+  }> | string[]
+  attributes?: {
+    color?: string
+    colorAr?: string
+    size?: string
+    sizeAr?: string
+    material?: string
+    materialAr?: string
+    [key: string]: string | undefined
+  }
+  isDefault?: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface BaseProduct {
   _id: string
   id?: string | number
@@ -23,6 +57,9 @@ export interface BaseProduct {
     isPrimary?: boolean; 
     order?: number 
   }> | string[]
+  // Product variants
+  variants?: ProductVariant[]
+  hasVariants?: boolean
   description?: string
   descriptionAr?: string // Arabic description
   shortDescription?: string
@@ -70,18 +107,6 @@ export interface BaseProduct {
     code?: string
     inStock?: boolean
   } | string>
-  variants?: Array<{
-    id: string
-    name?: string
-    nameAr?: string // Arabic variant name
-    colorName?: string
-    colorNameAr?: string // Arabic color name
-    colorHex?: string
-    image?: string
-    price: number
-    compareAtPrice?: number
-    inStock: boolean
-  }>
   sizes?: string[]
   features?: (string | { title: string; titleAr?: string; description?: string; descriptionAr?: string })[]
   specifications?: Record<string, string>
@@ -224,6 +249,9 @@ export interface CartItem {
   color?: string
   size?: string
   isBundle?: boolean
+  variantId?: string
+  variantName?: string
+  sku?: string
 }
 
 // Order interface

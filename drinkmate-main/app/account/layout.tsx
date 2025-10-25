@@ -14,7 +14,7 @@ interface AccountLayoutProps {
 
 export default function AccountLayout({ children }: AccountLayoutProps) {
   const { user: _user, isAuthenticated, isLoading } = useAuth()
-  const { isRTL: _isRTL } = useTranslation()
+  const { t, isRTL: _isRTL } = useTranslation()
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
 

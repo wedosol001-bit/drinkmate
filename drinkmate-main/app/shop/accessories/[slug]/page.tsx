@@ -139,7 +139,7 @@ interface AccessoryProduct {
   brand?: string
 
   // Media
-  image?: string
+  image: string
   images?: (string | Image)[] // Support both string and object formats
 
   // Product options

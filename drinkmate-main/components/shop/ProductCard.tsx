@@ -6,18 +6,9 @@ import { useState, useMemo } from "react"
 import { Price, PriceWithBadge } from "./Price"
 import { ColorSwatches } from "./ColorSwatches"
 import { QuickView } from "./CardFooter"
-import { ProductCardProps, Product } from "@/lib/types"
+import { ProductCardProps, Product, ProductVariant } from "@/lib/types"
 
-// Define Variant interface locally since it was removed
-interface Variant {
-  id: string
-  colorName?: string
-  colorHex?: string
-  image?: string
-  price: number
-  compareAtPrice?: number
-  inStock: boolean
-}
+// Use ProductVariant from types instead of local Variant interface
 import { cn } from "@/lib/utils"
 import { Heart, Eye, ShoppingCart, Star, Zap, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -79,7 +70,7 @@ export default function ProductCard({
     () => product.variants?.find(v => v.inStock) ?? product.variants?.[0],
     [product.variants]
   )
-  const [selected, setSelected] = useState<Variant | undefined>(firstAvailable)
+  const [selected, setSelected] = useState<ProductVariant | undefined>(firstAvailable)
   const [qty, setQty] = useState(1)
   const [showQuickView, setShowQuickView] = useState(false)
   const [isWishlisted, setIsWishlisted] = useState(isInWishlist)
@@ -348,14 +339,14 @@ export default function ProductCard({
             <div className="mt-3">
               <ColorSwatches
                 options={product.variants!.map(v => ({
-                  value: v.id,
-                  label: v.colorName || 'Variant',
-                  swatch: v.colorHex || '#E5E7EB',
-                  inStock: v.inStock
+                  value: v.id || v._id || '',
+                  label: v.attributes?.color || v.name || 'Variant',
+                  swatch: v.attributes?.color || '#E5E7EB',
+                  inStock: v.inStock || false
                 }))}
-                selected={selected?.id}
+                selected={selected?.id || selected?._id}
                 onSelect={(variantId) => {
-                  const variant = product.variants!.find(v => v.id === variantId)
+                  const variant = product.variants!.find(v => (v.id || v._id) === variantId)
                   if (variant) setSelected(variant)
                 }}
               />
@@ -373,7 +364,14 @@ export default function ProductCard({
           description: product.description,
           price: finalPrice,
           compareAtPrice: comparePrice,
-          variants: product.variants
+          variants: product.variants?.map(v => ({
+            id: v.id || v._id || `variant-${Math.random()}`,
+            colorName: v.attributes?.color || v.name,
+            colorHex: v.attributes?.color || '#E5E7EB',
+            image: v.image,
+            price: v.price,
+            inStock: v.inStock || false
+          }))
         }}
         onAddToCart={(variantId) => {
           onAdd()

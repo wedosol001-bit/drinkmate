@@ -70,7 +70,7 @@ interface Order {
 
 
 export default function AccountDashboard() {
-  const { language, isRTL } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
   const { user, refreshUser, isAuthenticated } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)

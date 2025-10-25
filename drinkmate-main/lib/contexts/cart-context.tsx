@@ -19,6 +19,8 @@ export interface CartItem {
   productId?: string  // For regular products
   bundleId?: string   // For bundles
   productType?: 'product' | 'bundle' | 'cylinder'
+  variantId?: string
+  variantName?: string
 }
 
 interface CartState {

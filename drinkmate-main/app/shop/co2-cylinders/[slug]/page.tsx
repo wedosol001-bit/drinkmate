@@ -63,6 +63,7 @@ import { useTranslation } from "@/lib/contexts/translation-context"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useRouter } from "next/navigation"
 import { co2API } from "@/lib/api"
+import { getLocalizedProductData } from "@/lib/utils/product-localization"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import styles from "./styles.module.css"
 
@@ -90,7 +91,7 @@ interface CO2Cylinder {
   features: string[]
   specifications: Record<string, string>
   images: string[]
-  image?: string // For compatibility with mock data
+  image: string
   videos: string[]
   documents: { name: string; url: string; type: string }[]
   certifications: string[]
@@ -212,12 +213,15 @@ const productQA = [
 
 export default function CO2ProductDetail() {
   const params = useParams()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const { addItem } = useCart()
   const router = useRouter()
 
   const productSlug = params?.slug as string
   const [product, setProduct] = useState<CO2Cylinder | null>(null)
+  
+  // Get localized product data
+  const localizedProduct = product ? getLocalizedProductData(product, language) : null
   const [loading, setLoading] = useState(true)
   const [relatedProducts, setRelatedProducts] = useState<CO2Cylinder[]>([])
   const [loadingRelated, setLoadingRelated] = useState(true)
@@ -973,7 +977,7 @@ export default function CO2ProductDetail() {
                       )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{product.name}</h1>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
 
                     {/* Enhanced Rating */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">

@@ -13,7 +13,7 @@ interface RecentOrdersCardProps {
 }
 
 export default function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
-  const { language, isRTL } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
 
   const getStatusLabel = (status: string) => {
     const statusMap = {

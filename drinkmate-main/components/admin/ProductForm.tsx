@@ -70,6 +70,7 @@ export default function ProductForm({
 
   const [formData, setFormData] = useState({
     name: product?.name || "",
+    nameAr: product?.nameAr || "",
     category: product?.category || "",
     subcategory: product?.subcategory || "",
     price: product?.price || "",
@@ -77,7 +78,9 @@ export default function ProductForm({
     stock: product?.stock || "",
     minStock: product?.minStock || "",
     shortDescription: product?.shortDescription || "",
+    shortDescriptionAr: product?.shortDescriptionAr || "",
     fullDescription: product?.description || product?.fullDescription || "",
+    fullDescriptionAr: product?.fullDescriptionAr || "",
     sku: product?.sku || "",
     brand: product?.brand || "",
     type: product?.type || "",
@@ -97,6 +100,9 @@ export default function ProductForm({
     features: product?.features || [],
     specifications: product?.specifications || {},
     safetyFeatures: product?.safetyFeatures || [],
+    // Product variants
+    hasVariants: product?.hasVariants || false,
+    variants: product?.variants || [],
     compatibility: product?.compatibility || [],
     certifications: product?.certifications || [],
     tags: product?.tags || [],
@@ -165,6 +171,7 @@ export default function ProductForm({
       
       setFormData({
         name: product.name || "",
+        nameAr: product.nameAr || "",
         category: product.category || "",
         subcategory: product.subcategory || "",
         price: product.price || "",
@@ -172,7 +179,9 @@ export default function ProductForm({
         stock: product.stock || "",
         minStock: product.minStock || "",
         shortDescription: product.shortDescription || "",
+        shortDescriptionAr: product.shortDescriptionAr || "",
         fullDescription: product.description || product.fullDescription || "",
+        fullDescriptionAr: product.fullDescriptionAr || "",
         sku: product.sku || "",
         brand: product.brand || "",
         type: product.type || "",
@@ -201,6 +210,8 @@ export default function ProductForm({
         seoDescription: product.seoDescription || "",
         products: product.products || [],
         bundleDiscount: product.bundleDiscount || "",
+        hasVariants: product.hasVariants || false,
+        variants: product.variants || [],
       })
       
       // Initialize uploadedImages for editing mode
@@ -299,6 +310,62 @@ export default function ProductForm({
     setFormData({
       ...formData,
       colors: newColors
+    })
+  }
+
+  // Variant management
+  const addVariant = () => {
+    const newVariant = {
+      name: '',
+      sku: '',
+      price: 0,
+      stock: 0,
+      image: '',
+      attributes: {
+        color: ''
+      },
+      isDefault: formData.variants.length === 0
+    }
+    
+    setFormData({
+      ...formData,
+      variants: [...formData.variants, newVariant]
+    })
+  }
+
+  const removeVariant = (index: number) => {
+    const newVariants = [...formData.variants]
+    newVariants.splice(index, 1)
+    setFormData({
+      ...formData,
+      variants: newVariants
+    })
+  }
+
+  const updateVariant = (index: number, field: string, value: any) => {
+    const newVariants = [...formData.variants]
+    newVariants[index] = {
+      ...newVariants[index],
+      [field]: value
+    }
+    setFormData({
+      ...formData,
+      variants: newVariants
+    })
+  }
+
+  const updateVariantAttribute = (index: number, attribute: string, value: string) => {
+    const newVariants = [...formData.variants]
+    newVariants[index] = {
+      ...newVariants[index],
+      attributes: {
+        ...newVariants[index].attributes,
+        [attribute]: value
+      }
+    }
+    setFormData({
+      ...formData,
+      variants: newVariants
     })
   }
 
@@ -555,13 +622,24 @@ export default function ProductForm({
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="name">Name (English)</Label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="nameAr">Name (Arabic)</Label>
+                    <Input
+                      id="nameAr"
+                      name="nameAr"
+                      value={formData.nameAr}
+                      onChange={handleChange}
+                      placeholder="اسم المنتج بالعربية"
                     />
                   </div>
                   
@@ -730,13 +808,25 @@ export default function ProductForm({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="shortDescription">Short Description</Label>
+                  <Label htmlFor="shortDescription">Short Description (English)</Label>
                   <Textarea
                     id="shortDescription"
                     name="shortDescription"
                     value={formData.shortDescription}
                     onChange={handleChange}
                     rows={2}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="shortDescriptionAr">Short Description (Arabic)</Label>
+                  <Textarea
+                    id="shortDescriptionAr"
+                    name="shortDescriptionAr"
+                    value={formData.shortDescriptionAr}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="وصف مختصر بالعربية"
                   />
                 </div>
 
@@ -801,13 +891,25 @@ export default function ProductForm({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullDescription">Full Description</Label>
+                  <Label htmlFor="fullDescription">Full Description (English)</Label>
                   <Textarea
                     id="fullDescription"
                     name="fullDescription"
                     value={formData.fullDescription}
                     onChange={handleChange}
                     rows={6}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="fullDescriptionAr">Full Description (Arabic)</Label>
+                  <Textarea
+                    id="fullDescriptionAr"
+                    name="fullDescriptionAr"
+                    value={formData.fullDescriptionAr}
+                    onChange={handleChange}
+                    rows={6}
+                    placeholder="وصف مفصل بالعربية"
                   />
                 </div>
                 
@@ -1365,50 +1467,124 @@ export default function ProductForm({
           <TabsContent value="variants">
             <Card>
               <CardHeader>
-                <CardTitle>Color Variants</CardTitle>
+                <CardTitle>Product Variants</CardTitle>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="hasVariants"
+                    checked={formData.hasVariants}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, hasVariants: !!checked }))}
+                  />
+                  <Label htmlFor="hasVariants">This product has variants (different colors, sizes, etc.)</Label>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Add color (e.g., Red, Blue)"
-                      value={newColor}
-                      onChange={(e) => setNewColor(e.target.value)}
-                      className="max-w-xs"
-                    />
-                    <Button 
-                      type="button" 
-                      variant="outline"
-                      onClick={addColor}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add
-                    </Button>
-                  </div>
-                  
-                  {formData.colors.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                                             {formData.colors.map((color: string, index: number) => (
-                        <div 
-                          key={index} 
-                          className="flex items-center bg-gray-100 rounded-full pl-3 pr-2 py-1"
-                        >
-                          <span className="text-sm">{color}</span>
-                          <button
-                            type="button"
-                            className="ml-2 text-gray-500 hover:text-red-500"
-                            onClick={() => removeColor(index)}
-                            aria-label={`Remove color ${color}`}
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
+                {formData.hasVariants ? (
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-lg font-semibold">Product Variants</h4>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => addVariant()}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Variant
+                      </Button>
                     </div>
-                  ) : (
-                    <p className="text-gray-500 text-sm">No colors added yet</p>
-                  )}
-                </div>
+                    
+                    {formData.variants.length > 0 ? (
+                      <div className="space-y-4">
+                        {formData.variants.map((variant: any, index: number) => (
+                          <Card key={index} className="p-4">
+                            <div className="flex justify-between items-start mb-4">
+                              <h5 className="font-semibold">Variant {index + 1}</h5>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeVariant(index)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor={`variant-name-${index}`}>Variant Name</Label>
+                                <Input
+                                  id={`variant-name-${index}`}
+                                  value={variant.name}
+                                  onChange={(e) => updateVariant(index, 'name', e.target.value)}
+                                  placeholder="e.g., Red, Large, Premium"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-sku-${index}`}>SKU (Optional)</Label>
+                                <Input
+                                  id={`variant-sku-${index}`}
+                                  value={variant.sku || ''}
+                                  onChange={(e) => updateVariant(index, 'sku', e.target.value)}
+                                  placeholder="e.g., PROD-RED-L"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-price-${index}`}>Price (SAR)</Label>
+                                <Input
+                                  id={`variant-price-${index}`}
+                                  type="number"
+                                  value={variant.price}
+                                  onChange={(e) => updateVariant(index, 'price', parseFloat(e.target.value) || 0)}
+                                  placeholder="0.00"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-stock-${index}`}>Stock Quantity</Label>
+                                <Input
+                                  id={`variant-stock-${index}`}
+                                  type="number"
+                                  value={variant.stock || ''}
+                                  onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
+                                  placeholder="0"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-image-${index}`}>Variant Image URL</Label>
+                                <Input
+                                  id={`variant-image-${index}`}
+                                  value={variant.image}
+                                  onChange={(e) => updateVariant(index, 'image', e.target.value)}
+                                  placeholder="https://example.com/image.jpg"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-color-${index}`}>Color (Optional)</Label>
+                                <Input
+                                  id={`variant-color-${index}`}
+                                  value={variant.attributes?.color || ''}
+                                  onChange={(e) => updateVariantAttribute(index, 'color', e.target.value)}
+                                  placeholder="e.g., Red, Blue, Green"
+                                />
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>No variants added yet. Click "Add Variant" to create product variants.</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Enable variants to create different versions of this product (colors, sizes, etc.)</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

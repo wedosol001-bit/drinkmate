@@ -3,7 +3,7 @@
  * Handles getting the correct language version of product data
  */
 
-import { BaseProduct } from '@/lib/types'
+import { BaseProduct, ProductVariant } from '@/lib/types'
 import { Language } from '@/lib/translations'
 
 /**
@@ -69,11 +69,11 @@ export function getLocalizedVariantName(variant: { name?: string; nameAr?: strin
 /**
  * Get localized color name for variant
  */
-export function getLocalizedVariantColorName(variant: { colorName?: string; colorNameAr?: string }, language: Language): string {
-  if (language === 'AR' && variant.colorNameAr) {
-    return variant.colorNameAr
+export function getLocalizedVariantColorName(variant: ProductVariant, language: Language): string {
+  if (language === 'AR' && variant.attributes?.colorAr) {
+    return variant.attributes.colorAr
   }
-  return variant.colorName || ''
+  return variant.attributes?.color || ''
 }
 
 /**
@@ -109,8 +109,9 @@ export function getLocalizedSpecifications(product: BaseProduct, language: Langu
 /**
  * Get localized product data for display
  */
-export function getLocalizedProductData(product: BaseProduct, language: Language) {
+export function getLocalizedProductData(product: BaseProduct, language: Language): BaseProduct {
   return {
+    ...product,
     name: getLocalizedProductName(product, language),
     description: getLocalizedProductDescription(product, language),
     shortDescription: getLocalizedShortDescription(product, language),

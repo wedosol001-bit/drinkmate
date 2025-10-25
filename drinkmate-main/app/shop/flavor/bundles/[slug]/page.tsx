@@ -130,7 +130,7 @@ interface BundleProduct {
   brand?: string
 
   // Media
-  image?: string
+  image: string
   images?: (string | any)[] // Support both string and object formats
 
   // Bundle-specific fields

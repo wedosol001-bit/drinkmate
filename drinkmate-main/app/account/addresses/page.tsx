@@ -9,7 +9,7 @@ import AddressForm from '@/components/account/AddressForm'
 import Link from 'next/link'
 
 export default function AddressesPage() {
-  const { language, isRTL: _isRTL } = useTranslation() // _isRTL for future RTL implementation
+  const { t, language, isRTL: _isRTL } = useTranslation() // _isRTL for future RTL implementation
   const [addresses, setAddresses] = useState<Address[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)

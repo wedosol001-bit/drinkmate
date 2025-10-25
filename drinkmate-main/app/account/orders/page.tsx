@@ -34,7 +34,7 @@ import { Price } from '@/components/account/Price'
 import SaudiRiyal from '@/components/ui/SaudiRiyal'
 
 export default function OrdersPage() {
-  const { language, isRTL } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({

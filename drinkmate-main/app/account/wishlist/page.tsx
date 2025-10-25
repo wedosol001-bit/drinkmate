@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import { Price } from '@/components/account/Price'
 
 export default function WishlistPage() {
-  const { language, isRTL } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
   const { items: wishlist, loading, error, removeFromWishlist, refreshWishlist } = useWishlist()
   const { addItem } = useCart()
   const [removingItems, setRemovingItems] = useState<Set<string>>(new Set())

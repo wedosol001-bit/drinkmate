@@ -161,7 +161,7 @@ function FAQAccordion({
 function ContactForm() {
   const { settings, getText } = useContactSettings()
   const { user } = useAuth()
-  const { isRTL } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -584,7 +584,7 @@ function ContactForm() {
 function ContactPageContent() {
   const { settings, getText } = useContactSettings()
   const { user, isAuthenticated } = useAuth()
-  const { isRTL } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const { chatStatus, isLoading: isChatStatusLoading } = useChatStatus()
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null)

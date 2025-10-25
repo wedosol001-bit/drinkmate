@@ -54,7 +54,7 @@ interface Carrier {
 export default function OrderDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { language, isRTL } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
   const { addItem, totalItems } = useCart()
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)

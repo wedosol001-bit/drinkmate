@@ -104,24 +104,89 @@ const productSchema = new mongoose.Schema({
   }],
   
   // Product Variants
+  hasVariants: {
+    type: Boolean,
+    default: false
+  },
   variants: [{
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId()
+    },
     name: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
-    nameAr: String,
-    value: {
+    nameAr: {
       type: String,
-      required: true
+      trim: true
     },
-    valueAr: String,
-    priceAdjustment: {
+    sku: {
+      type: String,
+      trim: true,
+      uppercase: true
+    },
+    price: {
       type: Number,
-      default: 0
+      required: true,
+      min: 0
+    },
+    originalPrice: {
+      type: Number,
+      min: 0
+    },
+    salePrice: {
+      type: Number,
+      min: 0
     },
     stock: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0
+    },
+    inStock: {
+      type: Boolean,
+      default: true
+    },
+    image: {
+      type: String,
+      required: true
+    },
+    images: [{
+      url: {
+        type: String,
+        required: true
+      },
+      alt: String,
+      isPrimary: {
+        type: Boolean,
+        default: false
+      },
+      order: {
+        type: Number,
+        default: 0
+      }
+    }],
+    attributes: {
+      color: String,
+      colorAr: String,
+      size: String,
+      sizeAr: String,
+      material: String,
+      materialAr: String
+    },
+    isDefault: {
+      type: Boolean,
+      default: false
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
     }
   }],
   
@@ -278,6 +343,28 @@ productSchema.virtual('isAvailable').get(function() {
   return this.status === 'active' && this.stock > 0;
 });
 
+// Virtual for price range when variants exist
+productSchema.virtual('priceRange').get(function() {
+  if (!this.hasVariants || !this.variants || this.variants.length === 0) {
+    return { min: this.price, max: this.price };
+  }
+  
+  const prices = this.variants.map(variant => variant.price);
+  return {
+    min: Math.min(...prices),
+    max: Math.max(...prices)
+  };
+});
+
+// Virtual for default variant
+productSchema.virtual('defaultVariant').get(function() {
+  if (!this.hasVariants || !this.variants || this.variants.length === 0) {
+    return null;
+  }
+  
+  return this.variants.find(variant => variant.isDefault) || this.variants[0];
+});
+
 // Virtual for discount percentage
 productSchema.virtual('discountPercentage').get(function() {
   if (this.originalPrice && this.originalPrice > this.price) {
@@ -349,6 +436,53 @@ productSchema.methods.addReview = function(userId, rating, title, comment) {
   const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
   this.rating.average = totalRating / this.reviews.length;
   this.rating.count = this.reviews.length;
+  
+  return this.save();
+};
+
+// Method to get variant by ID
+productSchema.methods.getVariant = function(variantId) {
+  if (!this.hasVariants || !this.variants) return null;
+  return this.variants.id(variantId);
+};
+
+// Method to add variant
+productSchema.methods.addVariant = function(variantData) {
+  if (!this.hasVariants) {
+    this.hasVariants = true;
+  }
+  
+  // Set first variant as default if none exist
+  if (this.variants.length === 0) {
+    variantData.isDefault = true;
+  }
+  
+  this.variants.push(variantData);
+  return this.save();
+};
+
+// Method to update variant
+productSchema.methods.updateVariant = function(variantId, updateData) {
+  const variant = this.getVariant(variantId);
+  if (!variant) return null;
+  
+  Object.assign(variant, updateData);
+  variant.updatedAt = new Date();
+  
+  return this.save();
+};
+
+// Method to remove variant
+productSchema.methods.removeVariant = function(variantId) {
+  const variant = this.getVariant(variantId);
+  if (!variant) return null;
+  
+  variant.remove();
+  
+  // If no variants left, disable variants
+  if (this.variants.length === 0) {
+    this.hasVariants = false;
+  }
   
   return this.save();
 };

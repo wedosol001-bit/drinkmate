@@ -13,6 +13,7 @@ import { useCart } from "@/lib/contexts/cart-context"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { getLocalizedProductData } from "@/lib/utils/product-localization"
+import { getProductDisplayPrice, getDefaultVariant, getProductDisplayImage, formatPriceRange } from '@/lib/utils/product-variants'
 import { Button } from "@/components/ui/button"
 import { Product as ShopProduct, BaseProduct } from '@/lib/types'
 import {
@@ -175,6 +176,9 @@ export default function ShopProductDetail() {
     category: "Usage & Features",
     tags: ""
   })
+  
+  // Product variants state
+  const [selectedVariant, setSelectedVariant] = useState<any>(null)
 
   const [showImageGallery, setShowImageGallery] = useState(false)
   const [reviewFilter, setReviewFilter] = useState("all")
@@ -386,22 +390,28 @@ export default function ShopProductDetail() {
     setCartAnimation(true)
     setIsInCart(true)
 
+    // Determine the current variant or use default
+    const currentVariant = selectedVariant || (localizedProduct ? getDefaultVariant(localizedProduct) : null);
+    const displayPrice = localizedProduct ? getProductDisplayPrice(localizedProduct) : { price: product.price, isRange: false };
+    const currentPrice = currentVariant ? currentVariant.price : displayPrice.price;
+    const currentName = currentVariant ? `${product.name} - ${currentVariant.name}` : product.name;
+    const currentImage = localizedProduct ? getProductDisplayImage(localizedProduct, currentVariant) : product.image;
+
     // Add item to cart context with all required fields
     addItem({
       id: product._id || product.id || productSlug,
-      name: product.name,
-      price: product.salePrice || product.price,
-      image: product.image || (() => {
-        const img = product.images?.[0]
-        return typeof img === 'string' ? img : img?.url || '/placeholder.svg'
-      })(),
+      name: currentName,
+      price: currentPrice,
+      image: currentImage,
       quantity: quantity,
       category: 'shop-product',
       color: selectedColor,
       size: selectedSize,
       productId: String(product._id || product.id || productSlug),
       productType: 'product' as const,
-      sku: product.sku
+      sku: currentVariant?.sku || product.sku,
+      variantId: currentVariant?._id,
+      variantName: currentVariant?.name
     })
 
     // Simulate cart API call
@@ -1031,20 +1041,48 @@ export default function ShopProductDetail() {
 
                     {/* Enhanced Pricing */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
-                      <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12d6fa]">
-                        <SaudiRiyal amount={product.salePrice || product.price} size="lg" />
-                      </span>
-                      {/* @ts-ignore - product exists at this point since we checked earlier */}
-                      {(product.originalPrice || product.salePrice) && (product.originalPrice || product.salePrice) > (product.salePrice || product.price) && (
-                        <span className="text-lg text-muted-foreground line-through">
-                          <SaudiRiyal amount={product.originalPrice || product.salePrice} size="md" />
-                        </span>
-                      )}
-                      {calculateSavings() > 0 && (
-                        <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm">
-                          {t("product.save")} <SaudiRiyal amount={calculateSavings()} size="sm" />
-                        </Badge>
-                      )}
+                      {(() => {
+                        const displayPrice = localizedProduct ? getProductDisplayPrice(localizedProduct) : { price: product.price, originalPrice: product.originalPrice, hasVariants: false };
+                        const currentPrice = selectedVariant ? selectedVariant.price : displayPrice.price;
+                        const currentOriginalPrice = selectedVariant ? selectedVariant.originalPrice : displayPrice.originalPrice;
+                        
+                        if (displayPrice.hasVariants && displayPrice.priceRange) {
+                          return (
+                            <div className="flex flex-col">
+                              <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12d6fa]">
+                                {selectedVariant ? (
+                                  <SaudiRiyal amount={currentPrice} size="lg" />
+                                ) : (
+                                  formatPriceRange(displayPrice.priceRange.min, displayPrice.priceRange.max)
+                                )}
+                              </span>
+                              {selectedVariant && currentOriginalPrice && currentOriginalPrice > currentPrice && (
+                                <span className="text-lg text-muted-foreground line-through">
+                                  <SaudiRiyal amount={currentOriginalPrice} size="md" />
+                                </span>
+                              )}
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                              <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#12d6fa]">
+                                <SaudiRiyal amount={currentPrice} size="lg" />
+                              </span>
+                              {currentOriginalPrice && currentOriginalPrice > currentPrice && (
+                                <span className="text-lg text-muted-foreground line-through">
+                                  <SaudiRiyal amount={currentOriginalPrice} size="md" />
+                                </span>
+                              )}
+                              {calculateSavings() > 0 && (
+                                <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm">
+                                  {t("product.save")} <SaudiRiyal amount={calculateSavings()} size="sm" />
+                                </Badge>
+                              )}
+                            </div>
+                          );
+                        }
+                      })()}
                     </div>
 
                     {/* Enhanced Stock and Badges */}
@@ -1132,6 +1170,43 @@ export default function ShopProductDetail() {
                         </div>
                       </CardContent>
                     </Card>
+                  )}
+
+                  {/* Product Variants Selector */}
+                  {localizedProduct?.hasVariants && localizedProduct?.variants && localizedProduct.variants.length > 0 && (
+                    <div className="space-y-4 mb-6">
+                      <h4 className="text-lg font-semibold text-gray-900">Choose Variant</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {localizedProduct.variants.map((variant: any, index: number) => (
+                          <div
+                            key={variant._id || index}
+                            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ${
+                              selectedVariant?._id === variant._id || (!selectedVariant && variant.isDefault)
+                                ? 'border-[#12d6fa] bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                            onClick={() => setSelectedVariant(variant)}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <img
+                                src={variant.image}
+                                alt={variant.name}
+                                className="w-12 h-12 object-cover rounded-lg"
+                              />
+                              <div className="flex-1">
+                                <h5 className="font-medium text-gray-900">{variant.name}</h5>
+                                <p className="text-sm text-gray-600">
+                                  <SaudiRiyal amount={variant.price} size="sm" />
+                                </p>
+                                {variant.attributes?.color && (
+                                  <p className="text-xs text-gray-500">{variant.attributes.color}</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   {/* Enhanced Quantity and Actions */}

@@ -890,6 +890,8 @@ export interface Translations {
         role: string
       }
     }
+    loginToChat: string
+    startLiveChat: string
   }
   
   // Profile
@@ -1659,12 +1661,6 @@ export interface Translations {
     passwordsMustMatch: string
     termsAndConditions: string
     privacyPolicy: string
-  }
-  
-  // Contact
-  contact: {
-    loginToChat: string
-    startLiveChat: string
   }
   
   // Product
@@ -3954,7 +3950,9 @@ export const translations: Record<Language, Translations> = {
           author: "Mohammed K.",
           role: "Verified Customer"
         }
-      }
+      },
+      loginToChat: "Login to chat",
+      startLiveChat: "Start live chat"
     },
     profile: {
       hero: {
@@ -4137,10 +4135,6 @@ export const translations: Record<Language, Translations> = {
       passwordsMustMatch: "Passwords must match",
       termsAndConditions: "Terms and Conditions",
       privacyPolicy: "Privacy Policy"
-    },
-    contact: {
-      loginToChat: "Login to chat",
-      startLiveChat: "Start live chat"
     },
     product: {
       inStock: "In stock",
@@ -5804,7 +5798,9 @@ export const translations: Record<Language, Translations> = {
           author: "محمد ك.",
           role: "عميل موثق"
         }
-      }
+      },
+      loginToChat: "تسجيل الدخول للدردشة",
+      startLiveChat: "بدء الدردشة المباشرة"
     },
     profile: {
       hero: {
@@ -6194,10 +6190,6 @@ export const translations: Record<Language, Translations> = {
       passwordsMustMatch: "يجب أن تتطابق كلمات المرور",
       termsAndConditions: "الشروط والأحكام",
       privacyPolicy: "سياسة الخصوصية"
-    },
-    contact: {
-      loginToChat: "تسجيل الدخول للدردشة",
-      startLiveChat: "بدء الدردشة المباشرة"
     },
     product: {
       inStock: "متوفر",

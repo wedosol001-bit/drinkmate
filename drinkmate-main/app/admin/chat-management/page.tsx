@@ -112,7 +112,7 @@ interface ChatStats {
 
 export default function ChatManagementPage() {
   const { user, isAuthenticated } = useAuth()
-  const { isRTL } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const { socket: contextSocket, isConnected: contextConnected } = useSocket()
   
   // Fallback socket connection

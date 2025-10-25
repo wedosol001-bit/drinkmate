@@ -31,20 +31,20 @@ export default function CO2() {
   // Slideshow state (same as shop page)
   const refillSlides: RefillSlide[] = [
     {
-      headline: "أعد التعبئة أكثر. وفر أكثر.",
-      description: "الآن أعد تعبئة 4 أسطوانات معاً بسعر 55 ﷼ لكل أسطوانة.",
-      buttonText: "أعد التعبئة الآن",
-      offerText: "*العرض صالح طوال السنة*",
+      headline: t("home.refill.title"),
+      description: t("home.refill.description"),
+      buttonText: t("home.refill.buttonText"),
+      offerText: t("home.refill.offerText"),
     },
     {
-      headline: "النكهات الإيطالية المميزة متوفرة الآن",
-      description: "استمتع بالطعم الأصيل مع مجموعتنا الجديدة من النكهات الإيطالية المميزة.",
+      headline: t("banner.messages.colaFlavors"),
+      description: "Enjoy authentic taste with our new collection of premium Italian flavors.",
       buttonText: "",
       offerText: "",
     },
     {
-      headline: "خصم 5% على الطلب الأول للعملاء الجدد",
-      description: "تريد الدخول في لعبة الفقاعات؟ استمتع بخصم 5% على طلبك الأول مع درينكميت.",
+      headline: t("banner.messages.firstOrderDiscount"),
+      description: "Want to get into the bubble game? Enjoy 5% off your first order with Drinkmate.",
       buttonText: "",
       offerText: "",
     },
@@ -477,7 +477,7 @@ export default function CO2() {
               {showBlocks && (
               <div className="mt-8 hidden lg:block">
                 <div className="bg-white rounded-3xl border-2 border-[#12d6fa]/20 shadow-sm p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">ملخص الطلب</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">{t("cart.orderSummary")}</h3>
                   
                   {/* Selected Cylinder Info */}
                   {selectedCylinderData && (
@@ -635,45 +635,12 @@ export default function CO2() {
               {/* Hidden Blocks - Show when button is clicked */}
               {showBlocks && (
                 <>
-                  {/* Premium Selected Cylinder Info - Only for Drinkmate */}
-                  {selectedCylinderData && cylinderType === "drinkmate" && (
-                    <div className="p-6 border border-gray-200 rounded-2xl bg-white">
-                    <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-[#12d6fa] rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <Info className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h4 className="text-xl font-bold text-gray-900">{selectedCylinderData.name}</h4>
-                            <div className="px-3 py-1 bg-[#12d6fa] text-white text-xs font-semibold rounded-full">
-                            PREMIUM
-                          </div>
-                        </div>
-                        <p className="text-gray-700 leading-relaxed mb-3">{selectedCylinderData.description}</p>
-                        <div className="flex items-center space-x-4 text-sm">
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 bg-[#a8f387] rounded-full"></div>
-                            <span className="text-gray-600">Food Grade CO2</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 bg-[#12d6fa] rounded-full"></div>
-                            <span className="text-gray-600">60L Capacity</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 bg-[#12d6fa] rounded-full"></div>
-                            <span className="text-gray-600">Premium Quality</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* Enhanced Premium Quantity Control */}
               <div className="space-y-8">
                 <div className="text-center">
                   <h3 className="text-3xl font-black text-black mb-3">
-                      اختر الكمية
+                      {t("product.quantity")}
                   </h3>
                   <p className="text-gray-600 text-lg">
                       اختر عدد الأسطوانات المميزة لإعادة التعبئة/التبديل
@@ -856,7 +823,7 @@ export default function CO2() {
                 {/* Order Summary - Mobile only, appears under Why Choose Our Premium Service */}
                 <div className="lg:hidden mt-6">
                   <div className="bg-white rounded-3xl border-2 border-[#12d6fa]/20 shadow-sm p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">ملخص الطلب</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">{t("cart.orderSummary")}</h3>
                     
                     {/* Selected Cylinder Info */}
                     {selectedCylinderData && (
@@ -878,7 +845,7 @@ export default function CO2() {
                     {/* Quantity and Return Info */}
                     <div className="mb-6 space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">الكمية:</span>
+                        <span className="text-gray-700">{t("product.quantity")}:</span>
                         <span className="font-semibold text-gray-900">{quantity} أسطوانة</span>
                       </div>
                       <div className="flex justify-between items-center">
