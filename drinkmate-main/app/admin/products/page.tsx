@@ -262,20 +262,26 @@ export default function ProductsPage() {
   // Create new product
   const handleCreateProduct = async (productData: ProductFormData) => {
     return formErrorHandler.handleSubmit(async () => {
+      console.log('=== STARTING PRODUCT VALIDATION ===')
+      console.log('Product data:', productData)
+      
       // Validate input data
       const validationErrors: Record<string, string> = {}
       
       const nameValidation = validateProductName(productData.name)
+      console.log('Name validation:', nameValidation)
       if (!nameValidation.valid && nameValidation.error) {
         validationErrors.name = nameValidation.error
       }
 
       const priceValidation = validatePrice(productData.price)
+      console.log('Price validation:', priceValidation)
       if (!priceValidation.valid && priceValidation.error) {
         validationErrors.price = priceValidation.error
       }
 
-      const stockValidation = validateStock(productData.stock || 0)
+      const stockValidation = validateStock(productData.stock || '0')
+      console.log('Stock validation:', stockValidation)
       if (!stockValidation.valid && stockValidation.error) {
         validationErrors.stock = stockValidation.error
       }
@@ -288,12 +294,15 @@ export default function ProductsPage() {
       }
 
       // Validate description - at least one description field is required, but we have a fallback
+      console.log('Description check:', { fullDescription: productData.fullDescription, shortDescription: productData.shortDescription, name: productData.name })
       if (!productData.fullDescription && !productData.shortDescription && !productData.name) {
+        console.error('No description field provided!')
         validationErrors.fullDescription = 'Either full description, short description, or product name is required'
       }
 
       if (productData.fullDescription && productData.fullDescription.trim()) {
         const descValidation = validateDescription(productData.fullDescription)
+        console.log('Description validation:', descValidation)
         if (!descValidation.valid && descValidation.error) {
           validationErrors.fullDescription = descValidation.error
         }
@@ -319,7 +328,9 @@ export default function ProductsPage() {
       }
 
       if (Object.keys(validationErrors).length > 0) {
+        console.error('Validation errors:', validationErrors)
         Object.entries(validationErrors).forEach(([field, message]) => {
+          console.error(`Field: ${field}, Error: ${message}`)
           formErrorHandler.setFieldError(field, message)
         })
         throw new Error('Validation failed')
@@ -409,9 +420,15 @@ export default function ProductsPage() {
         })) : []
       }
 
+      console.log('Product payload being sent:', productPayload)
+      
       const response = await adminAPI.createProduct(productPayload)
       
       console.log('Create product response:', response)
+      
+      if (!response.success) {
+        console.error('API Error Response:', response)
+      }
       
       if (response.success) {
         // Add the new product to the local state immediately
