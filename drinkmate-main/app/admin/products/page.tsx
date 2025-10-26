@@ -275,7 +275,7 @@ export default function ProductsPage() {
         validationErrors.price = priceValidation.error
       }
 
-      const stockValidation = validateStock(productData.stock)
+      const stockValidation = validateStock(productData.stock || 0)
       if (!stockValidation.valid && stockValidation.error) {
         validationErrors.stock = stockValidation.error
       }
@@ -287,12 +287,12 @@ export default function ProductsPage() {
         }
       }
 
-      // Validate description - at least one description field is required
-      if (!productData.fullDescription && !productData.shortDescription) {
-        validationErrors.fullDescription = 'Either full description or short description is required'
+      // Validate description - at least one description field is required, but we have a fallback
+      if (!productData.fullDescription && !productData.shortDescription && !productData.name) {
+        validationErrors.fullDescription = 'Either full description, short description, or product name is required'
       }
 
-      if (productData.fullDescription) {
+      if (productData.fullDescription && productData.fullDescription.trim()) {
         const descValidation = validateDescription(productData.fullDescription)
         if (!descValidation.valid && descValidation.error) {
           validationErrors.fullDescription = descValidation.error
