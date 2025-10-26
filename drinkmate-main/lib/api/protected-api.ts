@@ -282,8 +282,8 @@ export function validateSKU(sku: string): { valid: boolean; error?: string } {
   if (sku.length > 50) {
     return { valid: false, error: 'SKU must be less than 50 characters' }
   }
-  if (!/^[A-Z0-9\-_]+$/.test(sku)) {
-    return { valid: false, error: 'SKU must contain only uppercase letters, numbers, hyphens, and underscores' }
+  if (!/^[A-Za-z0-9\-_]+$/.test(sku)) {
+    return { valid: false, error: 'SKU must contain only letters, numbers, hyphens, and underscores' }
   }
   return { valid: true }
 }
