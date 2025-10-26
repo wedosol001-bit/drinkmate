@@ -387,6 +387,13 @@ export default function ShopProductDetail() {
   const handleAddToCart = useCallback(() => {
     if (!product) return
 
+    // Check if product has variants and no variant is selected
+    if (localizedProduct?.hasVariants && localizedProduct?.variants && localizedProduct.variants.length > 0 && !selectedVariant) {
+      // Show notification that variant selection is required
+      alert("Please select a variant before adding to cart.")
+      return
+    }
+
     setCartAnimation(true)
     setIsInCart(true)
 
@@ -871,10 +878,15 @@ export default function ShopProductDetail() {
                     ) : (
                       <img
                         src={(() => {
+                          // If variant is selected, show variant image
+                          if (selectedVariant?.image) {
+                            return selectedVariant.image
+                          }
+                          // Otherwise show default product image
                           const img = product.images?.[selectedImage]
                           return typeof img === 'string' ? img : img?.url || "/placeholder.svg"
                         })()}
-                        alt={product.name}
+                        alt={selectedVariant ? `${product.name} - ${selectedVariant.name}` : product.name}
                         className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                       />
                     )}
@@ -1176,35 +1188,54 @@ export default function ShopProductDetail() {
                   {localizedProduct?.hasVariants && localizedProduct?.variants && localizedProduct.variants.length > 0 && (
                     <div className="space-y-4 mb-6">
                       <h4 className="text-lg font-semibold text-gray-900">Choose Variant</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {localizedProduct.variants.map((variant: any, index: number) => (
-                          <div
-                            key={variant._id || index}
-                            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ${
-                              selectedVariant?._id === variant._id || (!selectedVariant && variant.isDefault)
-                                ? 'border-[#12d6fa] bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            onClick={() => setSelectedVariant(variant)}
-                          >
+                      <div className="space-y-4">
+                        <select
+                          value={selectedVariant?._id || ''}
+                          onChange={(e) => {
+                            if (e.target.value === '') {
+                              setSelectedVariant(null)
+                            } else {
+                              const variant = localizedProduct.variants?.find((v: any) => v._id === e.target.value)
+                              setSelectedVariant(variant || null)
+                            }
+                          }}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-transparent"
+                        >
+                          <option value="">Select a variant (Required)</option>
+                          {localizedProduct.variants?.map((variant: any, index: number) => (
+                            <option key={variant._id || index} value={variant._id}>
+                              {variant.name} - <SaudiRiyal amount={variant.price} size="sm" />
+                              {variant.attributes?.color && ` (${variant.attributes.color})`}
+                            </option>
+                          ))}
+                        </select>
+                        
+                        {/* Selected Variant Display */}
+                        {selectedVariant && (
+                          <div className="border-2 border-[#12d6fa] rounded-lg p-4 bg-blue-50">
                             <div className="flex items-center space-x-3">
                               <img
-                                src={variant.image}
-                                alt={variant.name}
-                                className="w-12 h-12 object-cover rounded-lg"
+                                src={selectedVariant.image}
+                                alt={selectedVariant.name}
+                                className="w-16 h-16 object-cover rounded-lg"
                               />
                               <div className="flex-1">
-                                <h5 className="font-medium text-gray-900">{variant.name}</h5>
+                                <h5 className="font-medium text-gray-900">{selectedVariant.name}</h5>
                                 <p className="text-sm text-gray-600">
-                                  <SaudiRiyal amount={variant.price} size="sm" />
+                                  <SaudiRiyal amount={selectedVariant.price} size="sm" />
                                 </p>
-                                {variant.attributes?.color && (
-                                  <p className="text-xs text-gray-500">{variant.attributes.color}</p>
+                                {selectedVariant.attributes?.color && (
+                                  <p className="text-xs text-gray-500">{selectedVariant.attributes.color}</p>
+                                )}
+                                {selectedVariant.stock !== undefined && (
+                                  <p className="text-xs text-gray-500">
+                                    Stock: {selectedVariant.stock} available
+                                  </p>
                                 )}
                               </div>
                             </div>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
                   )}
@@ -2027,10 +2058,15 @@ export default function ShopProductDetail() {
                 ) : (
                   <img
                     src={(() => {
+                      // If variant is selected, show variant image
+                      if (selectedVariant?.image) {
+                        return selectedVariant.image
+                      }
+                      // Otherwise show default product image
                       const img = product.images?.[selectedImage]
                       return typeof img === 'string' ? img : img?.url || "/placeholder.svg"
                     })()}
-                    alt={product.name}
+                    alt={selectedVariant ? `${product.name} - ${selectedVariant.name}` : product.name}
                     className="w-full h-auto max-h-[80vh] object-contain"
                   />
                 )}

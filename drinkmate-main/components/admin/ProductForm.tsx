@@ -610,7 +610,7 @@ export default function ProductForm({
             <TabsTrigger value="media">Media</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             {isBundle && <TabsTrigger value="bundle">Bundle Items</TabsTrigger>}
-            {!isBundle && <TabsTrigger value="variants">Variants</TabsTrigger>}
+            {!isBundle && formData.hasVariants && <TabsTrigger value="variants">Variants</TabsTrigger>}
           </TabsList>
           
           {/* Basic Info Tab */}
@@ -878,6 +878,24 @@ export default function ProductForm({
                     />
                     <Label htmlFor="isEcoFriendly">Eco Friendly</Label>
                   </div>
+                </div>
+
+                {/* Product Variants Checkbox */}
+                <div className="border-t pt-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="hasVariants" 
+                      name="hasVariants"
+                      checked={formData.hasVariants}
+                      onCheckedChange={(checked) => 
+                        setFormData({...formData, hasVariants: checked === true})
+                      }
+                    />
+                    <Label htmlFor="hasVariants" className="text-base font-medium">Product has variants?</Label>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1 ml-6">
+                    Check this if your product has different variants (colors, sizes, etc.) with different prices and images.
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -1282,7 +1300,14 @@ export default function ProductForm({
               {/* Images */}
             <Card>
               <CardHeader>
-                <CardTitle>Product Images</CardTitle>
+                <CardTitle>
+                  {formData.hasVariants ? "Default Product Image" : "Product Images"}
+                </CardTitle>
+                {formData.hasVariants && (
+                  <p className="text-sm text-muted-foreground">
+                    This will be the default image shown for the product. Individual variant images can be set in the Variants tab.
+                  </p>
+                )}
               </CardHeader>
               <CardContent>
                 <CloudinaryImageUpload
@@ -1463,22 +1488,17 @@ export default function ProductForm({
             </Card>
           </TabsContent>
           
-          {/* Variants Tab */}
-          <TabsContent value="variants">
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Variants</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="hasVariants"
-                    checked={formData.hasVariants}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, hasVariants: !!checked }))}
-                  />
-                  <Label htmlFor="hasVariants">This product has variants (different colors, sizes, etc.)</Label>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {formData.hasVariants ? (
+          {/* Variants Tab - Only show when hasVariants is true */}
+          {formData.hasVariants && (
+            <TabsContent value="variants">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Variants</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Add different variants of your product with unique prices, images, and attributes.
+                  </p>
+                </CardHeader>
+                <CardContent>
                   <div className="space-y-6">
                     <div className="flex justify-between items-center">
                       <h4 className="text-lg font-semibold">Product Variants</h4>
@@ -1586,14 +1606,10 @@ export default function ProductForm({
                       </div>
                     )}
                   </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>Enable variants to create different versions of this product (colors, sizes, etc.)</p>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </TabsContent>
+          )}
           
           {/* Bundle Items Tab */}
           {isBundle && (
