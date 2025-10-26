@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { SafeImage } from "@/components/ui/safe-image"
@@ -125,6 +125,24 @@ export default function CloudinaryImageUpload({
   const [retryCount, setRetryCount] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
+
+  // Sync internal state with currentImages prop changes
+  useEffect(() => {
+    if (!currentImages || currentImages.length === 0) {
+      setUploadedImages([])
+      return
+    }
+    
+    const processedImages = currentImages
+      .filter(url => url && typeof url === 'string' && url.trim() !== '')
+      .map(url => ({
+        url, 
+        publicId: url.includes('cloudinary.com') ? extractPublicIdFromUrl(url) : '', 
+        filename: url.split('/').pop() || 'image' 
+      }))
+    
+    setUploadedImages(processedImages)
+  }, [currentImages])
 
   // Helper function to compress image
   const compressImage = (file: File, maxWidth: number = 1000, quality: number = 0.8): Promise<File> => {

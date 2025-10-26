@@ -78,13 +78,16 @@ interface Product {
 
 interface ProductFormData {
   name: string
+  nameAr?: string
   category: string
   subcategory: string
   price: string
   originalPrice: string
   stock: string
   shortDescription: string
+  shortDescriptionAr?: string
   fullDescription: string
+  fullDescriptionAr?: string
   sku: string
   images: string[]
   colors: string[]
@@ -93,6 +96,28 @@ interface ProductFormData {
   isFeatured: boolean
   weight: string
   dimensions: string | { length: number; width: number; height: number; unit: string }
+  hasVariants?: boolean
+  variants?: Array<{
+    name: string
+    nameAr?: string
+    sku?: string
+    price: string
+    originalPrice?: string
+    salePrice?: string
+    stock: string
+    inStock?: boolean
+    image: string
+    images?: string[]
+    attributes?: {
+      color?: string
+      colorAr?: string
+      size?: string
+      sizeAr?: string
+      material?: string
+      materialAr?: string
+    }
+    isDefault?: boolean
+  }>
 }
 
 export default function ProductsPage() {
@@ -262,10 +287,34 @@ export default function ProductsPage() {
         }
       }
 
+      // Validate description - at least one description field is required
+      if (!productData.fullDescription && !productData.shortDescription) {
+        validationErrors.fullDescription = 'Either full description or short description is required'
+      }
+
       if (productData.fullDescription) {
         const descValidation = validateDescription(productData.fullDescription)
         if (!descValidation.valid && descValidation.error) {
           validationErrors.fullDescription = descValidation.error
+        }
+      }
+
+      // Validate variants if product has variants
+      if (productData.hasVariants && Array.isArray(productData.variants)) {
+        if (productData.variants.length === 0) {
+          validationErrors.variants = 'At least one variant is required when product has variants'
+        } else {
+          productData.variants.forEach((variant: any, index: number) => {
+            if (!variant.name || variant.name.trim() === '') {
+              validationErrors[`variants.${index}.name`] = 'Variant name is required'
+            }
+            if (!variant.price || isNaN(parseFloat(variant.price)) || parseFloat(variant.price) < 0) {
+              validationErrors[`variants.${index}.price`] = 'Valid variant price is required'
+            }
+            if (!variant.image || variant.image.trim() === '') {
+              validationErrors[`variants.${index}.image`] = 'Variant image is required'
+            }
+          })
         }
       }
 
@@ -279,10 +328,14 @@ export default function ProductsPage() {
       // Prepare the product data for the API with proper sanitization
       const productPayload = {
         name: sanitizeInput(productData.name?.trim() || ''),
+        nameAr: sanitizeInput(productData.nameAr?.trim() || ''),
         slug: sanitizeInput(productData.name?.toLowerCase().replace(/\s+/g, '-') || ''),
-        description: sanitizeHtml(productData.fullDescription || productData.shortDescription || productData.name || ''), // Backend expects 'description'
+        description: sanitizeHtml(productData.fullDescription || productData.shortDescription || productData.name || 'Product description'), // Backend expects 'description'
+        descriptionAr: sanitizeHtml(productData.fullDescriptionAr?.trim() || ''),
         shortDescription: sanitizeInput(productData.shortDescription?.trim() || ''), // Add short description
+        shortDescriptionAr: sanitizeInput(productData.shortDescriptionAr?.trim() || ''),
         fullDescription: sanitizeHtml(productData.fullDescription?.trim() || ''), // Add full description
+        fullDescriptionAr: sanitizeHtml(productData.fullDescriptionAr?.trim() || ''),
         price: parseFloat(productData.price) || 0,
         originalPrice: productData.originalPrice ? parseFloat(productData.originalPrice) : undefined,
         stock: parseInt(productData.stock) || 0,
@@ -337,7 +390,23 @@ export default function ProductsPage() {
         rating: {
           average: 0,
           count: 0
-        }
+        },
+        // Add variants data if product has variants
+        hasVariants: Boolean(productData.hasVariants),
+        variants: productData.hasVariants && Array.isArray(productData.variants) ? productData.variants.map((variant: any) => ({
+          name: variant.name || '',
+          nameAr: variant.nameAr || '',
+          sku: variant.sku || '',
+          price: parseFloat(variant.price) || 0,
+          originalPrice: variant.originalPrice ? parseFloat(variant.originalPrice) : undefined,
+          salePrice: variant.salePrice ? parseFloat(variant.salePrice) : undefined,
+          stock: parseInt(variant.stock) || 0,
+          inStock: Boolean(variant.inStock !== false),
+          image: variant.image || '',
+          images: variant.images || [],
+          attributes: variant.attributes || {},
+          isDefault: Boolean(variant.isDefault)
+        })) : []
       }
 
       const response = await adminAPI.createProduct(productPayload)
