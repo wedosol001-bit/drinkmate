@@ -287,12 +287,16 @@ export default function ProductsPage() {
         }
       }
 
-      // Validate description - at least one description field is required, but we have a fallback
-      if (!productData.fullDescription && !productData.shortDescription && !productData.name) {
+      // Validate description - at least one description field is required
+      const hasFullDescription = productData.fullDescription && productData.fullDescription.trim().length > 0
+      const hasShortDescription = productData.shortDescription && productData.shortDescription.trim().length > 0
+      const hasName = productData.name && productData.name.trim().length > 0
+      
+      if (!hasFullDescription && !hasShortDescription && !hasName) {
         validationErrors.fullDescription = 'Either full description, short description, or product name is required'
       }
 
-      if (productData.fullDescription && productData.fullDescription.trim()) {
+      if (hasFullDescription) {
         const descValidation = validateDescription(productData.fullDescription)
         if (!descValidation.valid && descValidation.error) {
           validationErrors.fullDescription = descValidation.error
