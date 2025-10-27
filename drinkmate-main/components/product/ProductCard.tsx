@@ -30,7 +30,7 @@ import {
 import SaudiRiyal from '@/components/ui/SaudiRiyal'
 import { toast } from 'sonner'
 
-// Helper function to generate correct product URL based on category
+// Helper function to generate correct product URL based on category ok
 import { getProductUrl as getProductUrlFromUtils } from '@/lib/utils/product-url'
 
 const getProductUrl = (product: any): string => {
