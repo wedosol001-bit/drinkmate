@@ -265,69 +265,130 @@ export default function ProductsPage() {
       // Validate input data
       const validationErrors: Record<string, string> = {}
       
+      console.log('=== VALIDATION DEBUG ===')
+      console.log('📋 Full product data received:', JSON.stringify(productData, null, 2))
+      console.log('📝 Name value:', productData.name, '| Type:', typeof productData.name, '| Length:', productData.name?.length)
+      console.log('💰 Price value:', productData.price, '| Type:', typeof productData.price)
+      console.log('📦 Stock value:', productData.stock, '| Type:', typeof productData.stock)
+      console.log('🏷️ Category value:', productData.category)
+      console.log('📄 Description:', productData.fullDescription?.substring(0, 100))
+      
       const nameValidation = validateProductName(productData.name)
+      console.log('✅ Name validation result:', nameValidation)
       if (!nameValidation.valid && nameValidation.error) {
+        console.error('❌ NAME VALIDATION FAILED:', {
+          field: 'name',
+          value: productData.name,
+          error: nameValidation.error
+        })
         validationErrors.name = nameValidation.error
       }
 
       const priceValidation = validatePrice(productData.price)
+      console.log('✅ Price validation result:', priceValidation)
       if (!priceValidation.valid && priceValidation.error) {
+        console.error('❌ PRICE VALIDATION FAILED:', {
+          field: 'price',
+          value: productData.price,
+          error: priceValidation.error
+        })
         validationErrors.price = priceValidation.error
       }
 
-      const stockValidation = validateStock(productData.stock || '0')
-      if (!stockValidation.valid && stockValidation.error) {
-        validationErrors.stock = stockValidation.error
+      // Stock is optional - only validate if provided and is a positive number
+      if (productData.stock && (typeof productData.stock === 'string' ? productData.stock.trim() !== '' : true)) {
+        const stockValidation = validateStock(productData.stock || '0')
+        console.log('✅ Stock validation result:', stockValidation)
+        if (!stockValidation.valid && stockValidation.error) {
+          console.error('❌ STOCK VALIDATION FAILED:', {
+            field: 'stock',
+            value: productData.stock,
+            error: stockValidation.error
+          })
+          validationErrors.stock = stockValidation.error
+        }
+      } else {
+        console.log('ℹ️ Stock validation skipped (stock is optional)')
       }
 
       if (productData.sku) {
         const skuValidation = validateSKU(productData.sku)
+        console.log('✅ SKU validation result:', skuValidation)
         if (!skuValidation.valid && skuValidation.error) {
+          console.error('❌ SKU VALIDATION FAILED:', {
+            field: 'sku',
+            value: productData.sku,
+            error: skuValidation.error
+          })
           validationErrors.sku = skuValidation.error
         }
+      } else {
+        console.log('ℹ️ SKU validation skipped (SKU not provided)')
       }
 
-      // Validate description - at least one description field is required
-      const hasFullDescription = productData.fullDescription && productData.fullDescription.trim().length >= 10
-      const hasShortDescription = productData.shortDescription && productData.shortDescription.trim().length > 0
-      const hasName = productData.name && productData.name.trim().length > 0
-      
-      // Only require description if there's no short description or name
-      if (!hasFullDescription && !hasShortDescription && !hasName) {
-        validationErrors.fullDescription = 'Either full description (min 10 chars), short description, or product name is required'
-      }
-
+      // Only validate description if provided - make it optional
+      // The product name serves as the description if no description is provided
       if (productData.fullDescription && productData.fullDescription.trim().length > 0) {
-        const descValidation = validateDescription(productData.fullDescription)
-        if (!descValidation.valid && descValidation.error) {
-          validationErrors.fullDescription = descValidation.error
+        console.log('✅ Description provided, length:', productData.fullDescription.trim().length)
+        // Only validate length if description is less than 10 chars (not critical)
+        if (productData.fullDescription.trim().length > 2000) {
+          console.error('❌ DESCRIPTION VALIDATION FAILED:', {
+            field: 'fullDescription',
+            error: 'Description must be less than 2000 characters'
+          })
+          validationErrors.fullDescription = 'Description must be less than 2000 characters'
         }
+      } else {
+        console.log('ℹ️ Description validation skipped (description is optional)')
       }
 
       // Validate variants if product has variants
-      if (productData.hasVariants && Array.isArray(productData.variants)) {
-        if (productData.variants.length === 0) {
-          validationErrors.variants = 'At least one variant is required when product has variants'
-        } else {
-          productData.variants.forEach((variant: any, index: number) => {
-            if (!variant.name || variant.name.trim() === '') {
-              validationErrors[`variants.${index}.name`] = 'Variant name is required'
-            }
-            if (!variant.price || isNaN(parseFloat(variant.price)) || parseFloat(variant.price) < 0) {
-              validationErrors[`variants.${index}.price`] = 'Valid variant price is required'
-            }
-            if (!variant.image || variant.image.trim() === '') {
-              validationErrors[`variants.${index}.image`] = 'Variant image is required'
-            }
-          })
-        }
+      console.log('🔍 Checking hasVariants:', productData.hasVariants, '| Type:', typeof productData.hasVariants)
+      const hasVariants = productData.hasVariants || false
+      console.log('🔍 Normalized hasVariants:', hasVariants)
+      console.log('🔍 Variants array:', productData.variants, '| Is array:', Array.isArray(productData.variants))
+      
+      if (hasVariants && Array.isArray(productData.variants) && productData.variants.length > 0) {
+        console.log('✅ Variants exist, validating...')
+        // Only validate if variants actually exist
+        productData.variants.forEach((variant: any, index: number) => {
+          console.log(`🔍 Validating variant ${index}:`, variant)
+          if (!variant.name || variant.name.trim() === '') {
+            console.error(`❌ Variant ${index} name validation failed`)
+            validationErrors[`variants.${index}.name`] = 'Variant name is required'
+          }
+          if (!variant.price || isNaN(parseFloat(variant.price)) || parseFloat(variant.price) < 0) {
+            console.error(`❌ Variant ${index} price validation failed`)
+            validationErrors[`variants.${index}.price`] = 'Valid variant price is required'
+          }
+          // Don't require variant images - make it optional
+        })
+      } else {
+        console.log('ℹ️ Variants validation skipped (no variants)')
       }
 
+      console.log('📊 FINAL VALIDATION ERRORS:', validationErrors)
+      console.log('📊 Number of validation errors:', Object.keys(validationErrors).length)
+      console.log('=== END VALIDATION DEBUG ===')
+
       if (Object.keys(validationErrors).length > 0) {
+        console.error('🚨 VALIDATION FAILED - Errors:', validationErrors)
+        console.error('🚨 Total fields with errors:', Object.keys(validationErrors).length)
+        console.error('🚨 Error fields:', Object.keys(validationErrors).join(', '))
+        
         Object.entries(validationErrors).forEach(([field, message]) => {
+          console.error(`🚨 Field "${field}": ${message}`)
           formErrorHandler.setFieldError(field, message)
         })
-        throw new Error('Validation failed')
+        
+        // Create a detailed error message
+        const errorDetails = Object.entries(validationErrors)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join('; ')
+        
+        throw new Error(`Validation failed: ${errorDetails}`)
+      } else {
+        console.log('✅ All validation passed!')
       }
       
       // Prepare the product data for the API with proper sanitization

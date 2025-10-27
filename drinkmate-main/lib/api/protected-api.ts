@@ -241,15 +241,13 @@ export function validateNationalAddress(address: string): boolean {
 
 // Enhanced validation functions for admin forms
 export function validateProductName(name: string): { valid: boolean; error?: string } {
-  if (!name || name.trim().length < 2) {
-    return { valid: false, error: 'Product name must be at least 2 characters long' }
+  if (!name || name.trim().length < 1) {
+    return { valid: false, error: 'Product name is required' }
   }
-  if (name.length > 100) {
-    return { valid: false, error: 'Product name must be less than 100 characters' }
+  if (name.length > 200) {
+    return { valid: false, error: 'Product name must be less than 200 characters' }
   }
-  if (!/^[a-zA-Z0-9\s\-_.,()]+$/.test(name)) {
-    return { valid: false, error: 'Product name contains invalid characters' }
-  }
+  // Make name validation more lenient - allow any characters
   return { valid: true }
 }
 
@@ -276,15 +274,13 @@ export function validateStock(stock: string | number): { valid: boolean; error?:
 }
 
 export function validateSKU(sku: string): { valid: boolean; error?: string } {
-  if (!sku || sku.trim().length < 3) {
-    return { valid: false, error: 'SKU must be at least 3 characters long' }
+  if (!sku || sku.trim().length < 1) {
+    return { valid: false, error: 'SKU is required' }
   }
-  if (sku.length > 50) {
-    return { valid: false, error: 'SKU must be less than 50 characters' }
+  if (sku.length > 100) {
+    return { valid: false, error: 'SKU must be less than 100 characters' }
   }
-  if (!/^[A-Za-z0-9\-_]+$/.test(sku)) {
-    return { valid: false, error: 'SKU must contain only letters, numbers, hyphens, and underscores' }
-  }
+  // Make SKU validation more lenient
   return { valid: true }
 }
 
