@@ -26,11 +26,13 @@ export function getProductUrl(product: any): string {
   
   const category = categoryName.toLowerCase().trim();
   
-  // Handle bundles
-  const isBundle = 
+  // Handle bundles (but NOT variant products)
+  // Variant products should never be treated as bundles
+  const isBundle = !product.hasVariants && (
     product.subcategory?.toLowerCase().includes('bundle') || 
     product.name?.toLowerCase().includes('bundle') ||
-    product.title?.toLowerCase().includes('bundle');
+    product.title?.toLowerCase().includes('bundle')
+  );
   
   if (isBundle) {
     if (matchesCategory(category, ['flavors', 'flavor'])) {
@@ -55,7 +57,7 @@ export function getProductUrl(product: any): string {
   if (matchesCategory(category, ['co2-cylinders', 'co2-cylinder', 'co2'])) {
     return `/shop/co2-cylinders/${product.slug}`;
   }
-  if (matchesCategory(category, ['sodamakers', 'sodamaker', 'machine', 'machines', 'soda-maker', 'soda-makers'])) {
+  if (matchesCategory(category, ['sodamakers', 'sodamaker', 'machine', 'machines', 'soda-maker', 'soda-makers', 'starter-kits', 'starter kits'])) {
     return `/shop/sodamakers/${product.slug}`;
   }
   
