@@ -396,6 +396,15 @@ export default function BundleDetailPage() {
         console.log('Badge color from API:', bundleData.badge?.color)
         console.log('Price from API:', bundleData.price)
         
+        // Check if this is actually a variant product (not a bundle)
+        // If it has hasVariants: true, redirect to proper product page
+        if (bundleData.hasVariants) {
+          console.warn('Detected variant product on bundle page, redirecting...');
+          const correctUrl = `/shop/sodamakers/${bundleData.slug}`;
+          router.push(correctUrl);
+          return;
+        }
+        
         setBundle(bundleData)
         
         // Set default selected image

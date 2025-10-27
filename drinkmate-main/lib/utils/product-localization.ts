@@ -117,25 +117,25 @@ export function getLocalizedProductData(product: BaseProduct, language: Language
     shortDescription: getLocalizedShortDescription(product, language),
     fullDescription: getLocalizedFullDescription(product, language),
     specifications: getLocalizedSpecifications(product, language),
-    colors: product.colors?.map(color => {
+    colors: product.colors && Array.isArray(product.colors) ? product.colors.map(color => {
       if (typeof color === 'string') return color
       return {
         ...color,
         displayName: getLocalizedColorName(color, language)
       }
-    }),
-    variants: product.variants?.map(variant => ({
+    }) : [],
+    variants: product.variants && Array.isArray(product.variants) ? product.variants.map(variant => ({
       ...variant,
       displayName: getLocalizedVariantName(variant, language),
       displayColorName: getLocalizedVariantColorName(variant, language)
-    })),
-    features: product.features?.map(feature => {
+    })) : [],
+    features: product.features && Array.isArray(product.features) ? product.features.map(feature => {
       if (typeof feature === 'string') return feature
       return {
         ...feature,
         displayTitle: getLocalizedFeatureTitle(feature, language),
         displayDescription: getLocalizedFeatureDescription(feature, language)
       }
-    })
+    }) : []
   }
 }
