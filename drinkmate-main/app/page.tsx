@@ -165,7 +165,7 @@ export default function Home() {
       alt: "Premium Flavors Collection",
       mobileSrc: "/images/banner/flavors3-banner.jpg",
       mobileAlt: "Premium Flavors Collection",
-      objectFit: "contain"
+      objectFit: "contain" as const
     }
   ]
 
