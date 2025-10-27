@@ -151,7 +151,7 @@ export default function ProductCard({
   let comparePrice = product.compareAtPrice
   let priceRange: { min: number; max: number } | null = null
   
-  if (hasVariants && !selected) {
+  if (hasVariants && !selected && product.variants) {
     // Calculate price range from variants
     const prices = product.variants.map((v: any) => parseFloat(v.price) || 0).filter(p => p > 0)
     const comparePrices = product.variants.map((v: any) => parseFloat(v.compareAtPrice || v.originalPrice) || parseFloat(v.price) || 0).filter(p => p > 0)
