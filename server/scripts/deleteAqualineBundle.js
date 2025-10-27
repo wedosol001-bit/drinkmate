@@ -3,11 +3,18 @@
  * This bundle is incorrectly categorized and should be deleted
  */
 
+require('dotenv').config();
 const mongoose = require('mongoose');
+const path = require('path');
+
+// Load .env file from the server directory
+const envPath = path.join(__dirname, '..', '.env');
+require('dotenv').config({ path: envPath });
+
 const Bundle = require('../Models/bundle-model');
 
-// MongoDB connection URL - update if needed
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/drinkmates';
+// MongoDB connection URL
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/drinkmate';
 
 async function deleteAqualineBundle() {
   try {

@@ -11,6 +11,7 @@ interface CarouselItem {
   alt: string
   mobileSrc?: string
   mobileAlt?: string
+  objectFit?: "cover" | "contain"
 }
 
 interface CarouselBannerProps {
@@ -107,7 +108,7 @@ export default function CarouselBanner({
                   src={item.src}
                   alt={item.alt}
                   fill
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className={`absolute inset-0 w-full h-full object-${item.objectFit || 'cover'}`}
                   priority={index === 0}
                   quality={90}
                 />
@@ -118,7 +119,7 @@ export default function CarouselBanner({
                     src={item.mobileSrc}
                     alt={item.mobileAlt || item.alt}
                     fill
-                    className="absolute inset-0 w-full h-full object-cover md:hidden"
+                    className={`absolute inset-0 w-full h-full object-${item.objectFit || 'cover'} md:hidden`}
                     priority={index === 0}
                     quality={90}
                   />

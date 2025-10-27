@@ -415,7 +415,27 @@ export default function BundleDetailPage() {
         // Fetch related products
         fetchRelatedProducts(bundleData._id)
       } else {
-        // Use mock data as fallback
+        // Check if this might be a product instead of a bundle
+        // Try to fetch it as a product
+        console.log('Not found as bundle, checking if it\'s a product...')
+        try {
+          const productResponse = await shopAPI.getProduct(bundleSlug)
+          if (productResponse.success && productResponse.product) {
+            console.log('Found as product, redirecting to product page...')
+            const product = productResponse.product
+            // Use the product URL utility to get the correct URL
+            import('@/lib/utils/product-url').then(({ getProductUrl }) => {
+              const correctUrl = getProductUrl(product)
+              router.push(correctUrl)
+            })
+            return
+          }
+        } catch (productError) {
+          console.log('Not a product either, falling back to mock data')
+        }
+        
+        // Use mock data as fallback - but only if user is actually looking for a bundle
+        console.log('Using mock data fallback')
         setBundle(mockBundle)
         setSelectedImage(0)
         fetchRelatedProducts(mockBundle._id)

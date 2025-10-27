@@ -258,23 +258,6 @@ export default function ShopProductDetail() {
       try {
         setLoading(true)
 
-        // First, check if this is a known product that should redirect
-        // Check for specific known products that exist in mock data
-        const knownProducts = {
-          'aqualine-starter-kit-soda-maker': {
-            category: 'sodamakers',
-            isBundle: true,
-            correctUrl: '/shop/sodamakers/bundles/aqualine-starter-kit-soda-maker'
-          }
-        }
-
-        if (knownProducts[productSlug as keyof typeof knownProducts]) {
-          const productInfo = knownProducts[productSlug as keyof typeof knownProducts]
-          console.log(`🔄 Known product redirect: ${productSlug} -> ${productInfo.correctUrl}`)
-          router.replace(productInfo.correctUrl)
-          return
-        }
-
         // Get product details using the standard API endpoint
         const response = await shopAPI.getProduct(productSlug)
 
@@ -298,11 +281,14 @@ export default function ShopProductDetail() {
           })
           
           // Determine if this is a bundle
-          const isBundle = productData.subcategory?.toLowerCase().includes('bundle') || 
-                          productData.name?.toLowerCase().includes('bundle') ||
-                          productData.title?.toLowerCase().includes('bundle')
+          // IMPORTANT: Products with variants should NOT be treated as bundles
+          const isBundle = !productData.hasVariants && (
+            productData.subcategory?.toLowerCase().includes('bundle') || 
+            productData.name?.toLowerCase().includes('bundle') ||
+            productData.title?.toLowerCase().includes('bundle')
+          )
           
-          console.log('📦 Bundle check:', { isBundle, subcategory: productData.subcategory })
+          console.log('📦 Bundle check:', { isBundle, hasVariants: productData.hasVariants, subcategory: productData.subcategory })
           
           // Generate the correct URL based on category
           let correctUrl = ''
@@ -343,6 +329,9 @@ export default function ShopProductDetail() {
                      imageUrl?.startsWith('/') ? `http://localhost:3000${imageUrl}` :
                      '/placeholder.svg'
             }),
+            // Ensure variants is always an array
+            hasVariants: Boolean(productData.hasVariants),
+            variants: Array.isArray(productData.variants) ? productData.variants : [],
             // Add any missing properties with default values
             specifications: productData.specifications || {},
             videos: productData.videos || [],
@@ -351,6 +340,9 @@ export default function ShopProductDetail() {
             dimensions: productData.dimensions || { width: 0, height: 0, depth: 0, weight: 0 },
             compatibility: productData.compatibility || [],
             safetyFeatures: productData.safetyFeatures || [],
+            colors: Array.isArray(productData.colors) ? productData.colors : [],
+            sizes: Array.isArray(productData.sizes) ? productData.sizes : [],
+            features: Array.isArray(productData.features) ? productData.features : [],
           }
 
           setProduct(processedProduct)
@@ -1137,7 +1129,7 @@ export default function ShopProductDetail() {
                           Product Options
                         </h3>
                         <div className="space-y-4">
-                          {product.colors && product.colors.length > 0 && (
+                          {product.colors && Array.isArray(product.colors) && product.colors.length > 0 && (
                             <div>
                               <label className="text-sm font-medium mb-2 block">Color</label>
                               <div className="flex flex-wrap gap-2">
@@ -1167,7 +1159,7 @@ export default function ShopProductDetail() {
                               </div>
                             </div>
                           )}
-                          {product.sizes && product.sizes.length > 0 && (
+                          {product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0 && (
                             <div>
                               <label className="text-sm font-medium mb-2 block">Size</label>
                               <div className="flex flex-wrap gap-2">
@@ -1193,7 +1185,7 @@ export default function ShopProductDetail() {
                   )}
 
                   {/* Product Variants Selector */}
-                  {localizedProduct?.hasVariants && localizedProduct?.variants && localizedProduct.variants.length > 0 && (
+                  {localizedProduct?.hasVariants && Array.isArray(localizedProduct?.variants) && localizedProduct.variants.length > 0 && (
                     <div className="space-y-4 mb-6">
                       <h4 className="text-lg font-semibold text-gray-900">Choose Variant</h4>
                       <div className="space-y-4">
@@ -1427,17 +1419,19 @@ export default function ShopProductDetail() {
                           {t("product.keyFeatures")}
                         </h3>
                         <ul className="space-y-3">
-                          {localizedProduct?.features?.map((feature, index) => (
-                            <li key={index} className="flex items-start">
-                              <Check className="w-4 h-4 text-[#12d6fa] mr-3 mt-0.5 flex-shrink-0" />
-                              <div>
-                                <span className="text-gray-700 font-medium">{typeof feature === 'string' ? feature : feature.title}</span>
-                                {typeof feature === 'object' && feature.description && (
-                                  <p className="text-sm text-gray-500 mt-1">{feature.description}</p>
-                                )}
-                              </div>
-                            </li>
-                          )) || (
+                          {Array.isArray(localizedProduct?.features) && localizedProduct.features.length > 0 ? (
+                            localizedProduct.features.map((feature, index) => (
+                              <li key={index} className="flex items-start">
+                                <Check className="w-4 h-4 text-[#12d6fa] mr-3 mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <span className="text-gray-700 font-medium">{typeof feature === 'string' ? feature : feature.title}</span>
+                                  {typeof feature === 'object' && feature.description && (
+                                    <p className="text-sm text-gray-500 mt-1">{feature.description}</p>
+                                  )}
+                                </div>
+                              </li>
+                            ))
+                          ) : (
                             <li className="flex items-start">
                               <Check className="w-4 h-4 text-[#12d6fa] mr-3 mt-0.5 flex-shrink-0" />
                               <span className="text-gray-700">Premium quality materials</span>
@@ -1452,12 +1446,14 @@ export default function ShopProductDetail() {
                           Safety & Quality
                         </h3>
                         <ul className="space-y-3">
-                          {product.safetyFeatures?.map((feature, index) => (
-                            <li key={index} className="flex items-start">
-                              <Shield className="w-4 h-4 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
-                              <span className="text-gray-700">{feature}</span>
-                            </li>
-                          )) || (
+                          {Array.isArray(product.safetyFeatures) && product.safetyFeatures.length > 0 ? (
+                            product.safetyFeatures.map((feature, index) => (
+                              <li key={index} className="flex items-start">
+                                <Shield className="w-4 h-4 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-700">{feature}</span>
+                              </li>
+                            ))
+                          ) : (
                             <>
                               <li className="flex items-start">
                                 <Shield className="w-4 h-4 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
@@ -1531,11 +1527,13 @@ export default function ShopProductDetail() {
                         <div className="py-2 border-b border-gray-100 last:border-b-0">
                           <span className="font-medium text-gray-700 block mb-2">Certifications</span>
                           <div className="flex flex-wrap gap-2">
-                            {product.certifications?.map((cert) => (
-                              <Badge key={cert} variant="secondary" className="text-xs">
-                                {cert}
-                              </Badge>
-                            )) || (
+                            {Array.isArray(product.certifications) && product.certifications.length > 0 ? (
+                              product.certifications.map((cert) => (
+                                <Badge key={cert} variant="secondary" className="text-xs">
+                                  {cert}
+                                </Badge>
+                              ))
+                            ) : (
                               <Badge variant="secondary" className="text-xs">Quality Certified</Badge>
                             )}
                           </div>
@@ -1543,11 +1541,13 @@ export default function ShopProductDetail() {
                         <div className="py-2 border-b border-gray-100 last:border-b-0">
                           <span className="font-medium text-gray-700 block mb-2">Compatibility</span>
                           <div className="flex flex-wrap gap-2">
-                            {product.compatibility?.map((comp) => (
-                              <Badge key={comp} variant="outline" className="text-xs">
-                                {comp}
-                              </Badge>
-                            )) || (
+                            {Array.isArray(product.compatibility) && product.compatibility.length > 0 ? (
+                              product.compatibility.map((comp) => (
+                                <Badge key={comp} variant="outline" className="text-xs">
+                                  {comp}
+                                </Badge>
+                              ))
+                            ) : (
                               <Badge variant="outline" className="text-xs">Universal</Badge>
                             )}
                           </div>
