@@ -319,6 +319,7 @@ export default function ProductForm({
       name: '',
       sku: '',
       price: 0,
+      originalPrice: 0,
       stock: 0,
       image: '',
       attributes: {
@@ -1558,6 +1559,18 @@ export default function ProductForm({
                                   onChange={(e) => updateVariant(index, 'price', parseFloat(e.target.value) || 0)}
                                   placeholder="0.00"
                                 />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-original-price-${index}`}>Original Price (SAR) - Optional</Label>
+                                <Input
+                                  id={`variant-original-price-${index}`}
+                                  type="number"
+                                  value={variant.originalPrice || ''}
+                                  onChange={(e) => updateVariant(index, 'originalPrice', parseFloat(e.target.value) || 0)}
+                                  placeholder="0.00"
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">Leave empty if no discount</p>
                               </div>
                               
                               <div>

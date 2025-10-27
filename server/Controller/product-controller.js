@@ -122,8 +122,15 @@ exports.getAllProducts = async (req, res) => {
         
         // Build filter object based on query parameters
         const filter = { 
-            status: 'active',
-            stock: { $gt: 0 }
+            status: 'active'
+        };
+        
+        // Show products with variants OR products with stock > 0
+        const stockAndVariantConditions = {
+            $or: [
+                { hasVariants: true },
+                { stock: { $gt: 0 } }
+            ]
         };
         
         // Category filter
@@ -131,13 +138,22 @@ exports.getAllProducts = async (req, res) => {
             const category = await Category.findOne({ slug: req.query.category });
             if (category) {
                 // Support products where category is stored as ObjectId, stringified id, slug, or name
-                filter.$or = [
-                    { category: category._id },
-                    { category: category._id.toString() },
-                    { category: category.slug },
-                    { category: category.name }
+                filter.$and = [
+                    stockAndVariantConditions,
+                    {
+                        $or: [
+                            { category: category._id },
+                            { category: category._id.toString() },
+                            { category: category.slug },
+                            { category: category.name }
+                        ]
+                    }
                 ];
+            } else {
+                filter.$or = stockAndVariantConditions.$or;
             }
+        } else {
+            filter.$or = stockAndVariantConditions.$or;
         }
         
         // Price range filter
@@ -357,7 +373,7 @@ exports.createProduct = async (req, res) => {
             price: parseFloat(req.body.price),
             originalPrice: req.body.originalPrice ? parseFloat(req.body.originalPrice) : undefined,
             currency: req.body.currency || 'SAR',
-            stock: req.body.stock !== undefined ? parseInt(req.body.stock) : 0,
+            stock: req.body.stock !== undefined ? parseInt(req.body.stock) : (req.body.hasVariants ? 0 : 1000), // Default stock: 0 for variants, 1000 for regular products
             lowStockThreshold: req.body.lowStockThreshold ? parseInt(req.body.lowStockThreshold) : 10,
             trackInventory: req.body.trackInventory !== false,
             

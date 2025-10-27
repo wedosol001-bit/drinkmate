@@ -146,11 +146,33 @@ export default function ProductCard({
     })
   }
 
-  const isSale = (selected?.compareAtPrice ?? product.compareAtPrice) &&
-                 (selected?.compareAtPrice ?? 0) > (selected?.price ?? product.price)
+  // Calculate price range for variant products when no variant is selected
+  const hasVariants = product.hasVariants && product.variants && product.variants.length > 0
+  let finalPrice = product.price
+  let comparePrice = product.compareAtPrice
+  let priceRange: { min: number; max: number } | null = null
+  
+  if (hasVariants && !selected) {
+    // Calculate price range from variants
+    const prices = product.variants.map((v: any) => parseFloat(v.price) || 0).filter(p => p > 0)
+    const comparePrices = product.variants.map((v: any) => parseFloat(v.compareAtPrice || v.originalPrice) || parseFloat(v.price) || 0).filter(p => p > 0)
+    
+    if (prices.length > 0) {
+      priceRange = {
+        min: Math.min(...prices),
+        max: Math.max(...prices)
+      }
+      finalPrice = priceRange.min
+      if (comparePrices.length > 0) {
+        comparePrice = Math.max(...comparePrices)
+      }
+    }
+  } else if (selected) {
+    finalPrice = selected.price
+    comparePrice = selected.compareAtPrice
+  }
 
-  const finalPrice = selected?.price ?? product.price
-  const comparePrice = selected?.compareAtPrice ?? product.compareAtPrice
+  const isSale = (comparePrice && comparePrice > 0) && comparePrice > finalPrice
 
   const percentOff =
     isSale && comparePrice
@@ -320,9 +342,15 @@ export default function ProductCard({
           {/* Main price and add to cart */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
             <div className="flex items-center gap-1">
-              <span className="text-xl text-gray-900">
-                <Price value={finalPrice} size="md" />
-              </span>
+              {priceRange && priceRange.min !== priceRange.max ? (
+                <span className="text-xl text-gray-900">
+                  <Price value={priceRange.min} size="md" /> - <Price value={priceRange.max} size="md" />
+                </span>
+              ) : (
+                <span className="text-xl text-gray-900">
+                  <Price value={finalPrice} size="md" />
+                </span>
+              )}
             </div>
             <Button
               onClick={onAdd}

@@ -402,8 +402,20 @@ export default function ProductsPage() {
         shortDescriptionAr: sanitizeInput(productData.shortDescriptionAr?.trim() || ''),
         fullDescription: sanitizeHtml(productData.fullDescription?.trim() || ''), // Add full description
         fullDescriptionAr: sanitizeHtml(productData.fullDescriptionAr?.trim() || ''),
-        price: parseFloat(productData.price) || 0,
-        originalPrice: productData.originalPrice ? parseFloat(productData.originalPrice) : undefined,
+        // For products with variants, calculate price from variants (min-max range)
+        // For products without variants, use the price from basic info
+        price: productData.hasVariants && Array.isArray(productData.variants) && productData.variants.length > 0 
+          ? (() => {
+              const prices = productData.variants.map((v: any) => parseFloat(v.price) || 0).filter(p => p > 0)
+              return prices.length > 0 ? Math.min(...prices) : parseFloat(productData.price) || 0
+            })()
+          : parseFloat(productData.price) || 0,
+        originalPrice: productData.hasVariants && Array.isArray(productData.variants) && productData.variants.length > 0
+          ? (() => {
+              const originalPrices = productData.variants.map((v: any) => parseFloat(v.originalPrice) || parseFloat(v.price) || 0).filter(p => p > 0)
+              return originalPrices.length > 0 ? Math.max(...originalPrices) : undefined
+            })()
+          : productData.originalPrice ? parseFloat(productData.originalPrice) : undefined,
         stock: parseInt(productData.stock) || 0,
         category: sanitizeInput(productData.category?.trim() || 'energy-drink'), // Use the category string directly
         subcategory: sanitizeInput(productData.subcategory?.trim() || ''),
