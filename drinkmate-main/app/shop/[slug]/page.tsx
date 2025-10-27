@@ -460,7 +460,7 @@ export default function ShopProductDetail() {
     const media: Array<{ type: 'image' | 'video', src: string, index: number }> = []
 
     // Add images
-    if (product?.images) {
+    if (product?.images && Array.isArray(product.images)) {
       product.images.forEach((image, index) => {
         const imageUrl = typeof image === 'string' ? image : image?.url || ''
         media.push({ type: 'image', src: imageUrl, index })
@@ -468,7 +468,7 @@ export default function ShopProductDetail() {
     }
 
     // Add videos
-    if (product?.videos) {
+    if (product?.videos && Array.isArray(product.videos)) {
       product.videos.forEach((video, index) => {
         media.push({ type: 'video', src: video, index })
       })

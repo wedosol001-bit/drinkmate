@@ -50,6 +50,7 @@ export function getLocalizedFullDescription(product: BaseProduct, language: Lang
  * Get localized color name
  */
 export function getLocalizedColorName(color: { name: string; nameAr?: string }, language: Language): string {
+  if (!color || !color.name) return ''
   if (language === 'AR' && color.nameAr) {
     return color.nameAr
   }
@@ -60,6 +61,7 @@ export function getLocalizedColorName(color: { name: string; nameAr?: string }, 
  * Get localized variant name
  */
 export function getLocalizedVariantName(variant: { name?: string; nameAr?: string }, language: Language): string {
+  if (!variant) return ''
   if (language === 'AR' && variant.nameAr) {
     return variant.nameAr
   }
@@ -70,6 +72,7 @@ export function getLocalizedVariantName(variant: { name?: string; nameAr?: strin
  * Get localized color name for variant
  */
 export function getLocalizedVariantColorName(variant: ProductVariant, language: Language): string {
+  if (!variant) return ''
   if (language === 'AR' && variant.attributes?.colorAr) {
     return variant.attributes.colorAr
   }
@@ -80,6 +83,7 @@ export function getLocalizedVariantColorName(variant: ProductVariant, language: 
  * Get localized feature title
  */
 export function getLocalizedFeatureTitle(feature: { title: string; titleAr?: string }, language: Language): string {
+  if (!feature || !feature.title) return ''
   if (language === 'AR' && feature.titleAr) {
     return feature.titleAr
   }
@@ -90,6 +94,7 @@ export function getLocalizedFeatureTitle(feature: { title: string; titleAr?: str
  * Get localized feature description
  */
 export function getLocalizedFeatureDescription(feature: { description?: string; descriptionAr?: string }, language: Language): string {
+  if (!feature) return ''
   if (language === 'AR' && feature.descriptionAr) {
     return feature.descriptionAr
   }
@@ -117,20 +122,21 @@ export function getLocalizedProductData(product: BaseProduct, language: Language
     shortDescription: getLocalizedShortDescription(product, language),
     fullDescription: getLocalizedFullDescription(product, language),
     specifications: getLocalizedSpecifications(product, language),
-    colors: product.colors && Array.isArray(product.colors) ? product.colors.map(color => {
+    colors: product.colors && Array.isArray(product.colors) && product.colors.length > 0 ? product.colors.map(color => {
       if (typeof color === 'string') return color
       return {
         ...color,
         displayName: getLocalizedColorName(color, language)
       }
     }) : [],
-    variants: product.variants && Array.isArray(product.variants) ? product.variants.map(variant => ({
+    variants: product.variants && Array.isArray(product.variants) && product.variants.length > 0 ? product.variants.map(variant => ({
       ...variant,
       displayName: getLocalizedVariantName(variant, language),
       displayColorName: getLocalizedVariantColorName(variant, language)
     })) : [],
-    features: product.features && Array.isArray(product.features) ? product.features.map(feature => {
+    features: product.features && Array.isArray(product.features) && product.features.length > 0 ? product.features.map(feature => {
       if (typeof feature === 'string') return feature
+      if (!feature || typeof feature !== 'object') return feature
       return {
         ...feature,
         displayTitle: getLocalizedFeatureTitle(feature, language),

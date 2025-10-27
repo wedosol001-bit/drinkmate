@@ -505,14 +505,14 @@ export default function SodamakerProductDetail() {
                    productData.image?.startsWith('/') ? `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}${productData.image}` : 
                    '/placeholder.svg',
             // Ensure image URLs in arrays are absolute
-            images: (productData.images || []).map((img: any) => 
+            images: Array.isArray(productData.images) ? productData.images.map((img: any) => 
               img?.url?.startsWith('http') ? img.url : 
               img?.url?.startsWith('/') ? `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}${img.url}` : 
               '/placeholder.svg'
-            ),
+            ) : [],
             // Add any missing properties with default values
             specifications: productData.specifications || {},
-            videos: productData.videos || [],
+            videos: Array.isArray(productData.videos) ? productData.videos : [],
             documents: productData.documents || [],
             certifications: productData.certifications || [],
             dimensions: productData.dimensions || { width: 0, height: 0, depth: 0, weight: 0 },
@@ -587,14 +587,14 @@ export default function SodamakerProductDetail() {
                    productData.image?.startsWith('/') ? `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}${productData.image}` : 
                    '/placeholder.svg',
             // Ensure image URLs in arrays are absolute
-            images: (productData.images || []).map((img: string) => 
+            images: Array.isArray(productData.images) ? productData.images.map((img: string) => 
               img?.startsWith('http') ? img : 
               img?.startsWith('/') ? `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}${img}` : 
               '/placeholder.svg'
-            ),
+            ) : [],
             // Add any missing properties with default values
             specifications: productData.specifications || {},
-            videos: productData.videos || [],
+            videos: Array.isArray(productData.videos) ? productData.videos : [],
             documents: productData.documents || [],
             certifications: productData.certifications || [],
             dimensions: productData.dimensions || { width: 0, height: 0, depth: 0, weight: 0 },
@@ -677,14 +677,14 @@ export default function SodamakerProductDetail() {
     const media: Array<{ type: 'image' | 'video', src: string, index: number }> = []
     
     // Add images
-    if (product?.images) {
+    if (product?.images && Array.isArray(product.images)) {
       product.images.forEach((image, index) => {
         media.push({ type: 'image', src: image, index })
       })
     }
     
     // Add videos
-    if (product?.videos) {
+    if (product?.videos && Array.isArray(product.videos)) {
       product.videos.forEach((video, index) => {
         media.push({ type: 'video', src: video, index })
       })
