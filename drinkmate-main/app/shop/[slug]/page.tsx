@@ -447,6 +447,14 @@ export default function ShopProductDetail() {
     }
   }, [product, toggleWishlist])
 
+  // Calculate effective stock - use variant stock if product has variants and variant is selected
+  const effectiveStock = useMemo(() => {
+    if (selectedVariant && selectedVariant.stock !== undefined) {
+      return selectedVariant.stock
+    }
+    return product?.stock ?? 0
+  }, [selectedVariant, product?.stock])
+
   const handleQuantityChange = useCallback(
     (change: number) => {
       const newQuantity = Math.max(1, Math.min(effectiveStock || 1, quantity + change))
@@ -620,14 +628,6 @@ export default function ShopProductDetail() {
     setShowQuestionForm(false)
     alert("Thank you for your question! We'll get back to you soon.")
   }, [newQuestion, qaData])
-
-  // Calculate effective stock - use variant stock if product has variants and variant is selected
-  const effectiveStock = useMemo(() => {
-    if (selectedVariant && selectedVariant.stock !== undefined) {
-      return selectedVariant.stock
-    }
-    return product?.stock ?? 0
-  }, [selectedVariant, product?.stock])
 
   const stockMessage = useMemo(() => {
     if (!effectiveStock && effectiveStock !== 0) return t("product.inStock")
