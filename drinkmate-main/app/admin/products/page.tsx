@@ -288,15 +288,16 @@ export default function ProductsPage() {
       }
 
       // Validate description - at least one description field is required
-      const hasFullDescription = productData.fullDescription && productData.fullDescription.trim().length > 0
+      const hasFullDescription = productData.fullDescription && productData.fullDescription.trim().length >= 10
       const hasShortDescription = productData.shortDescription && productData.shortDescription.trim().length > 0
       const hasName = productData.name && productData.name.trim().length > 0
       
+      // Only require description if there's no short description or name
       if (!hasFullDescription && !hasShortDescription && !hasName) {
-        validationErrors.fullDescription = 'Either full description, short description, or product name is required'
+        validationErrors.fullDescription = 'Either full description (min 10 chars), short description, or product name is required'
       }
 
-      if (hasFullDescription) {
+      if (productData.fullDescription && productData.fullDescription.trim().length > 0) {
         const descValidation = validateDescription(productData.fullDescription)
         if (!descValidation.valid && descValidation.error) {
           validationErrors.fullDescription = descValidation.error
