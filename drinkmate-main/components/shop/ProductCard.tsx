@@ -147,7 +147,6 @@ export default function ProductCard({
   }
 
   // Calculate price range for variant products when no variant is selected
-  const hasVariants = product.hasVariants && product.variants && product.variants.length > 0
   let finalPrice = product.price
   let comparePrice = product.compareAtPrice
   let priceRange: { min: number; max: number } | null = null
