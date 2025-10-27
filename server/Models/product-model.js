@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: false,
     trim: true,
     maxlength: 2000
   },
@@ -90,7 +90,7 @@ const productSchema = new mongoose.Schema({
   images: [{
     url: {
       type: String,
-      required: true
+      required: false
     },
     alt: String,
     isPrimary: {
@@ -115,7 +115,7 @@ const productSchema = new mongoose.Schema({
     },
     name: {
       type: String,
-      required: true,
+      required: false,
       trim: true
     },
     nameAr: {
@@ -129,7 +129,7 @@ const productSchema = new mongoose.Schema({
     },
     price: {
       type: Number,
-      required: true,
+      required: false,
       min: 0
     },
     originalPrice: {
@@ -151,12 +151,12 @@ const productSchema = new mongoose.Schema({
     },
     image: {
       type: String,
-      required: true
+      required: false
     },
     images: [{
       url: {
         type: String,
-        required: true
+        required: false
       },
       alt: String,
       isPrimary: {
