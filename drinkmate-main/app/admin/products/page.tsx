@@ -533,12 +533,28 @@ export default function ProductsPage() {
       
       const productPayload = {
         name: productData.name?.trim() || '',
+        nameAr: productData.nameAr?.trim() || '',
         slug: productData.name?.toLowerCase().replace(/\s+/g, '-') || '',
-        description: productData.fullDescription || productData.shortDescription || productData.name || '', // Backend expects 'description'
+        description: productData.fullDescription || productData.shortDescription || productData.name || '',
+        descriptionAr: productData.fullDescriptionAr?.trim() || '',
         shortDescription: productData.shortDescription?.trim() || '',
+        shortDescriptionAr: productData.shortDescriptionAr?.trim() || '',
         fullDescription: productData.fullDescription?.trim() || '',
-        price: parseFloat(productData.price) || 0,
-        originalPrice: productData.originalPrice ? parseFloat(productData.originalPrice) : undefined,
+        fullDescriptionAr: productData.fullDescriptionAr?.trim() || '',
+        // For products with variants, calculate price from variants (min-max range)
+        // For products without variants, use the price from basic info
+        price: productData.hasVariants && Array.isArray(productData.variants) && productData.variants.length > 0 
+          ? (() => {
+              const prices = productData.variants.map((v: any) => parseFloat(v.price) || 0).filter(p => p > 0)
+              return prices.length > 0 ? Math.min(...prices) : parseFloat(productData.price) || 0
+            })()
+          : parseFloat(productData.price) || 0,
+        originalPrice: productData.hasVariants && Array.isArray(productData.variants) && productData.variants.length > 0
+          ? (() => {
+              const originalPrices = productData.variants.map((v: any) => parseFloat(v.originalPrice) || parseFloat(v.price) || 0).filter(p => p > 0)
+              return originalPrices.length > 0 ? Math.max(...originalPrices) : undefined
+            })()
+          : productData.originalPrice ? parseFloat(productData.originalPrice) : undefined,
         stock: parseInt(productData.stock) || 0,
         category: productData.category?.trim() || 'energy-drink',
         subcategory: productData.subcategory?.trim() || '',
@@ -581,7 +597,27 @@ export default function ProductsPage() {
             };
           }
           return undefined;
-        })() : undefined
+        })() : undefined,
+        status: 'active',
+        trackInventory: true,
+        lowStockThreshold: 10,
+        currency: 'SAR',
+        // Add variants data if product has variants
+        hasVariants: Boolean(productData.hasVariants),
+        variants: productData.hasVariants && Array.isArray(productData.variants) ? productData.variants.map((variant: any) => ({
+          name: variant.name || '',
+          nameAr: variant.nameAr || '',
+          sku: variant.sku || '',
+          price: parseFloat(variant.price) || 0,
+          originalPrice: variant.originalPrice ? parseFloat(variant.originalPrice) : undefined,
+          salePrice: variant.salePrice ? parseFloat(variant.salePrice) : undefined,
+          stock: parseInt(variant.stock) || 0,
+          inStock: Boolean(variant.inStock !== false),
+          image: variant.image || '',
+          images: variant.images || [],
+          attributes: variant.attributes || {},
+          isDefault: Boolean(variant.isDefault)
+        })) : []
       }
 
       console.log('Sending update payload:', productPayload)

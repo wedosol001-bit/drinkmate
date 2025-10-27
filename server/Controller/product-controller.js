@@ -294,8 +294,34 @@ exports.getProduct = async (req, res) => {
             });
         }
         
-        // Populate category
-        await product.populate('category', 'name slug');
+        // Populate category if it's an ObjectId
+        try {
+            const productDoc = product;
+            if (productDoc.category && typeof productDoc.category === 'object' && productDoc.category._id) {
+                // It's already an ObjectId or populated, try to populate it
+                await productDoc.populate('category', 'name slug');
+            } else if (typeof productDoc.category === 'string' && productDoc.category.length === 24) {
+                // Check if it's an ObjectId string and try to populate
+                await productDoc.populate('category', 'name slug');
+            } else if (typeof productDoc.category === 'string') {
+                // Category is stored as a string (slug or name), find and attach category info
+                const categoryDoc = await Category.findOne({
+                    $or: [
+                        { slug: productDoc.category },
+                        { name: productDoc.category }
+                    ]
+                });
+                if (categoryDoc) {
+                    productDoc.category = {
+                        _id: categoryDoc._id,
+                        name: categoryDoc.name,
+                        slug: categoryDoc.slug
+                    };
+                }
+            }
+        } catch (populateError) {
+            console.warn('Could not populate category, using as-is:', populateError.message);
+        }
         
         // Get reviews for this product
         const reviews = await Review.find({ 

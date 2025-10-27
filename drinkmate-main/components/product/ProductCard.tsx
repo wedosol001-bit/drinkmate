@@ -31,34 +31,10 @@ import SaudiRiyal from '@/components/ui/SaudiRiyal'
 import { toast } from 'sonner'
 
 // Helper function to generate correct product URL based on category
+import { getProductUrl as getProductUrlFromUtils } from '@/lib/utils/product-url'
+
 const getProductUrl = (product: any): string => {
-  if (!product.slug) return '/shop'
-  
-  // Get category name (handle both string and object formats)
-  const categoryName = typeof product.category === 'string' 
-    ? product.category 
-    : product.category?.name || ''
-  
-  const category = categoryName.toLowerCase()
-  
-  // Handle bundles (check if product has bundle-related properties)
-  if (product.subcategory?.toLowerCase().includes('bundle') || 
-      product.name?.toLowerCase().includes('bundle') ||
-      product.title?.toLowerCase().includes('bundle')) {
-    if (category === 'flavors' || category === 'flavor') return `/shop/flavor/bundles/${product.slug}`
-    if (category === 'accessories' || category === 'accessory') return `/shop/accessories/bundles/${product.slug}`
-    if (category === 'sodamakers' || category === 'sodamaker' || category === 'machine' || category === 'machines') return `/shop/sodamakers/bundles/${product.slug}`
-    return `/shop/${category}/bundles/${product.slug}`
-  }
-  
-  // Handle regular products
-  if (category === 'flavors' || category === 'flavor') return `/shop/flavor/${product.slug}`
-  if (category === 'accessories' || category === 'accessory') return `/shop/accessories/${product.slug}`
-  if (category === 'co2-cylinders' || category === 'co2-cylinder' || category === 'co2') return `/shop/co2-cylinders/${product.slug}`
-  if (category === 'sodamakers' || category === 'sodamaker' || category === 'machine' || category === 'machines') return `/shop/sodamakers/${product.slug}`
-  
-  // Fallback to generic shop URL
-  return `/shop/${product.slug}`
+  return getProductUrlFromUtils(product)
 }
 
 export default function ProductCard({ 

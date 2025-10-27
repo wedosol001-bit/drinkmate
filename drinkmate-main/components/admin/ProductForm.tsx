@@ -317,6 +317,7 @@ export default function ProductForm({
   const addVariant = () => {
     const newVariant = {
       name: '',
+      nameAr: '',
       sku: '',
       price: 0,
       originalPrice: 0,
@@ -1531,12 +1532,22 @@ export default function ProductForm({
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <Label htmlFor={`variant-name-${index}`}>Variant Name</Label>
+                                <Label htmlFor={`variant-name-${index}`}>Variant Name (English)</Label>
                                 <Input
                                   id={`variant-name-${index}`}
                                   value={variant.name}
                                   onChange={(e) => updateVariant(index, 'name', e.target.value)}
                                   placeholder="e.g., Red, Large, Premium"
+                                />
+                              </div>
+                              
+                              <div>
+                                <Label htmlFor={`variant-nameAr-${index}`}>Variant Name (Arabic) - Optional</Label>
+                                <Input
+                                  id={`variant-nameAr-${index}`}
+                                  value={variant.nameAr || ''}
+                                  onChange={(e) => updateVariant(index, 'nameAr', e.target.value)}
+                                  placeholder="e.g., أحمر، كبير، ممتاز"
                                 />
                               </div>
                               

@@ -16,34 +16,10 @@ import YouTubeThumbnail from "@/components/ui/YouTubeThumbnail"
 import styles from "@/components/ui/product-image-zoom.module.css"
 
 // Helper function to generate correct product URL based on category
+import { getProductUrl as getProductUrlFromUtils } from '@/lib/utils/product-url'
+
 const getProductUrl = (product: Product): string => {
-  if (!product.slug) return '/shop'
-  
-  // Get category name (handle both string and object formats)
-  const categoryName = typeof product.category === 'string' 
-    ? product.category 
-    : product.category?.name || ''
-  
-  const category = categoryName.toLowerCase()
-  
-  // Handle bundles (check if product has bundle-related properties)
-  if (product.subcategory?.toLowerCase().includes('bundle') || 
-      product.name?.toLowerCase().includes('bundle') ||
-      product.title?.toLowerCase().includes('bundle')) {
-    if (category === 'flavors' || category === 'flavor') return `/shop/flavor/bundles/${product.slug}`
-    if (category === 'accessories' || category === 'accessory') return `/shop/accessories/bundles/${product.slug}`
-    if (category === 'sodamakers' || category === 'sodamaker' || category === 'machine' || category === 'machines') return `/shop/sodamakers/bundles/${product.slug}`
-    return `/shop/${category}/bundles/${product.slug}`
-  }
-  
-  // Handle regular products
-  if (category === 'flavors' || category === 'flavor') return `/shop/flavor/${product.slug}`
-  if (category === 'accessories' || category === 'accessory') return `/shop/accessories/${product.slug}`
-  if (category === 'co2-cylinders' || category === 'co2-cylinder' || category === 'co2') return `/shop/co2-cylinders/${product.slug}`
-  if (category === 'sodamakers' || category === 'sodamaker' || category === 'machine' || category === 'machines') return `/shop/sodamakers/${product.slug}`
-  
-  // Fallback to generic shop URL
-  return `/shop/${product.slug}`
+  return getProductUrlFromUtils(product)
 }
 
 export default function ProductCard({
@@ -138,6 +114,18 @@ export default function ProductCard({
   // })
 
   const onAdd = () => {
+    // If product has variants but no variant is selected, redirect to product page
+    if (hasVariants && !selected) {
+      if (onProductView) {
+        onProductView(product)
+      } else {
+        // Fallback: use router if available
+        window.location.href = getProductUrl(product)
+      }
+      return
+    }
+    
+    // Otherwise, proceed with add to cart
     if (!onAddToCart) return
     onAddToCart({
       productId: String(product._id || product.id || ''),
@@ -356,8 +344,16 @@ export default function ProductCard({
               disabled={!isInStock}
               className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-white rounded-full w-full sm:w-auto justify-center px-4 sm:px-6 py-2 h-10 text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              <ShoppingCart className="w-4 h-4" />
-              {!isInStock ? "Out of Stock" : "Add to Cart"}
+              {hasVariants && !selected ? (
+                <>
+                  <span>Select Options</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-4 h-4" />
+                  {!isInStock ? "Out of Stock" : "Add to Cart"}
+                </>
+              )}
             </Button>
           </div>
 

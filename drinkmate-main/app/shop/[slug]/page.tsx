@@ -449,10 +449,10 @@ export default function ShopProductDetail() {
 
   const handleQuantityChange = useCallback(
     (change: number) => {
-      const newQuantity = Math.max(1, Math.min(product?.stock || 1, quantity + change))
+      const newQuantity = Math.max(1, Math.min(effectiveStock || 1, quantity + change))
       setQuantity(newQuantity)
     },
-    [quantity, product?.stock],
+    [quantity, effectiveStock],
   )
 
   // Create combined media array (images + videos)
@@ -621,20 +621,28 @@ export default function ShopProductDetail() {
     alert("Thank you for your question! We'll get back to you soon.")
   }, [newQuestion, qaData])
 
+  // Calculate effective stock - use variant stock if product has variants and variant is selected
+  const effectiveStock = useMemo(() => {
+    if (selectedVariant && selectedVariant.stock !== undefined) {
+      return selectedVariant.stock
+    }
+    return product?.stock ?? 0
+  }, [selectedVariant, product?.stock])
+
   const stockMessage = useMemo(() => {
-    if (!product || product.stock === undefined || product.stock === null) return t("product.inStock")
-    if (product.stock === 0) return t("product.outOfStock")
-    if (product.stock <= 5) return t("product.onlyLeftInStock").replace("{count}", product.stock.toString())
-    if (product.stock <= 10) return t("product.stockCount").replace("{count}", product.stock.toString())
+    if (!effectiveStock && effectiveStock !== 0) return t("product.inStock")
+    if (effectiveStock === 0) return t("product.outOfStock")
+    if (effectiveStock <= 5) return t("product.onlyLeftInStock").replace("{count}", effectiveStock.toString())
+    if (effectiveStock <= 10) return t("product.stockCount").replace("{count}", effectiveStock.toString())
     return t("product.inStock")
-  }, [product?.stock, t])
+  }, [effectiveStock, t])
 
   const getStockColor = useCallback(() => {
-    if (!product || product.stock === undefined || product.stock === null) return "text-green-600"
-    if (product.stock === 0) return "text-red-600"
-    if (product.stock <= 5) return "text-orange-600"
+    if (!effectiveStock && effectiveStock !== 0) return "text-green-600"
+    if (effectiveStock === 0) return "text-red-600"
+    if (effectiveStock <= 5) return "text-orange-600"
     return "text-green-600"
-  }, [product])
+  }, [effectiveStock])
 
   const getDeliveryDate = useMemo(() => {
     const today = new Date()
@@ -667,11 +675,11 @@ export default function ShopProductDetail() {
   }, [product])
 
   const getEstimatedUsage = useCallback(() => {
-    if (!product) return ""
-    const weeksLow = Math.floor((product.stock || 10) / 20)
-    const weeksHigh = Math.floor((product.stock || 10) / 10)
+    if (!effectiveStock && effectiveStock !== 0) return ""
+    const weeksLow = Math.floor((effectiveStock || 10) / 20)
+    const weeksHigh = Math.floor((effectiveStock || 10) / 10)
     return `${weeksLow}-${weeksHigh} weeks`
-  }, [product])
+  }, [effectiveStock])
 
   const filteredReviews = useCallback(() => {
     let filtered = reviews
@@ -1099,7 +1107,7 @@ export default function ShopProductDetail() {
 
                     {/* Enhanced Stock and Badges */}
                     <div className="flex items-center flex-wrap gap-2 mb-6">
-                      <Badge variant={(product.stock ?? 0) > 0 ? "default" : "destructive"} className={`${getStockColor()} text-xs sm:text-sm`}>
+                      <Badge variant={(effectiveStock ?? 0) > 0 ? "default" : "destructive"} className={`${getStockColor()} text-xs sm:text-sm`}>
                         <Package className="w-3 h-3 mr-1" />
                         {stockMessage}
                       </Badge>
@@ -1256,7 +1264,7 @@ export default function ShopProductDetail() {
                         <button
                           onClick={() => handleQuantityChange(1)}
                           className="p-2 hover:bg-gray-50 transition-colors"
-                          disabled={quantity >= (product.stock || 1)}
+                          disabled={quantity >= (effectiveStock || 1)}
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4" />
@@ -1264,9 +1272,9 @@ export default function ShopProductDetail() {
                       </div>
 
                       <div className="text-sm text-muted-foreground">
-                        {(product.stock ?? 0) > 0 ? (
+                        {(effectiveStock ?? 0) > 0 ? (
                           <span className="text-green-600">
-                            ✓ {product.stock} {t("product.inStock")}
+                            ✓ {effectiveStock} {t("product.inStock")}
                           </span>
                         ) : (
                           <span className="text-red-600">
@@ -1278,7 +1286,7 @@ export default function ShopProductDetail() {
 
                     {/* Enhanced Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-3">
-                      {(product.stock ?? 0) > 0 ? (
+                      {(effectiveStock ?? 0) > 0 ? (
                         <Button
                           onClick={handleAddToCart}
                           className={`flex-1 bg-[#12d6fa] hover:bg-[#0fb8d9] text-white transition-all duration-200 ${
