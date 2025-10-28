@@ -919,30 +919,28 @@ function ShopPageContent() {
 
   return (
     <PageLayout>
-      {/* Shop Slideshow - matches previous hero height via custom classes */}
-      <section className="relative py-16 md:py-20 lg:py-24 overflow-hidden">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <CarouselBanner
-            items={[
-              {
-                id: 1,
-                src: "/images/banner/Shop-Banner-4.png",
-                alt: "Shop banner",
-                objectFit: "cover",
-              },
-              {
-                id: 2,
-                src: "/images/banner/flavors3-banner.jpg",
-                alt: "Flavors banner",
-                objectFit: "cover",
-              },
-            ]}
-            autoPlay={true}
-            autoPlayInterval={5000}
-            className="w-full"
-            heightClass="relative h-[128px] md:h-[160px] lg:h-[192px]"
-          />
-        </div>
+      {/* Shop Slideshow - full viewport width banners */}
+      <section className="relative overflow-hidden">
+        <CarouselBanner
+          items={[
+            {
+              id: 1,
+              src: "/images/banner/Shop-Banner-4.png",
+              alt: "Shop banner",
+              objectFit: "cover",
+            },
+            {
+              id: 2,
+              src: "/images/banner/flavors3-banner.jpg",
+              alt: "Flavors banner",
+              objectFit: "cover",
+            },
+          ]}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          className="w-full"
+          heightClass="relative h-[128px] md:h-[160px] lg:h-[192px]"
+        />
       </section>
 
       {/* Professional Toolbar */}

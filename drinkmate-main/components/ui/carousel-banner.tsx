@@ -86,7 +86,7 @@ export default function CarouselBanner({
     <div id="animation-carousel" className={`relative w-full ${className}`} data-carousel="static">
       {/* Carousel wrapper */}
       <div 
-        className={`${heightClass} overflow-hidden rounded-lg w-full touch-pan-y`}
+        className={`${heightClass} overflow-hidden w-full touch-pan-y`}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

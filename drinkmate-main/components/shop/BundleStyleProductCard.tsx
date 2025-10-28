@@ -134,7 +134,7 @@ export default function BundleStyleProductCard({
               src={getBestImage()}
               alt={product.title || product.name || 'Product image'}
               fill
-              className={`object-contain object-top transition-all duration-500 hover:scale-150 cursor-zoom-in ${styles.productImageZoom}`}
+              className={`object-contain object-top transition-all duration-500 scale-110 hover:scale-150 cursor-zoom-in ${styles.productImageZoom}`}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               onError={() => setImageLoadError(true)}
               onLoad={() => setImageLoadError(false)}
