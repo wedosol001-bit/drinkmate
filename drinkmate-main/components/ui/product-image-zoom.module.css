@@ -2,7 +2,7 @@
 .productImageZoom {
   object-position: center center; /* Center image */
   transform-origin: center center;
-  transform: scale(1.5); /* Default zoom */
+  transform: scale(1.3); /* Default zoom (reduced) */
   object-fit: cover; /* Fill container and crop as needed */
   width: 100%;
   height: 100%;
