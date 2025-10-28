@@ -933,11 +933,16 @@ function ShopPageContent() {
               src: "/images/banner/flvrs2.jpg",
               alt: "Flavors banner",
             },
+            {
+              id: 3,
+              src: "/images/banner/flavors3-banner.jpg",
+              alt: "Premium Flavors Collection",
+            },
           ]}
           autoPlay={true}
           autoPlayInterval={5000}
           className="w-full"
-          containerHeight="h-[300px] md:h-[400px] lg:h-[450px]"
+          containerHeight="h-[350px] md:h-[450px] lg:h-[500px]"
         />
       </section>
 
