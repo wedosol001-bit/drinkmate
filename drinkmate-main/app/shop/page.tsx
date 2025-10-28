@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import CarouselBanner from '@/components/ui/carousel-banner'
+import ViewportSlideshow from '@/components/ui/viewport-slideshow'
 import { useCart } from '@/lib/contexts/cart-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -921,27 +921,23 @@ function ShopPageContent() {
     <PageLayout>
       {/* Shop Slideshow - matches original hero height */}
       <section className="relative py-6 md:py-8 lg:py-10 overflow-hidden">
-        <CarouselBanner
+        <ViewportSlideshow
           items={[
             {
               id: 1,
               src: "/images/banner/Shop-Banner-4.png",
               alt: "Shop banner",
-              objectFit: "cover",
-              objectPosition: "center top",
             },
             {
               id: 2,
               src: "/images/banner/flavorsbanner1_page-0001.jpg",
               alt: "Flavors banner",
-              objectFit: "cover",
-              objectPosition: "center",
             },
           ]}
           autoPlay={true}
           autoPlayInterval={5000}
           className="w-full"
-          heightClass="relative h-[160px] md:h-[200px] lg:h-[240px]"
+          baseHeight="h-[200px] md:h-[250px] lg:h-[300px]"
         />
       </section>
 
