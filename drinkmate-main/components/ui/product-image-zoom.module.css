@@ -1,28 +1,26 @@
 /* Product Image Zoom Styles - Complete Image Display */
 .productImageZoom {
-  object-position: center center; /* Center the complete image */
+  object-position: center center; /* Center image */
   transform-origin: center center;
-  object-fit: contain; /* Show complete image without cropping */
-  width: 100%; /* Ensure full width coverage */
-  height: 100%; /* Ensure full height coverage */
-  background-color: white; /* White background for product images */
-  /* Show complete image without any cropping */
+  object-fit: cover; /* Fill container and crop as needed */
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 .productImageZoom:hover {
-  object-position: center center; /* Maintain center positioning on hover */
+  object-position: center center;
   transform-origin: center center;
-  /* Scale up on hover while maintaining complete image */
-  transform: scale(1.3);
-  object-fit: contain; /* Maintain complete image on hover */
-  width: 100%; /* Ensure full width coverage on hover */
-  height: 100%; /* Ensure full height coverage on hover */
-  background-color: white; /* Maintain white background on hover */
+  transform: scale(1.0); /* No extra hover zoom */
+  object-fit: cover; /* Keep cover on hover */
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 /* Container for complete image display */
 .productImageContainer {
-  overflow: visible; /* Allow full image to be visible */
+  overflow: hidden; /* Clip overflow so zoomed image stays within card */
   position: relative;
   background-color: white; /* White background for the container */
   /* Allow natural aspect ratio for complete image */
@@ -32,6 +30,6 @@
 }
 
 .productImageContainer:hover {
-  overflow: visible; /* Keep visible on hover for zoom effect */
-  background-color: white; /* Maintain white background on hover */
+  overflow: hidden;
+  background-color: white;
 }
