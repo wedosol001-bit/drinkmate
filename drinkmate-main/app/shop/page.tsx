@@ -919,8 +919,8 @@ function ShopPageContent() {
 
   return (
     <PageLayout>
-      {/* Shop Slideshow - full viewport width banners */}
-      <section className="relative overflow-hidden">
+      {/* Shop Slideshow - matches original hero height */}
+      <section className="relative py-16 md:py-20 lg:py-24 overflow-hidden">
         <CarouselBanner
           items={[
             {
@@ -931,7 +931,7 @@ function ShopPageContent() {
             },
             {
               id: 2,
-              src: "/images/banner/flavors3-banner.jpg",
+              src: "/images/banner/flavorsbanner1_page-0001.jpg",
               alt: "Flavors banner",
               objectFit: "cover",
             },
