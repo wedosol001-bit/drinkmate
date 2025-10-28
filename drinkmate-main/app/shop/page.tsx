@@ -920,28 +920,28 @@ function ShopPageContent() {
   return (
     <PageLayout>
       {/* Shop Slideshow - matches original hero height */}
-      <section className="relative py-16 md:py-20 lg:py-24 overflow-hidden">
+      <section className="relative py-6 md:py-8 lg:py-10 overflow-hidden">
         <CarouselBanner
           items={[
             {
               id: 1,
               src: "/images/banner/Shop-Banner-4.png",
               alt: "Shop banner",
-              objectFit: "contain",
-              objectPosition: "center center",
+              objectFit: "cover",
+              objectPosition: "center top",
             },
             {
               id: 2,
               src: "/images/banner/flavorsbanner1_page-0001.jpg",
               alt: "Flavors banner",
-              objectFit: "contain",
-              objectPosition: "center center",
+              objectFit: "cover",
+              objectPosition: "center",
             },
           ]}
           autoPlay={true}
           autoPlayInterval={5000}
           className="w-full"
-          heightClass="relative h-[200px] md:h-[250px] lg:h-[300px]"
+          heightClass="relative h-[160px] md:h-[200px] lg:h-[240px]"
         />
       </section>
 

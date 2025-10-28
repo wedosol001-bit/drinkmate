@@ -111,10 +111,13 @@ export default function CarouselBanner({
                   src={item.src}
                   alt={item.alt}
                   fill
-                  className={`absolute inset-0 w-full h-full object-${item.objectFit || 'cover'}`}
+                  className="absolute inset-0 w-full h-full"
                   priority={index === 0}
                   quality={90}
-                  style={item.objectPosition ? { objectPosition: item.objectPosition } : undefined}
+                  style={{
+                    objectFit: item.objectFit || 'cover',
+                    objectPosition: item.objectPosition || 'center'
+                  }}
                 />
                 
                 {/* Mobile Image (if provided) */}
@@ -123,10 +126,13 @@ export default function CarouselBanner({
                     src={item.mobileSrc}
                     alt={item.mobileAlt || item.alt}
                     fill
-                    className={`absolute inset-0 w-full h-full object-${item.objectFit || 'cover'} md:hidden`}
+                    className="absolute inset-0 w-full h-full md:hidden"
                     priority={index === 0}
                     quality={90}
-                    style={item.objectPosition ? { objectPosition: item.objectPosition } : undefined}
+                    style={{
+                      objectFit: item.objectFit || 'cover',
+                      objectPosition: item.objectPosition || 'center'
+                    }}
                   />
                 )}
               </>
