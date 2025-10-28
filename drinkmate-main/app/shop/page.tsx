@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import ViewportSlideshow from '@/components/ui/viewport-slideshow'
+import QualitySlideshow from '@/components/ui/quality-slideshow'
 import { useCart } from '@/lib/contexts/cart-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -921,7 +921,7 @@ function ShopPageContent() {
     <PageLayout>
       {/* Shop Slideshow - matches original hero height */}
       <section className="relative overflow-hidden">
-        <ViewportSlideshow
+        <QualitySlideshow
           items={[
             {
               id: 1,
@@ -937,7 +937,7 @@ function ShopPageContent() {
           autoPlay={true}
           autoPlayInterval={5000}
           className="w-full"
-          baseHeight="h-[200px] md:h-[250px] lg:h-[300px]"
+          containerHeight="h-[300px] md:h-[400px] lg:h-[450px]"
         />
       </section>
 
