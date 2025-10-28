@@ -927,20 +927,21 @@ function ShopPageContent() {
               id: 1,
               src: "/images/banner/Shop-Banner-4.png",
               alt: "Shop banner",
-              objectFit: "cover",
-              objectPosition: "center top",
+              objectFit: "contain",
+              objectPosition: "center center",
             },
             {
               id: 2,
               src: "/images/banner/flavorsbanner1_page-0001.jpg",
               alt: "Flavors banner",
-              objectFit: "cover",
+              objectFit: "contain",
+              objectPosition: "center center",
             },
           ]}
           autoPlay={true}
           autoPlayInterval={5000}
           className="w-full"
-          heightClass="relative h-[128px] md:h-[160px] lg:h-[192px]"
+          heightClass="relative h-[200px] md:h-[250px] lg:h-[300px]"
         />
       </section>
 
