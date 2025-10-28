@@ -205,7 +205,7 @@ export default function ProductCard({
               url={imageUrl}
               alt={product.title || product.name || 'Product image'}
               fill
-              className={`object-cover object-top transition-transform duration-500 hover:scale-150 cursor-zoom-in ${styles.productImageZoom}`}
+              className={`object-cover object-top transition-transform duration-500 hover:scale-130 cursor-zoom-in ${styles.productImageZoom}`}
               showPlayButton={true}
                   onError={(e) => {
                     const errorInfo = {

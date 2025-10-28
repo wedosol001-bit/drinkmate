@@ -926,13 +926,13 @@ function ShopPageContent() {
             items={[
               {
                 id: 1,
-                src: "/Shop-Banner-4.png",
+                src: "/images/banner/Shop-Banner-4.png",
                 alt: "Shop banner",
                 objectFit: "cover",
               },
               {
                 id: 2,
-                src: "/flavorsbanner1.png", // NOTE: convert PDF to PNG/JPG and place in public
+                src: "/images/banner/flavors3-banner.jpg",
                 alt: "Flavors banner",
                 objectFit: "cover",
               },

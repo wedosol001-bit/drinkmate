@@ -13,7 +13,7 @@
   object-position: center center; /* Maintain center positioning on hover */
   transform-origin: center center;
   /* Scale up on hover while maintaining complete image */
-  transform: scale(1.5);
+  transform: scale(1.3);
   object-fit: contain; /* Maintain complete image on hover */
   width: 100%; /* Ensure full width coverage on hover */
   height: 100%; /* Ensure full height coverage on hover */
