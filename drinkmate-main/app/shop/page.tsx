@@ -45,7 +45,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-// Dynamic export to prevent static optimization
+// Dynamic export to prevent static optimization ok
 export const dynamic = "force-dynamic"
 
 function ShopPageContent() {
