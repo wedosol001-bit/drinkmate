@@ -927,7 +927,7 @@ function ShopPageContent() {
               id: 1,
               src: "/images/banner/Shop-Banner-4.png",
               alt: "Shop banner",
-              objectFit: "cover",
+              objectFit: "contain",
             },
             {
               id: 2,
