@@ -920,7 +920,7 @@ function ShopPageContent() {
   return (
     <PageLayout>
       {/* Shop Slideshow - matches original hero height */}
-      <section className="relative py-6 md:py-8 lg:py-10 overflow-hidden">
+      <section className="relative overflow-hidden">
         <ViewportSlideshow
           items={[
             {
