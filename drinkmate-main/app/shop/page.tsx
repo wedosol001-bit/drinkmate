@@ -930,7 +930,7 @@ function ShopPageContent() {
             },
             {
               id: 2,
-              src: "/images/banner/flavorsbanner2.jpg",
+              src: "/images/banner/flvrs2.jpg",
               alt: "Flavors banner",
             },
           ]}
