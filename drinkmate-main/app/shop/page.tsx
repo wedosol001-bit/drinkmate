@@ -930,11 +930,6 @@ function ShopPageContent() {
             },
             {
               id: 2,
-              src: "/images/banner/flvrs2.jpg",
-              alt: "Flavors banner",
-            },
-            {
-              id: 3,
               src: "/images/banner/flavors3-banner.jpg",
               alt: "Premium Flavors Collection",
             },
