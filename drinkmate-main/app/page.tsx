@@ -151,14 +151,6 @@ export default function Home() {
       mobileAlt: "Drinkmate Soda Makers Collection Mobile"
     },
     {
-      id: 3,
-      type: "banner" as const,
-      src: "/images/banner/flavor banner.webp",
-      alt: "Premium Italian Flavors Collection", 
-      mobileSrc: "/images/banner/flavor mobile.webp",
-      mobileAlt: "Premium Italian Flavors Collection Mobile"
-    },
-    {
       id: 4,
       type: "banner" as const,
       src: "/images/banner/flavors3-banner.jpg",
