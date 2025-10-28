@@ -20,6 +20,7 @@ interface CarouselBannerProps {
   autoPlayInterval?: number
   className?: string
   renderCustomContent?: (item: CarouselItem, isActive: boolean) => React.ReactNode
+  heightClass?: string
 }
 
 export default function CarouselBanner({ 
@@ -27,7 +28,8 @@ export default function CarouselBanner({
   autoPlay = true, 
   autoPlayInterval = 5000,
   className = "",
-  renderCustomContent
+  renderCustomContent,
+  heightClass = "relative h-[600px] sm:h-[700px] md:h-[500px] lg:h-[550px] xl:h-[600px] 2xl:h-[650px]"
 }: CarouselBannerProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -84,7 +86,7 @@ export default function CarouselBanner({
     <div id="animation-carousel" className={`relative w-full ${className}`} data-carousel="static">
       {/* Carousel wrapper */}
       <div 
-        className="relative h-[600px] sm:h-[700px] md:h-[500px] lg:h-[550px] xl:h-[600px] 2xl:h-[650px] overflow-hidden rounded-lg w-full touch-pan-y"
+        className={`${heightClass} overflow-hidden rounded-lg w-full touch-pan-y`}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

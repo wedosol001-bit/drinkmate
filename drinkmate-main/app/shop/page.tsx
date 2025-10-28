@@ -3,12 +3,13 @@
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import CarouselBanner from '@/components/ui/carousel-banner'
 import { useCart } from '@/lib/contexts/cart-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useDebounce } from '@/hooks/use-debounce'
 import { Button } from '@/components/ui/button'
 import PageLayout from '@/components/layout/PageLayout'
-import ShopHero from '@/components/shop/ShopHero'
+// import ShopHero from '@/components/shop/ShopHero'
 import ShopToolbar from '@/components/shop/ShopToolbar'
 import StickyToolbar from '@/components/shop/StickyToolbar'
 import ShopFilters from '@/components/shop/ShopFilters'
@@ -39,9 +40,6 @@ import {
   ArrowUpDown,
   X,
   Zap,
-  Award,
-  Shield,
-  Truck,
   ChevronDown,
   SlidersHorizontal
 } from 'lucide-react'
@@ -921,49 +919,29 @@ function ShopPageContent() {
 
   return (
     <PageLayout>
-      {/* Professional Hero Section */}
+      {/* Shop Slideshow - matches previous hero height via custom classes */}
       <section className="relative py-16 md:py-20 lg:py-24 overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1757151071/water-366586_bd4us9.jpg"
-            alt="Shop background"
-            fill
-            className="object-cover"
-            priority
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CarouselBanner
+            items={[
+              {
+                id: 1,
+                src: "/Shop-Banner-4.png",
+                alt: "Shop banner",
+                objectFit: "cover",
+              },
+              {
+                id: 2,
+                src: "/flavorsbanner1.png", // NOTE: convert PDF to PNG/JPG and place in public
+                alt: "Flavors banner",
+                objectFit: "cover",
+              },
+            ]}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            className="w-full"
+            heightClass="relative h-[128px] md:h-[160px] lg:h-[192px]"
           />
-          {/* Professional overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/40 to-black/60"></div>
-          {/* Subtle pattern overlay */}
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
-        </div>
-        
-        {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-6">
-            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight ${isRTL ? 'font-cairo' : 'font-montserrat'} tracking-tight`}>
-              {isRTL ? "المتجر" : "Shop"}
-            </h1>
-            <p className={`text-base sm:text-lg md:text-xl text-white/90 max-w-2xl sm:max-w-3xl mx-auto leading-relaxed ${isRTL ? 'font-cairo' : 'font-montserrat'}`}>
-              {isRTL ? "اكتشف منتجاتنا المتميزة من صانعات الصودا والنكهات والإكسسوارات." : "Discover our premium collection of soda makers, flavors, and accessories."}
-            </p>
-            
-            {/* Professional Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-8">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 sm:px-4 py-2">
-                <Truck className="w-4 h-4 text-cyan-300" />
-                <span className="text-white text-sm font-medium">Free Delivery</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 sm:px-4 py-2">
-                <Shield className="w-4 h-4 text-green-300" />
-                <span className="text-white text-sm font-medium">100% Original</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 sm:px-4 py-2">
-                <Award className="w-4 h-4 text-yellow-300" />
-                <span className="text-white text-sm font-medium">Easy Returns</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
