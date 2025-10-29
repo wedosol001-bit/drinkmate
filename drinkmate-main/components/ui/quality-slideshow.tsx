@@ -93,35 +93,68 @@ export default function QualitySlideshow({
             className={`absolute inset-0 duration-500 ease-in-out transition-opacity ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
+            style={{ 
+              background: 'white',
+              isolation: 'isolate',
+              willChange: 'opacity'
+            }}
           >
-            {/* Desktop Image - Matching CarouselBanner structure exactly */}
-            <Image
-              src={item.src}
-              alt={item.alt}
-              fill
+            {/* Desktop Image - Isolated container to prevent reflection */}
+            <div 
               className="absolute inset-0 w-full h-full"
-              priority={index === 0}
-              quality={90}
               style={{
-                objectFit: 'cover',
-                objectPosition: 'center'
+                overflow: 'hidden',
+                background: 'white',
+                isolation: 'isolate'
               }}
-            />
-            
-            {/* Mobile Image (if provided) */}
-            {item.mobileSrc && (
+            >
               <Image
-                src={item.mobileSrc}
-                alt={item.mobileAlt || item.alt}
+                src={item.src}
+                alt={item.alt}
                 fill
-                className="absolute inset-0 w-full h-full md:hidden"
+                className="w-full h-full"
                 priority={index === 0}
                 quality={90}
                 style={{
                   objectFit: 'cover',
-                  objectPosition: 'center'
+                  objectPosition: 'center',
+                  display: 'block',
+                  imageRendering: 'auto',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden'
                 }}
+                unoptimized={false}
               />
+            </div>
+            
+            {/* Mobile Image (if provided) */}
+            {item.mobileSrc && (
+              <div 
+                className="absolute inset-0 w-full h-full md:hidden"
+                style={{
+                  overflow: 'hidden',
+                  background: 'white',
+                  isolation: 'isolate'
+                }}
+              >
+                <Image
+                  src={item.mobileSrc}
+                  alt={item.mobileAlt || item.alt}
+                  fill
+                  className="w-full h-full"
+                  priority={index === 0}
+                  quality={90}
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                    display: 'block',
+                    imageRendering: 'auto',
+                    WebkitBackfaceVisibility: 'hidden',
+                    backfaceVisibility: 'hidden'
+                  }}
+                  unoptimized={false}
+                />
+              </div>
             )}
           </div>
         ))}
