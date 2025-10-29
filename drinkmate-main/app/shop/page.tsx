@@ -933,6 +933,11 @@ function ShopPageContent() {
               src: "/images/banner/flavors3-banner.jpg",
               alt: "Premium Flavors Collection",
             },
+            {
+              id: 3,
+              src: "/images/banner/flavors3-banner-resized.jpg",
+              alt: "Premium Flavors Collection (Resized)",
+            },
           ]}
           autoPlay={true}
           autoPlayInterval={5000}
