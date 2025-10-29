@@ -82,7 +82,7 @@ export default function QualitySlideshow({
     <div className={`relative w-full ${className}`}>
       {/* Slideshow container with centered content */}
       <div 
-        className={`relative w-full ${containerHeight} overflow-hidden bg-gray-50 flex items-center justify-center`}
+        className={`relative w-full ${containerHeight} overflow-hidden bg-white`}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -90,36 +90,38 @@ export default function QualitySlideshow({
         {items.map((item, index) => (
           <div
             key={item.id}
-            className={`absolute inset-0 duration-500 ease-in-out transition-opacity flex items-center justify-center ${
+            className={`absolute inset-0 duration-500 ease-in-out transition-opacity ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            {/* Desktop Image */}
-            <div className="relative w-full h-full flex items-center justify-center">
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                className="object-contain"
-                priority={index === 0}
-                quality={95}
-                sizes="100vw"
-              />
-            </div>
+            {/* Desktop Image - Matching CarouselBanner structure exactly */}
+            <Image
+              src={item.src}
+              alt={item.alt}
+              fill
+              className="absolute inset-0 w-full h-full"
+              priority={index === 0}
+              quality={90}
+              style={{
+                objectFit: 'cover',
+                objectPosition: 'center'
+              }}
+            />
             
             {/* Mobile Image (if provided) */}
             {item.mobileSrc && (
-              <div className="relative w-full h-full flex items-center justify-center md:hidden">
-                <Image
-                  src={item.mobileSrc}
-                  alt={item.mobileAlt || item.alt}
-                  fill
-                  className="object-contain"
-                  priority={index === 0}
-                  quality={95}
-                  sizes="100vw"
-                />
-              </div>
+              <Image
+                src={item.mobileSrc}
+                alt={item.mobileAlt || item.alt}
+                fill
+                className="absolute inset-0 w-full h-full md:hidden"
+                priority={index === 0}
+                quality={90}
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center'
+                }}
+              />
             )}
           </div>
         ))}

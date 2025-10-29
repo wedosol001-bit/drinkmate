@@ -937,7 +937,7 @@ function ShopPageContent() {
           autoPlay={true}
           autoPlayInterval={5000}
           className="w-full"
-          containerHeight="h-[350px] md:h-[450px] lg:h-[500px]"
+          containerHeight="h-[200px] md:h-[250px] lg:h-[300px]"
         />
       </section>
 

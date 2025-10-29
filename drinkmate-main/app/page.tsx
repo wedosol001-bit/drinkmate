@@ -156,7 +156,9 @@ export default function Home() {
       src: "/images/banner/flavors3-banner-re.jpg",
       alt: "Premium Flavors Collection",
       mobileSrc: "/images/banner/flavors3-banner-re.jpg",
-      mobileAlt: "Premium Flavors Collection"
+      mobileAlt: "Premium Flavors Collection",
+      objectFit: "cover" as const,
+      objectPosition: "center center"
     }
   ]
 
