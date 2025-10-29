@@ -925,18 +925,13 @@ function ShopPageContent() {
           items={[
             {
               id: 1,
-              src: "/images/banner/Shop-Banner-4.png",
+              src: "/images/banner/Shop-Banner-4-re.png",
               alt: "Shop banner",
             },
             {
               id: 2,
               src: "/images/banner/flavors3-banner.jpg",
               alt: "Premium Flavors Collection",
-            },
-            {
-              id: 3,
-              src: "/images/banner/flavors3-banner-resized.jpg",
-              alt: "Premium Flavors Collection (Resized)",
             },
           ]}
           autoPlay={true}

@@ -153,18 +153,10 @@ export default function Home() {
     {
       id: 4,
       type: "banner" as const,
-      src: "/images/banner/flavors3-banner.jpg",
+      src: "/images/banner/flavors3-banner-re.jpg",
       alt: "Premium Flavors Collection",
-      mobileSrc: "/images/banner/flavors3-banner.jpg",
+      mobileSrc: "/images/banner/flavors3-banner-re.jpg",
       mobileAlt: "Premium Flavors Collection"
-    },
-    {
-      id: 5,
-      type: "banner" as const,
-      src: "/images/banner/flavors3-banner-resized.jpg",
-      alt: "Premium Flavors Collection (Resized)",
-      mobileSrc: "/images/banner/flavors3-banner-resized.jpg",
-      mobileAlt: "Premium Flavors Collection (Resized)"
     }
   ]
 

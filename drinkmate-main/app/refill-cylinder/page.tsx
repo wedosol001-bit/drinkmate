@@ -22,6 +22,7 @@ interface RefillSlide {
   description: string;
   buttonText: string;
   offerText: string;
+  image?: string; // Optional image URL
 }
 
 export default function CO2() {
@@ -47,6 +48,13 @@ export default function CO2() {
       description: "Want to get into the bubble game? Enjoy 5% off your first order with Drinkmate.",
       buttonText: "",
       offerText: "",
+    },
+    {
+      headline: "",
+      description: "",
+      buttonText: "",
+      offerText: "",
+      image: "/images/banner/Web--Cylinder--Page (1).png",
     },
   ]
 
@@ -385,36 +393,51 @@ export default function CO2() {
 
           {/* Enhanced Main Content Area */}
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl px-8">
-            <div className="text-center space-y-6">
-              <div className="space-y-4">
-                <h2 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
-                  {refillSlides[currentRefillSlide].headline}
-                </h2>
-                <p className="text-gray-700 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
-                  {refillSlides[currentRefillSlide].headline === "أعد التعبئة أكثر. وفر أكثر." ? (
-                    <>الآن أعد تعبئة 4 أسطوانات معاً بسعر <SaudiRiyal amount={55} size="sm" className="font-bold text-[#12d6fa]" /> لكل أسطوانة.</>
-                  ) : (
-                    refillSlides[currentRefillSlide].description
+            {refillSlides[currentRefillSlide].image ? (
+              // Image slide
+              <div className="w-full h-full flex items-center justify-center">
+                <Image
+                  src={refillSlides[currentRefillSlide].image!}
+                  alt="Banner image"
+                  width={800}
+                  height={320}
+                  className="object-contain w-full h-full max-h-[280px] md:max-h-[320px]"
+                  priority
+                />
+              </div>
+            ) : (
+              // Text content slide
+              <div className="text-center space-y-6">
+                <div className="space-y-4">
+                  <h2 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
+                    {refillSlides[currentRefillSlide].headline}
+                  </h2>
+                  <p className="text-gray-700 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+                    {refillSlides[currentRefillSlide].headline === "أعد التعبئة أكثر. وفر أكثر." ? (
+                      <>الآن أعد تعبئة 4 أسطوانات معاً بسعر <SaudiRiyal amount={55} size="sm" className="font-bold text-[#12d6fa]" /> لكل أسطوانة.</>
+                    ) : (
+                      refillSlides[currentRefillSlide].description
+                    )}
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                  {refillSlides[currentRefillSlide].buttonText && (
+                    <Button 
+                      onClick={() => window.location.href = refillSlides[currentRefillSlide].buttonText === "Refill Now" ? "/co2" : "/shop"}
+                      className="bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold px-8 py-4 rounded-full text-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
+                    >
+                      {refillSlides[currentRefillSlide].buttonText}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
                   )}
-                </p>
+                  {refillSlides[currentRefillSlide].offerText && (
+                    <span className="text-sm text-gray-600 bg-white/80 px-4 py-2 rounded-full border border-gray-200 backdrop-blur-sm">
+                      {refillSlides[currentRefillSlide].offerText}
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                {refillSlides[currentRefillSlide].buttonText && (
-                  <Button 
-                    onClick={() => window.location.href = refillSlides[currentRefillSlide].buttonText === "Refill Now" ? "/co2" : "/shop"}
-                    className="bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold px-8 py-4 rounded-full text-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
-                  >
-                    {refillSlides[currentRefillSlide].buttonText}
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                )}
-                {refillSlides[currentRefillSlide].offerText && (
-                  <span className="text-sm text-gray-600 bg-white/80 px-4 py-2 rounded-full border border-gray-200 backdrop-blur-sm">
-                    {refillSlides[currentRefillSlide].offerText}
-                  </span>
-                )}
-              </div>
-            </div>
+            )}
           </div>
 
 
