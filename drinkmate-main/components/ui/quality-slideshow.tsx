@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface QualitySlideshowItem {
@@ -99,62 +98,42 @@ export default function QualitySlideshow({
               willChange: 'opacity'
             }}
           >
-            {/* Desktop Image - Isolated container to prevent reflection */}
-            <div 
-              className="absolute inset-0 w-full h-full"
+            {/* Desktop Image - Direct rendering without Next.js optimization */}
+            <img
+              src={item.src}
+              alt={item.alt}
+              className="absolute inset-0 w-full h-full object-cover object-center"
               style={{
-                overflow: 'hidden',
-                background: 'white',
-                isolation: 'isolate'
+                display: 'block',
+                filter: 'none',
+                transform: 'none',
+                boxShadow: 'none',
+                WebkitFilter: 'none',
+                WebkitTransform: 'none',
+                zIndex: 1,
+                pointerEvents: 'none'
               }}
-            >
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                className="w-full h-full"
-                priority={index === 0}
-                quality={90}
-                style={{
-                  objectFit: 'cover',
-                  objectPosition: 'center',
-                  display: 'block',
-                  imageRendering: 'auto',
-                  WebkitBackfaceVisibility: 'hidden',
-                  backfaceVisibility: 'hidden'
-                }}
-                unoptimized={false}
-              />
-            </div>
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
             
             {/* Mobile Image (if provided) */}
             {item.mobileSrc && (
-              <div 
-                className="absolute inset-0 w-full h-full md:hidden"
+              <img
+                src={item.mobileSrc}
+                alt={item.mobileAlt || item.alt}
+                className="absolute inset-0 w-full h-full object-cover object-center md:hidden"
                 style={{
-                  overflow: 'hidden',
-                  background: 'white',
-                  isolation: 'isolate'
+                  display: 'block',
+                  filter: 'none',
+                  transform: 'none',
+                  boxShadow: 'none',
+                  WebkitFilter: 'none',
+                  WebkitTransform: 'none',
+                  zIndex: 1,
+                  pointerEvents: 'none'
                 }}
-              >
-                <Image
-                  src={item.mobileSrc}
-                  alt={item.mobileAlt || item.alt}
-                  fill
-                  className="w-full h-full"
-                  priority={index === 0}
-                  quality={90}
-                  style={{
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                    display: 'block',
-                    imageRendering: 'auto',
-                    WebkitBackfaceVisibility: 'hidden',
-                    backfaceVisibility: 'hidden'
-                  }}
-                  unoptimized={false}
-                />
-              </div>
+                loading={index === 0 ? 'eager' : 'lazy'}
+              />
             )}
           </div>
         ))}
