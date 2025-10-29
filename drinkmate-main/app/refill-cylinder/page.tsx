@@ -392,7 +392,7 @@ export default function CO2() {
           </Button>
 
           {/* Enhanced Main Content Area */}
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl px-8">
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full px-0">
             {refillSlides[currentRefillSlide].image ? (
               // Image slide
               <div className="w-full h-full flex items-center justify-center">
@@ -401,13 +401,13 @@ export default function CO2() {
                   alt="Banner image"
                   width={800}
                   height={320}
-                  className="object-contain w-full h-full max-h-[280px] md:max-h-[320px]"
+                  className="object-cover w-full h-full"
                   priority
                 />
               </div>
             ) : (
               // Text content slide
-              <div className="text-center space-y-6">
+              <div className="h-full flex flex-col items-center justify-center text-center space-y-6 px-8">
                 <div className="space-y-4">
                   <h2 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
                     {refillSlides[currentRefillSlide].headline}

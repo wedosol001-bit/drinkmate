@@ -1572,7 +1572,7 @@ export default function SodamakerProductDetail() {
                           Key Features
                         </h3>
                         <ul className="space-y-3">
-                          {product.features.map((feature, index) => (
+                          {product.features?.map((feature, index) => (
                             <li key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
                               <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[#12d6fa] mt-0.5 flex-shrink-0" />
                               <span className="text-sm sm:text-base text-gray-700">{feature}</span>
