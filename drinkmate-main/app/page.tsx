@@ -158,6 +158,15 @@ export default function Home() {
       mobileSrc: "/images/banner/flavors3-banner.jpg",
       mobileAlt: "Premium Flavors Collection",
       objectFit: "contain" as const
+    },
+    {
+      id: 5,
+      type: "banner" as const,
+      src: "/images/banner/flavors3-banner-resized.jpg",
+      alt: "Premium Flavors Collection (Resized)",
+      mobileSrc: "/images/banner/flavors3-banner-resized.jpg",
+      mobileAlt: "Premium Flavors Collection (Resized)",
+      objectFit: "contain" as const
     }
   ]
 
