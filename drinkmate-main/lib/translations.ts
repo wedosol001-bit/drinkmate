@@ -4809,6 +4809,25 @@ export const translations: Record<Language, Translations> = {
         exploreMore: "استكشف المزيد",
         buyNow: "اشتر الآن"
       },
+      refill: {
+        title: "أعد الملء أكثر. ووفّر أكثر.",
+        description: "الآن أعد ملء 4 أسطوانات معاً بسعر 55 ريال لكل أسطوانة.",
+        buttonText: "أعد الملء الآن",
+        offerText: "*العرض صالح طوال العام*",
+        carbonatesUpto: "يغوز حتى",
+        liters: "60",
+        litersOfDrink: "لتراً من المشروب",
+        slide2: {
+          headline: "احصل على نكهة مشروب الطاقة والكولا مقابل 79",
+          description: "تغلب على حرارة الصيف مع أكثر منتجاتنا مبيعاً.",
+          buttonText: "تسوق الآن"
+        },
+        slide3: {
+          headline: "خصم 5% على أول طلب لعملائنا الجدد",
+          description: "تدخل إلى عالم الفقاعات؟ استمتع بخصم 5% على أول طلب مع درينكميت.",
+          buttonText: "تسوق الآن"
+        }
+      },
       
       features: {
         title: "لماذا تختار درينكميت",
