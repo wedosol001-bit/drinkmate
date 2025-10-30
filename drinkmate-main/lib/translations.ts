@@ -1140,111 +1140,47 @@ export interface Translations {
     }
   }
   
-  // Track Order
+  // Track Order (Waybill-based tracking)
   trackOrder: {
-    hero: {
-      title: string
-      subtitle: string
-    }
+    headerTitle: string
+    headerSubtitle: string
     form: {
       title: string
-      subtitle: string
-      orderNumber: string
-      orderNumberPlaceholder: string
-      email: string
-      emailPlaceholder: string
-      trackOrder: string
+      waybillLabel: string
+      placeholder: string
+      placeholderShort: string
+      help: string
+      submit: string
+      submitting: string
+    }
+    errors: {
+      emptyWaybill: string
+      shortWaybill: string
+    }
+    info: {
+      email: { title: string; body: string }
+      help: { title: string; body: string }
+    }
+    features: {
+      title: string
+      realtime: { title: string; body: string }
+      history: { title: string; body: string }
+      alerts: { title: string; body: string }
     }
     results: {
-      title: string
-      orderNumber: string
-      currentStatus: string
-      estimatedDelivery: string
-      currentLocation: string
-      trackingHistory: string
+      waybill: string
+      historyTitle: string
+      noInfo: string
     }
-    recentOrders: {
+    noResults: {
       title: string
-      subtitle: string
-      orderDate: string
-      items: string
-      total: string
-      trackThisOrder: string
-    }
-    orderHistory: {
-      title: string
-      subtitle: string
-      allOrders: string
-      viewAllOrders: string
-      orderId: string
-      date: string
-      status: string
-      total: string
-      actions: string
-      track: string
-    }
-    delivery: {
-      title: string
-      subtitle: string
-      standardDelivery: string
-      standardDeliveryTime: string
-      standardDeliveryNote: string
-      expressDelivery: string
-      expressDeliveryTime: string
-      expressDeliveryNote: string
-      localPickup: string
-      localPickupTime: string
-      localPickupNote: string
-    }
-    returns: {
-      title: string
-      subtitle: string
-      returnPolicy: string
-      returnPolicyItems: {
-        item1: string
-        item2: string
-        item3: string
-        item4: string
-      }
-      exchangePolicy: string
-      exchangePolicyItems: {
-        item1: string
-        item2: string
-        item3: string
-        item4: string
-      }
-    }
-    notifications: {
-      title: string
-      subtitle: string
-      deliveryNotifications: string
-      description: string
-      items: {
-        item1: string
-        item2: string
-        item3: string
-        item4: string
-      }
-      enableNotifications: string
-      learnMore: string
-      getNotified: string
-    }
-    status: {
-      orderPlaced: string
-      processing: string
-      shipped: string
-      inTransit: string
-      delivered: string
+      desc: string
+      hint: string
     }
     help: {
       title: string
-      subtitle: string
-      callUs: string
-      callUsNumber: string
-      callUsNote: string
-      emailUs: string
-      emailUsAddress: string
-      emailUsNote: string
+      cantFind: { title: string; body: string; buttonEmail: string }
+      stillIssues: { title: string; body: string; buttonSupport: string }
     }
   }
   
