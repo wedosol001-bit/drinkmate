@@ -469,20 +469,7 @@ export interface Translations {
         accessories: string
       }
     }
-    refill: {
-      loadingTitle: string
-      loadingSubtitle: string
-      errorTitle: string
-      retry: string
-      carousel: { goTo: string }
-      choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
-      qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string }
-      discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
-      cta: { addToCart: string; subscribe: string; premium: string }
-      why: { title: string; f1: string; f2: string; f3: string; f4: string }
-      summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string }
-      tabs: { faqs: string; description: string; reviews: string; faqsTitle: string; faqsSubtitle: string; productDescription: string; keyFeatures: string; customerReviews: string }
-    }
+    
     customerReviews: {
       title: string
       subtitle: string
@@ -1771,6 +1758,22 @@ export interface Translations {
     cookies: string
   }
   
+  // Refill
+  refill: {
+    loadingTitle: string
+    loadingSubtitle: string
+    errorTitle: string
+    retry: string
+    carousel: { goTo: string }
+    choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
+    qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string }
+    discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
+    cta: { addToCart: string; subscribe: string; premium: string }
+    why: { title: string; f1: string; f2: string; f3: string; f4: string }
+    summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string }
+    tabs: { faqs: string; description: string; reviews: string; faqsTitle: string; faqsSubtitle: string; productDescription: string; keyFeatures: string; customerReviews: string }
+  }
+
   // Cart
   cart: {
     title: string
@@ -2757,20 +2760,7 @@ export const translations: Record<Language, Translations> = {
           accessories: "Accessories"
         }
       },
-      refill: {
-        loadingTitle: "Loading CO2 cylinders...",
-        loadingSubtitle: "Please wait while we retrieve the latest cylinder information.",
-        errorTitle: "Unable to load cylinder data",
-        retry: "Retry",
-        carousel: { goTo: "Go to slide" },
-        choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
-        qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days" },
-        discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
-        cta: { addToCart: "Add cylinders to cart", subscribe: "Subscribe & save 20%", premium: "Premium membership" },
-        why: { title: "Why choose our service?", f1: "Food-grade CO2 for beverages", f2: "3-5 day turnaround", f3: "Home pickup and delivery", f4: "Quality guaranteed" },
-        summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:" },
-        tabs: { faqs: "FAQs", description: "Description", reviews: "Reviews", faqsTitle: "Frequently Asked Questions", faqsSubtitle: "Everything you need to know about our cylinder service", productDescription: "Product Description", keyFeatures: "Key Features:", customerReviews: "Customer Reviews" }
-      },
+      
       customerReviews: {
         title: "What Our",
         subtitle: "Customers",
@@ -4565,6 +4555,20 @@ export const translations: Record<Language, Translations> = {
       terms: "Terms",
       cookies: "Cookies"
     },
+    refill: {
+      loadingTitle: "Loading CO2 cylinders...",
+      loadingSubtitle: "Please wait while we retrieve the latest cylinder information.",
+      errorTitle: "Unable to load cylinder data",
+      retry: "Retry",
+      carousel: { goTo: "Go to slide" },
+      choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
+      qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days" },
+      discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
+      cta: { addToCart: "Add cylinders to cart", subscribe: "Subscribe & save 20%", premium: "Premium membership" },
+      why: { title: "Why choose our service?", f1: "Food-grade CO2 for beverages", f2: "3-5 day turnaround", f3: "Home pickup and delivery", f4: "Quality guaranteed" },
+      summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:" },
+      tabs: { faqs: "FAQs", description: "Description", reviews: "Reviews", faqsTitle: "Frequently Asked Questions", faqsSubtitle: "Everything you need to know about our cylinder service", productDescription: "Product Description", keyFeatures: "Key Features:", customerReviews: "Customer Reviews" }
+    },
     cart: {
       title: "Shopping Cart",
       loading: "Loading cart...",
@@ -4905,25 +4909,7 @@ export const translations: Record<Language, Translations> = {
         exploreMore: "استكشف المزيد",
         buyNow: "اشتر الآن"
       },
-      refill: {
-        title: "أعد الملء أكثر. ووفّر أكثر.",
-        description: "الآن أعد ملء 4 أسطوانات معاً بسعر 55 ريال لكل أسطوانة.",
-        buttonText: "أعد الملء الآن",
-        offerText: "*العرض صالح طوال العام*",
-        carbonatesUpto: "يضيف الغاز حتى",
-        liters: "60",
-        litersOfDrink: "لتر من المشروب",
-        slide2: {
-          headline: "احصل على مشروب الطاقة ونكهة الكولا مقابل 79 ريال",
-          description: "تغلب على حرارة الصيف مع أفضل مبيعاتنا.",
-          buttonText: "أعد الملء الآن"
-        },
-        slide3: {
-          headline: "خصم 5% على أول طلب للعملاء الجدد",
-          description: "تدخل عالم المشروبات الغازية؟ استمتع بخصم 5% على أول طلب مع درينكميت.",
-          buttonText: "تسوق الآن"
-        }
-      },
+      
       features: {
         title: "لماذا تختار درينكميت",
         subtitle: "الجودة العالية تلتقي بالتكنولوجيا المبتكرة",
@@ -5331,20 +5317,7 @@ export const translations: Record<Language, Translations> = {
           accessories: "الملحقات"
         }
       },
-      refill: {
-        loadingTitle: "جارٍ تحميل أسطوانات CO2...",
-        loadingSubtitle: "يرجى الانتظار بينما نسترجع أحدث معلومات الأسطوانات.",
-        errorTitle: "تعذر تحميل بيانات الأسطوانات",
-        retry: "إعادة المحاولة",
-        carousel: { goTo: "اذهب إلى الشريحة" },
-        choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينكميت", nonDrinkmate: "غير درينكميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
-        qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل" },
-        discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
-        cta: { addToCart: "أضف الأسطوانات إلى السلة", subscribe: "اشترك ووفر 20%", premium: "عضوية مميزة" },
-        why: { title: "لماذا تختار خدمتنا؟", f1: "CO2 صالح للاستخدام الغذائي", f2: "دورة 3-5 أيام", f3: "استلام وتسليم من المنزل", f4: "جودة مضمونة" },
-        summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:" },
-        tabs: { faqs: "الأسئلة الشائعة", description: "الوصف", reviews: "التقييمات", faqsTitle: "الأسئلة الشائعة", faqsSubtitle: "كل ما تحتاج لمعرفته حول خدمة الأسطوانات", productDescription: "وصف المنتج", keyFeatures: "الميزات الرئيسية:", customerReviews: "آراء العملاء" }
-      },
+      
       customerReviews: {
         title: "ماذا يقول",
         subtitle: "عملاؤنا",
@@ -6934,6 +6907,20 @@ export const translations: Record<Language, Translations> = {
       privacy: "الخصوصية",
       terms: "الشروط",
       cookies: "ملفات تعريف الارتباط"
+    },
+    refill: {
+      loadingTitle: "جارٍ تحميل أسطوانات CO2...",
+      loadingSubtitle: "يرجى الانتظار بينما نسترجع أحدث معلومات الأسطوانات.",
+      errorTitle: "تعذر تحميل بيانات الأسطوانات",
+      retry: "إعادة المحاولة",
+      carousel: { goTo: "اذهب إلى الشريحة" },
+      choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينكميت", nonDrinkmate: "غير درينكميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
+      qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل" },
+      discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
+      cta: { addToCart: "أضف الأسطوانات إلى السلة", subscribe: "اشترك ووفر 20%", premium: "عضوية مميزة" },
+      why: { title: "لماذا تختار خدمتنا؟", f1: "CO2 صالح للاستخدام الغذائي", f2: "دورة 3-5 أيام", f3: "استلام وتسليم من المنزل", f4: "جودة مضمونة" },
+      summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:" },
+      tabs: { faqs: "الأسئلة الشائعة", description: "الوصف", reviews: "التقييمات", faqsTitle: "الأسئلة الشائعة", faqsSubtitle: "كل ما تحتاج لمعرفته حول خدمة الأسطوانات", productDescription: "وصف المنتج", keyFeatures: "الميزات الرئيسية:", customerReviews: "آراء العملاء" }
     },
     cart: {
       title: "سلة التسوق",
