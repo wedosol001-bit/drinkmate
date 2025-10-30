@@ -120,4 +120,18 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Arabic (RTL) font assignments: RH ZAK Thin for body, Bold for headings */
+  html[dir="rtl"] {
+    font-family: var(--font-rh-zak), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    font-weight: 100;
+  }
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3,
+  html[dir="rtl"] h4,
+  html[dir="rtl"] h5,
+  html[dir="rtl"] h6 {
+    font-family: var(--font-rh-zak), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    font-weight: 700;
+  }
 }

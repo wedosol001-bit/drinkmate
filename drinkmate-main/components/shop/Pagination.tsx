@@ -4,6 +4,7 @@ import React, { useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface PaginationProps {
   currentPage: number
@@ -28,6 +29,7 @@ export default function Pagination({
   showLoadMore = false,
   isRTL = false
 }: PaginationProps) {
+  const { t } = useTranslation()
   const startItem = (currentPage - 1) * itemsPerPage + 1
   const endItem = Math.min(currentPage * itemsPerPage, totalItems)
 
@@ -111,7 +113,7 @@ export default function Pagination({
             className="flex items-center gap-1"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Previous</span>
+            <span className="hidden sm:inline">{t("shop.pagination.previous")}</span>
           </Button>
 
           {/* Page Numbers */}
@@ -153,7 +155,7 @@ export default function Pagination({
             disabled={currentPage === totalPages}
             className="flex items-center gap-1"
           >
-            <span className="hidden sm:inline">Next</span>
+            <span className="hidden sm:inline">{t("shop.pagination.next")}</span>
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>

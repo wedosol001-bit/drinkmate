@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/contexts/cart-context"
+import { useTranslation } from "@/lib/contexts/translation-context"
 import PageLayout from "@/components/layout/PageLayout"
 import { Star, Loader2, ShoppingCart } from "lucide-react"
 import { shopAPI } from "@/lib/api"
@@ -47,6 +48,7 @@ interface Bundle {
 }
 
 export default function AccessoriesPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const [isLoading, setIsLoading] = useState(true)
@@ -205,7 +207,7 @@ export default function AccessoriesPage() {
         setSubcategorySections(sections)
       } catch (error) {
         console.error("Error fetching products:", error)
-        setError("Failed to load products. Please try again later.")
+        setError(t("shop.categoryPages.failedToLoad"))
 
         // Fallback to static data if API fails
         setBundles([
@@ -378,7 +380,7 @@ export default function AccessoriesPage() {
   return (
     <PageLayout currentPage="shop-accessories">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">Explore Our Accessories</h1>
+        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.accessories.title")}</h1>
 
         {/* Hero section - Accessories Banner */}
         <div className="w-full h-[300px] sm:h-[400px] md:h-[350px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-lg">
@@ -412,11 +414,11 @@ export default function AccessoriesPage() {
               <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 animate-spin text-[#12d6fa] mb-3 sm:mb-4" />
               <div className="absolute inset-0 rounded-full border-2 border-[#12d6fa]/20"></div>
             </div>
-            <p className="text-sm sm:text-base text-gray-600 font-medium mb-2">Loading premium accessories...</p>
+            <p className="text-sm sm:text-base text-gray-600 font-medium mb-2">{t("shop.categoryPages.loadingProducts")}</p>
             <div className="w-64 bg-gray-200 rounded-full h-2">
               <div className="bg-gradient-to-r from-[#12d6fa] to-blue-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Please wait while we fetch the latest products</p>
+            <p className="text-xs text-gray-500 mt-2">{t("shop.categoryPages.loadingProducts")}</p>
           </div>
         ) : (
           <>

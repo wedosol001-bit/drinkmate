@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Package, MapPin, Clock, CheckCircle, AlertCircle, Truck, Home } from 'lucide-react';
 import { format } from 'date-fns';
+import { useTranslation } from '@/lib/contexts/translation-context';
 
 interface TrackingResult {
   waybillNumber: string;
@@ -53,6 +54,7 @@ const statusColors = {
 export default function TrackOrderPage() {
   const params = useParams();
   const waybillNumber = params?.waybillNumber as string;
+  const { t } = useTranslation();
   
   const [trackingData, setTrackingData] = useState<TrackingData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -117,8 +119,8 @@ export default function TrackOrderPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Track Your Order</h1>
-          <p className="text-gray-600">Enter your Aramex waybill number to track your shipment</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('trackOrder.headerTitle')}</h1>
+          <p className="text-gray-600">{t('trackOrder.headerSubtitle')}</p>
         </div>
 
         {/* Search Form */}
@@ -126,11 +128,11 @@ export default function TrackOrderPage() {
           <CardContent className="pt-6">
             <form onSubmit={handleSearch} className="flex gap-4">
               <div className="flex-1">
-                <Label htmlFor="waybill">Waybill Number</Label>
+                <Label htmlFor="waybill">{t('trackOrder.form.waybillLabel')}</Label>
                 <Input
                   id="waybill"
                   type="text"
-                  placeholder="Enter your waybill number"
+                  placeholder={t('trackOrder.form.placeholderShort')}
                   value={searchWaybill}
                   onChange={(e) => setSearchWaybill(e.target.value)}
                   className="mt-1"
@@ -140,10 +142,10 @@ export default function TrackOrderPage() {
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Tracking...
+                    {t('trackOrder.form.submitting')}
                   </>
                 ) : (
-                  'Track Order'
+                  t('trackOrder.form.submit')
                 )}
               </Button>
             </form>
@@ -167,7 +169,7 @@ export default function TrackOrderPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
                       <Package className="h-5 w-5" />
-                      Waybill: {shipment.waybillNumber}
+                      {t('trackOrder.results.waybill')}: {shipment.waybillNumber}
                     </CardTitle>
                     {shipment.trackingResults.length > 0 && (
                       <Badge 
@@ -184,7 +186,7 @@ export default function TrackOrderPage() {
                 <CardContent>
                   {shipment.trackingResults.length > 0 ? (
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-lg mb-4">Tracking History</h3>
+                      <h3 className="font-semibold text-lg mb-4">{t('trackOrder.results.historyTitle')}</h3>
                       <div className="relative">
                         {/* Timeline */}
                         <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
@@ -244,7 +246,7 @@ export default function TrackOrderPage() {
                   ) : (
                     <div className="text-center py-8">
                       <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600">No tracking information available yet.</p>
+                      <p className="text-gray-600">{t('trackOrder.results.noInfo')}</p>
                     </div>
                   )}
                 </CardContent>
@@ -258,13 +260,11 @@ export default function TrackOrderPage() {
           <Card>
             <CardContent className="text-center py-8">
               <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Tracking Information Found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('trackOrder.noResults.title')}</h3>
               <p className="text-gray-600">
-                We couldn't find any tracking information for waybill number: <strong>{searchWaybill}</strong>
+                {t('trackOrder.noResults.desc')} <strong>{searchWaybill}</strong>
               </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Please check the waybill number and try again, or contact our support team.
-              </p>
+              <p className="text-sm text-gray-500 mt-2">{t('trackOrder.noResults.hint')}</p>
             </CardContent>
           </Card>
         )}
@@ -274,29 +274,20 @@ export default function TrackOrderPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Home className="h-5 w-5" />
-              Need Help?
+              {t('trackOrder.help.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <h4 className="font-medium mb-2">Can't find your waybill number?</h4>
-                <p className="text-sm text-gray-600 mb-3">
-                  Your waybill number was sent to your email when your order was shipped. 
-                  Check your inbox or spam folder.
-                </p>
-                <Button variant="outline" size="sm">
-                  Check Email
-                </Button>
+                <h4 className="font-medium mb-2">{t('trackOrder.help.cantFind.title')}</h4>
+                <p className="text-sm text-gray-600 mb-3">{t('trackOrder.help.cantFind.body')}</p>
+                <Button variant="outline" size="sm">{t('trackOrder.help.cantFind.buttonEmail')}</Button>
               </div>
               <div>
-                <h4 className="font-medium mb-2">Still having issues?</h4>
-                <p className="text-sm text-gray-600 mb-3">
-                  Our support team is here to help you track your order.
-                </p>
-                <Button variant="outline" size="sm">
-                  Contact Support
-                </Button>
+                <h4 className="font-medium mb-2">{t('trackOrder.help.stillIssues.title')}</h4>
+                <p className="text-sm text-gray-600 mb-3">{t('trackOrder.help.stillIssues.body')}</p>
+                <Button variant="outline" size="sm">{t('trackOrder.help.stillIssues.buttonSupport')}</Button>
               </div>
             </div>
           </CardContent>

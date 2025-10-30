@@ -10,6 +10,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/contexts/cart-context"
+import { useTranslation } from "@/lib/contexts/translation-context"
 import PageLayout from "@/components/layout/PageLayout"
 import { Star, Loader2, ShoppingCart } from "lucide-react"
 import { shopAPI } from "@/lib/api"
@@ -56,6 +57,7 @@ interface Bundle {
 }
 
 export default function FlavorPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const [isLoading, setIsLoading] = useState(true)
@@ -239,7 +241,7 @@ export default function FlavorPage() {
       setSubcategorySections(sections)
     } catch (error) {
       console.error("Error fetching products:", error)
-      setError("Failed to load products. Please try again later.")
+      setError(t("shop.categoryPages.failedToLoad"))
 
       // Fallback to static data if API fails
       setAllFlavors([
@@ -400,7 +402,7 @@ export default function FlavorPage() {
   return (
     <PageLayout currentPage="shop-flavor">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">Explore Our Premium Flavors</h1>
+        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
 
         <div className="w-full h-[300px] sm:h-[400px] md:h-[350px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-lg">
           {/* Desktop Banner */}
@@ -442,7 +444,7 @@ export default function FlavorPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-16">
             <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 animate-spin text-[#12d6fa] mb-3 sm:mb-4" />
-            <p className="text-sm sm:text-base text-gray-600 font-medium">Loading premium products...</p>
+            <p className="text-sm sm:text-base text-gray-600 font-medium">{t("shop.categoryPages.loadingProducts")}</p>
           </div>
         ) : (
           <>

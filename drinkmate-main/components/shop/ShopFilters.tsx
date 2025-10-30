@@ -25,6 +25,7 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface FilterOption {
   value: string
@@ -86,6 +87,7 @@ export default function ShopFilters({
   isOpen = false,
   onClose
 }: ShopFiltersProps) {
+  const { t } = useTranslation()
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['category', 'price']))
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(filters.priceRange)
 
@@ -217,7 +219,7 @@ export default function ShopFilters({
           <div className="p-2 bg-brand-100 rounded-lg">
             <Filter className="w-5 h-5 text-brand-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t("shop.filters.filters")}</h3>
         </div>
         {activeFilterCount > 0 && (
           <Button
@@ -227,14 +229,14 @@ export default function ShopFilters({
             className="text-brand-600 hover:text-brand-700 hover:bg-brand-50 px-3 py-2 rounded-lg"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            Clear all
+            {t("shop.filters.clearAll")}
           </Button>
         )}
       </div>
 
       {/* Category Filter */}
       <FilterSection
-        title="Categories"
+        title={t("shop.filters.categories")}
         sectionKey="category"
         icon={<Tag className="w-4 h-4 text-brand-600" />}
       >
@@ -248,7 +250,7 @@ export default function ShopFilters({
                 className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
               />
               <Label htmlFor="category-all" className="text-sm font-medium cursor-pointer">
-                All Categories
+                {t("shop.filters.allCategories")}
               </Label>
             </div>
             <Badge variant="secondary" className="bg-brand-100 text-brand-700 px-2 py-1">
@@ -343,7 +345,7 @@ export default function ShopFilters({
 
       {/* Price Range Filter */}
       <FilterSection
-        title="Price Range"
+        title={t("shop.filters.priceRange")}
         sectionKey="price"
         icon={<DollarSign className="w-4 h-4 text-brand-600" />}
       >
@@ -365,7 +367,7 @@ export default function ShopFilters({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="price-min" className="text-xs text-gray-500 mb-1 block">Min Price</Label>
+              <Label htmlFor="price-min" className="text-xs text-gray-500 mb-1 block">{t("shop.filters.minPrice")}</Label>
               <Input
                 id="price-min"
                 type="number"
@@ -376,7 +378,7 @@ export default function ShopFilters({
               />
             </div>
             <div>
-              <Label htmlFor="price-max" className="text-xs text-gray-500 mb-1 block">Max Price</Label>
+              <Label htmlFor="price-max" className="text-xs text-gray-500 mb-1 block">{t("shop.filters.maxPrice")}</Label>
               <Input
                 id="price-max"
                 type="number"
@@ -393,7 +395,7 @@ export default function ShopFilters({
       {/* Brand Filter */}
       {brands.length > 0 && (
         <FilterSection
-          title="Brands"
+          title={t("shop.filters.brands")}
           sectionKey="brand"
           icon={<Award className="w-4 h-4 text-brand-600" />}
         >
@@ -433,7 +435,7 @@ export default function ShopFilters({
 
       {/* Rating Filter */}
       <FilterSection
-        title="Customer Rating"
+        title={t("shop.filters.customerRating")}
         sectionKey="rating"
         icon={<Star className="w-4 h-4 text-brand-600" />}
       >
@@ -483,7 +485,7 @@ export default function ShopFilters({
 
       {/* Availability Filter */}
       <FilterSection
-        title="Availability"
+        title={t("shop.filters.availability")}
         sectionKey="availability"
         icon={<Shield className="w-4 h-4 text-brand-600" />}
       >
@@ -498,7 +500,7 @@ export default function ShopFilters({
               />
               <Label htmlFor="in-stock" className="text-sm font-medium cursor-pointer flex items-center gap-2">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                In Stock Only
+                {t("shop.filters.inStockOnly")}
               </Label>
             </div>
             <Badge 
@@ -518,7 +520,7 @@ export default function ShopFilters({
 
       {/* Special Offers Filter */}
       <FilterSection
-        title="Special Offers"
+        title={t("shop.filters.specialOffers")}
         sectionKey="offers"
         icon={<Zap className="w-4 h-4 text-brand-600" />}
       >
@@ -533,7 +535,7 @@ export default function ShopFilters({
               />
               <Label htmlFor="new-products" className="text-sm font-medium cursor-pointer flex items-center gap-2">
                 <Clock className="w-4 h-4 text-green-500" />
-                New Products
+                {t("shop.filters.newProducts")}
               </Label>
             </div>
             <Badge 
@@ -558,7 +560,7 @@ export default function ShopFilters({
               />
               <Label htmlFor="best-sellers" className="text-sm font-medium cursor-pointer flex items-center gap-2">
                 <Award className="w-4 h-4 text-amber-500" />
-                Best Sellers
+                {t("shop.filters.bestSellers")}
               </Label>
             </div>
             <Badge 
@@ -583,7 +585,7 @@ export default function ShopFilters({
               />
               <Label htmlFor="on-sale" className="text-sm font-medium cursor-pointer flex items-center gap-2">
                 <Tag className="w-4 h-4 text-red-500" />
-                On Sale
+                {t("shop.filters.onSale")}
               </Label>
             </div>
             <Badge 
@@ -620,7 +622,7 @@ export default function ShopFilters({
                 <div className="p-2 bg-brand-100 rounded-lg">
                   <Filter className="w-5 h-5 text-brand-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t("shop.filters.filters")}</h2>
               </div>
               <Button
                 variant="ghost"
@@ -641,13 +643,13 @@ export default function ShopFilters({
             <div className="p-6 border-t border-gray-200">
               <div className="space-y-3">
                 <div className="text-center text-sm text-gray-600">
-                  <span className="font-semibold text-gray-900">{productCount}</span> products found
+                  <span className="font-semibold text-gray-900">{productCount}</span> {t("shop.filters.productsFound")}
                 </div>
                 <Button
                   onClick={onClose}
                   className="w-full h-12 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg"
                 >
-                  Show Results
+                  {t("shop.filters.showResults")}
                 </Button>
               </div>
             </div>

@@ -168,10 +168,10 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
           {/* Header Section */}
           <div className="mb-6 sm:mb-8 text-center">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 font-montserrat">
-              Shop by Category
+              {t("shop.categoryPages.shopByCategory")}
             </h2>
             <p className="text-sm text-slate-600 font-noto-sans max-w-md mx-auto">
-              Discover our premium collection of soda makers, flavors, and accessories
+              {t("shop.categoryPages.discoverCollection")}
             </p>
             <div className="w-16 h-1 bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] rounded-full mx-auto mt-3"></div>
           </div>
@@ -180,33 +180,33 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
           <div className="mega-grid grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <MenuTile
                 href="/shop/sodamakers"
-                title="Soda Makers"
+                title={t("header.sodamakers")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559855/Artic-Black-Machine---Front_pxsies.png"
-                alt="Soda Makers"
+                alt={t("header.sodamakers")}
                 onMouseEnter={() => handlePrefetch("/shop/sodamakers")}
                 onClick={() => onOpenChange(false)}
               />
               <MenuTile
                 href="/shop/flavor"
-                title="Flavors"
+                title={t("header.flavor")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1759593778/italian-strawberry-lemon-syrup_rjg0tk_c_crop_ar_9_16_ulj06x.png"
-                alt="Flavors"
+                alt={t("header.flavor")}
                 onMouseEnter={() => handlePrefetch("/shop/flavor")}
                 onClick={() => onOpenChange(false)}
               />
               <MenuTile
                 href="/shop/accessories"
-                title="Accessories"
+                title={t("header.accessories")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756892916/empty-drinkmate-bottle_dkmtzo.png"
-                alt="Accessories"
+                alt={t("header.accessories")}
                 onMouseEnter={() => handlePrefetch("/shop/accessories")}
                 onClick={() => onOpenChange(false)}
               />
               <MenuTile
                 href="/shop/co2-cylinders"
-                title="CO₂ Cylinders"
+                title={t("header.co2")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893591/co2-cylinder-single_dcrdnx.png"
-                alt="CO2 Cylinders"
+                alt={t("header.co2")}
                 onMouseEnter={() => handlePrefetch("/co2")}
                 onClick={() => onOpenChange(false)}
               />
@@ -222,7 +222,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
               onMouseEnter={() => handlePrefetch("/shop")}
             >
               <ShoppingBag className="w-5 h-5" />
-              Shop All Products
+              {t("shop.categoryPages.shopAllProducts")}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

@@ -1278,10 +1278,10 @@ export default function Home() {
           {/* Header */}
           <div className="text-center space-y-4 md:space-y-6" dir={isRTL ? "rtl" : "ltr"}>
             <h2 className={`font-bold leading-tight text-[#12d6fa] text-[clamp(22px,6vw,44px)] ${isRTL ? "font-cairo text-end" : "font-montserrat text-center"}`}>
-              <Balancer>How does the Drinkmate® OmniFizz work?</Balancer>
+              <Balancer>{t("home.howItWorks.title")}</Balancer>
             </h2>
             <p className={`text-base md:text-lg text-black/70 leading-relaxed max-w-2xl mx-auto ${isRTL ? "font-noto-arabic text-end" : "font-noto-sans text-center"}`}>
-              Four simple steps that show you how to use the Drinkmate® OmniFizz
+              {t("home.howItWorks.subtitle")}
             </p>
           </div>
 

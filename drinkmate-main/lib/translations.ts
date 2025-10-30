@@ -274,9 +274,177 @@ export interface Translations {
       highestRated: string
       newest: string
       loadMore: string
+      quickStats: string
+      totalProducts: string
+      categories: string
+      brands: string
+      inStock: string
+      filters: string
+      priceRange: string
+      minPrice: string
+      maxPrice: string
+      customerRating: string
+      availability: string
+      specialOffers: string
+      allCategories: string
+      inStockOnly: string
+      newProducts: string
+      bestSellers: string
+      onSale: string
+      clearAll: string
+      showResults: string
+      productsFound: string
+    }
+    search: {
+      placeholder: string
+      helpText: string
+      searchingFor: string
+      results: string
+      clearSearch: string
+    }
+    sort: {
+      mostPopular: string
+      priceLowToHigh: string
+      priceHighToLow: string
+      newestFirst: string
+      highestRated: string
+      helpText: string
+    }
+    pagination: {
+      previous: string
+      next: string
+    }
+    contact: {
+      hero: { title: string; subtitle: string }
+      options: {
+        heading: string
+        whatsapp: { title: string; availability: string; button: string }
+        email: { title: string; availability: string; button: string }
+        chat: {
+          title: string
+          checking: string
+          loginRequired: string
+          avgReply: string
+          opensAt: string
+          buttonLoading: string
+          buttonLogin: string
+          buttonStart: string
+        }
+        show: string
+        hide: string
+      }
+      status: { available: string; offline: string; always: string; loginRequired: string }
+      form: {
+        title: string
+        subtitle: string
+        reason: string
+        reasons: {
+          general: string
+          order: string
+          billing: string
+          technical: string
+          refund: string
+          other: string
+        }
+        name: string
+        namePlaceholder: string
+        nameRequired: string
+        email: string
+        emailPlaceholder: string
+        emailRequired: string
+        phone: string
+        phoneHint: string
+        message: string
+        messagePlaceholder: string
+        messageMin: string
+        attachments: string
+        uploadBtn: string
+        uploadHint: string
+        consent: string
+        submit: string
+        submitting: string
+        errors: {
+          fillAll: string
+          consent: string
+          maxFiles: string
+          fileTooLarge: string
+          invalidType: string
+          submitFail: string
+        }
+        success: {
+          heading: string
+          subtitle: string
+          another: string
+        }
+        history: {
+          title: string
+          yourMessage: string
+          ourResponse: string
+        }
+      }
+      faq: {
+        heading: string
+        searchPlaceholder: string
+        cta: string
+        categories: {
+          orders: string
+          refill: string
+          returns: string
+          payment: string
+        }
+        viewAll: string
+        emailSubject: string
+        emailBody: string
+      }
+      map: {
+        visit: string
+        seeUs: string
+        officeInfo: string
+        address: string
+        businessHours: string
+        phone: string
+        getDirections: string
+        googleMaps: string
+        appleMaps: string
+        city: string
+        country: string
+      }
+    }
+      categoryPages: {
+        explorePremium: string
+        loadingProducts: string
+        failedToLoad: string
+        noProductsFound: string
+        checkBackLater: string
+        errorLoading: string
+        omnifizzTitle: string
+        omnifizzDescription: string
+        luxeTitle: string
+        luxeDescription: string
+        activeFilters: string
+        tryAgain: string
+        filterApplied: string
+        filtersApplied: string
+        trySearchingFor: string
+        shopByCategory: string
+        discoverCollection: string
+        shopAllProducts: string
+      sodamakers: {
+        title: string
+      }
+      flavors: {
+        title: string
+      }
+      accessories: {
+        title: string
+      }
+      co2: {
+        title: string
+      }
     }
     products: {
       addToCart: string
+      selectOptions: string
       outOfStock: string
       new: string
       popular: string
@@ -300,6 +468,20 @@ export interface Translations {
         italianFlavors: string
         accessories: string
       }
+    }
+    refill: {
+      loadingTitle: string
+      loadingSubtitle: string
+      errorTitle: string
+      retry: string
+      carousel: { goTo: string }
+      choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
+      qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string }
+      discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
+      cta: { addToCart: string; subscribe: string; premium: string }
+      why: { title: string; f1: string; f2: string; f3: string; f4: string }
+      summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string }
+      tabs: { faqs: string; description: string; reviews: string; faqsTitle: string; faqsSubtitle: string; productDescription: string; keyFeatures: string; customerReviews: string }
     }
     customerReviews: {
       title: string
@@ -1598,6 +1780,8 @@ export interface Translations {
     empty: string
     emptyDescription: string
     continueShopping: string
+    taxesNote?: string
+    coupon?: { enter: string; applied: string; invalid: string }
     removeItem: string
     updateQuantity: string
     subtotal: string
@@ -1995,6 +2179,137 @@ export const translations: Record<Language, Translations> = {
       refillCylinder: "Refill Cylinder",
       refill: "Refill"
     },
+    trackOrder: {
+      headerTitle: "Track Your Order",
+      headerSubtitle: "Enter your Aramex waybill number to get real-time tracking information",
+      form: {
+        title: "Track Shipment",
+        waybillLabel: "Waybill Number",
+        placeholder: "Enter your waybill number (e.g., 1234567890)",
+        placeholderShort: "Enter your waybill number",
+        help: "You can find your waybill number in the shipping confirmation email",
+        submit: "Track Order",
+        submitting: "Tracking..."
+      },
+      errors: {
+        emptyWaybill: "Please enter a waybill number",
+        shortWaybill: "Waybill number must be at least 8 characters long"
+      },
+      info: {
+        email: {
+          title: "Check Your Email",
+          body: "Your waybill number was sent to your email address when your order was shipped. Check your inbox and spam folder."
+        },
+        help: {
+          title: "Need Help?",
+          body: "Can't find your waybill number? Contact our support team and we'll help you track your order."
+        }
+      },
+      features: {
+        title: "What You Can Track",
+        realtime: { title: "Real-time Status", body: "Get live updates on your package location and delivery status" },
+        history: { title: "Detailed History", body: "View complete tracking history with timestamps and locations" },
+        alerts: { title: "Delivery Alerts", body: "Get notified about any delivery issues or exceptions" }
+      },
+      results: {
+        waybill: "Waybill",
+        historyTitle: "Tracking History",
+        noInfo: "No tracking information available yet."
+      },
+      noResults: {
+        title: "No Tracking Information Found",
+        desc: "We couldn't find any tracking information for waybill number:",
+        hint: "Please check the waybill number and try again, or contact our support team."
+      },
+      help: {
+        title: "Need Help?",
+        cantFind: {
+          title: "Can't find your waybill number?",
+          body: "Your waybill number was sent to your email when your order was shipped. Check your inbox or spam folder.",
+          buttonEmail: "Check Email"
+        },
+        stillIssues: {
+          title: "Still having issues?",
+          body: "Our support team is here to help you track your order.",
+          buttonSupport: "Contact Support"
+        }
+      }
+    },
+    account: {
+      loading: "Loading account data...",
+      loadingErrorTitle: "Loading Error",
+      tryAgain: "Try Again",
+      errors: {
+        notAuthenticated: "Not authenticated",
+        failedLoad: "Failed to load account data"
+      },
+      welcome: "Welcome",
+      manageAccount: "Manage your account and orders",
+      stats: { orders: "Orders", rating: "Rating" },
+      profile: {
+        title: "Profile Information",
+        fullName: "Full Name",
+        phoneNumber: "Phone Number",
+        phone: "Phone",
+        email: "Email",
+        emailUnchangeable: "Email cannot be changed",
+        save: "Save Changes",
+        cancel: "Cancel",
+        edit: "Edit"
+      },
+      address: {
+        title: "Address",
+        district: "District",
+        city: "City",
+        country: "Country",
+        countryValue: "Saudi Arabia",
+        enterDistrict: "Enter district",
+        enterCity: "Enter city",
+        shortAddress: "Short Address",
+        nationalAddressLink: "National Address",
+        optional: "(optional)",
+        placeholder: "JESA3591",
+        formatHint: "Format: 4 letters followed by 4 numbers (e.g., JESA3591)",
+        save: "Save Address",
+        saving: "Saving...",
+        cancel: "Cancel",
+        viewLabel: "Address",
+        edit: "Edit"
+      },
+      password: {
+        title: "Change Password",
+        current: "Current Password",
+        new: "New Password",
+        confirm: "Confirm Password",
+        change: "Change Password",
+        cancel: "Cancel",
+        security: "Account Security",
+        strong: "Strong Password",
+        lastUpdated: "Last updated: 1 month ago"
+      },
+      orders: {
+        title: "Orders & Returns",
+        itemsSuffix: "items",
+        view: "View",
+        viewAll: "View All Orders"
+      },
+      toasts: {
+        nameRequired: "Please fill in full name",
+        loginFirst: "Please log in first",
+        profileSaved: "Profile saved successfully!",
+        profileSaveError: "Error saving profile",
+        addressValidation: "Please fill in district and city",
+        nationalAddressInvalid: "Format must be: 4 letters followed by 4 numbers (e.g., JESA3591)",
+        addressSaved: "Address saved successfully!",
+        addressSaveError: "Error saving address",
+        passwordAllRequired: "All fields are required",
+        passwordMismatch: "New passwords do not match",
+        passwordTooShort: "Password must be at least 8 characters",
+        passwordNotAuthenticated: "Not authenticated",
+        passwordChanged: "Password changed successfully",
+        passwordChangeError: "Error changing password"
+      }
+    },
     banner: {
       messages: {
         freeDelivery: "🚚 Free delivery on orders above 150 ﷼",
@@ -2246,10 +2561,178 @@ export const translations: Record<Language, Translations> = {
         priceHighToLow: "Price: High to Low",
         highestRated: "Highest Rated",
         newest: "Newest",
-        loadMore: "Load More Products"
+        loadMore: "Load More Products",
+        quickStats: "Quick Stats",
+        totalProducts: "Total Products",
+        categories: "Categories",
+        brands: "Brands",
+        inStock: "In Stock",
+        filters: "Filters",
+        priceRange: "Price Range",
+        minPrice: "Min Price",
+        maxPrice: "Max Price",
+        customerRating: "Customer Rating",
+        availability: "Availability",
+        specialOffers: "Special Offers",
+        allCategories: "All Categories",
+        inStockOnly: "In Stock Only",
+        newProducts: "New Products",
+        bestSellers: "Best Sellers",
+        onSale: "On Sale",
+        clearAll: "Clear all",
+        showResults: "Show Results",
+        productsFound: "products found"
+      },
+      search: {
+        placeholder: "Search products, brands, or categories...",
+        helpText: "Search for products by name, brand, or category. Results will update as you type.",
+        searchingFor: "Searching for",
+        results: "result",
+        clearSearch: "Clear search"
+      },
+      sort: {
+        mostPopular: "Most Popular",
+        priceLowToHigh: "Price: Low to High",
+        priceHighToLow: "Price: High to Low",
+        newestFirst: "Newest First",
+        highestRated: "Highest Rated",
+        helpText: "Choose how to sort the products. Options include popularity, price, newest, and rating."
+      },
+      pagination: {
+        previous: "Previous",
+        next: "Next"
+      },
+      contact: {
+        hero: { title: "Get in Touch", subtitle: "We're here to help. Choose the best way to reach us." },
+        options: {
+          heading: "Contact Options",
+          whatsapp: { title: "WhatsApp", availability: "Typical replies 9–5", button: "Chat on WhatsApp" },
+          email: { title: "Email", availability: "We reply within 1 business day", button: "Email support@drinkmates.com" },
+          chat: {
+            title: "Live Chat",
+            checking: "Checking availability...",
+            loginRequired: "Login required to start chat",
+            avgReply: "Avg. reply ~2 min",
+            opensAt: "Opens",
+            buttonLoading: "Loading...",
+            buttonLogin: "Login to chat",
+            buttonStart: "Start live chat"
+          },
+          show: "Show",
+          hide: "Hide"
+        },
+        status: { available: "Live now", offline: "Offline", always: "24/7", loginRequired: "Login required" },
+        form: {
+          title: "Contact Form",
+          subtitle: "Send us a message anytime.",
+          reason: "Reason for contact",
+          reasons: {
+            general: "General Inquiry",
+            order: "Order Related",
+            billing: "Billing Question",
+            technical: "Technical Support",
+            refund: "Refund Request",
+            other: "Other"
+          },
+          name: "Full name *",
+          namePlaceholder: "Enter your full name",
+          nameRequired: "Name is required",
+          email: "Email *",
+          emailPlaceholder: "Enter your email",
+          emailRequired: "Valid email is required",
+          phone: "Phone (optional)",
+          phoneHint: "For faster follow-up",
+          message: "Message *",
+          messagePlaceholder: "Tell us how we can help you...",
+          messageMin: "Minimum 10 characters",
+          attachments: "Attachments (optional)",
+          uploadBtn: "Upload up to 3 files / 10MB total",
+          uploadHint: "(JPG, PNG, GIF, PDF)",
+          consent: "I agree to the privacy policy and terms of service",
+          submit: "Send message",
+          submitting: "Sending...",
+          errors: {
+            fillAll: "Please fill in all required fields",
+            consent: "Please agree to the privacy policy and terms of service",
+            maxFiles: "Maximum 3 files allowed",
+            fileTooLarge: "File too large. Maximum 10MB allowed.",
+            invalidType: "Invalid file type. Only JPG, PNG, GIF, and PDF allowed.",
+            submitFail: "Failed to send message"
+          },
+          success: {
+            heading: "We've received your message — ticket DM-",
+            subtitle: "We'll reply within 1 business day. A confirmation email has been sent.",
+            another: "Send Another Message"
+          },
+          history: {
+            title: "Your Previous Messages & Responses",
+            yourMessage: "Your message:",
+            ourResponse: "Our response:"
+          }
+        },
+        faq: {
+          heading: "Frequently Asked Questions",
+          searchPlaceholder: "Search our FAQ…",
+          cta: "Didn't find what you need?",
+          categories: {
+            orders: "Orders & Delivery",
+            refill: "Refill & Exchange",
+            returns: "Returns & Warranty",
+            payment: "Payment & Billing"
+          },
+          viewAll: "View all {{count}} questions →",
+          emailSubject: "FAQ Question",
+          emailBody: "I couldn't find the answer to my question in the FAQ. Here's what I need help with:\n\n"
+        },
+        map: {
+          visit: "Visit Our Office",
+          seeUs: "Come and see us in person",
+          officeInfo: "Office Information",
+          address: "Address",
+          businessHours: "Business Hours",
+          phone: "Phone",
+          getDirections: "Get Directions",
+          googleMaps: "Google Maps",
+          appleMaps: "Apple Maps",
+          city: "As Salamah, Jeddah",
+          country: "Saudi Arabia"
+        }
+      },
+      categoryPages: {
+        explorePremium: "Explore Our Premium",
+        loadingProducts: "Loading premium products...",
+        failedToLoad: "Failed to load products. Please try again later.",
+        noProductsFound: "No products found in this category.",
+        checkBackLater: "Please check back later or try a different category.",
+        errorLoading: "Error Loading Products",
+        activeFilters: "Active filters:",
+        tryAgain: "Try Again",
+        filterApplied: "filter applied",
+        filtersApplied: "filters applied",
+        trySearchingFor: "Try searching for:",
+        shopByCategory: "Shop by Category",
+        discoverCollection: "Discover our premium collection of soda makers, flavors, and accessories",
+        shopAllProducts: "Shop All Products",
+        omnifizzTitle: "OmniFizz Soda Makers",
+        omnifizzDescription: "Premium carbonation for all beverages",
+        luxeTitle: "Luxe Soda Makers",
+        luxeDescription: "Luxurious and elegant carbonation experience",
+        sodamakers: {
+          title: "Explore Our Premium Soda Makers"
+        },
+        flavors: {
+          title: "Explore Our Premium Flavors"
+        },
+        accessories: {
+          title: "Explore Our Premium Accessories"
+        },
+        co2: {
+          title: "Explore Our CO2 Cylinders"
+        }
       },
       products: {
         addToCart: "ADD TO CART",
+        selectOptions: "Select Options",
         outOfStock: "OUT OF STOCK",
         new: "🆕 NEW",
         popular: "⭐ POPULAR",
@@ -2273,6 +2756,20 @@ export const translations: Record<Language, Translations> = {
           italianFlavors: "Italian Flavors",
           accessories: "Accessories"
         }
+      },
+      refill: {
+        loadingTitle: "Loading CO2 cylinders...",
+        loadingSubtitle: "Please wait while we retrieve the latest cylinder information.",
+        errorTitle: "Unable to load cylinder data",
+        retry: "Retry",
+        carousel: { goTo: "Go to slide" },
+        choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
+        qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days" },
+        discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
+        cta: { addToCart: "Add cylinders to cart", subscribe: "Subscribe & save 20%", premium: "Premium membership" },
+        why: { title: "Why choose our service?", f1: "Food-grade CO2 for beverages", f2: "3-5 day turnaround", f3: "Home pickup and delivery", f4: "Quality guaranteed" },
+        summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:" },
+        tabs: { faqs: "FAQs", description: "Description", reviews: "Reviews", faqsTitle: "Frequently Asked Questions", faqsSubtitle: "Everything you need to know about our cylinder service", productDescription: "Product Description", keyFeatures: "Key Features:", customerReviews: "Customer Reviews" }
       },
       customerReviews: {
         title: "What Our",
@@ -4076,6 +4573,8 @@ export const translations: Record<Language, Translations> = {
       empty: "Your cart is empty",
       emptyDescription: "Add some items to your cart to get started",
       continueShopping: "Continue Shopping",
+      taxesNote: "Taxes and discount codes calculated at checkout",
+      coupon: { enter: "Please enter a coupon code", applied: "Coupon applied successfully", invalid: "Invalid coupon code" },
       removeItem: "Remove Item",
       updateQuantity: "Update Quantity",
       subtotal: "Subtotal",
@@ -4253,6 +4752,137 @@ export const translations: Record<Language, Translations> = {
       userMenu: "قائمة المستخدم",
       refillCylinder: "إعادة ملء الأسطوانة",
       refill: "إعادة ملء"
+    },
+    trackOrder: {
+      headerTitle: "تتبع طلبك",
+      headerSubtitle: "أدخل رقم بوليصة أرامكس للحصول على معلومات تتبع فورية",
+      form: {
+        title: "تتبع الشحنة",
+        waybillLabel: "رقم البوليصة",
+        placeholder: "أدخل رقم البوليصة (مثال: 1234567890)",
+        placeholderShort: "أدخل رقم البوليصة",
+        help: "يمكنك العثور على رقم البوليصة في بريد تأكيد الشحن",
+        submit: "تتبع الطلب",
+        submitting: "جارٍ التتبع..."
+      },
+      errors: {
+        emptyWaybill: "يرجى إدخال رقم البوليصة",
+        shortWaybill: "يجب أن يكون رقم البوليصة 8 أحرف على الأقل"
+      },
+      info: {
+        email: {
+          title: "تحقق من بريدك الإلكتروني",
+          body: "تم إرسال رقم البوليصة إلى بريدك الإلكتروني عند شحن طلبك. تحقق من صندوق الوارد والرسائل غير المرغوب فيها."
+        },
+        help: {
+          title: "هل تحتاج مساعدة؟",
+          body: "لا يمكنك العثور على رقم البوليصة؟ تواصل مع فريق الدعم وسنساعدك في تتبع طلبك."
+        }
+      },
+      features: {
+        title: "ما الذي يمكنك تتبعه",
+        realtime: { title: "حالة فورية", body: "احصل على تحديثات مباشرة حول موقع الطرد وحالة التوصيل" },
+        history: { title: "تاريخ مفصل", body: "اعرض سجل التتبع الكامل مع الطوابع الزمنية والمواقع" },
+        alerts: { title: "تنبيهات التوصيل", body: "احصل على إشعارات بشأن أي مشاكل أو استثناءات في التوصيل" }
+      },
+      results: {
+        waybill: "رقم البوليصة",
+        historyTitle: "سجل التتبع",
+        noInfo: "لا توجد معلومات تتبع متاحة بعد."
+      },
+      noResults: {
+        title: "لم يتم العثور على معلومات تتبع",
+        desc: "لم نتمكن من العثور على أي معلومات تتبع لرقم البوليصة:",
+        hint: "يرجى التحقق من رقم البوليصة والمحاولة مرة أخرى، أو التواصل مع فريق الدعم."
+      },
+      help: {
+        title: "هل تحتاج مساعدة؟",
+        cantFind: {
+          title: "لا يمكنك العثور على رقم البوليصة؟",
+          body: "تم إرسال رقم البوليصة إلى بريدك الإلكتروني عند شحن طلبك. تحقق من صندوق الوارد أو الرسائل غير المرغوب فيها.",
+          buttonEmail: "تحقق من البريد"
+        },
+        stillIssues: {
+          title: "ما زالت هناك مشكلة؟",
+          body: "فريق الدعم لدينا هنا لمساعدتك في تتبع طلبك.",
+          buttonSupport: "اتصل بالدعم"
+        }
+      }
+    },
+    account: {
+      loading: "جاري تحميل بيانات الحساب...",
+      loadingErrorTitle: "خطأ في التحميل",
+      tryAgain: "إعادة المحاولة",
+      errors: {
+        notAuthenticated: "غير مسجل الدخول",
+        failedLoad: "فشل في تحميل بيانات الحساب"
+      },
+      welcome: "مرحباً",
+      manageAccount: "إدارة حسابك وطلباتك",
+      stats: { orders: "الطلبات", rating: "التقييم" },
+      profile: {
+        title: "معلومات الملف الشخصي",
+        fullName: "الاسم الكامل",
+        phoneNumber: "رقم الهاتف",
+        phone: "الهاتف",
+        email: "البريد الإلكتروني",
+        emailUnchangeable: "لا يمكن تغيير البريد الإلكتروني",
+        save: "حفظ التغييرات",
+        cancel: "إلغاء",
+        edit: "تعديل"
+      },
+      address: {
+        title: "العنوان",
+        district: "الحي",
+        city: "المدينة",
+        country: "البلد",
+        countryValue: "المملكة العربية السعودية",
+        enterDistrict: "أدخل الحي",
+        enterCity: "أدخل المدينة",
+        shortAddress: "العنوان المختصر",
+        nationalAddressLink: "العنوان الوطني",
+        optional: "(اختياري)",
+        placeholder: "JESA3591",
+        formatHint: "التنسيق: 4 أحرف متبوعة بـ 4 أرقام (مثال: JESA3591)",
+        save: "حفظ العنوان",
+        saving: "جاري الحفظ...",
+        cancel: "إلغاء",
+        viewLabel: "العنوان",
+        edit: "تعديل"
+      },
+      password: {
+        title: "تغيير كلمة المرور",
+        current: "كلمة المرور الحالية",
+        new: "كلمة المرور الجديدة",
+        confirm: "تأكيد كلمة المرور",
+        change: "تغيير كلمة المرور",
+        cancel: "إلغاء",
+        security: "أمان الحساب",
+        strong: "كلمة مرور قوية",
+        lastUpdated: "آخر تحديث: منذ شهر"
+      },
+      orders: {
+        title: "الطلبات والإرجاع",
+        itemsSuffix: "عناصر",
+        view: "عرض",
+        viewAll: "عرض جميع الطلبات"
+      },
+      toasts: {
+        nameRequired: "يرجى ملء الاسم الكامل",
+        loginFirst: "يرجى تسجيل الدخول أولاً",
+        profileSaved: "تم حفظ الملف الشخصي بنجاح!",
+        profileSaveError: "حدث خطأ في حفظ الملف الشخصي",
+        addressValidation: "يرجى ملء الحي والمدينة",
+        nationalAddressInvalid: "يجب أن يكون التنسيق: 4 أحرف متبوعة بـ 4 أرقام (مثال: JESA3591)",
+        addressSaved: "تم حفظ العنوان بنجاح!",
+        addressSaveError: "حدث خطأ في حفظ العنوان",
+        passwordAllRequired: "جميع الحقول مطلوبة",
+        passwordMismatch: "كلمة المرور الجديدة غير متطابقة",
+        passwordTooShort: "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+        passwordNotAuthenticated: "غير مسجل الدخول",
+        passwordChanged: "تم تغيير كلمة المرور بنجاح",
+        passwordChangeError: "حدث خطأ في تغيير كلمة المرور"
+      }
     },
     banner: {
       messages: {
@@ -4505,10 +5135,178 @@ export const translations: Record<Language, Translations> = {
         priceHighToLow: "السعر: من الأعلى إلى الأقل",
         highestRated: "الأعلى تقييماً",
         newest: "الأحدث",
-        loadMore: "تحميل المزيد من المنتجات"
+        loadMore: "تحميل المزيد من المنتجات",
+        quickStats: "إحصائيات سريعة",
+        totalProducts: "إجمالي المنتجات",
+        categories: "الفئات",
+        brands: "العلامات التجارية",
+        inStock: "متوفر",
+        filters: "الفلاتر",
+        priceRange: "نطاق السعر",
+        minPrice: "الحد الأدنى للسعر",
+        maxPrice: "الحد الأقصى للسعر",
+        customerRating: "تقييم العملاء",
+        availability: "التوفر",
+        specialOffers: "العروض الخاصة",
+        allCategories: "جميع الفئات",
+        inStockOnly: "متوفر فقط",
+        newProducts: "منتجات جديدة",
+        bestSellers: "الأكثر مبيعاً",
+        onSale: "عروض",
+        clearAll: "مسح الكل",
+        showResults: "عرض النتائج",
+        productsFound: "منتج موجود"
+      },
+      search: {
+        placeholder: "البحث عن المنتجات أو العلامات التجارية أو الفئات...",
+        helpText: "ابحث عن المنتجات بالاسم أو العلامة التجارية أو الفئة. ستحدّث النتائج أثناء الكتابة.",
+        searchingFor: "البحث عن",
+        results: "نتيجة",
+        clearSearch: "مسح البحث"
+      },
+      sort: {
+        mostPopular: "الأكثر شعبية",
+        priceLowToHigh: "السعر: من الأقل إلى الأعلى",
+        priceHighToLow: "السعر: من الأعلى إلى الأقل",
+        newestFirst: "الأحدث أولاً",
+        highestRated: "الأعلى تقييماً",
+        helpText: "اختر طريقة ترتيب المنتجات. الخيارات تشمل الشعبية والسعر والأحدث والتقييم."
+      },
+      pagination: {
+        previous: "السابق",
+        next: "التالي"
+      },
+      contact: {
+        hero: { title: "تواصل معنا", subtitle: "نحن هنا لمساعدتك. اختر أفضل طريقة للتواصل معنا." },
+        options: {
+          heading: "خيارات التواصل",
+          whatsapp: { title: "واتساب", availability: "الردود عادة 9–5", button: "الدردشة عبر واتساب" },
+          email: { title: "البريد الإلكتروني", availability: "نرد خلال يوم عمل واحد", button: "أرسل بريدًا إلى support@drinkmates.com" },
+          chat: {
+            title: "الدردشة المباشرة",
+            checking: "جارٍ التحقق من التوفر...",
+            loginRequired: "يلزم تسجيل الدخول لبدء الدردشة",
+            avgReply: "متوسط الرد ~2 دقيقة",
+            opensAt: "تفتح في",
+            buttonLoading: "جارٍ التحميل...",
+            buttonLogin: "سجّل الدخول للدردشة",
+            buttonStart: "ابدأ الدردشة المباشرة"
+          },
+          show: "عرض",
+          hide: "إخفاء"
+        },
+        status: { available: "مباشرة الآن", offline: "غير متصل", always: "طوال اليوم", loginRequired: "يتطلب تسجيل الدخول" },
+        form: {
+          title: "نموذج التواصل",
+          subtitle: "أرسل لنا رسالة في أي وقت.",
+          reason: "سبب التواصل",
+          reasons: {
+            general: "استفسار عام",
+            order: "بخصوص الطلب",
+            billing: "سؤال عن الفواتير",
+            technical: "دعم فني",
+            refund: "طلب استرداد",
+            other: "أخرى"
+          },
+          name: "الاسم الكامل *",
+          namePlaceholder: "أدخل اسمك الكامل",
+          nameRequired: "الاسم مطلوب",
+          email: "البريد الإلكتروني *",
+          emailPlaceholder: "أدخل بريدك الإلكتروني",
+          emailRequired: "البريد الإلكتروني مطلوب",
+          phone: "الهاتف (اختياري)",
+          phoneHint: "لتسريع المتابعة",
+          message: "الرسالة *",
+          messagePlaceholder: "أخبرنا كيف يمكننا مساعدتك...",
+          messageMin: "الحد الأدنى 10 أحرف",
+          attachments: "المرفقات (اختياري)",
+          uploadBtn: "ارفع حتى 3 ملفات / 10MB",
+          uploadHint: "(JPG, PNG, GIF, PDF)",
+          consent: "أوافق على سياسة الخصوصية وشروط الخدمة",
+          submit: "إرسال الرسالة",
+          submitting: "جارٍ الإرسال...",
+          errors: {
+            fillAll: "يرجى تعبئة جميع الحقول المطلوبة",
+            consent: "يرجى الموافقة على سياسة الخصوصية وشروط الخدمة",
+            maxFiles: "الحد الأقصى 3 ملفات",
+            fileTooLarge: "الملف كبير جدًا. الحد الأقصى 10MB.",
+            invalidType: "نوع ملف غير صالح. المسموح JPG و PNG و GIF و PDF",
+            submitFail: "فشل إرسال الرسالة"
+          },
+          success: {
+            heading: "لقد استلمنا رسالتك — التذكرة DM-",
+            subtitle: "سنرد خلال يوم عمل واحد. تم إرسال رسالة تأكيد.",
+            another: "أرسل رسالة أخرى"
+          },
+          history: {
+            title: "رسائلك السابقة والردود",
+            yourMessage: "رسالتك:",
+            ourResponse: "ردّنا:"
+          }
+        },
+        faq: {
+          heading: "الأسئلة الشائعة",
+          searchPlaceholder: "ابحث في الأسئلة الشائعة…",
+          cta: "لم تجد ما تبحث عنه؟",
+          categories: {
+            orders: "الطلبات والتسليم",
+            refill: "التعبئة والاستبدال",
+            returns: "الإرجاع والضمان",
+            payment: "الدفع والفواتير"
+          },
+          viewAll: "عرض جميع {{count}} سؤالًا →",
+          emailSubject: "سؤال عن الأسئلة الشائعة",
+          emailBody: "لم أجد الإجابة على سؤالي في الأسئلة الشائعة. أحتاج مساعدة بخصوص:\n\n"
+        },
+        map: {
+          visit: "زر مكتبنا",
+          seeUs: "يسعدنا زيارتك",
+          officeInfo: "معلومات المكتب",
+          address: "العنوان",
+          businessHours: "ساعات العمل",
+          phone: "الهاتف",
+          getDirections: "احصل على الاتجاهات",
+          googleMaps: "خرائط قوقل",
+          appleMaps: "خرائط آبل",
+          city: "السلامة، جدة",
+          country: "المملكة العربية السعودية"
+        }
+      },
+      categoryPages: {
+        explorePremium: "استكشف منتجاتنا المميزة",
+        loadingProducts: "جاري تحميل المنتجات المميزة...",
+        failedToLoad: "فشل تحميل المنتجات. يرجى المحاولة مرة أخرى لاحقاً.",
+        noProductsFound: "لم يتم العثور على منتجات في هذه الفئة.",
+        checkBackLater: "يرجى التحقق لاحقاً أو تجربة فئة مختلفة.",
+        errorLoading: "خطأ في تحميل المنتجات",
+        activeFilters: "الفلاتر النشطة:",
+        tryAgain: "حاول مرة أخرى",
+        filterApplied: "فلتر مطبق",
+        filtersApplied: "فلاتر مطبقة",
+        trySearchingFor: "جرب البحث عن:",
+        shopByCategory: "تسوق حسب الفئة",
+        discoverCollection: "اكتشف مجموعتنا المميزة من صانعات الصودا والنكهات والإكسسوارات",
+        shopAllProducts: "تسوق جميع المنتجات",
+        omnifizzTitle: "صانعات الصودا أومني فيز",
+        omnifizzDescription: "تغويز مميز لجميع المشروبات",
+        luxeTitle: "صانعات الصودا الفاخرة",
+        luxeDescription: "تجربة تغويز فاخرة وأنيقة",
+        sodamakers: {
+          title: "استكشف صانعات الصودا المميزة لدينا"
+        },
+        flavors: {
+          title: "استكشف نكهاتنا المميزة"
+        },
+        accessories: {
+          title: "استكشف الإكسسوارات المميزة لدينا"
+        },
+        co2: {
+          title: "استكشف أسطوانات ثاني أكسيد الكربون لدينا"
+        }
       },
       products: {
         addToCart: "أضف إلى السلة",
+        selectOptions: "اختر الخيارات",
         outOfStock: "نفذت الكمية",
         new: "🆕 جديد",
         popular: "⭐ شائع",
@@ -4532,6 +5330,20 @@ export const translations: Record<Language, Translations> = {
           italianFlavors: "النكهات الإيطالية",
           accessories: "الملحقات"
         }
+      },
+      refill: {
+        loadingTitle: "جارٍ تحميل أسطوانات CO2...",
+        loadingSubtitle: "يرجى الانتظار بينما نسترجع أحدث معلومات الأسطوانات.",
+        errorTitle: "تعذر تحميل بيانات الأسطوانات",
+        retry: "إعادة المحاولة",
+        carousel: { goTo: "اذهب إلى الشريحة" },
+        choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينكميت", nonDrinkmate: "غير درينكميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
+        qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل" },
+        discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
+        cta: { addToCart: "أضف الأسطوانات إلى السلة", subscribe: "اشترك ووفر 20%", premium: "عضوية مميزة" },
+        why: { title: "لماذا تختار خدمتنا؟", f1: "CO2 صالح للاستخدام الغذائي", f2: "دورة 3-5 أيام", f3: "استلام وتسليم من المنزل", f4: "جودة مضمونة" },
+        summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:" },
+        tabs: { faqs: "الأسئلة الشائعة", description: "الوصف", reviews: "التقييمات", faqsTitle: "الأسئلة الشائعة", faqsSubtitle: "كل ما تحتاج لمعرفته حول خدمة الأسطوانات", productDescription: "وصف المنتج", keyFeatures: "الميزات الرئيسية:", customerReviews: "آراء العملاء" }
       },
       customerReviews: {
         title: "ماذا يقول",
@@ -6131,6 +6943,8 @@ export const translations: Record<Language, Translations> = {
       empty: "سلتك فارغة",
       emptyDescription: "أضف بعض العناصر إلى سلة التسوق للبدء",
       continueShopping: "متابعة التسوق",
+      taxesNote: "سيتم احتساب الضرائب وأكواد الخصم عند الدفع",
+      coupon: { enter: "يرجى إدخال رمز الكوبون", applied: "تم تطبيق الكوبون بنجاح", invalid: "رمز الكوبون غير صالح" },
       removeItem: "إزالة العنصر",
       updateQuantity: "تحديث الكمية",
       subtotal: "المجموع الفرعي",

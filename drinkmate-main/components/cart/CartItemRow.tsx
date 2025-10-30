@@ -7,6 +7,7 @@ import { useCartSettings } from '@/lib/contexts/cart-settings-context'
 import { useState } from 'react'
 import { getImageUrl } from '@/lib/utils/image-utils'
 import { getCategoryName } from '@/lib/utils/category-utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface CartItem {
   id: string | number
@@ -25,6 +26,7 @@ export default function CartItemRow({ item }: CartItemRowProps) {
   const { updateQuantity, removeItem, saveForLater } = useCart()
   const { getText } = useCartSettings()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const { t } = useTranslation()
 
   const onDecrement = () => {
     if (item.quantity === 1) setConfirmDelete(true)
@@ -57,9 +59,7 @@ export default function CartItemRow({ item }: CartItemRowProps) {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h3 className="text-ink-900 font-medium truncate">{item.name}</h3>
-            <p className="text-sm text-ink-600 mt-0.5">
-              Unit price: <Currency amount={item.price} />
-            </p>
+            <p className="text-sm text-ink-600 mt-0.5">{t('cart.price')}: <Currency amount={item.price} /></p>
             {item.category && (
               <p className="text-xs text-ink-500 mt-0.5">{getCategoryName(item.category)}</p>
             )}
@@ -123,19 +123,19 @@ export default function CartItemRow({ item }: CartItemRowProps) {
         {/* Delete confirm (inline) */}
         {confirmDelete && (
           <div className="mt-3 p-3 rounded-md bg-danger-light text-danger flex items-center justify-between">
-            <span>Remove this item?</span>
+            <span>{t('cart.removeItem')}</span>
             <div className="flex gap-2">
               <button 
                 className="px-3 py-1 bg-white rounded-md" 
                 onClick={() => setConfirmDelete(false)}
               >
-                Cancel
+                {getText('general.continueShoppingEn')}
               </button>
               <button 
                 className="px-3 py-1 bg-danger text-white rounded-md" 
                 onClick={handleRemove}
               >
-                Remove
+                {getText('general.removeEn')}
               </button>
             </div>
           </div>

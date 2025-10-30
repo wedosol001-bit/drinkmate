@@ -12,6 +12,7 @@ import { ProductCardProps, Product, ProductVariant } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Heart, Eye, ShoppingCart, Star, Zap, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "@/lib/contexts/translation-context"
 import YouTubeThumbnail from "@/components/ui/YouTubeThumbnail"
 import styles from "@/components/ui/product-image-zoom.module.css"
 
@@ -39,6 +40,7 @@ export default function ProductCard({
   isInWishlist?: boolean
   isInComparison?: boolean
 }) {
+  const { t } = useTranslation()
   const hasVariants = (product.variants?.length ?? 0) > 0
 
   // Default selected variant: first in-stock, otherwise first available
@@ -346,12 +348,12 @@ export default function ProductCard({
             >
               {hasVariants && !selected ? (
                 <>
-                  <span>Select Options</span>
+                  <span>{t("shop.products.selectOptions")}</span>
                 </>
               ) : (
                 <>
                   <ShoppingCart className="w-4 h-4" />
-                  {!isInStock ? "Out of Stock" : "Add to Cart"}
+                  {!isInStock ? t("shop.products.outOfStock") : t("shop.products.addToCart")}
                 </>
               )}
             </Button>

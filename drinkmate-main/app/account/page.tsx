@@ -141,7 +141,7 @@ export default function AccountDashboard() {
         // Get auth token
         const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
         if (!token) {
-          setError('Not authenticated')
+          setError(t('account.errors.notAuthenticated'))
           return
         }
 
@@ -184,7 +184,7 @@ export default function AccountDashboard() {
           setOrders([])
         }
       } catch (err) {
-        setError('Failed to load account data')
+        setError(t('account.errors.failedLoad'))
       } finally {
         setLoading(false)
       }
@@ -201,18 +201,14 @@ export default function AccountDashboard() {
     try {
       // Basic validation
       if (!profile.name.trim()) {
-        toast.error(
-          language === 'AR' ? 'يرجى ملء الاسم الكامل' : 'Please fill in full name'
-        )
+        toast.error(t('account.toasts.nameRequired'))
         return
       }
 
       // Make API call to save the profile
       const token = getAuthToken()
       if (!token) {
-        toast.error(
-          language === 'AR' ? 'يرجى تسجيل الدخول أولاً' : 'Please log in first'
-        )
+        toast.error(t('account.toasts.loginFirst'))
         return
       }
 
@@ -254,14 +250,10 @@ export default function AccountDashboard() {
 
       setIsEditingProfile(false)
       
-      toast.success(
-        language === 'AR' ? 'تم حفظ الملف الشخصي بنجاح!' : 'Profile saved successfully!'
-      )
+      toast.success(t('account.toasts.profileSaved'))
     } catch (error) {
       console.error('Error saving profile:', error)
-      toast.error(
-        language === 'AR' ? 'حدث خطأ في حفظ الملف الشخصي' : 'Error saving profile'
-      )
+      toast.error(t('account.toasts.profileSaveError'))
     }
   }
 
@@ -271,26 +263,20 @@ export default function AccountDashboard() {
       
       // Basic validation
       if (!profile.district.trim() || !profile.city.trim()) {
-        toast.error(
-          language === 'AR' ? 'يرجى ملء الحي والمدينة' : 'Please fill in district and city'
-        )
+        toast.error(t('account.toasts.addressValidation'))
         return
       }
 
       // Validate national address format if provided
       if (profile.nationalAddress && !/^[A-Z]{4}[0-9]{4}$/.test(profile.nationalAddress)) {
-        toast.error(
-          language === 'AR' ? 'يجب أن يكون التنسيق: 4 أحرف متبوعة بـ 4 أرقام (مثال: JESA3591)' : 'Format must be: 4 letters followed by 4 numbers (e.g., JESA3591)'
-        )
+        toast.error(t('account.toasts.nationalAddressInvalid'))
         return
       }
 
       // Make API call to save the address
       const token = getAuthToken()
       if (!token) {
-        toast.error(
-          language === 'AR' ? 'يرجى تسجيل الدخول أولاً' : 'Please log in first'
-        )
+        toast.error(t('account.toasts.loginFirst'))
         return
       }
 
@@ -341,14 +327,10 @@ export default function AccountDashboard() {
       
       // Show success message
       console.log('Address saved successfully!')
-      toast.success(
-        language === 'AR' ? 'تم حفظ العنوان بنجاح!' : 'Address saved successfully!'
-      )
+      toast.success(t('account.toasts.addressSaved'))
     } catch (error) {
       console.error('Error saving address:', error)
-      toast.error(
-        language === 'AR' ? 'حدث خطأ في حفظ العنوان' : 'Error saving address'
-      )
+      toast.error(t('account.toasts.addressSaveError'))
     } finally {
       setIsSavingAddress(false)
     }
@@ -358,32 +340,24 @@ export default function AccountDashboard() {
     try {
       // Basic validation
       if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-        toast.error(
-          language === 'AR' ? 'جميع الحقول مطلوبة' : 'All fields are required'
-        )
+        toast.error(t('account.toasts.passwordAllRequired'))
         return
       }
 
       if (passwordData.newPassword !== passwordData.confirmPassword) {
-        toast.error(
-          language === 'AR' ? 'كلمة المرور الجديدة غير متطابقة' : 'New passwords do not match'
-        )
+        toast.error(t('account.toasts.passwordMismatch'))
         return
       }
 
       if (passwordData.newPassword.length < 8) {
-        toast.error(
-          language === 'AR' ? 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' : 'Password must be at least 8 characters'
-        )
+        toast.error(t('account.toasts.passwordTooShort'))
         return
       }
 
       // Get auth token
       const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
       if (!token) {
-        toast.error(
-          language === 'AR' ? 'غير مسجل الدخول' : 'Not authenticated'
-        )
+        toast.error(t('account.toasts.passwordNotAuthenticated'))
         return
       }
 
@@ -407,9 +381,7 @@ export default function AccountDashboard() {
       }
 
       // Success
-      toast.success(
-        language === 'AR' ? 'تم تغيير كلمة المرور بنجاح' : 'Password changed successfully'
-      )
+      toast.success(t('account.toasts.passwordChanged'))
 
       // Reset form
     setPasswordData({
@@ -421,9 +393,7 @@ export default function AccountDashboard() {
 
     } catch (error) {
       console.error('Error changing password:', error)
-      toast.error(
-        language === 'AR' ? 'حدث خطأ في تغيير كلمة المرور' : 'Error changing password'
-      )
+      toast.error(t('account.toasts.passwordChangeError'))
     }
   }
 
@@ -472,9 +442,7 @@ export default function AccountDashboard() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-gray-600">
-            {language === 'AR' ? 'جاري تحميل بيانات الحساب...' : 'Loading account data...'}
-          </p>
+          <p className="text-gray-600">{t('account.loading')}</p>
         </div>
       </div>
     )
@@ -486,13 +454,9 @@ export default function AccountDashboard() {
         <div className="text-red-600 mb-4">
           <AlertCircle className="w-12 h-12 mx-auto" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          {language === 'AR' ? 'خطأ في التحميل' : 'Loading Error'}
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('account.loadingErrorTitle')}</h3>
         <p className="text-gray-600 mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>
-          {language === 'AR' ? 'إعادة المحاولة' : 'Try Again'}
-        </Button>
+        <Button onClick={() => window.location.reload()}>{t('account.tryAgain')}</Button>
       </div>
     )
   }
@@ -505,25 +469,19 @@ export default function AccountDashboard() {
           <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold mb-2">
-                  {language === 'AR' ? `مرحباً، ${profile.name}` : `Welcome, ${profile.name}`}
-                </h1>
-                <p className="text-blue-100 text-lg">
-                  {language === 'AR' ? 'إدارة حسابك وطلباتك' : 'Manage your account and orders'}
-                </p>
+                <h1 className="text-4xl font-bold mb-2">{`${t('account.welcome')}, ${profile.name}`}</h1>
+                <p className="text-blue-100 text-lg">{t('account.manageAccount')}</p>
               </div>
               <div className="hidden md:flex items-center space-x-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold">{orders.length}</div>
-                  <div className="text-blue-100 text-sm">
-                    {language === 'AR' ? 'الطلبات' : 'Orders'}
-                  </div>
+                  <div className="text-blue-100 text-sm">{t('account.stats.orders')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold">4.8</div>
                   <div className="text-blue-100 text-sm flex items-center gap-1">
                     <Star className="h-4 w-4 fill-current" />
-                    {language === 'AR' ? 'التقييم' : 'Rating'}
+                    {t('account.stats.rating')}
                   </div>
                 </div>
               </div>
@@ -541,7 +499,7 @@ export default function AccountDashboard() {
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <User className="h-6 w-6 text-blue-600" />
                   </div>
-                  {language === 'AR' ? 'معلومات الملف الشخصي' : 'Profile Information'}
+                  {t('account.profile.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -549,7 +507,7 @@ export default function AccountDashboard() {
                   <div className="space-y-6">
                     <div>
                       <Label htmlFor="name" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'الاسم الكامل' : 'Full Name'}
+                        {t('account.profile.fullName')}
                       </Label>
                       <Input
                         id="name"
@@ -560,7 +518,7 @@ export default function AccountDashboard() {
                     </div>
                     <div>
                       <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'رقم الهاتف' : 'Phone Number'}
+                        {t('account.profile.phoneNumber')}
                       </Label>
                       <Input
                         id="phone"
@@ -571,7 +529,7 @@ export default function AccountDashboard() {
                     </div>
                     <div>
                       <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'البريد الإلكتروني' : 'Email'}
+                        {t('account.profile.email')}
                       </Label>
                       <Input
                         id="email"
@@ -579,14 +537,12 @@ export default function AccountDashboard() {
                         disabled
                         className="mt-2 bg-gray-50 border-gray-200"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
-                        {language === 'AR' ? 'لا يمكن تغيير البريد الإلكتروني' : 'Email cannot be changed'}
-                      </p>
+                      <p className="text-xs text-gray-500 mt-1">{t('account.profile.emailUnchangeable')}</p>
                     </div>
                     <div className="flex gap-3">
                       <Button onClick={handleProfileSave} className="flex-1 bg-blue-600 hover:bg-blue-700">
                         <Save className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'حفظ التغييرات' : 'Save Changes'}
+                        {t('account.profile.save')}
                       </Button>
                       <Button 
                         variant="outline" 
@@ -594,7 +550,7 @@ export default function AccountDashboard() {
                         className="px-6"
                       >
                         <X className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'إلغاء' : 'Cancel'}
+                        {t('account.profile.cancel')}
                       </Button>
                     </div>
                   </div>
@@ -602,7 +558,7 @@ export default function AccountDashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-500 mb-1">{language === 'AR' ? 'الاسم الكامل' : 'Full Name'}</p>
+                        <p className="text-sm text-gray-500 mb-1">{t('account.profile.fullName')}</p>
                         <p className="font-semibold text-lg">{profile.name}</p>
                       </div>
                       <Button
@@ -612,15 +568,15 @@ export default function AccountDashboard() {
                         className="hover:bg-blue-50"
                       >
                         <Edit3 className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'تعديل' : 'Edit'}
+                        {t('account.profile.edit')}
                       </Button>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">{language === 'AR' ? 'البريد الإلكتروني' : 'Email'}</p>
+                      <p className="text-sm text-gray-500 mb-1">{t('account.profile.email')}</p>
                       <p className="font-medium text-gray-900">{profile.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">{language === 'AR' ? 'رقم الهاتف' : 'Phone'}</p>
+                      <p className="text-sm text-gray-500 mb-1">{t('account.profile.phone')}</p>
                       <p className="font-medium text-gray-900">{profile.phone}</p>
                     </div>
                   </div>
@@ -635,7 +591,7 @@ export default function AccountDashboard() {
                   <div className="p-2 bg-green-100 rounded-lg">
                     <MapPin className="h-6 w-6 text-green-600" />
                   </div>
-                  {language === 'AR' ? 'العنوان' : 'Address'}
+                  {t('account.address.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -644,7 +600,7 @@ export default function AccountDashboard() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="district" className="text-sm font-semibold text-gray-700">
-                          {language === 'AR' ? 'الحي' : 'District'}
+                          {t('account.address.district')}
                         </Label>
                         <Input
                           id="district"
@@ -654,12 +610,12 @@ export default function AccountDashboard() {
                             district: e.target.value
                           })}
                           className="mt-2 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                          placeholder={language === 'AR' ? 'أدخل الحي' : 'Enter district'}
+                          placeholder={t('account.address.enterDistrict')}
                         />
                       </div>
                       <div>
                         <Label htmlFor="city" className="text-sm font-semibold text-gray-700">
-                          {language === 'AR' ? 'المدينة' : 'City'}
+                          {t('account.address.city')}
                         </Label>
                         <Input
                           id="city"
@@ -669,21 +625,21 @@ export default function AccountDashboard() {
                             city: e.target.value
                           })}
                           className="mt-2 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                          placeholder={language === 'AR' ? 'أدخل المدينة' : 'Enter city'}
+                          placeholder={t('account.address.enterCity')}
                         />
                       </div>
                     </div>
                     <div>
                       <Label htmlFor="country" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'البلد' : 'Country'}
+                        {t('account.address.country')}
                       </Label>
                       <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 mt-2">
-                        Saudi Arabia
+                        {t('account.address.countryValue')}
                       </div>
                     </div>
                     <div>
                       <Label htmlFor="nationalAddress" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'العنوان المختصر' : 'Short Address'} (<a href="https://splonline.com.sa/en/national-address-1/" target="_blank" rel="noopener noreferrer" className="text-[#12d6fa] hover:text-[#0bc4e8] underline">{language === 'AR' ? 'العنوان الوطني' : 'National Address'}</a>) {language === 'AR' ? '(اختياري)' : '(optional)'}
+                        {t('account.address.shortAddress')} (<a href="https://splonline.com.sa/en/national-address-1/" target="_blank" rel="noopener noreferrer" className="text-[#12d6fa] hover:text-[#0bc4e8] underline">{t('account.address.nationalAddressLink')}</a>) {t('account.address.optional')}
                       </Label>
                       <Input
                         id="nationalAddress"
@@ -693,11 +649,11 @@ export default function AccountDashboard() {
                           nationalAddress: e.target.value.toUpperCase()
                         })}
                         className="mt-2 border-gray-300 focus:border-green-500 focus:ring-green-500 font-mono tracking-wider"
-                        placeholder="JESA3591"
+                        placeholder={t('account.address.placeholder')}
                         maxLength={8}
                         pattern="[A-Z]{4}[0-9]{4}"
                       />
-                      <p className="text-xs text-gray-500 mt-1">{language === 'AR' ? 'التنسيق: 4 أحرف متبوعة بـ 4 أرقام (مثال: JESA3591)' : 'Format: 4 letters followed by 4 numbers (e.g., JESA3591)'}</p>
+                      <p className="text-xs text-gray-500 mt-1">{t('account.address.formatHint')}</p>
                     </div>
                     <div className="flex gap-3">
                       <Button 
@@ -710,10 +666,7 @@ export default function AccountDashboard() {
                         ) : (
                           <Save className="h-4 w-4 mr-2" />
                         )}
-                        {isSavingAddress 
-                          ? (language === 'AR' ? 'جاري الحفظ...' : 'Saving...') 
-                          : (language === 'AR' ? 'حفظ العنوان' : 'Save Address')
-                        }
+                        {isSavingAddress ? t('account.address.saving') : t('account.address.save')}
                       </Button>
                       <Button 
                         variant="outline" 
@@ -722,7 +675,7 @@ export default function AccountDashboard() {
                         className="px-6"
                       >
                         <X className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'إلغاء' : 'Cancel'}
+                        {t('account.address.cancel')}
                       </Button>
                     </div>
                   </div>
@@ -730,7 +683,7 @@ export default function AccountDashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-500 mb-1">{language === 'AR' ? 'العنوان' : 'Address'}</p>
+                        <p className="text-sm text-gray-500 mb-1">{t('account.address.viewLabel')}</p>
                         <p className="font-semibold text-lg">{profile.district}</p>
                         <p className="text-gray-600">
                           {profile.city}, {profile.country}
@@ -744,7 +697,7 @@ export default function AccountDashboard() {
                         className="hover:bg-green-50"
                       >
                         <Edit3 className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'تعديل' : 'Edit'}
+                        {t('account.address.edit')}
                       </Button>
                     </div>
                   </div>
@@ -759,7 +712,7 @@ export default function AccountDashboard() {
                   <div className="p-2 bg-purple-100 rounded-lg">
                     <Lock className="h-6 w-6 text-purple-600" />
                   </div>
-                  {language === 'AR' ? 'تغيير كلمة المرور' : 'Change Password'}
+                  {t('account.password.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -767,7 +720,7 @@ export default function AccountDashboard() {
                   <div className="space-y-6">
                     <div>
                       <Label htmlFor="currentPassword" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'كلمة المرور الحالية' : 'Current Password'}
+                        {t('account.password.current')}
                       </Label>
                       <div className="relative mt-2">
                         <Input
@@ -788,7 +741,7 @@ export default function AccountDashboard() {
                     </div>
                     <div>
                       <Label htmlFor="newPassword" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'كلمة المرور الجديدة' : 'New Password'}
+                        {t('account.password.new')}
                       </Label>
                       <div className="relative mt-2">
                         <Input
@@ -809,7 +762,7 @@ export default function AccountDashboard() {
                     </div>
                     <div>
                       <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">
-                        {language === 'AR' ? 'تأكيد كلمة المرور' : 'Confirm Password'}
+                        {t('account.password.confirm')}
                       </Label>
                       <div className="relative mt-2">
                         <Input
@@ -831,7 +784,7 @@ export default function AccountDashboard() {
                     <div className="flex gap-3">
                       <Button onClick={handlePasswordChange} className="flex-1 bg-purple-600 hover:bg-purple-700">
                         <Shield className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'تغيير كلمة المرور' : 'Change Password'}
+                        {t('account.password.change')}
                       </Button>
                       <Button 
                         variant="outline" 
@@ -839,7 +792,7 @@ export default function AccountDashboard() {
                         className="px-6"
                       >
                         <X className="h-4 w-4 mr-2" />
-                        {language === 'AR' ? 'إلغاء' : 'Cancel'}
+                        {t('account.password.cancel')}
                       </Button>
                     </div>
                   </div>
@@ -847,9 +800,9 @@ export default function AccountDashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-500 mb-1">{language === 'AR' ? 'أمان الحساب' : 'Account Security'}</p>
-                        <p className="font-semibold text-lg">{language === 'AR' ? 'كلمة مرور قوية' : 'Strong Password'}</p>
-                        <p className="text-sm text-gray-600">{language === 'AR' ? 'آخر تحديث: منذ شهر' : 'Last updated: 1 month ago'}</p>
+                        <p className="text-sm text-gray-500 mb-1">{t('account.password.security')}</p>
+                        <p className="font-semibold text-lg">{t('account.password.strong')}</p>
+                        <p className="text-sm text-gray-600">{t('account.password.lastUpdated')}</p>
                       </div>
                       <Button
                         variant="outline"
@@ -879,7 +832,7 @@ export default function AccountDashboard() {
                   <div className="p-2 bg-orange-100 rounded-lg">
                     <ShoppingBag className="h-6 w-6 text-orange-600" />
                   </div>
-                  {language === 'AR' ? 'الطلبات والإرجاع' : 'Orders & Returns'}
+                  {t('account.orders.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -900,7 +853,7 @@ export default function AccountDashboard() {
                           <div className="font-bold text-xl text-gray-900">
                             <SaudiRiyal amount={order.total} size="lg" />
                           </div>
-                          <p className="text-sm text-gray-500">{order.itemsCount} items</p>
+                          <p className="text-sm text-gray-500">{order.itemsCount} {t('account.orders.itemsSuffix')}</p>
                         </div>
                       </div>
                       <div className="flex items-center text-sm text-gray-600 mb-4">
@@ -923,7 +876,7 @@ export default function AccountDashboard() {
                           className="hover:bg-orange-50 hover:border-orange-200"
                         >
                           <Eye className="h-4 w-4 mr-2" />
-                          {language === 'AR' ? 'عرض' : 'View'}
+                          {t('account.orders.view')}
                         </Button>
                       </div>
                     </div>
@@ -934,7 +887,7 @@ export default function AccountDashboard() {
                     onClick={handleViewAllOrders}
                   >
                     <TrendingUp className="h-5 w-5 mr-2" />
-                    {language === 'AR' ? 'عرض جميع الطلبات' : 'View All Orders'}
+                    {t('account.orders.viewAll')}
                   </Button>
                 </div>
               </CardContent>

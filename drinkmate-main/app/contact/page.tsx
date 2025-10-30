@@ -54,6 +54,7 @@ function ContactOptionCard({
   status?: 'available' | 'offline' | '24/7' | 'login-required'
   disabled?: boolean
 }) {
+  const { t } = useTranslation()
   const getStatusColor = () => {
     switch (status) {
       case 'available': return 'bg-green-100 text-green-800'
@@ -66,11 +67,11 @@ function ContactOptionCard({
 
   const getStatusText = () => {
     switch (status) {
-      case 'available': return 'Live now'
-      case 'offline': return 'Offline'
-      case '24/7': return '24/7'
-      case 'login-required': return 'Login required'
-      default: return 'Available'
+      case 'available': return t('contact.status.available')
+      case 'offline': return t('contact.status.offline')
+      case '24/7': return t('contact.status.always')
+      case 'login-required': return t('contact.status.loginRequired')
+      default: return t('contact.status.available')
     }
   }
 
@@ -103,7 +104,7 @@ function ContactOptionCard({
               ? 'bg-orange-500 hover:bg-orange-600 text-white hover:shadow-md'
               : 'bg-[#12d6fa] hover:bg-[#0fb8d9] text-white hover:shadow-md'
         }`}
-        title={disabled ? "Chat is available 9-5. You can still use WhatsApp or the form." : ""}
+        title={disabled ? t('contact.options.chat.checking') : ""}
       >
         {buttonText}
       </button>
@@ -123,6 +124,7 @@ function FAQAccordion({
   isExpanded: boolean
   onToggle: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
       <button 
@@ -146,7 +148,7 @@ function FAQAccordion({
             {questions.length > 3 && (
               <div className="pt-2">
                 <button className="text-xs text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
-                  View all {questions.length} questions →
+                  {t('contact.faq.viewAll').replace('{{count}}', String(questions.length))}
                 </button>
               </div>
             )}
@@ -220,20 +222,20 @@ function ContactForm() {
     const newFiles = Array.from(e.target.files || [])
     
     if (files.length + newFiles.length > 3) {
-      toast.error('Maximum 3 files allowed')
+      toast.error(t('contact.form.errors.maxFiles'))
       return
     }
 
     const validFiles: File[] = []
     for (const file of newFiles) {
       if (file.size > 10 * 1024 * 1024) {
-        toast.error('File too large. Maximum 10MB allowed.')
+        toast.error(t('contact.form.errors.fileTooLarge'))
         continue
       }
       
       const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf']
       if (!allowedTypes.includes(file.type)) {
-        toast.error('Invalid file type. Only JPG, PNG, GIF, and PDF allowed.')
+        toast.error(t('contact.form.errors.invalidType'))
         continue
       }
       
@@ -253,12 +255,12 @@ function ContactForm() {
 
     try {
       if (!formData.name || !formData.email || !formData.reason || !formData.message) {
-        toast.error('Please fill in all required fields')
+        toast.error(t('contact.form.errors.fillAll'))
         return
       }
 
       if (!formData.consent) {
-        toast.error('Please agree to the privacy policy and terms of service')
+        toast.error(t('contact.form.errors.consent'))
         return
       }
 
@@ -295,11 +297,11 @@ function ContactForm() {
         })
         setFiles([])
       } else {
-        toast.error(result.error || 'Failed to send message')
+        toast.error(result.error || t('contact.form.errors.submitFail'))
       }
     } catch (error) {
       console.error('Form submission error:', error)
-      toast.error('Failed to send message')
+      toast.error(t('contact.form.errors.submitFail'))
     } finally {
       setIsSubmitting(false)
     }
@@ -311,17 +313,17 @@ function ContactForm() {
         <CardContent className="p-6 text-center">
           <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-green-800 mb-2">
-            We've received your message — ticket DM-{ticketId}
+            {t('contact.form.success.heading')} {ticketId}
           </h3>
           <p className="text-sm text-green-700 mb-4">
-            We'll reply within 1 business day. A confirmation email has been sent.
+            {t('contact.form.success.subtitle')}
           </p>
           <Button 
             onClick={() => setShowSuccess(false)} 
             variant="outline"
             className="rounded-xl border-green-300 text-green-700 hover:bg-green-100"
           >
-            Send Another Message
+            {t('contact.form.success.another')}
           </Button>
         </CardContent>
       </Card>
@@ -332,15 +334,15 @@ function ContactForm() {
     <Card className="border-gray-200 bg-white shadow-lg">
       <CardHeader className="p-6">
         <div>
-          <CardTitle className="text-2xl font-bold text-gray-900 mb-2">Contact Form</CardTitle>
-          <p className="text-gray-600">Send us a message anytime.</p>
+          <CardTitle className="text-2xl font-bold text-gray-900 mb-2">{t('contact.form.title')}</CardTitle>
+          <p className="text-gray-600">{t('contact.form.subtitle')}</p>
         </div>
       </CardHeader>
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Reason Selection */}
           <div>
-            <Label className="text-sm font-medium text-gray-900 mb-4 block">Reason for contact</Label>
+            <Label className="text-sm font-medium text-gray-900 mb-4 block">{t('contact.form.reason')}</Label>
             <div className="grid grid-cols-3 gap-2">
               {reasons.map((reason) => (
                 <button
@@ -353,7 +355,7 @@ function ContactForm() {
                       : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  {reason.label}
+                  {t(`contact.form.reasons.${reason.value}`)}
                 </button>
               ))}
             </div>
@@ -363,68 +365,68 @@ function ContactForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name" className="text-sm font-medium text-gray-900 mb-2 block">
-                Full name *
+                {t('contact.form.name')}
               </Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={t('contact.form.namePlaceholder')}
                 className="h-12 border-gray-200 focus:border-[#12d6fa] focus:ring-[#12d6fa] rounded-xl"
                 required
               />
               {!formData.name && formData.name !== '' && (
-                <p className="text-xs text-red-600 mt-1">Name is required</p>
+                <p className="text-xs text-red-600 mt-1">{t('contact.form.nameRequired')}</p>
               )}
             </div>
             <div>
               <Label htmlFor="email" className="text-sm font-medium text-gray-900 mb-2 block">
-                Email *
+                {t('contact.form.email')}
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="Enter your email"
+                placeholder={t('contact.form.emailPlaceholder')}
                 className="h-12 border-gray-200 focus:border-[#12d6fa] focus:ring-[#12d6fa] rounded-xl"
                 required
               />
               {!formData.email && formData.email !== '' && (
-                <p className="text-xs text-red-600 mt-1">Valid email is required</p>
+                <p className="text-xs text-red-600 mt-1">{t('contact.form.emailRequired')}</p>
               )}
             </div>
           </div>
 
           <div>
             <Label htmlFor="phone" className="text-sm font-medium text-gray-900 mb-2 block">
-              Phone (optional)
+              {t('contact.form.phone')}
             </Label>
             <Input
               id="phone"
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
-              placeholder="Enter your phone number"
+              placeholder={t('contact.form.phone')}
               className="h-12 border-gray-200 focus:border-[#12d6fa] focus:ring-[#12d6fa] rounded-xl"
             />
-            <p className="text-xs text-gray-500 mt-1">For faster follow-up</p>
+            <p className="text-xs text-gray-500 mt-1">{t('contact.form.phoneHint')}</p>
           </div>
 
           <div>
             <Label htmlFor="message" className="text-sm font-medium text-gray-900 mb-2 block">
-              Message *
+              {t('contact.form.message')}
             </Label>
             <Textarea
               id="message"
               value={formData.message}
               onChange={(e) => handleInputChange('message', e.target.value)}
-              placeholder="Tell us how we can help you..."
+              placeholder={t('contact.form.messagePlaceholder')}
               rows={6}
               className="min-h-[150px] border-gray-200 focus:border-[#12d6fa] focus:ring-[#12d6fa] rounded-xl"
               required
             />
             <div className="flex justify-between items-center mt-1">
-              <p className="text-xs text-gray-500">Minimum 10 characters</p>
+              <p className="text-xs text-gray-500">{t('contact.form.messageMin')}</p>
               <p className="text-xs text-gray-400">{formData.message.length}/500</p>
             </div>
           </div>
@@ -432,7 +434,7 @@ function ContactForm() {
           {/* File Upload */}
           <div>
             <Label className="text-sm font-medium text-gray-900 mb-2 block">
-              Attachments (optional)
+              {t('contact.form.attachments')}
             </Label>
             <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 hover:border-[#12d6fa] transition-colors">
               <input
@@ -451,11 +453,9 @@ function ContactForm() {
                 className="w-full h-12 rounded-xl border-gray-200 hover:border-[#12d6fa] hover:text-[#12d6fa]"
               >
                 <Upload className="h-4 w-4 mr-2" />
-                Upload up to 3 files / 10MB total
+                {t('contact.form.uploadBtn')}
               </Button>
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                (JPG, PNG, GIF, PDF)
-              </p>
+              <p className="text-xs text-gray-500 mt-2 text-center">{t('contact.form.uploadHint')}</p>
             </div>
 
             {files.length > 0 && (
@@ -487,14 +487,7 @@ function ContactForm() {
               className="mt-1"
             />
             <Label htmlFor="consent" className="text-sm text-gray-700 leading-relaxed">
-              I agree to the{' '}
-              <a href="/privacy-policy" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">
-                privacy policy
-              </a>{' '}
-              and{' '}
-              <a href="/terms-of-service" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">
-                terms of service
-              </a>
+              {t('contact.form.consent')}
             </Label>
           </div>
 
@@ -506,12 +499,12 @@ function ContactForm() {
             {isSubmitting ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Sending...
+                {t('contact.form.submitting')}
               </>
             ) : (
               <>
                 <Send className="h-4 w-4 mr-2" />
-                Send message
+                {t('contact.form.submit')}
               </>
             )}
           </Button>
@@ -521,7 +514,7 @@ function ContactForm() {
         {contactResponses.length > 0 && (
           <div className="mt-8 pt-6 border-t border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Your Previous Messages & Responses</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('contact.form.history.title')}</h3>
               <Button
                 type="button"
                 variant="outline"
@@ -529,7 +522,7 @@ function ContactForm() {
                 onClick={() => setShowResponses(!showResponses)}
                 className="text-sm"
               >
-                {showResponses ? 'Hide' : 'Show'} ({contactResponses.length})
+                {showResponses ? t('contact.options.hide') : t('contact.options.show')} ({contactResponses.length})
               </Button>
             </div>
             
@@ -552,7 +545,7 @@ function ContactForm() {
                     </div>
                     
                     <div className="mb-3">
-                      <p className="text-sm text-gray-600 mb-1">Your message:</p>
+                      <p className="text-sm text-gray-600 mb-1">{t('contact.form.history.yourMessage')}</p>
                       <p className="text-sm text-gray-800 bg-white p-2 rounded border">
                         {contact.message}
                       </p>
@@ -560,7 +553,7 @@ function ContactForm() {
                     
                     {contact.response && (
                       <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                        <p className="text-sm font-medium text-blue-800 mb-1">Our response:</p>
+                        <p className="text-sm font-medium text-blue-800 mb-1">{t('contact.form.history.ourResponse')}</p>
                         <p className="text-sm text-blue-700">
                           {contact.response.text}
                         </p>
@@ -660,38 +653,38 @@ function ContactPageContent() {
   const faqCategories = [
     {
       id: 'orders',
-      title: 'Orders & Delivery',
+      title: t('contact.faq.categories.orders'),
       questions: [
-        { q: 'How long does delivery take?', a: 'Delivery typically takes 2-3 business days within Riyadh and 3-5 days for other cities.' },
-        { q: 'Can I track my order?', a: 'Yes, you can track your order using the order number in our track order page.' },
-        { q: 'What if my order is delayed?', a: 'We\'ll notify you immediately and provide updates on the new delivery timeline.' }
+        { q: t('contact.faq.categories.orders'), a: '' },
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' }
       ]
     },
     {
       id: 'refill',
-      title: 'Refill & Exchange',
+      title: t('contact.faq.categories.refill'),
       questions: [
-        { q: 'How do I refill my CO2 cylinder?', a: 'You can schedule a refill through our website or contact us directly.' },
-        { q: 'What is the exchange process?', a: 'We\'ll pick up your empty cylinder and deliver a full one within 24 hours.' },
-        { q: 'Is there a fee for cylinder exchange?', a: 'The first exchange is free. Subsequent exchanges have a small service fee.' }
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' }
       ]
     },
     {
       id: 'returns',
-      title: 'Returns & Warranty',
+      title: t('contact.faq.categories.returns'),
       questions: [
-        { q: 'What is your return policy?', a: 'We offer 30-day returns for unopened products in original packaging.' },
-        { q: 'How do I return a product?', a: 'Contact our support team and we\'ll arrange pickup and processing.' },
-        { q: 'What is covered under warranty?', a: 'All soda makers come with a 2-year warranty covering manufacturing defects.' }
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' }
       ]
     },
     {
       id: 'payment',
-      title: 'Payment & Billing',
+      title: t('contact.faq.categories.payment'),
       questions: [
-        { q: 'What payment methods do you accept?', a: 'We accept Mada, Visa, Mastercard, and American Express.' },
-        { q: 'Is my payment information secure?', a: 'Yes, all payments are processed through secure, encrypted channels.' },
-        { q: 'Can I pay in installments?', a: 'Yes, we offer installment plans for orders over 500 SAR.' }
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' },
+        { q: ' ', a: ' ' }
       ]
     }
   ]
@@ -724,13 +717,13 @@ function ContactPageContent() {
               {/* Main Heading with Premium Typography */}
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  Get in Touch
+                  {t('contact.hero.title')}
                 </h1>
               </div>
               
               {/* Description */}
               <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                We're here to help. Choose the best way to reach us.
+                {t('contact.hero.subtitle')}
               </p>
             </div>
           </div>
@@ -745,44 +738,44 @@ function ContactPageContent() {
               <div className="grid lg:grid-cols-[380px_1fr] lg:gap-8 mb-12">
                 {/* Left Column - Contact Options */}
                 <div className="sticky top-24 self-start">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Options</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('contact.options.heading')}</h2>
                   <div className="space-y-6">
                     <ContactOptionCard
                       icon={MessageCircle}
-                      title="WhatsApp"
-                      availability="Typical replies 9–5"
-                      buttonText="Chat on WhatsApp"
+                      title={t('contact.options.whatsapp.title')}
+                      availability={t('contact.options.whatsapp.availability')}
+                      buttonText={t('contact.options.whatsapp.button')}
                       buttonAction={handleWhatsAppClick}
                       status="24/7"
                     />
                     
                     <ContactOptionCard
                       icon={Mail}
-                      title="Email"
-                      availability="We reply within 1 business day"
-                      buttonText="Email support@drinkmates.com"
+                      title={t('contact.options.email.title')}
+                      availability={t('contact.options.email.availability')}
+                      buttonText={t('contact.options.email.button')}
                       buttonAction={handleEmailClick}
                       status="available"
                     />
                     
                     <ContactOptionCard
                       icon={MessageCircle}
-                      title="Live Chat"
+                      title={t('contact.options.chat.title')}
                       availability={
                         isChatStatusLoading
-                          ? "Checking availability..."
+                          ? t('contact.options.chat.checking')
                           : !isAuthenticated 
-                            ? "Login required to start chat" 
+                            ? t('contact.options.chat.loginRequired') 
                             : isChatOnline() 
-                              ? "Avg. reply ~2 min" 
-                              : `Opens ${chatStatus.workingHours.start}`
+                              ? t('contact.options.chat.avgReply') 
+                              : `${t('contact.options.chat.opensAt')} ${chatStatus.workingHours.start}`
                       }
                       buttonText={
                         isChatStatusLoading 
-                          ? t("common.loading")
+                          ? t('contact.options.chat.buttonLoading')
                           : !isAuthenticated 
-                            ? t("contact.loginToChat") 
-                            : t("contact.startLiveChat")
+                            ? t('contact.options.chat.buttonLogin') 
+                            : t('contact.options.chat.buttonStart')
                       }
                       buttonAction={handleChatClick}
                       status={
@@ -807,7 +800,7 @@ function ContactPageContent() {
 
               {/* Bottom Row - FAQ Section (full width) */}
               <div className="max-w-4xl mx-auto">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('contact.faq.heading')}</h2>
                 
                 {/* FAQ Search */}
                 <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-6 shadow-sm">
@@ -815,7 +808,7 @@ function ContactPageContent() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                     <input
                       type="text"
-                      placeholder="Search our FAQ…"
+                      placeholder={t('contact.faq.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500"
@@ -844,7 +837,7 @@ function ContactPageContent() {
                       className="w-full h-12 bg-[#12d6fa] hover:bg-[#0fb8d9] text-white font-medium rounded-2xl transition-colors flex items-center justify-center"
                     >
                       <HelpCircle className="h-4 w-4 mr-2" />
-                      Didn't find what you need?
+                      {t('contact.faq.cta')}
                     </button>
                   </div>
                 </div>
@@ -855,21 +848,21 @@ function ContactPageContent() {
             <div className="lg:hidden space-y-8">
               {/* Contact Options */}
               <div>
-                <h2 className="dm-heading-2 mb-6">Contact Options</h2>
+                <h2 className="dm-heading-2 mb-6">{t('contact.options.heading')}</h2>
                 <div className="space-y-4">
                   <ContactOptionCard
                     icon={MessageCircle}
-                    title="WhatsApp"
-                    availability="Available 24/7 • Typical replies 9–5"
-                    buttonText="Chat on WhatsApp"
+                    title={t('contact.options.whatsapp.title')}
+                    availability={`${t('contact.status.always')} • ${t('contact.options.whatsapp.availability')}`}
+                    buttonText={t('contact.options.whatsapp.button')}
                     buttonAction={handleWhatsAppClick}
                     status="24/7"
                   />
                   
                   <ContactOptionCard
                     icon={Mail}
-                    title="Email"
-                    availability="We reply within 1 business day"
+                    title={t('contact.options.email.title')}
+                    availability={t('contact.options.email.availability')}
                     buttonText="support@drinkmates.com"
                     buttonAction={handleEmailClick}
                     status="available"
@@ -877,22 +870,22 @@ function ContactPageContent() {
                   
                   <ContactOptionCard
                     icon={MessageCircle}
-                    title="Live Chat"
+                    title={t('contact.options.chat.title')}
                     availability={
                       isChatStatusLoading
-                        ? "Checking availability..."
+                        ? t('contact.options.chat.checking')
                         : !isAuthenticated 
-                          ? "Login required to start chat" 
+                          ? t('contact.options.chat.loginRequired') 
                           : isChatOnline() 
-                            ? "Live now • Avg. reply ~2 min" 
-                            : `Chat offline • Opens ${chatStatus.workingHours.start}`
+                            ? `${t('contact.status.available')} • ${t('contact.options.chat.avgReply')}` 
+                            : `${t('contact.status.offline')} • ${t('contact.options.chat.opensAt')} ${chatStatus.workingHours.start}`
                     }
                     buttonText={
                       isChatStatusLoading 
-                        ? t("common.loading")
+                        ? t('contact.options.chat.buttonLoading')
                         : !isAuthenticated 
-                          ? t("contact.loginToChat") 
-                          : t("contact.startLiveChat")
+                          ? t('contact.options.chat.buttonLogin') 
+                          : t('contact.options.chat.buttonStart')
                     }
                     buttonAction={handleChatClick}
                     status={
@@ -911,13 +904,13 @@ function ContactPageContent() {
 
               {/* FAQ Section */}
               <div>
-                <h2 className="dm-heading-2 mb-6">Frequently Asked Questions</h2>
+                <h2 className="dm-heading-2 mb-6">{t('contact.faq.heading')}</h2>
                 <div className="dm-card mb-6">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                     <input
                       type="text"
-                      placeholder="Search our FAQ…"
+                      placeholder={t('contact.faq.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="dm-search w-full"
@@ -946,7 +939,7 @@ function ContactPageContent() {
                       className="dm-btn px-8 py-3 dm-shine"
                     >
                       <HelpCircle className="h-4 w-4 mr-2" />
-                      Didn't find what you need?
+                      {t('contact.faq.cta')}
                     </button>
                   </div>
                 </div>
@@ -962,8 +955,8 @@ function ContactPageContent() {
         <section className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Visit Our Office</h2>
-              <p className="text-lg text-gray-600">Come and see us in person</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('contact.map.visit')}</h2>
+              <p className="text-lg text-gray-600">{t('contact.map.seeUs')}</p>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -972,8 +965,8 @@ function ContactPageContent() {
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                   <div className="text-center text-gray-600">
                     <MapPin className="h-12 w-12 mx-auto mb-2" />
-                    <p className="text-lg font-medium">As Salamah, Jeddah</p>
-                    <p className="text-sm">Saudi Arabia</p>
+                    <p className="text-lg font-medium">{t('contact.map.city')}</p>
+                    <p className="text-sm">{t('contact.map.country')}</p>
                   </div>
                 </div>
                 <div className="absolute inset-0 bg-black/20"></div>
@@ -984,8 +977,8 @@ function ContactPageContent() {
                         <MapPin className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">As Salamah, Jeddah</h3>
-                        <p className="text-sm text-gray-600">Saudi Arabia</p>
+                        <h3 className="font-semibold text-gray-900">{t('contact.map.city')}</h3>
+                        <p className="text-sm text-gray-600">{t('contact.map.country')}</p>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-3">
@@ -996,7 +989,7 @@ function ContactPageContent() {
                         className="inline-flex items-center px-3 py-1.5 bg-[#12d6fa] text-white rounded-md hover:bg-[#0fb8d9] transition-colors text-sm"
                       >
                         <MapPin className="h-3 w-3 mr-1" />
-                        Google Maps
+                        {t('contact.map.googleMaps')}
                       </a>
                       <a
                         href="https://maps.apple.com/?q=As+Salamah,Jeddah,Saudi+Arabia"
@@ -1005,7 +998,7 @@ function ContactPageContent() {
                         className="inline-flex items-center px-3 py-1.5 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors text-sm"
                       >
                         <MapPin className="h-3 w-3 mr-1" />
-                        Apple Maps
+                        {t('contact.map.appleMaps')}
                       </a>
                     </div>
                   </div>
@@ -1015,15 +1008,15 @@ function ContactPageContent() {
               {/* Contact Information */}
               <div className="space-y-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Office Information</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('contact.map.officeInfo')}</h3>
                   <div className="space-y-4">
                     <div className="flex items-start space-x-3">
                       <div className="w-6 h-6 bg-[#12d6fa]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
                         <MapPin className="h-4 w-4 text-[#12d6fa]" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">Address</p>
-                        <p className="text-gray-600">As Salamah District<br />Jeddah, Saudi Arabia</p>
+                        <p className="font-medium text-gray-900">{t('contact.map.address')}</p>
+                        <p className="text-gray-600">{t('contact.map.city')}<br />{t('contact.map.country')}</p>
                       </div>
                     </div>
                     
@@ -1032,7 +1025,7 @@ function ContactPageContent() {
                         <Clock className="h-4 w-4 text-[#12d6fa]" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">Business Hours</p>
+                        <p className="font-medium text-gray-900">{t('contact.map.businessHours')}</p>
                         <p className="text-gray-600">Sunday - Thursday: 9:00 AM - 6:00 PM<br />Friday - Saturday: Closed</p>
                       </div>
                     </div>
@@ -1042,7 +1035,7 @@ function ContactPageContent() {
                         <Phone className="h-4 w-4 text-[#12d6fa]" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">Phone</p>
+                        <p className="font-medium text-gray-900">{t('contact.map.phone')}</p>
                         <p className="text-gray-600">+966 11 123 4567</p>
                       </div>
                     </div>
@@ -1050,8 +1043,8 @@ function ContactPageContent() {
                 </div>
                 
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Get Directions</h3>
-                  <p className="text-gray-600 mb-4">Use the map to get directions to our office or click the button below to open in your preferred maps app.</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('contact.map.getDirections')}</h3>
+                  <p className="text-gray-600 mb-4">{t('contact.map.getDirections')}</p>
                   <div className="flex flex-wrap gap-3">
                     <a
                       href="https://maps.google.com/?q=As+Salamah,Jeddah,Saudi+Arabia"
@@ -1060,7 +1053,7 @@ function ContactPageContent() {
                       className="inline-flex items-center px-4 py-2 bg-[#12d6fa] text-white rounded-lg hover:bg-[#0fb8d9] transition-colors"
                     >
                       <MapPin className="h-4 w-4 mr-2" />
-                      Google Maps
+                      {t('contact.map.googleMaps')}
                     </a>
                     <a
                       href="https://maps.apple.com/?q=As+Salamah,Jeddah,Saudi+Arabia"
@@ -1069,7 +1062,7 @@ function ContactPageContent() {
                       className="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
                     >
                       <MapPin className="h-4 w-4 mr-2" />
-                      Apple Maps
+                      {t('contact.map.appleMaps')}
                     </a>
                   </div>
                 </div>

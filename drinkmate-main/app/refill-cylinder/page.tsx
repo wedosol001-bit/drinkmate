@@ -351,8 +351,8 @@ export default function CO2() {
       <PageLayout currentPage="co2">
         <div className="flex flex-col items-center justify-center h-64 p-8">
           <div className="w-12 h-12 border-4 border-t-[#12d6fa] border-gray-200 rounded-full animate-spin mb-4"></div>
-          <div className="text-lg font-medium">Loading CO2 cylinders...</div>
-          <p className="text-gray-500 text-sm mt-2 text-center">Please wait while we retrieve the latest cylinder information.</p>
+          <div className="text-lg font-medium">{t('refill.loadingTitle')}</div>
+          <p className="text-gray-500 text-sm mt-2 text-center">{t('refill.loadingSubtitle')}</p>
         </div>
       </PageLayout>
     )
@@ -365,13 +365,13 @@ export default function CO2() {
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <Info className="w-6 h-6 text-red-500" />
           </div>
-          <div className="text-lg font-medium text-center">Unable to load cylinder data</div>
+          <div className="text-lg font-medium text-center">{t('refill.errorTitle')}</div>
           <p className="text-gray-500 text-sm mt-2 text-center">{apiError}</p>
           <Button 
             onClick={() => setRetryCount(prev => prev + 1)} 
             className="mt-4 bg-[#12d6fa] hover:bg-[#0bc4e8] text-white"
           >
-            Retry
+            {t('refill.retry')}
           </Button>
         </div>
       </PageLayout>
@@ -460,8 +460,8 @@ export default function CO2() {
                     ? "bg-[#12d6fa] scale-125 shadow-sm" 
                     : "bg-white/60 hover:bg-white/80 hover:scale-110"
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
-                title={`Go to slide ${index + 1}`}
+                aria-label={`${t('refill.carousel.goTo')} ${index + 1}`}
+                title={`${t('refill.carousel.goTo')} ${index + 1}`}
               />
             ))}
           </div>
@@ -538,26 +538,26 @@ export default function CO2() {
                   {/* Pricing Breakdown */}
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-700">Unit price:</span>
+                      <span className="text-gray-700">{t('refill.summary.unitPrice')}</span>
                       <span className="font-semibold text-gray-900">
                         <SaudiRiyal amount={cylinderPrice} size="sm" />
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-700">Subtotal ({quantity} × <SaudiRiyal amount={cylinderPrice} size="sm" />):</span>
+                      <span className="text-gray-700">{t('refill.summary.subtotal')} ({quantity} × <SaudiRiyal amount={cylinderPrice} size="sm" />):</span>
                       <span className="font-semibold text-gray-900">
                         <SaudiRiyal amount={subtotal} size="sm" />
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-700">Delivery:</span>
+                      <span className="text-gray-700">{t('refill.summary.delivery')}</span>
                       <span className={`font-semibold ${deliveryCharge === 0 ? 'text-[#a8f387]' : 'text-gray-900'}`}>
-                        {deliveryCharge === 0 ? 'FREE' : <SaudiRiyal amount={deliveryCharge} size="sm" />}
+                        {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
                       </span>
                     </div>
                     {selectedCylinderData && (selectedCylinderData.originalPrice * quantity) - subtotal > 0 && (
                       <div className="flex justify-between items-center text-[#a8f387]">
-                        <span className="font-semibold">You save:</span>
+                        <span className="font-semibold">{t('refill.summary.youSave')}</span>
                         <span className="font-bold">
                           <SaudiRiyal amount={(selectedCylinderData.originalPrice * quantity) - subtotal} size="sm" />
                         </span>
@@ -568,7 +568,7 @@ export default function CO2() {
                   {/* Total */}
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold text-gray-900">Total:</span>
+                      <span className="text-xl font-bold text-gray-900">{t('refill.summary.total')}</span>
                       <span className="text-2xl font-black text-[#12d6fa]">
                         <SaudiRiyal amount={total} size="lg" />
                       </span>
@@ -577,9 +577,7 @@ export default function CO2() {
                   
                   {/* Additional Info */}
                   <div className="mt-6 text-center">
-                    <p className="text-xs text-gray-500">
-                      * Empty cylinders will be picked up from your location
-                    </p>
+                    <p className="text-xs text-gray-500">{t('refill.summary.pickupNote')}</p>
                   </div>
                 </div>
               </div>
@@ -592,15 +590,15 @@ export default function CO2() {
               {/* Choose Your Cylinder header */}
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
                 <div>
-                  <h2 className="text-3xl font-black text-black tracking-tight">اختر أسطوانتك</h2>
-                  <p className="text-gray-600 mt-2">اختر نوع الأسطوانة</p>
+                  <h2 className="text-3xl font-black text-black tracking-tight">{t('refill.choose.heading')}</h2>
+                  <p className="text-gray-600 mt-2">{t('refill.choose.subheading')}</p>
                 </div>
                 <a 
                   href="/contact" 
                   className="inline-flex items-center space-x-2 text-[#12d6fa] text-sm font-semibold hover:text-[#0bc4e8] transition-colors duration-200"
                 >
                   <Info className="w-4 h-4" />
-                  <span>Need Help?</span>
+                  <span>{t('refill.choose.needHelp')}</span>
                 </a>
               </div>
 
@@ -610,13 +608,13 @@ export default function CO2() {
                   onClick={handleDrinkmateClick}
                   className="flex-1 h-32 bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105"
                 >
-                  درينكميت
+                  {t('refill.choose.drinkmate')}
                 </Button>
                 <Button
                   onClick={handleNonDrinkmateClick}
                   className="flex-1 h-32 bg-[#a8f387] hover:bg-[#9ae374] text-black font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105"
                 >
-                  غير درينكميت
+                  {t('refill.choose.nonDrinkmate')}
                 </Button>
                             </div>
 
@@ -633,15 +631,13 @@ export default function CO2() {
                       readOnly
                       className="w-4 h-4 text-[#a8f387]"
                     />
-                    <label htmlFor="standard-threaded" className="text-lg font-semibold text-gray-900">
-                      خيوط قياسية
-                    </label>
+                    <label htmlFor="standard-threaded" className="text-lg font-semibold text-gray-900">{t('refill.choose.standardThreaded')}</label>
                           </div>
 
                   {/* Brand Dropdown */}
                   <Select value={nonDrinkmateBrand} onValueChange={handleNonDrinkmateBrandChange}>
                     <SelectTrigger className="w-full h-12 border-2 border-[#a8f387] rounded-xl">
-                      <SelectValue placeholder="اختر علامتك التجارية" />
+                      <SelectValue placeholder={t('refill.choose.brandPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="errva">Errva</SelectItem>
@@ -662,12 +658,8 @@ export default function CO2() {
               {/* Enhanced Premium Quantity Control */}
               <div className="space-y-8">
                 <div className="text-center">
-                  <h3 className="text-3xl font-black text-black mb-3">
-                      {t("product.quantity")}
-                  </h3>
-                  <p className="text-gray-600 text-lg">
-                      اختر عدد الأسطوانات المميزة لإعادة التعبئة/التبديل
-                  </p>
+                  <h3 className="text-3xl font-black text-black mb-3">{t('refill.qty.title')}</h3>
+                  <p className="text-gray-600 text-lg">{t('refill.qty.subtitle')}</p>
                 </div>
                 
                 <div className="relative group">
@@ -675,9 +667,7 @@ export default function CO2() {
                   <div className="relative bg-white rounded-3xl border-2 border-[#12d6fa]/30 shadow-sm p-8 group-hover:shadow-md transition-all duration-300">
                     {/* Quantity Selection Form */}
                     <div className="mb-8">
-                      <label className="block text-lg font-semibold text-gray-900 mb-4">
-                        عدد الأسطوانات لإعادة التعبئة/التبديل
-                      </label>
+                      <label className="block text-lg font-semibold text-gray-900 mb-4">{t('refill.qty.label')}</label>
                       <div className="flex items-center justify-center space-x-4">
                         <button
                           onClick={() => handleQuantityChange(-1)}
@@ -701,18 +691,14 @@ export default function CO2() {
                           <Plus className="w-5 h-5" />
                         </button>
                       </div>
-                      <p className="text-center text-sm text-gray-600 mt-3">
-                        يرجى إرجاع {quantity} أسطوانة فارغة
-                      </p>
+                      <p className="text-center text-sm text-gray-600 mt-3">{t('refill.qty.returnNote').replace('{{count}}', String(quantity))}</p>
                     </div>
                     
                     {/* Delivery Information */}
                     <div className="bg-blue-50 rounded-2xl p-4 mb-6 border border-blue-200">
                       <div className="flex items-center justify-center space-x-2">
                         <Truck className="w-5 h-5 text-[#12d6fa]" />
-                        <span className="text-sm font-semibold text-gray-700">
-                          وقت التسليم المتوقع: 3-5 أيام عمل
-                        </span>
+                        <span className="text-sm font-semibold text-gray-700">{t('refill.qty.deliveryInfo')} {t('refill.qty.deliveryTime')}</span>
                       </div>
                     </div>
                     
@@ -732,8 +718,8 @@ export default function CO2() {
                         </div>
                         <div className={`text-sm font-bold transition-colors duration-300 ${
                           quantity >= 2 ? 'text-[#a8f387]' : 'text-gray-600'
-                        }`}>خصم 5%</div>
-                        <div className="text-xs text-gray-600 font-medium">2+ أسطوانات</div>
+                        }`}>{t('refill.discounts.twoPlus')}</div>
+                        <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.twoPlusLabel')}</div>
                         {quantity >= 2 && (
                           <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
                             ✓ نشط
@@ -754,8 +740,8 @@ export default function CO2() {
                         </div>
                         <div className={`text-sm font-bold transition-colors duration-300 ${
                           quantity >= 3 ? 'text-[#12d6fa]' : 'text-gray-600'
-                        }`}>خصم 10%</div>
-                        <div className="text-xs text-gray-600 font-medium">3+ أسطوانات</div>
+                        }`}>{t('refill.discounts.threePlus')}</div>
+                        <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.threePlusLabel')}</div>
                         {quantity >= 3 && (
                           <div className="mt-1 text-xs font-semibold text-[#12d6fa] animate-pulse">
                             ✓ نشط
@@ -776,11 +762,11 @@ export default function CO2() {
                         </div>
                         <div className={`text-sm font-bold transition-colors duration-300 ${
                           quantity >= 4 ? 'text-gray-800' : 'text-gray-600'
-                        }`}>خصم 15%</div>
-                        <div className="text-xs text-gray-600 font-medium">+ تسليم مجاني</div>
+                        }`}>{t('refill.discounts.fourPlus')}</div>
+                        <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.fourPlusLabel')}</div>
                         {quantity >= 4 && (
                           <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
-                            ✓ نشط
+                            {t('refill.discounts.active')}
                           </div>
                         )}
                       </div>
@@ -798,7 +784,7 @@ export default function CO2() {
                     className="relative w-full bg-[#12d6fa] hover:bg-[#0bc4e8] text-white px-10 py-6 rounded-3xl font-black text-xl transition-all duration-300 hover:shadow-md hover:scale-105 border-0 group-hover:shadow-lg"
                   >
                     <ShoppingCart className="w-6 h-6 mr-4 group-hover:animate-bounce" />
-                    أضف الأسطوانات المميزة إلى السلة
+                    {t('refill.cta.addToCart')}
                     <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </div>
@@ -809,36 +795,36 @@ export default function CO2() {
                     className="px-8 py-4 border-2 border-[#12d6fa] rounded-2xl font-bold text-lg hover:bg-[#12d6fa] hover:text-white hover:border-transparent transition-all duration-300 hover:shadow-md hover:scale-105 group"
                   >
                     <Gift className="w-5 h-5 mr-3 group-hover:animate-pulse" />
-                    اشترك ووفر 20%
+                    {t('refill.cta.subscribe')}
                   </Button>
                   <Button
                     variant="outline"
                     className="px-8 py-4 border-2 border-[#12d6fa] rounded-2xl font-bold text-lg hover:bg-[#12d6fa] hover:text-white hover:border-transparent transition-all duration-300 hover:shadow-md hover:scale-105 group"
                   >
                     <Star className="w-5 h-5 mr-3 group-hover:animate-spin" />
-                    عضوية مميزة
+                    {t('refill.cta.premium')}
                   </Button>
                 </div>
                 
                 {/* Additional Premium Features */}
                 <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
-                  <h4 className="text-lg font-bold text-gray-900 mb-4 text-center">لماذا تختار خدمتنا المميزة؟</h4>
+                  <h4 className="text-lg font-bold text-gray-900 mb-4 text-center">{t('refill.why.title')}</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-[#a8f387] flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-700">CO2 معتمد للاستخدام الغذائي</span>
+                      <span className="text-sm font-medium text-gray-700">{t('refill.why.f1')}</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-[#12d6fa] flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-700">دورة 3-5 أيام</span>
+                      <span className="text-sm font-medium text-gray-700">{t('refill.why.f2')}</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-[#a8f387] flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-700">استلام وتسليم من المنزل</span>
+                      <span className="text-sm font-medium text-gray-700">{t('refill.why.f3')}</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-[#12d6fa] flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-700">جودة مضمونة</span>
+                      <span className="text-sm font-medium text-gray-700">{t('refill.why.f4')}</span>
                     </div>
                   </div>
                 </div>
@@ -868,15 +854,15 @@ export default function CO2() {
                     {/* Quantity and Return Info */}
                     <div className="mb-6 space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">{t("product.quantity")}:</span>
+                        <span className="text-gray-700">{t('refill.qty.title')}:</span>
                         <span className="font-semibold text-gray-900">{quantity} أسطوانة</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">مطلوب إرجاع:</span>
+                        <span className="text-gray-700">{t('refill.summary.requiredReturn')}</span>
                         <span className="font-semibold text-gray-900">{quantity} أسطوانة فارغة</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">وقت التسليم:</span>
+                        <span className="text-gray-700">{t('refill.summary.deliveryTime')}</span>
                         <span className="font-semibold text-[#12d6fa]">3-5 أيام عمل</span>
                       </div>
                     </div>
@@ -884,26 +870,26 @@ export default function CO2() {
                     {/* Pricing Breakdown */}
                     <div className="space-y-3 mb-6">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">سعر الوحدة:</span>
+                        <span className="text-gray-700">{t('refill.summary.unitPrice')}</span>
                         <span className="font-semibold text-gray-900">
                           <SaudiRiyal amount={cylinderPrice} size="sm" />
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">المجموع الفرعي ({quantity} × <SaudiRiyal amount={cylinderPrice} size="sm" />):</span>
+                        <span className="text-gray-700">{t('refill.summary.subtotal')} ({quantity} × <SaudiRiyal amount={cylinderPrice} size="sm" />):</span>
                         <span className="font-semibold text-gray-900">
                           <SaudiRiyal amount={subtotal} size="sm" />
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">التسليم:</span>
+                        <span className="text-gray-700">{t('refill.summary.delivery')}</span>
                         <span className={`font-semibold ${deliveryCharge === 0 ? 'text-[#a8f387]' : 'text-gray-900'}`}>
-                          {deliveryCharge === 0 ? 'مجاني' : <SaudiRiyal amount={deliveryCharge} size="sm" />}
+                          {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
                         </span>
                       </div>
                       {selectedCylinderData && (selectedCylinderData.originalPrice * quantity) - subtotal > 0 && (
                         <div className="flex justify-between items-center text-[#a8f387]">
-                          <span className="font-semibold">توفير:</span>
+                          <span className="font-semibold">{t('refill.summary.youSave')}</span>
                           <span className="font-bold">
                             <SaudiRiyal amount={(selectedCylinderData.originalPrice * quantity) - subtotal} size="sm" />
                           </span>
@@ -914,7 +900,7 @@ export default function CO2() {
                     {/* Total */}
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xl font-bold text-gray-900">المجموع:</span>
+                        <span className="text-xl font-bold text-gray-900">{t('refill.summary.total')}</span>
                         <span className="text-2xl font-black text-[#12d6fa]">
                           <SaudiRiyal amount={total} size="lg" />
                         </span>
@@ -923,9 +909,7 @@ export default function CO2() {
                     
                     {/* Additional Info */}
                     <div className="mt-6 text-center">
-                      <p className="text-xs text-gray-500">
-                        * سيتم استلام الأسطوانات الفارغة من موقعك
-                      </p>
+                      <p className="text-xs text-gray-500">{t('refill.summary.pickupNote')}</p>
                     </div>
                   </div>
                 </div>
@@ -943,12 +927,8 @@ export default function CO2() {
           {/* Enhanced How Refill/Exchange Works Section */}
           <div className="py-16">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-black mb-6">
-                كيف تعمل إعادة التعبئة/التبديل
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                عملية مبسطة تجعل إعادة تعبئة وتبديل الأسطوانات بسيطة ومريحة
-              </p>
+              <h2 className="text-4xl md:text-5xl font-black text-black mb-6">{t('home.howItWorks.title')}</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">{t('home.howItWorks.subtitle')}</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">

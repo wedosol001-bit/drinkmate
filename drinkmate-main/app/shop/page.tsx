@@ -901,7 +901,7 @@ function ShopPageContent() {
               <AlertCircle className="w-12 h-12 text-red-500" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-gray-900">Error Loading Products</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t("shop.categoryPages.errorLoading")}</h1>
               <p className="text-gray-600">{error}</p>
             </div>
             <Button 
@@ -909,7 +909,7 @@ function ShopPageContent() {
               className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-xl"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Try Again
+              {t("shop.categoryPages.tryAgain")}
             </Button>
           </div>
         </div>
@@ -956,7 +956,7 @@ function ShopPageContent() {
                   )}
                   <input
                     type="text"
-                    placeholder="Search products, brands, or categories..."
+                    placeholder={t("shop.search.placeholder")}
                     value={filters.searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                     className="w-full pl-12 pr-12 py-3 h-12 sm:h-14 text-sm sm:text-base border-2 border-gray-200 rounded-2xl focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100 transition-all duration-300 bg-white shadow-sm hover:shadow-lg focus:shadow-xl"
@@ -970,8 +970,8 @@ function ShopPageContent() {
                     <button
                       onClick={() => handleSearch('')}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyan-600 transition-colors p-1 rounded-full hover:bg-cyan-50"
-                      aria-label="Clear search"
-                      title="Clear search"
+                      aria-label={t("shop.search.clearSearch")}
+                      title={t("shop.search.clearSearch")}
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -984,10 +984,10 @@ function ShopPageContent() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Search className="w-4 h-4" />
-                        <span>Searching for "{filters.searchQuery}"</span>
+                        <span>{t("shop.search.searchingFor")} "{filters.searchQuery}"</span>
                       </div>
                       <div className="text-sm font-medium text-cyan-600">
-                        {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''}
+                        {filteredProducts.length} {t("shop.search.results")}{filteredProducts.length !== 1 ? 's' : ''}
                       </div>
                     </div>
                   </div>
@@ -995,7 +995,7 @@ function ShopPageContent() {
                 
                 {/* Hidden help text for screen readers */}
                 <div id="search-help" className="sr-only">
-                  Search for products by name, brand, or category. Results will update as you type.
+                  {t("shop.search.helpText")}
                 </div>
               </div>
 
@@ -1022,8 +1022,8 @@ function ShopPageContent() {
                 <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
                 <span className="text-xs sm:text-sm font-semibold text-gray-700">
                   <span className="font-bold text-gray-900">{filteredProducts.length}</span>
-                  <span className="ml-1 hidden sm:inline">products found</span>
-                  <span className="ml-1 sm:hidden">found</span>
+                  <span className="ml-1 hidden sm:inline"> {t("shop.filters.productsFound")}</span>
+                  <span className="ml-1 sm:hidden"> {t("shop.filters.productsFound")}</span>
                 </span>
               </div>
               
@@ -1034,7 +1034,7 @@ function ShopPageContent() {
 
               {/* Enhanced Sort Dropdown */}
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-gray-700 hidden sm:block">Sort by:</span>
+                <span className="text-sm font-semibold text-gray-700 hidden sm:block">{t("shop.filters.sortBy")}</span>
                 <select
                   value={`${sortBy}-${sortOrder}`}
                   onChange={(e) => {
@@ -1045,14 +1045,14 @@ function ShopPageContent() {
                   aria-label="Sort products"
                   aria-describedby="sort-help"
                 >
-                  <option value="popularity-desc">Most Popular</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="newest-desc">Newest First</option>
-                  <option value="rating-desc">Highest Rated</option>
+                  <option value="popularity-desc">{t("shop.sort.mostPopular")}</option>
+                  <option value="price-asc">{t("shop.sort.priceLowToHigh")}</option>
+                  <option value="price-desc">{t("shop.sort.priceHighToLow")}</option>
+                  <option value="newest-desc">{t("shop.sort.newestFirst")}</option>
+                  <option value="rating-desc">{t("shop.sort.highestRated")}</option>
                 </select>
                 <div id="sort-help" className="sr-only">
-                  Choose how to sort the products. Options include popularity, price, newest, and rating.
+                  {t("shop.sort.helpText")}
                 </div>
               </div>
 
@@ -1092,14 +1092,14 @@ function ShopPageContent() {
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                  <span className="text-sm font-semibold text-gray-700">Active filters:</span>
+                  <span className="text-sm font-semibold text-gray-700">{t("shop.categoryPages.activeFilters")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md">
-                    {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} applied
+                    {activeFilterCount} {activeFilterCount > 1 ? t("shop.categoryPages.filtersApplied") : t("shop.categoryPages.filterApplied")}
                   </span>
                   <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    {filteredProducts.length} results
+                    {filteredProducts.length} {t("shop.filters.products")}
                   </div>
                 </div>
               </div>
@@ -1110,7 +1110,7 @@ function ShopPageContent() {
                 className="text-gray-500 hover:text-cyan-600 hover:bg-cyan-50 px-4 py-2 rounded-xl transition-all duration-300 font-medium"
               >
                 <X className="w-4 h-4 mr-2" />
-                Clear all filters
+                {t("shop.filters.clearAll")}
               </Button>
             </div>
           )}
@@ -1126,22 +1126,22 @@ function ShopPageContent() {
               <div className="sticky top-24 space-y-6">
                 {/* Quick Stats Card */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 ml-2">
-                  <h3 className="font-bold text-lg text-gray-900 mb-4 text-left">Quick Stats</h3>
+                  <h3 className="font-bold text-lg text-gray-900 mb-4 text-left">{t("shop.filters.quickStats")}</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 text-left">Total Products</span>
+                      <span className="text-sm text-gray-600 text-left">{t("shop.filters.totalProducts")}</span>
                       <span className="font-bold text-cyan-600">{products.length}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 text-left">Categories</span>
+                      <span className="text-sm text-gray-600 text-left">{t("shop.filters.categories")}</span>
                       <span className="font-bold text-cyan-600">{categories.length}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 text-left">Brands</span>
+                      <span className="text-sm text-gray-600 text-left">{t("shop.filters.brands")}</span>
                       <span className="font-bold text-cyan-600">{brands.length}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 text-left">In Stock</span>
+                      <span className="text-sm text-gray-600 text-left">{t("shop.filters.inStock")}</span>
                       <span className="font-bold text-green-600">
                         {products.filter(p => p.inStock).length}
                       </span>
@@ -1230,10 +1230,10 @@ function ShopPageContent() {
                   
                   <div className="space-y-4 mb-8">
                     <h3 className="text-2xl font-bold text-gray-900">
-                      No products found
+                      {t("shop.categoryPages.noProductsFound")}
                     </h3>
                     <p className="text-gray-600 max-w-lg mx-auto leading-relaxed">
-                      We couldn't find any products matching your criteria. Try adjusting your filters or search terms to discover more products.
+                      {t("shop.categoryPages.checkBackLater")}
                     </p>
                   </div>
 
@@ -1243,7 +1243,7 @@ function ShopPageContent() {
                       className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <RefreshCw className="w-5 h-5 mr-2" />
-                      Clear all filters
+                      {t("shop.filters.clearAll")}
                     </Button>
                     <Button
                       variant="outline"
@@ -1251,13 +1251,13 @@ function ShopPageContent() {
                       className="border-2 border-gray-200 hover:border-cyan-500 hover:bg-cyan-50 text-gray-700 hover:text-cyan-600 px-8 py-3 rounded-2xl font-semibold transition-all duration-300"
                     >
                       <Search className="w-5 h-5 mr-2" />
-                      Browse all products
+                      {t("shop.categoryPages.explorePremium")} {t("shop.filters.products")}
                     </Button>
                   </div>
 
                   {/* Quick Suggestions */}
                   <div className="mt-12 max-w-2xl mx-auto">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Try searching for:</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">{t("shop.categoryPages.trySearchingFor")}</h4>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {['soda maker', 'flavors', 'accessories', 'co2 cylinders', 'bottles'].map((term) => (
                         <button

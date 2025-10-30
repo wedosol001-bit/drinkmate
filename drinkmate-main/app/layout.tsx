@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { cairo, montserrat, notoSans, notoArabic } from "@/lib/fonts"
+import localFont from "next/font/local"
 import "./globals.css"
 import { TranslationProvider } from "@/lib/contexts/translation-context"
 import { CartProvider } from "@/lib/contexts/cart-context"
@@ -143,6 +144,16 @@ export const metadata: Metadata = {
   },
 }
 
+// Local Arabic display font: RH ZAK (Thin 100, Bold 700)
+const rhZak = localFont({
+  src: [
+    { path: "../public/fonts/rh-zak/rh-zak-thin.otf", weight: "100", style: "normal" },
+    { path: "../public/fonts/rh-zak/rh-zak-bold.otf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-rh-zak",
+  display: "swap",
+})
+
 export default function RootLayout({
   children,
 }: {
@@ -158,6 +169,7 @@ export default function RootLayout({
         montserrat.variable,
         notoSans.variable,
         notoArabic.variable,
+        rhZak.variable,
       ].join(' ')}
     >
       <head>
@@ -407,7 +419,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${montserrat.variable} ${cairo.variable} ${notoSans.variable} ${notoArabic.variable} font-primary`} suppressHydrationWarning>
+      <body className={`${montserrat.variable} ${cairo.variable} ${notoSans.variable} ${notoArabic.variable} ${rhZak.variable} font-primary`} suppressHydrationWarning>
         <SecurityMiddleware>
           <TranslationProvider>
             <FontProvider />

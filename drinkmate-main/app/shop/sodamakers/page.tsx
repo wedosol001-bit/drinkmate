@@ -10,6 +10,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/contexts/cart-context"
+import { useTranslation } from "@/lib/contexts/translation-context"
 import PageLayout from "@/components/layout/PageLayout"
 import { Star, Loader2, ShoppingCart } from "lucide-react"
 import { shopAPI } from "@/lib/api"
@@ -52,6 +53,7 @@ interface Bundle {
 }
 
 export default function SodamakersPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const [isLoading, setIsLoading] = useState(true)
@@ -187,7 +189,7 @@ export default function SodamakersPage() {
       setSubcategorySections(sections)
     } catch (error) {
       console.error("Error fetching products:", error)
-      setError("Failed to load products. Please try again later.")
+      setError(t("shop.categoryPages.failedToLoad"))
 
       // Fallback to static data if API fails
       setAllSodaMakers([
@@ -354,7 +356,7 @@ export default function SodamakersPage() {
   return (
     <PageLayout currentPage="shop-sodamakers">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">Explore Our Premium Soda Makers</h1>
+        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.sodamakers.title")}</h1>
 
      
 
@@ -364,8 +366,8 @@ export default function SodamakersPage() {
           <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg bg-[#ffc232]">
             <div className="flex items-center justify-between h-full p-4 sm:p-6">
               <div className="text-black flex-1">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">OmniFizz Soda Makers</h2>
-                <p className="text-xs sm:text-sm md:text-base opacity-80">Premium carbonation for all beverages</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{t("shop.categoryPages.omnifizzTitle")}</h2>
+                <p className="text-xs sm:text-sm md:text-base opacity-80">{t("shop.categoryPages.omnifizzDescription")}</p>
               </div>
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 flex-shrink-0 ml-2 sm:ml-4">
                 <Image
@@ -383,8 +385,8 @@ export default function SodamakersPage() {
           <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg bg-black">
             <div className="flex items-center justify-between h-full p-4 sm:p-6">
               <div className="text-white flex-1">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">Luxe Soda Makers</h2>
-                <p className="text-xs sm:text-sm md:text-base opacity-90">Luxurious and elegant carbonation experience</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{t("shop.categoryPages.luxeTitle")}</h2>
+                <p className="text-xs sm:text-sm md:text-base opacity-90">{t("shop.categoryPages.luxeDescription")}</p>
               </div>
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 flex-shrink-0 ml-2 sm:ml-4">
                 <Image
@@ -410,7 +412,7 @@ export default function SodamakersPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-16">
             <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 animate-spin text-[#12d6fa] mb-3 sm:mb-4" />
-            <p className="text-sm sm:text-base text-gray-600 font-medium">Loading premium products...</p>
+            <p className="text-sm sm:text-base text-gray-600 font-medium">{t("shop.categoryPages.loadingProducts")}</p>
           </div>
         ) : (
           <>
@@ -492,8 +494,8 @@ export default function SodamakersPage() {
               })
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No products found in this category.</p>
-                <p className="text-gray-400 text-sm mt-2">Please check back later or try a different category.</p>
+                <p className="text-gray-500 text-lg">{t("shop.categoryPages.noProductsFound")}</p>
+                <p className="text-gray-400 text-sm mt-2">{t("shop.categoryPages.checkBackLater")}</p>
               </div>
             )}
           </>

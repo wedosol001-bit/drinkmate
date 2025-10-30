@@ -6,6 +6,7 @@ import { useCartSettings } from '@/lib/contexts/cart-settings-context'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface CartTotals {
   subtotal: number
@@ -25,20 +26,21 @@ export default function Summary({ totals }: SummaryProps) {
   const [code, setCode] = useState('')
   const [isApplying, setIsApplying] = useState(false)
   const router = useRouter()
+  const { t } = useTranslation()
 
   const handleApplyCoupon = async () => {
     if (!code.trim()) {
-      toast.error('Please enter a coupon code')
+      toast.error(t('cart.coupon.enter'))
       return
     }
 
     setIsApplying(true)
     try {
       // TODO: Implement coupon functionality
-      toast.success('Coupon applied successfully')
+      toast.success(t('cart.coupon.applied'))
       setCode('')
     } catch (error) {
-      toast.error('Invalid coupon code')
+      toast.error(t('cart.coupon.invalid'))
     } finally {
       setIsApplying(false)
     }
@@ -93,9 +95,7 @@ export default function Summary({ totals }: SummaryProps) {
         {getText('general.secureCheckoutEn')}
       </button>
 
-      <p className="mt-2 text-xs text-ink-500">
-        Taxes and discount codes calculated at checkout
-      </p>
+      <p className="mt-2 text-xs text-ink-500">{t('cart.taxesNote')}</p>
     </div>
   )
 }
