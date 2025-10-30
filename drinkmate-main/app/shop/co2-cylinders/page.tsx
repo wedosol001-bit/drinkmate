@@ -90,7 +90,7 @@ const benefits = [
 ]
 
 export default function CO2() {
-  const { isRTL } = useTranslation()
+  const { isRTL, t } = useTranslation()
 
   return (
     <PageLayout currentPage="shop">
@@ -113,12 +113,12 @@ export default function CO2() {
             <h1
               className={`text-2xl sm:text-3xl md:text-5xl font-bold text-white leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-up tracking-tight`}
             >
-              Refill / Exchange Cylinders
+              {isRTL ? 'إعادة تعبئة / استبدال الأسطوانات' : 'Refill / Exchange Cylinders'}
             </h1>
             <p
               className={`text-sm sm:text-base md:text-xl text-gray-200 max-w-3xl mx-auto ${isRTL ? "font-noto-arabic" : "font-noto-sans"} animate-slide-in-up delay-200 leading-relaxed`}
             >
-              Never let your sparkling run out with our fast and amazing refill / exchange service.
+              {isRTL ? 'لا تدع فقاعاتك تنفد مع خدمة إعادة التعبئة / الاستبدال السريعة والمميزة لدينا.' : 'Never let your sparkling run out with our fast and amazing refill / exchange service.'}
             </p>
           </div>
         </div>
@@ -149,8 +149,8 @@ export default function CO2() {
       <section className="py-12 sm:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
           <header className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-            <h2 className="font-bold text-black text-2xl sm:text-3xl md:text-4xl mb-3 sm:mb-4 tracking-tight">Cylinders FAQ</h2>
-            <p className="font-semibold text-black text-base sm:text-lg md:text-xl">All the answers to your cylinders questions</p>
+            <h2 className="font-bold text-black text-2xl sm:text-3xl md:text-4xl mb-3 sm:mb-4 tracking-tight">{isRTL ? 'الأسئلة الشائعة عن الأسطوانات' : 'Cylinders FAQ'}</h2>
+            <p className="font-semibold text-black text-base sm:text-lg md:text-xl">{isRTL ? 'كل الإجابات على أسئلتك حول الأسطوانات' : 'All the answers to your cylinders questions'}</p>
           </header>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
@@ -159,8 +159,20 @@ export default function CO2() {
                 key={card.id}
                 className="bg-white rounded-2xl p-4 sm:p-6 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border border-gray-100"
               >
-                <h3 className="text-base sm:text-lg font-bold text-black mb-2 sm:mb-3 tracking-tight">{card.question}</h3>
-                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{card.answer}</p>
+                <h3 className="text-base sm:text-lg font-bold text-black mb-2 sm:mb-3 tracking-tight">{isRTL ?
+                  (
+                    card.id === 1 ? 'كيف أستبدل أسطوانة CO2 الفارغة؟' :
+                    card.id === 2 ? 'كم يستغرق وقت التوصيل؟' :
+                    card.id === 3 ? 'هل أسطوانات CO2 لديكم آمنة؟' :
+                    'كم لتراً من الصودا يمكن أن تصنعها الأسطوانة الواحدة؟'
+                  ) : card.question}
+                </h3>
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{isRTL ? (
+                  card.id === 1 ? 'أحضر أسطوانتك الفارغة إلى أحد مواقع شركائنا أو اطلب الاستبدال عبر الإنترنت. ستحصل على واحدة ممتلئة فوراً.' :
+                  card.id === 2 ? 'عادةً ما يستغرق التوصيل من 1 إلى 2 يوم عمل حسب موقعك. تتوفر خدمة نفس اليوم في مناطق محددة.' :
+                  card.id === 3 ? 'نعم. تمر جميع أسطوانات CO2 لدينا بفحوصات جودة صارمة وتلبي معايير السلامة الدولية قبل إعادة التعبئة وإعادة الاستخدام.' :
+                  'في المتوسط، يمكن لأسطوانة CO2 سعة 60 لتراً تكربن حتى 60 لتراً من الماء الفوار حسب مستوى التكربن الذي تفضله.'
+                ) : card.answer}</p>
               </div>
             ))}
           </div>

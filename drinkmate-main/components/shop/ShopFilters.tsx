@@ -87,7 +87,7 @@ export default function ShopFilters({
   isOpen = false,
   onClose
 }: ShopFiltersProps) {
-  const { t } = useTranslation()
+  const { t, language } = useTranslation() as any
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['category', 'price']))
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(filters.priceRange)
 
@@ -154,6 +154,19 @@ export default function ShopFilters({
   const handleBooleanFilterChange = useCallback((key: string, value: boolean) => {
     handleFilterChange(key, value)
   }, [handleFilterChange])
+
+  const getCategoryLabel = useCallback((category: { slug: string; name: string }) => {
+    const slug = category.slug.toLowerCase()
+    const name = category.name.toLowerCase()
+
+    if (slug.includes('soda') || name.includes('soda')) return t('home.productCategories.sodaMakers')
+    if (slug.includes('accessor') || name.includes('accessor')) return t('home.productCategories.accessories')
+    if (slug.includes('flavor') || name.includes('flavor')) return t('home.productCategories.premiumItalianFlavors')
+    if (slug.includes('co2') || name.includes('co2')) return t('home.productCategories.co2')
+    if (slug.includes('starter') || name.includes('starter')) return language === 'AR' ? 'مجموعات البداية' : 'Starter Kits'
+    if (name === 'test category') return language === 'AR' ? 'فئة الاختبار' : 'Test Category'
+    return category.name
+  }, [t, language])
 
   const getActiveFilterCount = useCallback(() => {
     let count = 0
@@ -269,7 +282,7 @@ export default function ShopFilters({
                     className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
                   />
                   <Label htmlFor={`category-${category.slug}`} className="text-sm font-medium cursor-pointer">
-                    {category.name}
+                    {getCategoryLabel(category)}
                   </Label>
                 </div>
                 <Badge 

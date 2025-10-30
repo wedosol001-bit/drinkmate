@@ -23,7 +23,7 @@ import { useTranslation } from '@/lib/contexts/translation-context'
 export default function CartPage() {
   const { items, totalPrice, totalItems, loading, error, updateTrigger, addItem, clearCart, updateQuantity, removeItem } = useCart()
   const { ref: summaryRef, inView: summaryInView } = useStickyInView()
-  const { t } = useTranslation()
+  const { t, isRTL } = useTranslation()
   
   // Debug logging removed to prevent hydration issues
 
@@ -42,7 +42,11 @@ export default function CartPage() {
     discount,
     tax,
     total,
-    shippingLabel: isFreeShipping ? 'FREE' : shipping ? <Currency amount={shipping} /> : 'Calculated at checkout'
+    shippingLabel: isFreeShipping 
+      ? (isRTL ? 'مجاني' : 'FREE') 
+      : shipping 
+        ? <Currency amount={shipping} /> 
+        : (isRTL ? 'يُحسب عند الدفع' : 'Calculated at checkout')
   }
 
   // Show loading state

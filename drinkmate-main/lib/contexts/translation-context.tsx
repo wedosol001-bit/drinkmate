@@ -55,17 +55,33 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
 
   const t = (key: string): string => {
     const keys = key.split('.')
+
+    // Try current language first
     let current: any = translations[language]
-    
     for (const k of keys) {
-      if (current && current[k]) {
+      if (current && typeof current === 'object' && k in current) {
         current = current[k]
       } else {
-        return key // Return key if translation not found
+        current = undefined
+        break
       }
     }
+    if (typeof current === 'string') return current
 
-    return current || key
+    // Fallback to English if missing in current language
+    let fallback: any = translations.EN
+    for (const k of keys) {
+      if (fallback && typeof fallback === 'object' && k in fallback) {
+        fallback = fallback[k]
+      } else {
+        fallback = undefined
+        break
+      }
+    }
+    if (typeof fallback === 'string') return fallback
+
+    // Final fallback: return empty string to avoid exposing keys in UI
+    return ''
   }
 
   return (

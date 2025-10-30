@@ -48,7 +48,7 @@ interface Bundle {
 }
 
 export default function AccessoriesPage() {
-  const { t } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const [isLoading, setIsLoading] = useState(true)
@@ -196,13 +196,19 @@ export default function AccessoriesPage() {
         }
         const sections: Array<{ _id: string; name: string; products: Product[] }> = []
         for (const sc of subs) {
-          sections.push({ _id: sc._id, name: sc.name, products: (bySubId[sc._id] || []) })
+          let label = sc.name
+          if (isRTL) {
+            if (sc.name.toLowerCase() === 'bottles') label = 'زجاجات'
+            else if (sc.name.toLowerCase().includes('co2')) label = 'أسطوانات ثاني أكسيد الكربون'
+            else if (sc.name.toLowerCase() === 'tools') label = 'أدوات'
+          }
+          sections.push({ _id: sc._id, name: label, products: (bySubId[sc._id] || []) })
         }
         const otherProducts = Object.entries(bySubId)
           .filter(([sid]) => !subs.find(s => s._id === sid))
           .flatMap(([_, arr]) => arr)
         if (otherProducts.length > 0) {
-          sections.push({ _id: 'others', name: 'Other Accessories', products: otherProducts })
+          sections.push({ _id: 'others', name: isRTL ? 'إكسسوارات أخرى' : 'Other Accessories', products: otherProducts })
         }
         setSubcategorySections(sections)
       } catch (error) {

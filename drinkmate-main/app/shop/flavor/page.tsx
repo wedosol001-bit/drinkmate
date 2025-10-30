@@ -57,7 +57,7 @@ interface Bundle {
 }
 
 export default function FlavorPage() {
-  const { t } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const [isLoading, setIsLoading] = useState(true)
@@ -98,7 +98,7 @@ export default function FlavorPage() {
         name: bundle.name,
         price: bundle.price,
         originalPrice: bundle.originalPrice,
-        subcategory: bundle.subcategory || "Bundles & Promotions of Flavors",
+        subcategory: bundle.subcategory || (isRTL ? "العروض والتجميعات للنكهات" : "Bundles & Promotions of Flavors"),
         image: (() => {
           console.log("Bundle image data:", bundle.images)
           if (bundle.images && bundle.images.length > 0) {
@@ -125,7 +125,7 @@ export default function FlavorPage() {
       // Organize bundles by subcategory
       const bundleBySubcategory: Record<string, Bundle[]> = {}
       for (const bundle of formattedBundles) {
-        const subcategory = bundle.subcategory || "Bundles & Promotions of Flavors"
+        const subcategory = bundle.subcategory || (isRTL ? "العروض والتجميعات للنكهات" : "Bundles & Promotions of Flavors")
         if (!bundleBySubcategory[subcategory]) {
           bundleBySubcategory[subcategory] = []
         }
@@ -509,7 +509,7 @@ export default function FlavorPage() {
             {/* Product Sections */}
             {subcategorySections.filter(section => section.products.length > 0).map((section) => (
               <div key={section._id} className="mb-12 sm:mb-16">
-                <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{section.name}</h2>
+                <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{isRTL && section.name === 'Premium Flavors' ? 'النكهات الفاخرة' : section.name}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                   {section.products.map((product) => renderProductCard(product))}
                 </div>
