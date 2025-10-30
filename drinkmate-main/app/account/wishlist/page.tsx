@@ -138,7 +138,7 @@ export default function WishlistPage() {
               : 'Save products you like to view them here later'
             }
           </p>
-          <Link href="/shop">
+          <Link href={(language === 'AR' ? '/ar' : '') + "/shop"}>
             <Button className="bg-blue-600 hover:bg-blue-700">
               {language === 'AR' ? 'تسوق الآن' : 'Start Shopping'}
             </Button>
@@ -169,7 +169,7 @@ export default function WishlistPage() {
 
                 {/* Quick Actions */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
-                  <Link href={`/shop/${item.product.slug}`}>
+                  <Link href={`${language === 'AR' ? '/ar' : ''}/shop/${item.product.slug}`}>
                     <Button size="sm" variant="secondary">
                       <Eye className="w-4 h-4 mr-1" />
                       {language === 'AR' ? 'عرض' : 'View'}

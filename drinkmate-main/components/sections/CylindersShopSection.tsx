@@ -11,6 +11,7 @@ import ExchangeCylinderCard from "@/components/shop/ExchangeCylinderCard"
 import { useCart } from "@/lib/contexts/cart-context"
 import { toast } from "sonner"
 import styles from "./CylindersShopSection.module.css"
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface CO2Cylinder {
   _id: string
@@ -49,6 +50,7 @@ interface CylindersShopSectionProps {
 
 export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps) {
   const { addItem } = useCart()
+  const { isRTL } = useTranslation()
   const [cylinders, setCylinders] = useState<CO2Cylinder[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -217,22 +219,22 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
   const getSectionTitle = () => {
     switch (type) {
       case 'exchange':
-        return 'Exchange Cylinders'
+        return isRTL ? 'أسطوانات الاستبدال' : 'Exchange Cylinders'
       case 'refill':
         return ''
       default:
-        return 'Shop CO2 Cylinders'
+        return isRTL ? 'تسوق أسطوانات ثاني أكسيد الكربون' : 'Shop CO2 Cylinders'
     }
   }
 
   const getSectionDescription = () => {
     switch (type) {
       case 'exchange':
-        return 'Quick and easy cylinder exchange service'
+        return isRTL ? 'خدمة استبدال الأسطوانات بسرعة وسهولة' : 'Quick and easy cylinder exchange service'
       case 'refill':
         return ''
       default:
-        return 'Choose the perfect CO2 solution for your needs'
+        return isRTL ? 'اختر حل ثاني أكسيد الكربون المناسب لاحتياجك' : 'Choose the perfect CO2 solution for your needs'
     }
   }
 

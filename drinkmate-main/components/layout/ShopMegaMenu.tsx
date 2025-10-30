@@ -72,7 +72,7 @@ function MenuTile({
 }
 
 export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMenuProps) {
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const router = useRouter()
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -112,7 +112,8 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
     onOpenChange(false)
     // Then navigate
     setTimeout(() => {
-      router.push('/shop')
+      const prefix = language === 'AR' ? '/ar' : ''
+      router.push(`${prefix}/shop`)
     }, 100)
   }
 
@@ -179,35 +180,35 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
           {/* Category Grid - Row Layout */}
           <div className="mega-grid grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <MenuTile
-                href="/shop/sodamakers"
+                href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"}
                 title={t("header.sodamakers")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559855/Artic-Black-Machine---Front_pxsies.png"
                 alt={t("header.sodamakers")}
-                onMouseEnter={() => handlePrefetch("/shop/sodamakers")}
+                onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
                 onClick={() => onOpenChange(false)}
               />
               <MenuTile
-                href="/shop/flavor"
+                href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"}
                 title={t("header.flavor")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1759593778/italian-strawberry-lemon-syrup_rjg0tk_c_crop_ar_9_16_ulj06x.png"
                 alt={t("header.flavor")}
-                onMouseEnter={() => handlePrefetch("/shop/flavor")}
+                onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/flavor")}
                 onClick={() => onOpenChange(false)}
               />
               <MenuTile
-                href="/shop/accessories"
+                href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}
                 title={t("header.accessories")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756892916/empty-drinkmate-bottle_dkmtzo.png"
                 alt={t("header.accessories")}
-                onMouseEnter={() => handlePrefetch("/shop/accessories")}
+                onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/accessories")}
                 onClick={() => onOpenChange(false)}
               />
               <MenuTile
-                href="/shop/co2-cylinders"
+                href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
                 title={t("header.co2")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893591/co2-cylinder-single_dcrdnx.png"
                 alt={t("header.co2")}
-                onMouseEnter={() => handlePrefetch("/co2")}
+                onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
                 onClick={() => onOpenChange(false)}
               />
           </div>
@@ -216,10 +217,10 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
           {/* Shop All Link */}
           <div className="mt-6 pt-6 border-t border-slate-200/60">
             <Link
-              href="/shop"
+              href={(language === 'AR' ? '/ar' : '') + "/shop"}
               className="w-full flex items-center justify-center gap-3 text-slate-700 hover:text-slate-900 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-slate-50 border border-slate-200 hover:border-slate-300"
               onClick={() => onOpenChange(false)}
-              onMouseEnter={() => handlePrefetch("/shop")}
+              onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop")}
             >
               <ShoppingBag className="w-5 h-5" />
               {t("shop.categoryPages.shopAllProducts")}

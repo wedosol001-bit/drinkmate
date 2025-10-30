@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ProductCardProps, Product } from "@/lib/types"
 
 // Define Variant interface locally since it was removed
@@ -46,6 +47,7 @@ export default function BundleStyleProductCard({
   isInWishlist?: boolean
   isInComparison?: boolean
 }) {
+  const router = useRouter()
   const hasVariants = (product.variants?.length ?? 0) > 0
   const [isHovered, setIsHovered] = useState(false)
   const [imageLoadError, setImageLoadError] = useState(false)
@@ -68,12 +70,18 @@ export default function BundleStyleProductCard({
     e.preventDefault()
     e.stopPropagation()
     
+    // If product has variants, navigate to product detail page to select variant
+    if (hasVariants) {
+      router.push(getProductUrl(product))
+      return
+    }
+
     if (onAddToCart && !isAddingToCart) {
       const payload = {
         productId: String(product._id || product.id || ''),
-        variantId: hasVariants ? product.variants?.[0]?.id : undefined,
+        variantId: undefined,
         qty: 1,
-        isBundle: true // Mark as bundle
+        isBundle: false
       }
       console.log('Calling onAddToCart with payload:', payload)
       setIsAddingToCart(true)
@@ -90,10 +98,15 @@ export default function BundleStyleProductCard({
     }
   }
 
-  const isSale = product.compareAtPrice && product.compareAtPrice > product.price
+  // Pricing helpers
+  const isSale = !hasVariants && product.compareAtPrice && product.compareAtPrice > product.price
   const percentOff = isSale && product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0
+
+  const variantPrices = hasVariants ? (product.variants || []).map(v => Number(v.price) || 0).filter(p => p > 0) : []
+  const minVariantPrice = hasVariants && variantPrices.length > 0 ? Math.min(...variantPrices) : undefined
+  const maxVariantPrice = hasVariants && variantPrices.length > 0 ? Math.max(...variantPrices) : undefined
 
   const isInStock = product.inStock
   
@@ -321,7 +334,7 @@ export default function BundleStyleProductCard({
                     <div className="mt-auto pt-2">
                       {/* Price Section */}
                       <div className="flex items-center gap-3 mb-4 flex-wrap">
-                        {product.compareAtPrice && (
+                        {!hasVariants && product.compareAtPrice && (
                           <>
                             <span className="text-gray-400 text-sm line-through font-medium whitespace-nowrap">
                               <SaudiRiyal amount={product.compareAtPrice} size="sm" />
@@ -338,9 +351,23 @@ export default function BundleStyleProductCard({
           {/* Current Price and Add Button */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <span className="font-bold text-2xl text-gray-900 tracking-tight">
-                <SaudiRiyal amount={product.price} size="lg" />
-              </span>
+              {hasVariants ? (
+                <span className="font-bold text-2xl text-gray-900 tracking-tight">
+                  {minVariantPrice !== undefined && maxVariantPrice !== undefined && minVariantPrice !== maxVariantPrice ? (
+                    <>
+                      <SaudiRiyal amount={minVariantPrice} size="lg" />
+                      <span className="mx-1">-</span>
+                      <SaudiRiyal amount={maxVariantPrice} size="lg" />
+                    </>
+                  ) : (
+                    <SaudiRiyal amount={minVariantPrice ?? 0} size="lg" />
+                  )}
+                </span>
+              ) : (
+                <span className="font-bold text-2xl text-gray-900 tracking-tight">
+                  <SaudiRiyal amount={product.price} size="lg" />
+                </span>
+              )}
             </div>
             
             <button
@@ -356,7 +383,9 @@ export default function BundleStyleProductCard({
                 "cursor-pointer"
               )}
             >
-              {isAddingToCart ? (
+              {hasVariants ? (
+                <span>View Options</span>
+              ) : isAddingToCart ? (
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>Adding...</span>

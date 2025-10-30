@@ -29,7 +29,17 @@ const productSchema = new mongoose.Schema({
     trim: true,
     maxlength: 1000
   },
+  shortDescriptionAr: {
+    type: String,
+    trim: true,
+    maxlength: 1000
+  },
   fullDescription: {
+    type: String,
+    trim: true,
+    maxlength: 2000
+  },
+  fullDescriptionAr: {
     type: String,
     trim: true,
     maxlength: 2000

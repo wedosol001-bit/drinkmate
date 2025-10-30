@@ -117,7 +117,7 @@ export default function WishlistSidebar({ className = "" }: WishlistSidebarProps
           <p className="text-gray-500 text-sm mb-3">
             {language === 'AR' ? 'احفظ المنتجات لعرضها هنا لاحقاً' : 'Save products to view them here later'}
           </p>
-          <Link href="/shop">
+          <Link href={(language === 'AR' ? '/ar' : '') + "/shop"}>
             <Button variant="outline" size="sm" className="text-xs">
               {language === 'AR' ? 'تسوق الآن' : 'Start Shopping'}
             </Button>
@@ -187,7 +187,7 @@ export default function WishlistSidebar({ className = "" }: WishlistSidebarProps
 
               {/* Actions */}
               <div className="flex items-center gap-1">
-                <Link href={`/shop/${item.product.slug}`}>
+                <Link href={`${language === 'AR' ? '/ar' : ''}/shop/${item.product.slug}`}>
                   <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                     <Eye className="w-3 h-3" />
                   </Button>
@@ -336,7 +336,10 @@ export default function WishlistSidebar({ className = "" }: WishlistSidebarProps
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      <Link href={`/shop/${item.product.slug}`}>
+                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <Link href={`${language === 'AR' ? '/ar' : ''}/shop/${item.product.slug}`}>
                         <Button size="sm" variant="ghost" className="h-9 w-9 p-0">
                           <Eye className="w-4 h-4" />
                         </Button>

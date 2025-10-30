@@ -10,6 +10,7 @@ import { Suspense } from "react"
 import { shopAPI } from "@/lib/api"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useTranslation } from "@/lib/contexts/translation-context"
+import { getLocalizedProductData } from "@/lib/utils/product-localization"
 import styles from './styles.module.css'
 import { Button } from "@/components/ui/button"
 import {
@@ -206,7 +207,7 @@ interface QA {
 
 export default function FlavorDetailPage() {
   const params = useParams()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const { addItem } = useCart()
   const router = useRouter()
 
@@ -256,6 +257,11 @@ export default function FlavorDetailPage() {
   const [wishlistAnimation, setWishlistAnimation] = useState(false)
   const [selectedColor, setSelectedColor] = useState("")
   const [selectedSize, setSelectedSize] = useState("")
+
+  // Localized product for rendering localized fields
+  const localizedProduct = useMemo(() => {
+    return product ? (getLocalizedProductData as any)(product as any, language) : null
+  }, [product, language])
 
   const toggleQA = useCallback((id: number) => {
     setExpandedQA((prev) => {
@@ -710,7 +716,7 @@ export default function FlavorDetailPage() {
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
               <h1 className="text-2xl font-bold">Flavor Not Found</h1>
               <p className="text-gray-600 mb-4">The flavor you're looking for doesn't exist or has been removed.</p>
-              <Link href="/shop/flavor" className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+              <Link href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Flavors
               </Link>
@@ -729,7 +735,7 @@ export default function FlavorDetailPage() {
           {/* Enhanced Back Button with breadcrumb */}
           <div className="mb-6 space-y-4">
             <Link
-              href="/shop/flavor"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"}
               className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] transition-all duration-200 hover:translate-x-1"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -742,7 +748,7 @@ export default function FlavorDetailPage() {
                 Home
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <Link href="/shop/flavor" className="hover:text-[#12d6fa] transition-colors">
+              <Link href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"} className="hover:text-[#12d6fa] transition-colors">
                 Flavors
               </Link>
               <ChevronRight className="w-3 h-3" />
@@ -995,7 +1001,7 @@ export default function FlavorDetailPage() {
                       )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{product.name}</h1>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
 
                     {/* Enhanced Rating */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
@@ -1067,17 +1073,17 @@ export default function FlavorDetailPage() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        Free Shipping
+                        {t("product.freeShipping") || "Free Shipping"}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
                           <Star className="w-3 h-3 mr-1" />
-                          Featured
+                          {t("product.featured") || "Featured"}
                         </Badge>
                       )}
                       <Badge variant="outline" className="border-blue-200 text-blue-700 text-xs sm:text-sm">
                         <Clock className="w-3 h-3 mr-1" />
-                        Est. delivery: {getDeliveryDate}
+                        {(t("product.estimatedDelivery") || "Est. delivery:") + " "}{getDeliveryDate}
                       </Badge>
                     </div>
                   </div>
@@ -1088,7 +1094,7 @@ export default function FlavorDetailPage() {
                       <CardContent className="p-3 sm:p-4">
                         <h3 className="font-semibold mb-3 flex items-center text-sm sm:text-base">
                           <Settings className="w-4 h-4 mr-2 text-[#12d6fa] flex-shrink-0" />
-                          Product Options
+                          {t("product.options") || "Product Options"}
                         </h3>
                         <div className="space-y-4">
                           {product.colors && product.colors.length > 0 && (
@@ -1271,7 +1277,7 @@ export default function FlavorDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Description</span>
+                    <span className="hidden sm:inline">{t("product.description") || "Description"}</span>
                     <span className="sm:hidden">Info</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1279,7 +1285,7 @@ export default function FlavorDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Specifications</span>
+                    <span className="hidden sm:inline">{t("product.specifications") || "Specifications"}</span>
                     <span className="sm:hidden">Specs</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1287,7 +1293,7 @@ export default function FlavorDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Reviews ({reviews.length})</span>
+                    <span className="hidden sm:inline">{(t("product.reviews") || "Reviews") + ` (${reviews.length})`}</span>
                     <span className="sm:hidden">Reviews</span>
                     <span className="sm:hidden text-xs ml-1">({reviews.length})</span>
                   </TabsTrigger>
@@ -1305,8 +1311,8 @@ export default function FlavorDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Q&A ({qaData.length})</span>
-                    <span className="sm:hidden">Q&A</span>
+                    <span className="hidden sm:inline">{(t("product.qa") || "Q&A") + ` (${qaData.length})`}</span>
+                    <span className="sm:hidden">{t("product.qa") || "Q&A"}</span>
                     <span className="sm:hidden text-xs ml-1">({qaData.length})</span>
                   </TabsTrigger>
                 </TabsList>
@@ -1314,14 +1320,14 @@ export default function FlavorDetailPage() {
                 <TabsContent value="description" className="mt-6 sm:mt-8">
                   <div className="prose max-w-none">
                     <div className="bg-gradient-to-r from-[#12d6fa]/10 to-blue-50 p-4 sm:p-6 rounded-xl mb-6">
-                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{product.description}</p>
+                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{localizedProduct?.fullDescription || localizedProduct?.description || product.fullDescription || product.description}</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                       <div>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
-                          Key Features
+                          {t("product.keyFeatures") || "Key Features"}
                         </h3>
                         <ul className="space-y-3">
                           {product.features?.map((feature, index) => (
@@ -1346,7 +1352,7 @@ export default function FlavorDetailPage() {
                       <div>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <Shield className="w-5 h-5 mr-2 text-blue-500" />
-                          Safety & Quality
+                          {t("product.safetyQuality") || "Safety & Quality"}
                         </h3>
                         <ul className="space-y-3">
                           {product.safetyFeatures?.map((feature, index) => (
@@ -1907,7 +1913,7 @@ export default function FlavorDetailPage() {
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct) => (
-                      <Link key={relatedProduct._id} href={`/shop/flavor/${relatedProduct.slug}`} className="block group">
+                      <Link key={relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/flavor/${relatedProduct.slug}`} className="block group">
                         <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
                           <CardContent className="p-0">
                             <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden">
@@ -1963,7 +1969,7 @@ export default function FlavorDetailPage() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No related products found</h3>
                     <p className="text-gray-500">Check out our other flavors</p>
                     <Button className="mt-4 bg-[#12d6fa] hover:bg-[#0fbfe0] text-white">
-                      <Link href="/shop/flavor">Browse All Flavors</Link>
+                      <Link href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"}>Browse All Flavors</Link>
                     </Button>
                   </div>
                 )}

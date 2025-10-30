@@ -10,6 +10,7 @@ import { Suspense } from "react"
 import { shopAPI } from "@/lib/api"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useTranslation } from "@/lib/contexts/translation-context"
+import { getLocalizedProductData } from "@/lib/utils/product-localization"
 import { Button } from "@/components/ui/button"
 import {
   Plus,
@@ -205,12 +206,13 @@ interface QA {
 
 export default function AccessoryDetailPage() {
   const params = useParams()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const { addItem } = useCart()
   const router = useRouter()
 
   const productSlug = params?.slug as string
   const [product, setProduct] = useState<AccessoryProduct | null>(null)
+  const localizedProduct = product ? (getLocalizedProductData(product as any, language) as any) : null
   const [loading, setLoading] = useState(true)
   const [relatedProducts, setRelatedProducts] = useState<AccessoryProduct[]>([])
   const [loadingRelated, setLoadingRelated] = useState(true)
@@ -707,11 +709,11 @@ export default function AccessoryDetailPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center space-y-4">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
-              <h1 className="text-2xl font-bold">Accessory Not Found</h1>
+              <h1 className="text-2xl font-bold">{t("product.notFoundTitle")}</h1>
               <p className="text-gray-600 mb-4">The accessory you're looking for doesn't exist or has been removed.</p>
-              <Link href="/shop/accessories" className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+               <Link href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Accessories
+                 {t("product.backToAccessories")}
               </Link>
             </div>
           </div>
@@ -728,11 +730,11 @@ export default function AccessoryDetailPage() {
           {/* Enhanced Back Button with breadcrumb */}
           <div className="mb-6 space-y-4">
             <Link
-              href="/shop/accessories"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}
               className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] transition-all duration-200 hover:translate-x-1"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Accessories
+              {t("product.backToAccessories")}
             </Link>
 
             {/* Enhanced Breadcrumb */}
@@ -741,8 +743,8 @@ export default function AccessoryDetailPage() {
                 Home
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <Link href="/shop/accessories" className="hover:text-[#12d6fa] transition-colors">
-                Accessories
+               <Link href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"} className="hover:text-[#12d6fa] transition-colors">
+                 {t("header.accessories")}
               </Link>
               <ChevronRight className="w-3 h-3" />
               <span className="text-foreground font-medium">{product.name}</span>
@@ -808,7 +810,7 @@ export default function AccessoryDetailPage() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Compare Products</p>
+                  <p>{t("product.compareProducts")}</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -824,7 +826,7 @@ export default function AccessoryDetailPage() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Quick View</p>
+                  <p>{t("product.quickView")}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -994,34 +996,58 @@ export default function AccessoryDetailPage() {
                       )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{product.name}</h1>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
+                    {/* short description moved below tags and pricing/badges */}
 
                     {/* Enhanced Rating */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
                       <div className="flex items-center space-x-2">
                         <div className="flex items-center">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                                star <= (product.averageRating || product.rating || 0)
-                                  ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
+                          {[1, 2, 3, 4, 5].map((star) => {
+                            const rating = product.rating
+                            const averageRating = product.averageRating
+                            const ratingValue = typeof rating === 'number'
+                              ? rating
+                              : ((rating as any)?.average || averageRating || 0)
+
+                            return (
+                              <Star
+                                key={star}
+                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                                  star <= Math.floor(ratingValue)
+                                    ? "text-yellow-400 fill-current"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            )
+                          })}
                         </div>
                         <span className="text-sm sm:text-base font-medium">
-                          {product.averageRating || product.rating || 0}
+                          {(() => {
+                            const rating = product.rating
+                            const averageRating = product.averageRating
+                            const ratingValue = typeof rating === 'number'
+                              ? rating
+                              : ((rating as any)?.average || averageRating || 0)
+                            return Number(ratingValue).toFixed(1)
+                          })()}
                         </span>
                         <span className="text-sm text-muted-foreground">
-                          ({product.totalReviews || product.reviews || 0} reviews)
+                          ({(() => {
+                            const rating = product.rating
+                            const reviewsFallback = product.totalReviews || product.reviews || 0
+                            return (typeof rating === 'object' ? (rating as any)?.count : reviewsFallback) || 0
+                          })()} reviews)
                         </span>
                       </div>
                       <Separator orientation="vertical" className="h-4 hidden sm:block" />
                       <div className="flex items-center space-x-1 text-xs sm:text-sm text-muted-foreground">
                         <Users className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span>{product.totalReviews || product.reviews || 0} reviews</span>
+                        <span>{(() => {
+                          const rating = product.rating
+                          const reviewsFallback = product.totalReviews || product.reviews || 0
+                          return (typeof rating === 'object' ? (rating as any)?.count : reviewsFallback) || 0
+                        })()} reviews</span>
                       </div>
                     </div>
 
@@ -1051,28 +1077,32 @@ export default function AccessoryDetailPage() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        Free Shipping
+                        {t("product.freeShipping") || "Free Shipping"}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
                           <Star className="w-3 h-3 mr-1" />
-                          Featured
+                          {t("product.featured") || "Featured"}
                         </Badge>
                       )}
                       <Badge variant="outline" className="border-blue-200 text-blue-700 text-xs sm:text-sm">
                         <Clock className="w-3 h-3 mr-1" />
-                        Est. delivery: {getDeliveryDate}
+                        {(t("product.estimatedDelivery") || "Est. delivery:") + " "}{getDeliveryDate}
                       </Badge>
                     </div>
                   </div>
 
                   {/* Enhanced Product Options */}
+                  {/* Short Description (below tags, above options) */}
+                  {(localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description) && (
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description}</p>
+                  )}
                   {(product.colors || product.sizes) && (
                     <Card className="border-l-4 border-l-[#12d6fa]">
                       <CardContent className="p-3 sm:p-4">
                         <h3 className="font-semibold mb-3 flex items-center text-sm sm:text-base">
                           <Settings className="w-4 h-4 mr-2 text-[#12d6fa] flex-shrink-0" />
-                          Product Options
+                          {t("product.options") || "Product Options"}
                         </h3>
                         <div className="space-y-4">
                           {product.colors && product.colors.length > 0 && (
@@ -1257,7 +1287,7 @@ export default function AccessoryDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Description</span>
+                    <span className="hidden sm:inline">{t("product.description") || "Description"}</span>
                     <span className="sm:hidden">Info</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1265,7 +1295,7 @@ export default function AccessoryDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Specifications</span>
+                    <span className="hidden sm:inline">{t("product.specifications") || "Specifications"}</span>
                     <span className="sm:hidden">Specs</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1273,7 +1303,7 @@ export default function AccessoryDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Reviews ({reviews.length})</span>
+                    <span className="hidden sm:inline">{(t("product.reviews") || "Reviews") + ` (${reviews.length})`}</span>
                     <span className="sm:hidden">Reviews</span>
                     <span className="sm:hidden text-xs ml-1">({reviews.length})</span>
                   </TabsTrigger>
@@ -1282,7 +1312,7 @@ export default function AccessoryDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Video className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Videos ({product.videos?.length || 0})</span>
+                    <span className="hidden sm:inline">{t("product.videos")} ({product.videos?.length || 0})</span>
                     <span className="sm:hidden">Videos</span>
                     <span className="sm:hidden text-xs ml-1">({product.videos?.length || 0})</span>
                   </TabsTrigger>
@@ -1291,8 +1321,8 @@ export default function AccessoryDetailPage() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Q&A ({qaData.length})</span>
-                    <span className="sm:hidden">Q&A</span>
+                    <span className="hidden sm:inline">{t("product.qa")} ({qaData.length})</span>
+                    <span className="sm:hidden">{t("product.qa")}</span>
                     <span className="sm:hidden text-xs ml-1">({qaData.length})</span>
                   </TabsTrigger>
                 </TabsList>
@@ -1300,14 +1330,14 @@ export default function AccessoryDetailPage() {
                 <TabsContent value="description" className="mt-6 sm:mt-8">
                   <div className="prose max-w-none">
                     <div className="bg-gradient-to-r from-[#12d6fa]/10 to-blue-50 p-4 sm:p-6 rounded-xl mb-6">
-                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{product.description}</p>
+                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{localizedProduct?.fullDescription || localizedProduct?.description || product.fullDescription || product.description}</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                       <div>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
-                          Key Features
+                          {t("product.keyFeatures") || "Key Features"}
                         </h3>
                         <ul className="space-y-3">
                           {product.features?.map((feature, index) => (
@@ -1323,7 +1353,7 @@ export default function AccessoryDetailPage() {
                           )) || (
                             <li className="flex items-start">
                               <Check className="w-4 h-4 text-[#12d6fa] mr-3 mt-0.5 flex-shrink-0" />
-                              <span className="text-gray-700">Premium quality materials</span>
+                              <span className="text-gray-700">{t("product.defaultFeature")}</span>
                             </li>
                           )}
                         </ul>
@@ -1332,7 +1362,7 @@ export default function AccessoryDetailPage() {
                       <div>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <Shield className="w-5 h-5 mr-2 text-blue-500" />
-                          Safety & Quality
+                          {t("product.safetyQuality")}
                         </h3>
                         <ul className="space-y-3">
                           {product.safetyFeatures?.map((feature, index) => (
@@ -1387,7 +1417,7 @@ export default function AccessoryDetailPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center text-lg">
                           <Settings className="w-5 h-5 mr-2 text-[#12d6fa]" />
-                          Technical Specifications
+                          {t("product.technicalSpecifications")}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -1408,18 +1438,18 @@ export default function AccessoryDetailPage() {
                               <span className="text-gray-600">{product.type || "Accessory"}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                              <span className="font-medium text-gray-700">Material</span>
-                              <span className="text-gray-600">{product.material || "Premium"}</span>
+                              <span className="font-medium text-gray-700">{t("product.material")}</span>
+                              <span className="text-gray-600">{product.material || t("product.premium")}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                              <span className="font-medium text-gray-700">Dimensions</span>
+                              <span className="font-medium text-gray-700">{t("product.dimensions")}</span>
                               <span className="text-gray-600">
-                                {product.dimensions ? `${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth} cm` : "Standard"}
+                                {product.dimensions ? `${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth} cm` : t("product.standard")}
                               </span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                              <span className="font-medium text-gray-700">Weight</span>
-                              <span className="text-gray-600">{product.dimensions?.weight ? `${product.dimensions.weight} kg` : "Lightweight"}</span>
+                              <span className="font-medium text-gray-700">{t("product.weight")}</span>
+                              <span className="text-gray-600">{product.dimensions?.weight ? `${product.dimensions.weight} kg` : t("product.lightweight")}</span>
                             </div>
                           </>
                         )}
@@ -1430,16 +1460,16 @@ export default function AccessoryDetailPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center text-lg">
                           <Award className="w-5 h-5 mr-2 text-green-500" />
-                          Certifications & Warranty
+                          {t("product.certifications")} & {t("product.warranty")}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="font-medium text-gray-700">Warranty</span>
+                          <span className="font-medium text-gray-700">{t("product.warranty")}</span>
                           <span className="text-gray-600">{product.warranty || "1 Year"}</span>
                         </div>
                         <div className="py-2 border-b border-gray-100 last:border-b-0">
-                          <span className="font-medium text-gray-700 block mb-2">Certifications</span>
+                          <span className="font-medium text-gray-700 block mb-2">{t("product.certifications")}</span>
                           <div className="flex flex-wrap gap-2">
                             {product.certifications?.map((cert) => (
                               <Badge key={cert} variant="secondary" className="text-xs">
@@ -1451,7 +1481,7 @@ export default function AccessoryDetailPage() {
                           </div>
                         </div>
                         <div className="py-2 border-b border-gray-100 last:border-b-0">
-                          <span className="font-medium text-gray-700 block mb-2">Compatibility</span>
+                          <span className="font-medium text-gray-700 block mb-2">{t("product.compatibility")}</span>
                           <div className="flex flex-wrap gap-2">
                             {product.compatibility?.map((comp) => (
                               <Badge key={comp} variant="outline" className="text-xs">
@@ -1889,7 +1919,7 @@ export default function AccessoryDetailPage() {
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct) => (
-                      <Link key={relatedProduct._id} href={`/shop/accessories/${relatedProduct.slug}`} className="block group">
+                      <Link key={relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/accessories/${relatedProduct.slug}`} className="block group">
                         <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
                           <CardContent className="p-0">
                             <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden">
@@ -1945,7 +1975,7 @@ export default function AccessoryDetailPage() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No related products found</h3>
                     <p className="text-gray-500">Check out our other accessories</p>
                     <Button className="mt-4 bg-[#12d6fa] hover:bg-[#0fbfe0] text-white">
-                      <Link href="/shop/accessories">Browse All Accessories</Link>
+                      <Link href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}>Browse All Accessories</Link>
                     </Button>
                   </div>
                 )}

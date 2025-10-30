@@ -6,6 +6,7 @@ import { Currency } from '@/utils/currency'
 import { useCart } from '@/hooks/use-cart'
 import { useCartSettings } from '@/lib/contexts/cart-settings-context'
 import { useAuth } from '@/lib/contexts/auth-context'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface RecommendationItem {
   _id: string
@@ -31,6 +32,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
   const { user, isAuthenticated, token } = useAuth()
   const { addItem, items: cartItems } = useCart()
   const { settings, getText } = useCartSettings()
+  const { isRTL } = useTranslation()
   const [recommendations, setRecommendations] = useState<RecommendationItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -100,7 +102,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
   if (loading) {
     return (
       <section className={`bg-white rounded-soft shadow-card p-5 ${className}`}>
-        <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText('recommendations.titleEn')}</h2>
+        <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText(isRTL ? 'recommendations.titleAr' : 'recommendations.titleEn')}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse">
@@ -129,7 +131,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
 
   return (
     <section className={`bg-white rounded-soft shadow-card p-5 ${className}`}>
-      <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText('recommendations.titleEn')}</h2>
+      <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText(isRTL ? 'recommendations.titleAr' : 'recommendations.titleEn')}</h2>
       
       {/* Strategy indicator for debugging */}
       {process.env.NODE_ENV === 'development' && (

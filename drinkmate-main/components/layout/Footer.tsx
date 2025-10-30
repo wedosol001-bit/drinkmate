@@ -9,7 +9,7 @@ import { useTranslation } from "@/lib/contexts/translation-context"
 import { FaFacebook, FaTwitter, FaInstagram, FaWhatsapp } from "react-icons/fa"
 
 export default function Footer() {
-  const { t, isRTL, isHydrated } = useTranslation()
+  const { t, isRTL, isHydrated, language } = useTranslation()
   
   // Newsletter form state
   const [email, setEmail] = useState("")
@@ -164,27 +164,27 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm leading-snug">
               <li>
-                <Link href="/shop/sodamakers" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"} className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.products.sodaMakers")}
                 </Link>
               </li>
               <li>
-                <Link href="/shop/co2-cylinders" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"} className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.products.co2Cylinders")}
                 </Link>
               </li>
               <li>
-                <Link href="/shop/flavor" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"} className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.products.italianSyrups")}
                 </Link>
               </li>
               <li>
-                <LoadingLink href="/shop/accessories" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                <LoadingLink href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"} className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.products.accessories")}
                 </LoadingLink>
               </li>
               <li>
-                <Link href="/shop/bundles" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/bundles"} className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.products.giftBundles")}
                 </Link>
               </li>
@@ -297,27 +297,27 @@ export default function Footer() {
               </summary>
               <ul className="pb-3 space-y-2 pl-2 text-sm leading-snug">
                 <li>
-                  <Link href="/shop/sodamakers" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                  <Link href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"} className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.products.sodaMakers")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/shop/co2-cylinders" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                  <Link href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"} className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.products.co2Cylinders")}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/shop/flavor" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                  <Link href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"} className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.products.italianSyrups")}
                   </Link>
                 </li>
                 <li>
-                  <LoadingLink href="/shop/accessories" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                  <LoadingLink href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"} className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.products.accessories")}
                   </LoadingLink>
                 </li>
                 <li>
-                  <Link href="/shop/bundles" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+                  <Link href={(language === 'AR' ? '/ar' : '') + "/shop/bundles"} className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.products.giftBundles")}
                   </Link>
                 </li>

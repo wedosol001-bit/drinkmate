@@ -357,15 +357,16 @@ export default function FlavorPage() {
       // Add product view functionality if needed
     }
 
+    const displayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
     return (
       <BundleStyleProductCard
         key={product._id}
         product={{
           _id: product._id,
           id: product._id,
-          name: product.name,
+          name: displayName,
           slug: (product as any).slug || product._id,
-          title: product.name,
+          title: displayName,
           image: product.image,
           price: product.price,
           compareAtPrice: product.originalPrice,
@@ -381,7 +382,7 @@ export default function FlavorPage() {
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
           const cartItem = {
             id: productId,
-            name: product.name,
+            name: displayName,
             price: product.price,
             quantity: qty,
             image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),

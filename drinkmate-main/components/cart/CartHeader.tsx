@@ -5,24 +5,26 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/use-cart'
 import { useCartSettings } from '@/lib/contexts/cart-settings-context'
 import { useCustomDialogs } from '@/hooks/use-custom-dialogs'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 export default function CartHeader() {
   const { totalPrice, clearCart } = useCart()
   const { settings, getFreeShippingText, getUnlockedText, getText } = useCartSettings()
   const { confirm, showSuccess } = useCustomDialogs()
+  const { isRTL } = useTranslation()
   
   const handleClearCart = async () => {
     const confirmed = await confirm({
-      title: 'Clear Cart',
-      description: 'Are you sure you want to clear your cart? This action cannot be undone.',
+      title: isRTL ? 'مسح السلة' : 'Clear Cart',
+      description: isRTL ? 'هل أنت متأكد أنك تريد مسح السلة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to clear your cart? This action cannot be undone.',
       variant: 'destructive',
-      confirmText: 'Clear Cart',
-      cancelText: 'Keep Items'
+      confirmText: isRTL ? 'مسح السلة' : 'Clear Cart',
+      cancelText: isRTL ? 'الاحتفاظ بالعناصر' : 'Keep Items'
     })
     
     if (confirmed) {
       clearCart()
-      showSuccess('Cart cleared successfully')
+      showSuccess(isRTL ? 'تم مسح السلة بنجاح' : 'Cart cleared successfully')
     }
   }
   
@@ -34,11 +36,11 @@ export default function CartHeader() {
   return (
     <header className="bg-white rounded-soft shadow-card p-5">
       <div className="flex items-center justify-between gap-6 flex-wrap">
-        <h1 className="text-2xl font-semibold text-ink-900">Your Cart</h1>
+        <h1 className="text-2xl font-semibold text-ink-900">{isRTL ? 'سلة التسوق' : 'Your Cart'}</h1>
         {settings.secureCheckout.enabled && (
           <div className="flex items-center gap-2 text-ink-500">
             <Lock className="w-4 h-4" aria-hidden />
-            <span>{getText('secureCheckout.textEn')}</span>
+            <span>{getText(isRTL ? 'secureCheckout.textAr' : 'secureCheckout.textEn')}</span>
           </div>
         )}
       </div>
@@ -48,9 +50,9 @@ export default function CartHeader() {
           <div className="flex justify-between text-sm text-ink-600 mb-2">
             <span>
               {unlocked ? (
-                <span className="text-green-700 font-medium">{getUnlockedText()}</span>
+                <span className="text-green-700 font-medium">{getUnlockedText(isRTL ? 'ar' : 'en')}</span>
               ) : (
-                <span>{getFreeShippingText(freeShippingLeft)}</span>
+                <span>{getFreeShippingText(freeShippingLeft, isRTL ? 'ar' : 'en')}</span>
               )}
             </span>
           </div>
@@ -68,9 +70,9 @@ export default function CartHeader() {
           onClick={handleClearCart}
           className="text-danger hover:underline text-sm cursor-pointer"
         >
-          {getText('general.clearCartEn')}
+          {getText(isRTL ? 'general.clearCartAr' : 'general.clearCartEn')}
         </button>
-        <Link href="/shop" className="text-brand hover:underline text-sm">{getText('general.continueShoppingEn')}</Link>
+        <Link href="/shop" className="text-brand hover:underline text-sm">{getText(isRTL ? 'general.continueShoppingAr' : 'general.continueShoppingEn')}</Link>
       </div>
     </header>
   )

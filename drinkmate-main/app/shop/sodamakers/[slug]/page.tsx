@@ -902,8 +902,8 @@ export default function SodamakerProductDetail() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#12d6fa] mx-auto"></div>
-              <div className="text-lg font-medium">Loading premium product details...</div>
-              <div className="text-sm text-muted-foreground">Preparing the best experience for you</div>
+              <div className="text-lg font-medium">{t("product.loadingDetails") || "Loading premium product details..."}</div>
+              <div className="text-sm text-muted-foreground">{t("product.preparingExperience") || "Preparing the best experience for you"}</div>
             </div>
           </div>
         </div>
@@ -919,11 +919,11 @@ export default function SodamakerProductDetail() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center space-y-4">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
-              <h1 className="text-2xl font-bold">Product Not Found</h1>
-              <p className="text-gray-600 mb-4">The product you're looking for doesn't exist or has been removed.</p>
-              <Link href="/shop/sodamakers" className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+              <h1 className="text-2xl font-bold">{t("product.notFoundTitle") || "Product Not Found"}</h1>
+              <p className="text-gray-600 mb-4">{t("product.notFoundDescription") || "The product you're looking for doesn't exist or has been removed."}</p>
+              <Link href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Soda Makers
+                {t("product.backToSodaMakers")}
               </Link>
             </div>
           </div>
@@ -939,11 +939,11 @@ export default function SodamakerProductDetail() {
           {/* Enhanced Back Button with breadcrumb */}
           <div className="mb-6 space-y-4">
             <Link
-              href="/shop/sodamakers"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"}
               className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] transition-all duration-200 hover:translate-x-1"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Soda Makers
+              {t("product.backToSodaMakers")}
             </Link>
 
             {/* Enhanced Breadcrumb */}
@@ -956,8 +956,8 @@ export default function SodamakerProductDetail() {
                 Shop
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <Link href="/shop/sodamakers" className="hover:text-[#12d6fa] transition-colors">
-                Soda Makers
+               <Link href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"} className="hover:text-[#12d6fa] transition-colors">
+                 {t("header.sodamakers")}
               </Link>
               <ChevronRight className="w-3 h-3" />
               <span className="text-foreground font-medium">{product.name}</span>
@@ -1024,7 +1024,7 @@ export default function SodamakerProductDetail() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Compare Products</p>
+                  <p>{t("product.compareProducts")}</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -1040,7 +1040,7 @@ export default function SodamakerProductDetail() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Quick View</p>
+                  <p>{t("product.quickView")}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -1223,7 +1223,8 @@ export default function SodamakerProductDetail() {
                       )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
+                    {/* short description moved below tags and pricing/badges */}
 
                     {/* Enhanced Rating */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
@@ -1292,12 +1293,12 @@ export default function SodamakerProductDetail() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        Free Shipping
+                        {t("product.freeShipping") || "Free Shipping"}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="outline" className="border-amber-200 text-amber-700 text-xs sm:text-sm">
                           <Award className="w-3 h-3 mr-1" />
-                          Featured
+                          {t("product.featured") || "Featured"}
                         </Badge>
                       )}
                       <Badge variant="outline" className="border-blue-200 text-blue-700 text-xs sm:text-sm">
@@ -1306,6 +1307,11 @@ export default function SodamakerProductDetail() {
                       </Badge>
                     </div>
                   </div>
+
+                  {/* Short Description (below tags, above options/info sections) */}
+                  {(localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description) && (
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description}</p>
+                  )}
 
                   {/* Enhanced Service Type */}
                   <Card className="border-l-4 border-l-[#12d6fa]">
@@ -1533,7 +1539,7 @@ export default function SodamakerProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Reviews ({reviews.length})</span>
+                    <span className="hidden sm:inline">{t("product.reviews") || "Reviews"} ({reviews.length})</span>
                     <span className="sm:hidden">Reviews</span>
                     <span className="sm:hidden text-xs ml-1">({reviews.length})</span>
                   </TabsTrigger>
@@ -1544,7 +1550,7 @@ export default function SodamakerProductDetail() {
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
-                    <span className="hidden sm:inline">Videos ({product.videos?.length || 0})</span>
+                    <span className="hidden sm:inline">{t("product.videos")} ({product.videos?.length || 0})</span>
                     <span className="sm:hidden">Videos</span>
                     <span className="sm:hidden text-xs ml-1">({product.videos?.length || 0})</span>
                   </TabsTrigger>
@@ -1553,8 +1559,8 @@ export default function SodamakerProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Q&A ({qaData.length})</span>
-                    <span className="sm:hidden">Q&A</span>
+                    <span className="hidden sm:inline">{t("product.qa")} ({qaData.length})</span>
+                    <span className="sm:hidden">{t("product.qa")}</span>
                     <span className="sm:hidden text-xs ml-1">({qaData.length})</span>
                   </TabsTrigger>
                 </TabsList>
@@ -1569,7 +1575,7 @@ export default function SodamakerProductDetail() {
                       <div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-4 flex items-center">
                           <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-[#12d6fa] flex-shrink-0" />
-                          Key Features
+                          {t("product.keyFeatures") || "Key Features"}
                         </h3>
                         <ul className="space-y-3">
                           {product.features?.map((feature, index) => (
@@ -1597,7 +1603,7 @@ export default function SodamakerProductDetail() {
 
                         <h3 className="text-lg sm:text-xl font-semibold mb-4 mt-6 flex items-center">
                           <Award className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-amber-500 flex-shrink-0" />
-                          Certifications
+                          {t("product.certifications")}
                         </h3>
                         <div className="flex flex-wrap gap-2">
                           {product.certifications?.map((cert) => (
@@ -1700,7 +1706,7 @@ export default function SodamakerProductDetail() {
                       <CardHeader>
                         <CardTitle className="flex items-center">
                           <CheckCircle className="w-5 h-5 mr-2 text-blue-500" />
-                          Compatibility
+                          {t("product.compatibility")}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -2157,7 +2163,7 @@ export default function SodamakerProductDetail() {
                               <SelectItem value="all">All categories</SelectItem>
                               <SelectItem value="Usage & Capacity">Usage & Capacity</SelectItem>
                               <SelectItem value="Installation & Safety">Installation & Safety</SelectItem>
-                              <SelectItem value="Warranty & Support">Warranty & Support</SelectItem>
+                              <SelectItem value="Warranty & Support">{t("product.warrantySupport")}</SelectItem>
                               <SelectItem value="Certification & Quality">Certification & Quality</SelectItem>
                             </SelectContent>
                           </Select>
@@ -2204,7 +2210,7 @@ export default function SodamakerProductDetail() {
                                   <SelectContent>
                                     <SelectItem value="Usage & Capacity">Usage & Capacity</SelectItem>
                                     <SelectItem value="Installation & Safety">Installation & Safety</SelectItem>
-                                    <SelectItem value="Warranty & Support">Warranty & Support</SelectItem>
+                                    <SelectItem value="Warranty & Support">{t("product.warrantySupport")}</SelectItem>
                                     <SelectItem value="Certification & Quality">Certification & Quality</SelectItem>
                                   </SelectContent>
                                 </Select>
@@ -2326,7 +2332,7 @@ export default function SodamakerProductDetail() {
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct) => (
-                    <Link key={relatedProduct.id} href={`/shop/sodamakers/${relatedProduct.slug}`} className="block group">
+                    <Link key={relatedProduct.id} href={`${language === 'AR' ? '/ar' : ''}/shop/sodamakers/${relatedProduct.slug}`} className="block group">
                       <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
                         <CardContent className="p-4">
                           <div className="relative aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden">
@@ -2418,7 +2424,7 @@ export default function SodamakerProductDetail() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No related products found</h3>
                     <p className="text-gray-500">Check out our other products in the shop</p>
                     <Button className="mt-4 bg-[#12d6fa] hover:bg-[#0fbfe0] text-white">
-                      <Link href="/shop/sodamakers">Browse All Soda Makers</Link>
+                      <Link href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"}>Browse All Soda Makers</Link>
                     </Button>
                   </div>
                 )}

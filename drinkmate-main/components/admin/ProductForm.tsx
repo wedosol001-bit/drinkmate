@@ -717,8 +717,12 @@ export default function ProductForm({
                       type="number"
                       value={formData.price}
                       onChange={handleChange}
-                      required
+                      required={!formData.hasVariants}
+                      disabled={formData.hasVariants}
                     />
+                    {formData.hasVariants && (
+                      <p className="text-xs text-muted-foreground">Price is derived from variants.</p>
+                    )}
                   </div>
                   
                   <div className="space-y-2">
@@ -729,7 +733,11 @@ export default function ProductForm({
                       type="number"
                       value={formData.originalPrice}
                       onChange={handleChange}
+                      disabled={formData.hasVariants}
                     />
+                    {formData.hasVariants && (
+                      <p className="text-xs text-muted-foreground">Original price can be set per variant.</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -760,8 +768,12 @@ export default function ProductForm({
                       type="number"
                       value={formData.stock}
                       onChange={handleChange}
-                      required
+                      required={!formData.hasVariants}
+                      disabled={formData.hasVariants}
                     />
+                    {formData.hasVariants && (
+                      <p className="text-xs text-muted-foreground">Stock is managed per variant.</p>
+                    )}
                   </div>
                   
                   <div className="space-y-2">
@@ -783,7 +795,11 @@ export default function ProductForm({
                       value={formData.sku}
                       onChange={handleChange}
                       placeholder="Auto-generated if empty"
+                      disabled={formData.hasVariants}
                     />
+                    {formData.hasVariants && (
+                      <p className="text-xs text-muted-foreground">SKU is set per variant.</p>
+                    )}
                   </div>
                 </div>
 

@@ -399,7 +399,7 @@ export default function Header({ currentPage }: HeaderProps) {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Soda Makers */}
                   <Link
-                    href="/shop/sodamakers"
+                    href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"}
                     className="bg-gradient-to-br from-[#12d6fa] to-[#0bc4e8] rounded-2xl p-6 text-white hover:from-[#0bc4e8] hover:to-[#12d6fa] transition-all duration-300 group relative overflow-hidden flex flex-col items-center justify-center aspect-square shadow-lg hover:shadow-xl hover:scale-105"
                     onClick={() => {
                       setIsMobileMenuOpen(false)
@@ -426,7 +426,7 @@ export default function Header({ currentPage }: HeaderProps) {
 
                   {/* Flavors */}
                   <Link
-                    href="/shop/flavor"
+                    href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"}
                     className="bg-gradient-to-br from-green-400 to-green-500 rounded-2xl p-6 text-white hover:from-green-500 hover:to-green-600 transition-all duration-300 group relative overflow-hidden flex flex-col items-center justify-center aspect-square shadow-lg hover:shadow-xl hover:scale-105"
                     onClick={() => {
                       setIsMobileMenuOpen(false)
@@ -453,7 +453,7 @@ export default function Header({ currentPage }: HeaderProps) {
 
                   {/* Accessories */}
                   <LoadingLink
-                    href="/shop/accessories"
+                    href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}
                     className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl p-6 hover:from-slate-200 hover:to-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col items-center justify-center aspect-square shadow-lg hover:shadow-xl hover:scale-105 border border-slate-200"
                     onClick={() => {
                       setIsMobileMenuOpen(false)
@@ -477,7 +477,7 @@ export default function Header({ currentPage }: HeaderProps) {
 
                   {/* CO2 Cylinders */}
                   <Link
-                    href="/shop/co2-cylinders"
+                    href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
                     className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl p-6 text-white hover:from-orange-500 hover:to-orange-600 transition-all duration-300 group relative overflow-hidden flex flex-col items-center justify-center aspect-square shadow-lg hover:shadow-xl hover:scale-105"
                     onClick={() => {
                       setIsMobileMenuOpen(false)

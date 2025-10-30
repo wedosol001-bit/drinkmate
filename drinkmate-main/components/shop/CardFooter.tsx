@@ -6,6 +6,7 @@ import { Heart, ShoppingCart, Bell, X, Star, Shield, Truck } from 'lucide-react'
 import { ColorSwatches } from './ColorSwatches'
 import { Price } from './Price'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface CardFooterProps {
   onAddToCart: () => void
@@ -31,6 +32,7 @@ export function CardFooter({
   maxQuantity = 10
 }: CardFooterProps) {
   const [quantity, setQuantity] = useState(1)
+  const { t } = useTranslation()
 
   const handleQuantityChange = (newQuantity: number) => {
     const clampedQuantity = Math.max(1, Math.min(maxQuantity, newQuantity))
@@ -47,7 +49,7 @@ export function CardFooter({
           disabled={disabled}
         >
           <Bell className="w-4 h-4 mr-2" />
-          Notify Me
+          {t('product.notifyMe') || 'Notify Me'}
         </Button>
       </div>
     )
@@ -91,7 +93,7 @@ export function CardFooter({
           size="sm"
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          Add to Cart
+          {t('shop.products.addToCart')}
         </Button>
       </div>
 
@@ -109,7 +111,7 @@ export function CardFooter({
           )}
         >
           <Heart className={cn("w-4 h-4 mr-2 transition-all duration-300", isWishlisted && "fill-current animate-pulse")} />
-          {isWishlisted ? "Wishlisted" : "Wishlist"}
+          {isWishlisted ? (t('product.wishlisted') || 'Wishlisted') : (t('product.wishlist') || 'Wishlist')}
         </Button>
       )}
     </div>

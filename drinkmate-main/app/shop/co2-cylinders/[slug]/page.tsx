@@ -679,7 +679,7 @@ export default function CO2ProductDetail() {
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
               <h1 className="text-2xl font-bold">Product Not Found</h1>
               <p className="text-gray-600 mb-4">The product you're looking for doesn't exist or has been removed.</p>
-              <Link href="/shop/co2-cylinders" className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+            <Link href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to CO2 Cylinders
               </Link>
@@ -697,7 +697,7 @@ export default function CO2ProductDetail() {
           {/* Enhanced Back Button with breadcrumb */}
           <div className="mb-6 space-y-4">
             <Link
-              href="/shop/co2-cylinders"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
               className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] transition-all duration-200 hover:translate-x-1"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -710,7 +710,7 @@ export default function CO2ProductDetail() {
                 Home
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <Link href="/shop/co2-cylinders" className="hover:text-[#12d6fa] transition-colors">
+              <Link href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"} className="hover:text-[#12d6fa] transition-colors">
                 CO2 Cylinders
               </Link>
               <ChevronRight className="w-3 h-3" />
@@ -1029,12 +1029,12 @@ export default function CO2ProductDetail() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        Free Shipping
+                        {t("product.freeShipping") || "Free Shipping"}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="outline" className="border-amber-200 text-amber-700 text-xs sm:text-sm">
                           <Award className="w-3 h-3 mr-1" />
-                          Featured
+                          {t("product.featured") || "Featured"}
                         </Badge>
                       )}
                       <Badge variant="outline" className="border-blue-200 text-blue-700 text-xs sm:text-sm">
@@ -1270,7 +1270,7 @@ export default function CO2ProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Reviews ({reviews.length})</span>
+                    <span className="hidden sm:inline">{(t("product.reviews") || "Reviews") + ` (${reviews.length})`}</span>
                     <span className="sm:hidden">Reviews</span>
                     <span className="sm:hidden text-xs ml-1">({reviews.length})</span>
                   </TabsTrigger>
@@ -1299,14 +1299,14 @@ export default function CO2ProductDetail() {
                 <TabsContent value="description" className="mt-6 sm:mt-8">
                   <div className="prose max-w-none">
                     <div className="bg-gradient-to-r from-[#12d6fa]/10 to-blue-50 p-4 sm:p-6 rounded-xl mb-6">
-                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{product.description}</p>
+                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{localizedProduct?.fullDescription || localizedProduct?.description || product.fullDescription || product.description}</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                       <div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-4 flex items-center">
                           <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-[#12d6fa] flex-shrink-0" />
-                          Key Features
+                          {t("product.keyFeatures") || "Key Features"}
                         </h3>
                         <ul className="space-y-3">
                           {product.features.map((feature, index) => (
@@ -2146,7 +2146,7 @@ export default function CO2ProductDetail() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No related products found</h3>
                     <p className="text-gray-500">Check out our other products in the shop</p>
                     <Button className="mt-4 bg-[#12d6fa] hover:bg-[#0fbfe0] text-white">
-                      <Link href="/shop/co2-cylinders">Browse All CO2 Products</Link>
+                      <Link href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}>Browse All CO2 Products</Link>
                     </Button>
                   </div>
                 )}

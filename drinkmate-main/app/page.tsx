@@ -887,12 +887,12 @@ export default function Home() {
                         // Check if this is the second slide by looking at the slide content
                         if (slide.headline && slide.headline.includes("ENERGY DRINK & COLA FLAVOR")) {
                           // Second slide - navigate directly to flavor page
-                          router.push("/shop/flavor")
+                          router.push((language === 'AR' ? '/ar' : '') + "/shop/flavor")
                         } else {
-                          router.push("/shop/sodamakers")
+                          router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
                         }
                       } else {
-                        router.push("/shop/sodamakers")
+                        router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
                       }
                     }}
                     className={`font-medium px-6 py-3 rounded-full min-w-[140px] ${
@@ -1200,7 +1200,7 @@ export default function Home() {
                   className={`flex ${isRTL ? "flex-row-reverse space-x-reverse" : "flex-row"} space-x-3 md:space-x-4 justify-center ${isRTL ? "md:justify-start" : "md:justify-start"}`}
                 >
                   <Button
-                    onClick={() => router.push("/shop/bundles")}
+                    onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/bundles")}
                     variant="outline"
                     className="px-4 md:px-8 py-3 md:py-4 text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] md:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl text-sm md:text-base"
                   >

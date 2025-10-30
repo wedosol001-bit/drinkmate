@@ -87,7 +87,7 @@ export default function AccessoriesPage() {
           _id: bundle._id,
           id: bundle._id,
           slug: bundle.slug,
-          name: bundle.name,
+          name: (isRTL && bundle.nameAr) ? bundle.nameAr : bundle.name,
           price: bundle.price,
           originalPrice: bundle.originalPrice,
           subcategory: bundle.subcategory || "Bundles & Promotions of Accessories",
@@ -172,7 +172,7 @@ export default function AccessoriesPage() {
           _id: product._id,
           id: product._id,
           slug: product.slug,
-          name: product.name,
+          name: (isRTL && product.nameAr) ? product.nameAr : product.name,
           price: product.price,
           originalPrice: product.originalPrice,
           image: pickImage(product.images),
@@ -341,15 +341,16 @@ export default function AccessoriesPage() {
       // Add product view functionality if needed
     }
 
+    const displayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
     return (
       <BundleStyleProductCard
         key={product._id}
         product={{
           _id: product._id,
           id: product._id,
-          name: product.name,
+          name: displayName,
           slug: (product as any).slug || product._id,
-          title: product.name,
+          title: displayName,
           image: product.image,
           price: product.price,
           compareAtPrice: product.originalPrice,
@@ -365,7 +366,7 @@ export default function AccessoriesPage() {
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
           const cartItem = {
             id: productId,
-            name: product.name,
+            name: displayName,
             price: product.price,
             quantity: qty,
             image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),

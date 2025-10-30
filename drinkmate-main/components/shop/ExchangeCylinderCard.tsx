@@ -19,6 +19,7 @@ import {
   AlertCircle
 } from "lucide-react"
 import { toast } from "sonner"
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 // Helper function to generate correct product URL based on category
 import { getProductUrl as getProductUrlFromUtils } from '@/lib/utils/product-url'
@@ -66,6 +67,7 @@ export default function ExchangeCylinderCard({
   const [isHovered, setIsHovered] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [imageLoadError, setImageLoadError] = useState(false)
+  const { isRTL } = useTranslation()
 
   const getBestImage = () => {
     if (imageLoadError) return "/placeholder.svg"
@@ -77,7 +79,7 @@ export default function ExchangeCylinderCard({
     try {
       await onAddToCart({ productId: product.id, qty: 1 })
     } catch (error) {
-      toast.error("Failed to add to cart. Please try again.")
+      toast.error(isRTL ? "فشل في الإضافة إلى السلة. يرجى المحاولة مرة أخرى." : "Failed to add to cart. Please try again.")
     } finally {
       setIsAddingToCart(false)
     }
@@ -329,12 +331,12 @@ export default function ExchangeCylinderCard({
               {isAddingToCart ? (
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Adding...</span>
+                  <span>{isRTL ? 'جاري الإضافة...' : 'Adding...'}</span>
                 </div>
               ) : (
                 <>
                   <RefreshCw className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>Exchange Now</span>
+                  <span>{isRTL ? 'استبدل الآن' : 'Exchange Now'}</span>
                 </>
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />

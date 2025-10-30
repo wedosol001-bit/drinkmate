@@ -7,6 +7,7 @@ import { ShoppingCart, ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 import { cn, isValidImageUrl } from "@/lib/utils";
+import { useTranslation } from "@/lib/contexts/translation-context";
 
 interface FeaturedProduct {
   id: string;
@@ -29,6 +30,7 @@ interface EmptyCartStateProps {
 const EmptyCartState: React.FC<EmptyCartStateProps> = ({ 
   featuredProducts = [] 
 }) => {
+  const { language } = useTranslation();
   return (
     <div className="flex flex-col items-center py-12 px-4 text-center max-w-4xl mx-auto">
       <div className="bg-muted/30 p-8 rounded-full mb-6">
@@ -42,7 +44,7 @@ const EmptyCartState: React.FC<EmptyCartStateProps> = ({
       </p>
       
       <Button asChild size="lg" className="mb-16">
-        <Link href="/shop">
+        <Link href={(language === 'AR' ? '/ar' : '') + "/shop"}>
           Start Shopping <ArrowRight className="ml-2 w-4 h-4" />
         </Link>
       </Button>
@@ -54,7 +56,7 @@ const EmptyCartState: React.FC<EmptyCartStateProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredProducts.map(product => (
               <Link 
-                href={`/shop/${product.category}/${product.slug}`} 
+                href={`${language === 'AR' ? '/ar' : ''}/shop/${product.category}/${product.slug}`} 
                 key={product.id}
                 className="group hover:shadow-md transition-shadow duration-200 rounded-lg overflow-hidden border bg-card"
               >

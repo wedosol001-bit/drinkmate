@@ -292,22 +292,24 @@ export default function ShopProductDetail() {
           
           // Generate the correct URL based on category
           let correctUrl = ''
+          const isArabic = language === 'AR'
+          const prefix = isArabic ? '/ar' : ''
           if (isBundle) {
-            if (categorySlug === 'flavors' || categorySlug === 'flavor') correctUrl = `/shop/flavor/bundles/${productSlug}`
-            else if (categorySlug === 'accessories' || categorySlug === 'accessory') correctUrl = `/shop/accessories/bundles/${productSlug}`
-            else if (categorySlug === 'sodamakers' || categorySlug === 'sodamaker' || categorySlug === 'machine' || categorySlug === 'machines') correctUrl = `/shop/sodamakers/bundles/${productSlug}`
-            else correctUrl = `/shop/${categorySlug}/bundles/${productSlug}`
+            if (categorySlug === 'flavors' || categorySlug === 'flavor') correctUrl = `${prefix}/shop/flavor/bundles/${productSlug}`
+            else if (categorySlug === 'accessories' || categorySlug === 'accessory') correctUrl = `${prefix}/shop/accessories/bundles/${productSlug}`
+            else if (categorySlug === 'sodamakers' || categorySlug === 'sodamaker' || categorySlug === 'machine' || categorySlug === 'machines') correctUrl = `${prefix}/shop/sodamakers/bundles/${productSlug}`
+            else correctUrl = `${prefix}/shop/${categorySlug}/bundles/${productSlug}`
           } else {
-            if (categorySlug === 'flavors' || categorySlug === 'flavor') correctUrl = `/shop/flavor/${productSlug}`
-            else if (categorySlug === 'accessories' || categorySlug === 'accessory') correctUrl = `/shop/accessories/${productSlug}`
-            else if (categorySlug === 'co2-cylinders' || categorySlug === 'co2-cylinder' || categorySlug === 'co2') correctUrl = `/shop/co2-cylinders/${productSlug}`
-            else if (categorySlug === 'sodamakers' || categorySlug === 'sodamaker' || categorySlug === 'machine' || categorySlug === 'machines') correctUrl = `/shop/sodamakers/${productSlug}`
+            if (categorySlug === 'flavors' || categorySlug === 'flavor') correctUrl = `${prefix}/shop/flavor/${productSlug}`
+            else if (categorySlug === 'accessories' || categorySlug === 'accessory') correctUrl = `${prefix}/shop/accessories/${productSlug}`
+            else if (categorySlug === 'co2-cylinders' || categorySlug === 'co2-cylinder' || categorySlug === 'co2') correctUrl = `${prefix}/shop/co2-cylinders/${productSlug}`
+            else if (categorySlug === 'sodamakers' || categorySlug === 'sodamaker' || categorySlug === 'machine' || categorySlug === 'machines') correctUrl = `${prefix}/shop/sodamakers/${productSlug}`
           }
           
           console.log('🎯 Generated correct URL:', correctUrl)
           
           // If we have a correct URL and it's different from current, redirect
-          if (correctUrl && correctUrl !== `/shop/${productSlug}`) {
+          if (correctUrl && correctUrl !== `${prefix}/shop/${productSlug}`) {
             console.log(`🔄 Redirecting from /shop/${productSlug} to ${correctUrl}`)
             router.replace(correctUrl)
             return
@@ -727,11 +729,11 @@ export default function ShopProductDetail() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center space-y-4">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
-              <h1 className="text-2xl font-bold">Product Not Found</h1>
-              <p className="text-gray-600 mb-4">The product you're looking for doesn't exist or has been removed.</p>
-              <Link href="/shop" className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+              <h1 className="text-2xl font-bold">{t("product.notFoundTitle")}</h1>
+              <p className="text-gray-600 mb-4">{t("product.notFoundDescription")}</p>
+              <Link href={language === 'AR' ? '/ar/shop' : '/shop'} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Shop
+                {t("product.backToShop")}
               </Link>
             </div>
           </div>
@@ -748,11 +750,11 @@ export default function ShopProductDetail() {
           {/* Enhanced Back Button with breadcrumb */}
           <div className="mb-6 space-y-4">
             <Link
-              href="/shop"
+              href={language === 'AR' ? '/ar/shop' : '/shop'}
               className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] transition-all duration-200 hover:translate-x-1"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Shop
+              {t("product.backToShop")}
             </Link>
 
             {/* Enhanced Breadcrumb */}
@@ -813,7 +815,7 @@ export default function ShopProductDetail() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{isInWishlist(product?._id || '') ? "Remove from Wishlist" : "Add to Wishlist"}</p>
+                  <p>{isInWishlist(product?._id || '') ? t("product.removeFromWishlist") : t("product.addToWishlist")}</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -829,7 +831,7 @@ export default function ShopProductDetail() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Compare Products</p>
+                  <p>{t("product.compareProducts")}</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -845,7 +847,7 @@ export default function ShopProductDetail() {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Quick View</p>
+                  <p>{t("product.quickView")}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -903,19 +905,19 @@ export default function ShopProductDetail() {
                       {product.isBestSeller && (
                         <Badge className="bg-amber-500 text-white shadow-lg">
                           <Award className="w-3 h-3 mr-1" />
-                          Best Seller
+                          {t("product.badges.bestSeller")}
                         </Badge>
                       )}
                       {product.isNewProduct && (
                         <Badge className="bg-green-500 text-white shadow-lg">
                           <Sparkles className="w-3 h-3 mr-1" />
-                          New
+                          {t("product.badges.new")}
                         </Badge>
                       )}
                       {product.isEcoFriendly && (
                         <Badge className="bg-emerald-500 text-white shadow-lg">
                           <Leaf className="w-3 h-3 mr-1" />
-                          Eco-Friendly
+                          {t("product.badges.ecoFriendly")}
                         </Badge>
                       )}
                     </div>
@@ -1020,7 +1022,8 @@ export default function ShopProductDetail() {
                       )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
+                    {/* short description moved below tags and pricing/badges */}
 
                     {/* Enhanced Rating */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
@@ -1105,28 +1108,32 @@ export default function ShopProductDetail() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        Free Shipping
+                        {t("product.freeShipping") || "Free Shipping"}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
                           <Star className="w-3 h-3 mr-1" />
-                          Featured
+                          {t("product.featured") || "Featured"}
                         </Badge>
                       )}
                       <Badge variant="outline" className="border-blue-200 text-blue-700 text-xs sm:text-sm">
                         <Clock className="w-3 h-3 mr-1" />
-                        Est. delivery: {getDeliveryDate}
+                        {(t("product.estimatedDelivery") || "Est. delivery:") + " "}{getDeliveryDate}
                       </Badge>
                     </div>
                   </div>
 
                   {/* Enhanced Product Options */}
+                  {/* Short Description (below tags, above options) */}
+                  {(localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description) && (
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description}</p>
+                  )}
                   {(product.colors || product.sizes) && (
                     <Card className="border-l-4 border-l-[#12d6fa]">
                       <CardContent className="p-3 sm:p-4">
                         <h3 className="font-semibold mb-3 flex items-center text-sm sm:text-base">
                           <Settings className="w-4 h-4 mr-2 text-[#12d6fa] flex-shrink-0" />
-                          Product Options
+                          {t("product.options") || "Product Options"}
                         </h3>
                         <div className="space-y-4">
                           {product.colors && Array.isArray(product.colors) && product.colors.length > 0 && (
@@ -1366,7 +1373,7 @@ export default function ShopProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t("product.description")}</span>
+                        <span className="hidden sm:inline">{t("product.description") || "Description"}</span>
                     <span className="sm:hidden">Info</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1374,7 +1381,7 @@ export default function ShopProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">{t("product.specifications")}</span>
+                        <span className="hidden sm:inline">{t("product.specifications") || "Specifications"}</span>
                     <span className="sm:hidden">Specs</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1391,8 +1398,8 @@ export default function ShopProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Video className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Videos ({product.videos?.length || 0})</span>
-                    <span className="sm:hidden">Videos</span>
+                    <span className="hidden sm:inline">{t("product.videos")} ({product.videos?.length || 0})</span>
+                    <span className="sm:hidden">{t("product.videos")}</span>
                     <span className="sm:hidden text-xs ml-1">({product.videos?.length || 0})</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1400,8 +1407,8 @@ export default function ShopProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                    <span className="hidden sm:inline">Q&A ({qaData.length})</span>
-                    <span className="sm:hidden">Q&A</span>
+                    <span className="hidden sm:inline">{t("product.qa")} ({qaData.length})</span>
+                    <span className="sm:hidden">{t("product.qa")}</span>
                     <span className="sm:hidden text-xs ml-1">({qaData.length})</span>
                   </TabsTrigger>
                 </TabsList>
@@ -1409,7 +1416,7 @@ export default function ShopProductDetail() {
                 <TabsContent value="description" className="mt-6 sm:mt-8">
                   <div className="prose max-w-none">
                     <div className="bg-gradient-to-r from-[#12d6fa]/10 to-blue-50 p-4 sm:p-6 rounded-xl mb-6">
-                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{localizedProduct?.description || product.description}</p>
+                      <p className="text-base sm:text-lg leading-relaxed text-gray-700">{localizedProduct?.fullDescription || localizedProduct?.description || product.fullDescription || product.description}</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
@@ -1434,7 +1441,7 @@ export default function ShopProductDetail() {
                           ) : (
                             <li className="flex items-start">
                               <Check className="w-4 h-4 text-[#12d6fa] mr-3 mt-0.5 flex-shrink-0" />
-                              <span className="text-gray-700">Premium quality materials</span>
+                              <span className="text-gray-700">{t("product.defaultFeature")}</span>
                             </li>
                           )}
                         </ul>
@@ -1443,7 +1450,7 @@ export default function ShopProductDetail() {
                       <div>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <Shield className="w-5 h-5 mr-2 text-blue-500" />
-                          Safety & Quality
+                          {t("product.safetyQuality")}
                         </h3>
                         <ul className="space-y-3">
                           {Array.isArray(product.safetyFeatures) && product.safetyFeatures.length > 0 ? (
@@ -1494,18 +1501,18 @@ export default function ShopProductDetail() {
                         )) || (
                           <>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                              <span className="font-medium text-gray-700">Material</span>
-                              <span className="text-gray-600">{product.material || "Premium"}</span>
+                              <span className="font-medium text-gray-700">{t("product.material")}</span>
+                              <span className="text-gray-600">{product.material || t("product.premium")}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                              <span className="font-medium text-gray-700">Dimensions</span>
+                              <span className="font-medium text-gray-700">{t("product.dimensions")}</span>
                               <span className="text-gray-600">
-                                {product.dimensions ? `${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth} cm` : "Standard"}
+                                {product.dimensions ? `${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth} cm` : t("product.standard")}
                               </span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                              <span className="font-medium text-gray-700">Weight</span>
-                              <span className="text-gray-600">{product.dimensions?.weight ? `${product.dimensions.weight} kg` : "Lightweight"}</span>
+                              <span className="font-medium text-gray-700">{t("product.weight")}</span>
+                              <span className="text-gray-600">{product.dimensions?.weight ? `${product.dimensions.weight} kg` : t("product.lightweight")}</span>
                             </div>
                           </>
                         )}
@@ -1516,16 +1523,16 @@ export default function ShopProductDetail() {
                       <CardHeader>
                         <CardTitle className="flex items-center text-lg">
                           <Award className="w-5 h-5 mr-2 text-green-500" />
-                          Certifications & Warranty
+                          {t("product.certifications")} & {t("product.warranty")}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="font-medium text-gray-700">Warranty</span>
+                          <span className="font-medium text-gray-700">{t("product.warranty")}</span>
                           <span className="text-gray-600">{product.warranty || "1 Year"}</span>
                         </div>
                         <div className="py-2 border-b border-gray-100 last:border-b-0">
-                          <span className="font-medium text-gray-700 block mb-2">Certifications</span>
+                          <span className="font-medium text-gray-700 block mb-2">{t("product.certifications")}</span>
                           <div className="flex flex-wrap gap-2">
                             {Array.isArray(product.certifications) && product.certifications.length > 0 ? (
                               product.certifications.map((cert) => (
@@ -1539,7 +1546,7 @@ export default function ShopProductDetail() {
                           </div>
                         </div>
                         <div className="py-2 border-b border-gray-100 last:border-b-0">
-                          <span className="font-medium text-gray-700 block mb-2">Compatibility</span>
+                          <span className="font-medium text-gray-700 block mb-2">{t("product.compatibility")}</span>
                           <div className="flex flex-wrap gap-2">
                             {Array.isArray(product.compatibility) && product.compatibility.length > 0 ? (
                               product.compatibility.map((comp) => (
@@ -1979,7 +1986,7 @@ export default function ShopProductDetail() {
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct) => (
-                      <Link key={relatedProduct._id} href={`/shop/${relatedProduct.slug}`} className="block group">
+                      <Link key={relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/${relatedProduct.slug}`} className="block group">
                         <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
                           <CardContent className="p-0">
                             <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden">

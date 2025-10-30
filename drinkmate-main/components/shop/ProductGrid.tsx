@@ -10,6 +10,7 @@ import { useCart } from '@/hooks/use-cart'
 import { useCartAnimations } from '@/hooks/use-cart-animations'
 import { getProductImageUrl, getImageUrl } from '@/lib/utils/image-utils'
 import { getCategoryName } from '@/lib/utils/category-utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 const EmptyState = ({ onRetry, isRTL }: { onRetry?: () => void; isRTL?: boolean }) => (
   <div className="text-center py-16">
@@ -51,6 +52,7 @@ export default function ProductGrid({
   console.log('🎯 ProductGrid received products:', products.length, products.map(p => ({ name: p.name, category: p.category })))
   const { addItem } = useCart()
   const { animationState, triggerAddAnimation, hideNotification } = useCartAnimations()
+  const { isRTL } = useTranslation()
 
   // Convert old product format to new format if needed
   const convertProduct = (product: any): Product => {
@@ -76,7 +78,11 @@ export default function ProductGrid({
     }
 
     const productId = product._id || product.id
-    const productTitle = product.name || product.title || 'product'
+    const productTitle = (() => {
+      const arName = (product as any)?.nameAr || (product as any)?.titleAr
+      if (isRTL && arName) return arName
+      return product.name || product.title || 'product'
+    })()
     const productSlug = product.slug || generateSlug(productTitle, productId)
     
     // Get the primary image using the utility function

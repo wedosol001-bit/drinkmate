@@ -212,7 +212,7 @@ exports.getAllProducts = async (req, res) => {
         
         // Execute query with pagination
         const products = await Product.find(filter)
-            .select('name slug price originalPrice images averageRating reviewCount category shortDescription')
+            .select('name nameAr slug price originalPrice images averageRating reviewCount category shortDescription shortDescriptionAr hasVariants variants.price variants.originalPrice variants.stock variants.sku variants.name variants.nameAr variants.image')
             .sort(sort)
             .skip(skip)
             .limit(limit)
@@ -392,7 +392,9 @@ exports.createProduct = async (req, res) => {
             description: req.body.description || req.body.shortDescription || req.body.name,
             descriptionAr: req.body.descriptionAr?.trim(),
             shortDescription: req.body.shortDescription?.trim(),
+            shortDescriptionAr: req.body.shortDescriptionAr?.trim(),
             fullDescription: req.body.fullDescription?.trim(),
+            fullDescriptionAr: req.body.fullDescriptionAr?.trim(),
             sku: req.body.sku?.trim() || undefined,
             category: req.body.category?.trim() || 'energy-drink',
             subcategory: req.body.subcategory?.trim(),
@@ -534,7 +536,9 @@ exports.updateProduct = async (req, res) => {
         if (req.body.description !== undefined) updateData.description = req.body.description;
         if (req.body.descriptionAr !== undefined) updateData.descriptionAr = req.body.descriptionAr;
         if (req.body.shortDescription !== undefined) updateData.shortDescription = req.body.shortDescription;
+        if (req.body.shortDescriptionAr !== undefined) updateData.shortDescriptionAr = req.body.shortDescriptionAr;
         if (req.body.fullDescription !== undefined) updateData.fullDescription = req.body.fullDescription;
+        if (req.body.fullDescriptionAr !== undefined) updateData.fullDescriptionAr = req.body.fullDescriptionAr;
         if (req.body.category !== undefined) updateData.category = req.body.category;
         if (req.body.subcategory !== undefined) updateData.subcategory = req.body.subcategory;
         

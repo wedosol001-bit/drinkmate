@@ -53,7 +53,7 @@ interface Bundle {
 }
 
 export default function SodamakersPage() {
-  const { t } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const [isLoading, setIsLoading] = useState(true)
@@ -306,12 +306,13 @@ export default function SodamakersPage() {
       // Add product view functionality if needed
     }
 
+    const displayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
     const productData = {
       _id: product._id,
       id: product._id,
-      name: product.name,
+      name: displayName,
       slug: product.slug || product._id,
-      title: product.name,
+      title: displayName,
       image: product.image,
       price: product.price,
       compareAtPrice: product.originalPrice,
@@ -335,7 +336,7 @@ export default function SodamakersPage() {
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
           const cartItem = {
             id: productId,
-            name: product.name,
+            name: displayName,
             price: product.price,
             quantity: qty,
             image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
@@ -482,7 +483,7 @@ export default function SodamakersPage() {
                 console.log('🔍 Rendering section:', section.name, 'with', section.products.length, 'products');
                 return (
                   <div key={section._id} className="mb-12 sm:mb-16">
-                    <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{section.name}</h2>
+                    <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{isRTL && section.name === 'Soda Makers' ? 'صانعات الصودا' : section.name}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                       {section.products.map((product) => {
                         console.log('🔍 Rendering product:', product.name);
