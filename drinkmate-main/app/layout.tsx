@@ -147,8 +147,8 @@ export const metadata: Metadata = {
 // Local Arabic display font: RH ZAK (Thin 100, Bold 700)
 const rhZak = localFont({
   src: [
-    { path: "../public/fonts/rh-zak/rh-zak-thin.otf", weight: "100", style: "normal" },
-    { path: "../public/fonts/rh-zak/rh-zak-bold.otf", weight: "700", style: "normal" },
+    { path: "../public/fonts/rh-zak-thin.otf", weight: "100", style: "normal" },
+    { path: "../public/fonts/rh-zak-bold.otf", weight: "700", style: "normal" },
   ],
   variable: "--font-rh-zak",
   display: "swap",
