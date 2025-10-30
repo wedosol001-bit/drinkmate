@@ -1774,6 +1774,75 @@ export interface Translations {
     tabs: { faqs: string; description: string; reviews: string; faqsTitle: string; faqsSubtitle: string; productDescription: string; keyFeatures: string; customerReviews: string }
   }
 
+  // Account
+  account: {
+    loading: string
+    loadingErrorTitle: string
+    tryAgain: string
+    errors: { notAuthenticated: string; failedLoad: string }
+    welcome: string
+    manageAccount: string
+    stats: { orders: string; rating: string }
+    profile: {
+      title: string
+      fullName: string
+      phoneNumber: string
+      phone: string
+      email: string
+      emailUnchangeable: string
+      save: string
+      cancel: string
+      edit: string
+    }
+    address: {
+      title: string
+      district: string
+      city: string
+      country: string
+      countryValue: string
+      enterDistrict: string
+      enterCity: string
+      shortAddress: string
+      nationalAddressLink: string
+      optional: string
+      placeholder: string
+      formatHint: string
+      save: string
+      saving: string
+      cancel: string
+      viewLabel: string
+      edit: string
+    }
+    password: {
+      title: string
+      current: string
+      new: string
+      confirm: string
+      change: string
+      cancel: string
+      security: string
+      strong: string
+      lastUpdated: string
+    }
+    orders: { title: string; itemsSuffix: string; view: string; viewAll: string }
+    toasts: {
+      nameRequired: string
+      loginFirst: string
+      profileSaved: string
+      profileSaveError: string
+      addressValidation: string
+      nationalAddressInvalid: string
+      addressSaved: string
+      addressSaveError: string
+      passwordAllRequired: string
+      passwordMismatch: string
+      passwordTooShort: string
+      passwordNotAuthenticated: string
+      passwordChanged: string
+      passwordChangeError: string
+    }
+  }
+  
   // Cart
   cart: {
     title: string
