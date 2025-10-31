@@ -18,8 +18,11 @@ interface JWTPayload {
   exp: number
 }
 
-export function withAuth(handler: (req: AuthenticatedRequest) => Promise<NextResponse>) {
-  return async (req: NextRequest) => {
+export function withAuth(
+  handler: ((req: AuthenticatedRequest) => Promise<NextResponse>) | 
+           ((req: AuthenticatedRequest, context: { params: Promise<{ id: string }> }) => Promise<NextResponse>)
+) {
+  return async (req: NextRequest, context?: { params: Promise<{ id: string }> }) => {
     try {
       // Get token from Authorization header
       const authHeader = req.headers.get('Authorization')
@@ -153,8 +156,12 @@ export function withAuth(handler: (req: AuthenticatedRequest) => Promise<NextRes
         isAdmin: decoded.isAdmin || false
       }
 
-      // Call the original handler
-      return await handler(authenticatedReq)
+      // Call the original handler with or without params
+      if (context && handler.length > 1) {
+        return await (handler as (req: AuthenticatedRequest, context: { params: Promise<{ id: string }> }) => Promise<NextResponse>)(authenticatedReq, context)
+      } else {
+        return await (handler as (req: AuthenticatedRequest) => Promise<NextResponse>)(authenticatedReq)
+      }
 
     } catch (error) {
       console.error('Auth middleware error:', error)

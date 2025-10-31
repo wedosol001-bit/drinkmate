@@ -10,7 +10,10 @@ interface AuthenticatedRequest extends NextRequest {
   }
 }
 
-async function setDefaultAddress(req: AuthenticatedRequest, { params }: { params: Promise<{ id: string }> }) {
+async function setDefaultAddress(
+  req: AuthenticatedRequest, 
+  context: { params: Promise<{ id: string }> }
+) {
   try {
     const userId = req.user?.id
     if (!userId) {
@@ -20,7 +23,7 @@ async function setDefaultAddress(req: AuthenticatedRequest, { params }: { params
       )
     }
 
-    const { id } = await params
+    const { id } = await context.params
 
     const authToken = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
     
