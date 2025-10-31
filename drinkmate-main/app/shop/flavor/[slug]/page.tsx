@@ -1088,6 +1088,11 @@ export default function FlavorDetailPage() {
                     </div>
                   </div>
 
+                  {/* Short Description (below tags, above options) */}
+                  {(localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description) && (
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description}</p>
+                  )}
+
                   {/* Enhanced Product Options */}
                   {(product.colors || product.sizes) && (
                     <Card className="border-l-4 border-l-[#12d6fa]">
