@@ -27,7 +27,7 @@ interface Recipe {
   isFeatured?: boolean
 }
 
-// Mock recipes data - replace with actual API call
+// Mock recipes data - fallback only, will be replaced by API call
 const mockRecipes: Recipe[] = [
     {
       id: "1",

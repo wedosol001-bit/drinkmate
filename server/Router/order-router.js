@@ -6,6 +6,7 @@ const adminMiddleware = require('../Middleware/admin-middleware');
 
 // Public routes - Order Tracking
 router.get('/track/:orderNumber', orderController.trackOrder);
+router.post('/lookup', orderController.lookupOrder);
 
 // Guest checkout (no authentication required)
 router.post('/guest-orders', orderController.createGuestOrder);

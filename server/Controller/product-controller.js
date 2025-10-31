@@ -332,9 +332,13 @@ exports.getProduct = async (req, res) => {
         .sort({ createdAt: -1 })
         .limit(5);
         
+        // Ensure shortDescription is included in the response
+        // Convert to plain object to ensure all fields are serialized
+        const productData = product.toObject ? product.toObject() : product;
+        
         res.status(200).json({
             success: true,
-            product,
+            product: productData,
             reviews
         });
     } catch (error) {

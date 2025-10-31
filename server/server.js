@@ -55,6 +55,9 @@ const recommendationRouter = require('./Router/recommendation-router');
 const wishlistRouter = require('./Router/wishlist-router');
 const aramexRouter = require('./Router/aramex-router');
 const cartRouter = require('./Router/cart-router');
+const addressRouter = require('./Router/address-router');
+const subscriptionRouter = require('./Router/subscription-router');
+const newsletterRouter = require('./Router/newsletter-router');
 const { Server } = require('socket.io');
 const http = require('http');
 
@@ -66,6 +69,9 @@ require('./Models/product-model');
 require('./Models/category-model');
 require('./Models/bundle-model');
 require('./Models/chat-settings-model');
+require('./Models/address-model');
+require('./Models/subscription-model');
+require('./Models/newsletter-model');
 const app = express();
 
 // Trust proxy for accurate IP addresses
@@ -190,6 +196,9 @@ app.use('/recommendations', generalLimiter, recommendationRouter);
 app.use('/wishlist', generalLimiter, wishlistRouter);
 app.use('/aramex', generalLimiter, aramexRouter);
 app.use('/cart', generalLimiter, cartRouter);
+app.use('/addresses', generalLimiter, addressRouter);
+app.use('/subscriptions', generalLimiter, subscriptionRouter);
+app.use('/newsletter', generalLimiter, newsletterRouter);
 
 // API prefix routes for frontend compatibility
 app.use('/api/admin', generalLimiter, adminRouter);
@@ -210,6 +219,9 @@ app.use('/api/recommendations', generalLimiter, recommendationRouter);
 app.use('/api/wishlist', generalLimiter, wishlistRouter);
 app.use('/api/aramex', generalLimiter, aramexRouter);
 app.use('/api/cart', generalLimiter, cartRouter);
+app.use('/api/addresses', generalLimiter, addressRouter);
+app.use('/api/subscriptions', generalLimiter, subscriptionRouter);
+app.use('/api/newsletter', generalLimiter, newsletterRouter);
 
 // Agents endpoint (placeholder for frontend compatibility)
 app.get('/agents', generalLimiter, authenticateToken, isAdmin, (req, res) => {

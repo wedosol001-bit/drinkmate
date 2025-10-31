@@ -547,9 +547,69 @@ exports.trackOrder = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in trackOrder:', error);
+    }
+}
+
+// Lookup order by email and order number (for contact page)
+exports.lookupOrder = async (req, res) => {
+    try {
+        const { email, orderNumber } = req.body;
+
+        if (!email || !orderNumber) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email and order number are required'
+            });
+        }
+
+        // Find order by order number (case-insensitive)
+        const order = await Order.findOne({
+            orderNumber: orderNumber.toUpperCase()
+        }).populate('user', 'email username');
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Verify email matches (either user email or guest email)
+        const orderEmail = order.user?.email || order.guestInfo?.email || '';
+        if (orderEmail.toLowerCase() !== email.toLowerCase()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Email does not match this order'
+            });
+        }
+
+        // Return order details (excluding sensitive info)
+        const orderData = {
+            orderNumber: order.orderNumber,
+            status: order.status,
+            createdAt: order.createdAt,
+            total: order.total,
+            shippingAddress: {
+                city: order.shippingAddress?.city,
+                district: order.shippingAddress?.district,
+                country: order.shippingAddress?.country
+            },
+            trackingNumber: order.shipping?.trackingNumber || null,
+            estimatedDelivery: order.shipping?.estimatedDelivery || null,
+            itemsCount: order.items?.length || 0,
+            paymentMethod: order.paymentMethod,
+            paymentStatus: order.paymentDetails?.paymentStatus || 'pending'
+        };
+
+        res.status(200).json({
+            success: true,
+            order: orderData
+        });
+    } catch (error) {
+        console.error('Error in lookupOrder:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error',
+            message: 'Failed to lookup order',
             error: error.message
         });
     }

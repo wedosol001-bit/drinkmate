@@ -1089,6 +1089,313 @@ const updateMessageStatus = async (req, res) => {
   }
 };
 
+// Edit message in chat
+const editMessage = async (req, res) => {
+  try {
+    const { chatId, messageId } = req.params;
+    const { content } = req.body;
+    
+    if (!content || content.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Message content is required'
+      });
+    }
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: 'Chat not found'
+      });
+    }
+    
+    const message = chat.messages.id(messageId);
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: 'Message not found'
+      });
+    }
+    
+    // Add to edit history
+    if (!message.editHistory) {
+      message.editHistory = [];
+    }
+    message.editHistory.push({
+      content: message.content,
+      editedAt: new Date(),
+      editedBy: message.senderId || req.user._id
+    });
+    
+    // Update message content
+    message.content = content.trim();
+    message.edited = true;
+    message.editedAt = new Date();
+    
+    await chat.save();
+    
+    res.json({
+      success: true,
+      message: 'Message edited successfully',
+      data: {
+        messageId: message._id,
+        content: message.content,
+        edited: message.edited,
+        editedAt: message.editedAt
+      }
+    });
+  } catch (error) {
+    console.error('Error editing message:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to edit message',
+      error: error.message
+    });
+  }
+};
+
+// Delete message from chat
+const deleteMessage = async (req, res) => {
+  try {
+    const { chatId, messageId } = req.params;
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: 'Chat not found'
+      });
+    }
+    
+    const message = chat.messages.id(messageId);
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: 'Message not found'
+      });
+    }
+    
+    // Remove message from array
+    chat.messages.pull(messageId);
+    await chat.save();
+    
+    res.json({
+      success: true,
+      message: 'Message deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete message',
+      error: error.message
+    });
+  }
+};
+
+// Add reaction to message
+const addMessageReaction = async (req, res) => {
+  try {
+    const { chatId, messageId } = req.params;
+    const { emoji } = req.body;
+    
+    if (!emoji) {
+      return res.status(400).json({
+        success: false,
+        message: 'Emoji is required'
+      });
+    }
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: 'Chat not found'
+      });
+    }
+    
+    const message = chat.messages.id(messageId);
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: 'Message not found'
+      });
+    }
+    
+    // Initialize reactions array if it doesn't exist
+    if (!message.reactions) {
+      message.reactions = [];
+    }
+    
+    // Check if user already reacted with this emoji
+    const existingReaction = message.reactions.find(
+      r => r.userId?.toString() === req.user._id.toString() && r.emoji === emoji
+    );
+    
+    if (existingReaction) {
+      // Remove reaction if already exists (toggle)
+      message.reactions = message.reactions.filter(
+        r => !(r.userId?.toString() === req.user._id.toString() && r.emoji === emoji)
+      );
+    } else {
+      // Add new reaction
+      message.reactions.push({
+        emoji,
+        userId: req.user._id,
+        timestamp: new Date()
+      });
+    }
+    
+    await chat.save();
+    
+    res.json({
+      success: true,
+      message: 'Reaction updated successfully',
+      data: {
+        messageId: message._id,
+        reactions: message.reactions
+      }
+    });
+  } catch (error) {
+    console.error('Error adding reaction:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add reaction',
+      error: error.message
+    });
+  }
+};
+
+// Assign conversation to admin
+const assignConversation = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    const { adminId } = req.body;
+    
+    if (!adminId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Admin ID is required'
+      });
+    }
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: 'Chat not found'
+      });
+    }
+    
+    chat.assignedTo = adminId;
+    await chat.save();
+    
+    // Populate the updated chat
+    const updatedChat = await Chat.findById(chatId)
+      .populate('assignedTo', 'firstName lastName name fullName email')
+      .populate('customer.userId', 'firstName lastName name fullName email');
+    
+    res.json({
+      success: true,
+      message: 'Conversation assigned successfully',
+      data: updatedChat
+    });
+  } catch (error) {
+    console.error('Error assigning conversation:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to assign conversation',
+      error: error.message
+    });
+  }
+};
+
+// Update conversation priority
+const updatePriority = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    const { priority } = req.body;
+    
+    const validPriorities = ['low', 'medium', 'high', 'urgent'];
+    if (!priority || !validPriorities.includes(priority)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid priority is required (low, medium, high, urgent)'
+      });
+    }
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: 'Chat not found'
+      });
+    }
+    
+    chat.priority = priority;
+    await chat.save();
+    
+    res.json({
+      success: true,
+      message: 'Priority updated successfully',
+      data: {
+        chatId: chat._id,
+        priority: chat.priority
+      }
+    });
+  } catch (error) {
+    console.error('Error updating priority:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update priority',
+      error: error.message
+    });
+  }
+};
+
+// Update conversation tags
+const updateTags = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    const { tags } = req.body;
+    
+    if (!Array.isArray(tags)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tags must be an array'
+      });
+    }
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: 'Chat not found'
+      });
+    }
+    
+    chat.tags = tags;
+    await chat.save();
+    
+    res.json({
+      success: true,
+      message: 'Tags updated successfully',
+      data: {
+        chatId: chat._id,
+        tags: chat.tags
+      }
+    });
+  } catch (error) {
+    console.error('Error updating tags:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update tags',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllChats,
   getCustomerChats,
@@ -1110,6 +1417,12 @@ module.exports = {
   getCustomerChatMessages,
   getSessionTimeoutInfo,
   getSessionsNearExpiry,
+  editMessage,
+  deleteMessage,
+  addMessageReaction,
+  assignConversation,
+  updatePriority,
+  updateTags,
   closeSession,
   checkExpiredSessions,
   customerRateAndClose,

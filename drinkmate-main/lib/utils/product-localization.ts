@@ -30,10 +30,12 @@ export function getLocalizedProductDescription(product: BaseProduct, language: L
  * Get localized short description
  */
 export function getLocalizedShortDescription(product: BaseProduct, language: Language): string {
-  if (language === 'AR' && product.shortDescriptionAr) {
+  if (language === 'AR' && product.shortDescriptionAr && product.shortDescriptionAr.trim()) {
     return product.shortDescriptionAr
   }
-  return product.shortDescription || ''
+  // Return shortDescription if it exists and is not empty, otherwise return empty string
+  // The calling code should fall back to description if shortDescription is empty
+  return (product.shortDescription && product.shortDescription.trim()) ? product.shortDescription : ''
 }
 
 /**
@@ -115,11 +117,15 @@ export function getLocalizedSpecifications(product: BaseProduct, language: Langu
  * Get localized product data for display
  */
 export function getLocalizedProductData(product: BaseProduct, language: Language): BaseProduct {
+  const shortDesc = getLocalizedShortDescription(product, language);
+  // If shortDescription is empty, use description as fallback for display
+  const displayShortDescription = shortDesc || getLocalizedProductDescription(product, language);
+  
   return {
     ...product,
     name: getLocalizedProductName(product, language),
     description: getLocalizedProductDescription(product, language),
-    shortDescription: getLocalizedShortDescription(product, language),
+    shortDescription: displayShortDescription, // Use description as fallback if shortDescription is empty
     fullDescription: getLocalizedFullDescription(product, language),
     specifications: getLocalizedSpecifications(product, language),
     colors: product.colors && Array.isArray(product.colors) && product.colors.length > 0 ? product.colors.map(color => {

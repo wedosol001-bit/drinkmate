@@ -676,24 +676,51 @@ export default function ShopProductDetail() {
   }, [effectiveStock])
 
   const filteredReviews = useCallback(() => {
+    // Handle null/undefined reviews
+    if (!reviews || !Array.isArray(reviews)) {
+      return []
+    }
+
     let filtered = reviews
 
     if (reviewFilter !== "all") {
       const rating = Number.parseInt(reviewFilter)
-      filtered = filtered.filter((review) => review.rating === rating)
+      filtered = filtered.filter((review) => {
+        // Handle both API review structure and local review structure
+        const reviewRating = (review as any).rating
+        return reviewRating === rating
+      })
     }
 
     switch (reviewSort) {
       case "newest":
-        return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        return [...filtered].sort((a, b) => {
+          const reviewA = a as any
+          const reviewB = b as any
+          const dateA = reviewA.date || reviewA.createdAt || ''
+          const dateB = reviewB.date || reviewB.createdAt || ''
+          return new Date(dateB).getTime() - new Date(dateA).getTime()
+        })
       case "oldest":
-        return filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        return [...filtered].sort((a, b) => {
+          const reviewA = a as any
+          const reviewB = b as any
+          const dateA = reviewA.date || reviewA.createdAt || ''
+          const dateB = reviewB.date || reviewB.createdAt || ''
+          return new Date(dateA).getTime() - new Date(dateB).getTime()
+        })
       case "highest":
-        return filtered.sort((a, b) => b.rating - a.rating)
+        return [...filtered].sort((a, b) => ((b as any).rating || 0) - ((a as any).rating || 0))
       case "lowest":
-        return filtered.sort((a, b) => a.rating - a.rating)
+        return [...filtered].sort((a, b) => ((a as any).rating || 0) - ((b as any).rating || 0))
       case "helpful":
-        return filtered.sort((a, b) => b.helpful - a.helpful)
+        return [...filtered].sort((a, b) => {
+          const reviewA = a as any
+          const reviewB = b as any
+          const helpfulA = reviewA.helpful || reviewA.helpfulCount || 0
+          const helpfulB = reviewB.helpful || reviewB.helpfulCount || 0
+          return helpfulB - helpfulA
+        })
       default:
         return filtered
     }
@@ -1125,8 +1152,8 @@ export default function ShopProductDetail() {
 
                   {/* Enhanced Product Options */}
                   {/* Short Description (below tags, above options) */}
-                  {(localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description) && (
-                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description}</p>
+                  {localizedProduct?.shortDescription && (
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct.shortDescription}</p>
                   )}
                   {(product.colors || product.sizes) && (
                     <Card className="border-l-4 border-l-[#12d6fa]">
@@ -1592,8 +1619,10 @@ export default function ShopProductDetail() {
                           </div>
                           <div className="space-y-2">
                             {[5, 4, 3, 2, 1].map((rating) => {
-                              const count = reviews.filter((r) => r.rating === rating).length
-                              const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0
+                              const count = reviews && Array.isArray(reviews) 
+                                ? reviews.filter((r) => (r.rating || 0) === rating).length 
+                                : 0
+                              const percentage = reviews && reviews.length > 0 ? (count / reviews.length) * 100 : 0
                               return (
                                 <div key={rating} className="flex items-center space-x-2">
                                   <span className="text-sm w-8">{rating}★</span>
@@ -1717,80 +1746,112 @@ export default function ShopProductDetail() {
 
                     {/* Enhanced Reviews List */}
                     <div className="space-y-6">
-                      {filteredReviews().map((review) => (
-                        <Card key={review.id}>
-                          <CardContent className="p-6">
-                            <div className="flex items-start space-x-4">
-                              <Avatar>
-                                <AvatarImage src={review.avatar} alt={review.user} />
-                                <AvatarFallback>{review.user.charAt(0)}</AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1">
-                                <div className="flex items-center justify-between mb-2">
-                                  <div className="flex items-center space-x-2">
-                                    <span className="font-medium">{review.user}</span>
-                                    {review.verified && (
-                                      <Badge variant="secondary" className="text-xs">
-                                        <CheckCircle className="w-3 h-3 mr-1" />
-                                        Verified Purchase
-                                      </Badge>
+                      {filteredReviews().map((review) => {
+                        // Normalize review data to handle both API and local structures
+                        const reviewAny = review as any
+                        const reviewId = reviewAny.id || reviewAny._id || `review-${Math.random()}`
+                        const userName = typeof reviewAny.user === 'string' 
+                          ? reviewAny.user 
+                          : (reviewAny.user?.username || reviewAny.userName || 'Anonymous')
+                        const userAvatar = typeof reviewAny.user === 'object' 
+                          ? reviewAny.user?.avatar 
+                          : (reviewAny.avatar || undefined)
+                        const reviewDate = reviewAny.date || reviewAny.createdAt || ''
+                        const isVerified = reviewAny.verified || reviewAny.isVerifiedPurchase || false
+                        const helpfulCount = reviewAny.helpful || reviewAny.helpfulCount || 0
+                        const prosList: string[] = Array.isArray(reviewAny.pros) 
+                          ? reviewAny.pros 
+                          : (reviewAny.pros && typeof reviewAny.pros === 'string' ? reviewAny.pros.split(',').map((p: string) => p.trim()).filter(Boolean) : [])
+                        const consList: string[] = Array.isArray(reviewAny.cons) 
+                          ? reviewAny.cons 
+                          : (reviewAny.cons && typeof reviewAny.cons === 'string' ? reviewAny.cons.split(',').map((c: string) => c.trim()).filter(Boolean) : [])
+
+                        return (
+                          <Card key={reviewId}>
+                            <CardContent className="p-6">
+                              <div className="flex items-start space-x-4">
+                                <Avatar>
+                                  <AvatarImage src={userAvatar} alt={userName} />
+                                  <AvatarFallback>{userName.charAt(0).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="font-medium">{userName}</span>
+                                      {isVerified && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          <CheckCircle className="w-3 h-3 mr-1" />
+                                          Verified Purchase
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    {reviewDate && (
+                                      <span className="text-sm text-muted-foreground">
+                                        {new Date(reviewDate).toLocaleDateString()}
+                                      </span>
                                     )}
                                   </div>
-                                  <span className="text-sm text-muted-foreground">{review.date}</span>
-                                </div>
-                                <div className="flex items-center space-x-1 mb-3">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={`w-4 h-4 ${
-                                        star <= review.rating ? "text-yellow-400 fill-current" : "text-gray-300"
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
-                                <p className="text-gray-700 mb-4">{review.comment}</p>
-                                {review.pros && review.pros.length > 0 && (
-                                  <div className="mb-3">
-                                    <span className="font-medium text-green-600">Pros:</span>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                      {review.pros.map((pro, index) => (
-                                        <Badge key={index} variant="secondary" className="text-xs bg-green-50 text-green-700">
-                                          {pro}
-                                        </Badge>
-                                      ))}
-                                    </div>
+                                  <div className="flex items-center space-x-1 mb-3">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <Star
+                                        key={star}
+                                        className={`w-4 h-4 ${
+                                          star <= (reviewAny.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
+                                        }`}
+                                      />
+                                    ))}
                                   </div>
-                                )}
-                                {review.cons && review.cons.length > 0 && (
-                                  <div className="mb-3">
-                                    <span className="font-medium text-red-600">Cons:</span>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                      {review.cons.map((con, index) => (
-                                        <Badge key={index} variant="secondary" className="text-xs bg-red-50 text-red-700">
-                                          {con}
-                                        </Badge>
-                                      ))}
+                                  <p className="text-gray-700 mb-4">{reviewAny.comment || ''}</p>
+                                  {prosList.length > 0 && (
+                                    <div className="mb-3">
+                                      <span className="font-medium text-green-600">Pros:</span>
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {prosList.map((pro: string, index: number) => (
+                                          <Badge key={index} variant="secondary" className="text-xs bg-green-50 text-green-700">
+                                            {pro}
+                                          </Badge>
+                                        ))}
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center space-x-4">
-                                    <button className="flex items-center space-x-1 text-sm text-muted-foreground hover:text-[#12d6fa]">
-                                      <ThumbsUp className="w-4 h-4" />
-                                      <span>Helpful ({review.helpful})</span>
-                                    </button>
-                                    {review.wouldRecommend && (
-                                      <Badge variant="outline" className="text-xs text-green-600 border-green-600">
-                                        Would Recommend
-                                      </Badge>
-                                    )}
+                                  )}
+                                  {consList.length > 0 && (
+                                    <div className="mb-3">
+                                      <span className="font-medium text-red-600">Cons:</span>
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {consList.map((con: string, index: number) => (
+                                          <Badge key={index} variant="secondary" className="text-xs bg-red-50 text-red-700">
+                                            {con}
+                                          </Badge>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-4">
+                                      <button className="flex items-center space-x-1 text-sm text-muted-foreground hover:text-[#12d6fa]">
+                                        <ThumbsUp className="w-4 h-4" />
+                                        <span>Helpful ({helpfulCount})</span>
+                                      </button>
+                                      {(reviewAny.wouldRecommend === true || reviewAny.wouldRecommend === 'true') && (
+                                        <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                                          Would Recommend
+                                        </Badge>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
+                            </CardContent>
+                          </Card>
+                        )
+                      })}
+                      {filteredReviews().length === 0 && (
+                        <Card>
+                          <CardContent className="p-6 text-center text-muted-foreground">
+                            No reviews found. Be the first to review this product!
                           </CardContent>
                         </Card>
-                      ))}
+                      )}
                     </div>
                   </div>
                 </TabsContent>

@@ -38,6 +38,7 @@ import {
 import { useAuth } from '@/lib/contexts/auth-context'
 import { useSocket } from '@/lib/contexts/socket-context'
 import { Message, Conversation } from '@/types/chat'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -493,49 +494,244 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
   }, [])
 
   // Handle message actions
-  const handleMessageAction = useCallback((action: string, message: Message) => {
+  const handleMessageAction = useCallback(async (action: string, message: Message) => {
+    if (!selectedConversation) return
+    
+    const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
+    if (!token) {
+      toast.error('Authentication required')
+      return
+    }
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+    
     switch (action) {
       case 'copy':
         navigator.clipboard.writeText(message.content)
+        toast.success('Message copied to clipboard')
         break
       case 'edit':
-        // TODO: Implement message editing
-        console.log('Edit message:', message.id)
+        // Prompt for new content
+        const newContent = prompt('Edit message:', message.content)
+        if (newContent && newContent.trim() && newContent !== message.content) {
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/messages/${message.id}/edit`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ content: newContent.trim() })
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              setMessages(prev => prev.map(m => 
+                m.id === message.id 
+                  ? { ...m, content: data.data.content, edited: true, editedAt: data.data.editedAt }
+                  : m
+              ))
+              toast.success('Message edited successfully')
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to edit message')
+            }
+          } catch (error) {
+            console.error('Error editing message:', error)
+            toast.error('Failed to edit message')
+          }
+        }
         break
       case 'delete':
-        // TODO: Implement message deletion
-        console.log('Delete message:', message.id)
+        if (window.confirm('Are you sure you want to delete this message?')) {
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/messages/${message.id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            })
+            
+            if (response.ok) {
+              setMessages(prev => prev.filter(m => m.id !== message.id))
+              toast.success('Message deleted successfully')
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to delete message')
+            }
+          } catch (error) {
+            console.error('Error deleting message:', error)
+            toast.error('Failed to delete message')
+          }
+        }
         break
       case 'react':
-        // TODO: Implement message reactions
-        console.log('React to message:', message.id)
-        break
-    }
-  }, [])
-
-  // Handle conversation actions
-  const handleConversationAction = useCallback((action: string) => {
-    if (!selectedConversation) return
-
-    switch (action) {
-      case 'assign':
-        // TODO: Implement conversation assignment
-        console.log('Assign conversation:', selectedConversation.id)
-        break
-      case 'close':
-        // TODO: Implement conversation closing
-        console.log('Close conversation:', selectedConversation.id)
-        break
-      case 'priority':
-        // TODO: Implement priority change
-        console.log('Change priority:', selectedConversation.id)
-        break
-      case 'tags':
-        // TODO: Implement tag management
-        console.log('Manage tags:', selectedConversation.id)
+        // Show emoji picker or use default reactions
+        const emoji = prompt('Enter emoji reaction:', '👍')
+        if (emoji && emoji.trim()) {
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/messages/${message.id}/reaction`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ emoji: emoji.trim() })
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              setMessages(prev => prev.map(m => 
+                m.id === message.id 
+                  ? { ...m, reactions: data.data.reactions || [] }
+                  : m
+              ))
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to add reaction')
+            }
+          } catch (error) {
+            console.error('Error adding reaction:', error)
+            toast.error('Failed to add reaction')
+          }
+        }
         break
     }
   }, [selectedConversation])
+
+  // Handle conversation actions
+  const handleConversationAction = useCallback(async (action: string) => {
+    if (!selectedConversation) return
+
+    const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
+    if (!token) {
+      toast.error('Authentication required')
+      return
+    }
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+
+    switch (action) {
+      case 'assign':
+        const adminId = prompt('Enter admin ID to assign:')
+        if (adminId && adminId.trim()) {
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/assign-admin`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ adminId: adminId.trim() })
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              if (onConversationUpdate) {
+                onConversationUpdate(data.data)
+              }
+              toast.success('Conversation assigned successfully')
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to assign conversation')
+            }
+          } catch (error) {
+            console.error('Error assigning conversation:', error)
+            toast.error('Failed to assign conversation')
+          }
+        }
+        break
+      case 'close':
+        if (window.confirm('Are you sure you want to close this conversation?')) {
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/close`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              if (onConversationUpdate) {
+                onConversationUpdate(data.data)
+              }
+              toast.success('Conversation closed successfully')
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to close conversation')
+            }
+          } catch (error) {
+            console.error('Error closing conversation:', error)
+            toast.error('Failed to close conversation')
+          }
+        }
+        break
+      case 'priority':
+        const priority = prompt('Enter priority (low, medium, high, urgent):', selectedConversation.priority || 'medium')
+        if (priority && ['low', 'medium', 'high', 'urgent'].includes(priority.toLowerCase())) {
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/priority`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ priority: priority.toLowerCase() })
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              setConversationPriority(data.data.priority)
+              if (onConversationUpdate) {
+                onConversationUpdate({ ...selectedConversation, priority: data.data.priority })
+              }
+              toast.success('Priority updated successfully')
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to update priority')
+            }
+          } catch (error) {
+            console.error('Error updating priority:', error)
+            toast.error('Failed to update priority')
+          }
+        }
+        break
+      case 'tags':
+        const tagsInput = prompt('Enter tags (comma-separated):', conversationTags.join(', '))
+        if (tagsInput !== null) {
+          const tags = tagsInput.split(',').map(tag => tag.trim()).filter(Boolean)
+          try {
+            const response = await fetch(`${apiUrl}/chat/${selectedConversation.id}/tags`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ tags })
+            })
+            
+            if (response.ok) {
+              const data = await response.json()
+              setConversationTags(data.data.tags || [])
+              if (onConversationUpdate) {
+                onConversationUpdate({ ...selectedConversation, tags: data.data.tags })
+              }
+              toast.success('Tags updated successfully')
+            } else {
+              const error = await response.json()
+              toast.error(error.message || 'Failed to update tags')
+            }
+          } catch (error) {
+            console.error('Error updating tags:', error)
+            toast.error('Failed to update tags')
+          }
+        }
+        break
+    }
+  }, [selectedConversation, conversationTags, onConversationUpdate])
 
   if (!selectedConversation) {
     return (

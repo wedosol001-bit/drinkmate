@@ -24,18 +24,44 @@ export default function ContactSecondary({ isRTL }: ContactSecondaryProps) {
     if (!orderLookup.email || !orderLookup.orderNumber) return
 
     setIsLookingUp(true)
+    setLookupResult(null)
     try {
-      // TODO: Implement actual order lookup
-      setTimeout(() => {
-        setLookupResult({
-          orderNumber: orderLookup.orderNumber,
-          status: 'Shipped',
-          estimatedDelivery: '2024-01-15',
-          trackingNumber: 'TRK123456789'
+      const response = await fetch('/api/orders/lookup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: orderLookup.email,
+          orderNumber: orderLookup.orderNumber
         })
-        setIsLookingUp(false)
-      }, 1000)
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setLookupResult({
+          orderNumber: data.order.orderNumber,
+          status: data.order.status,
+          estimatedDelivery: data.order.estimatedDelivery 
+            ? new Date(data.order.estimatedDelivery).toLocaleDateString() 
+            : null,
+          trackingNumber: data.order.trackingNumber,
+          total: data.order.total,
+          itemsCount: data.order.itemsCount,
+          createdAt: data.order.createdAt,
+          paymentStatus: data.order.paymentStatus
+        })
+      } else {
+        setLookupResult({
+          error: data.message || (isRTL ? 'فشل العثور على الطلب' : 'Order not found')
+        })
+      }
     } catch (error) {
+      setLookupResult({
+        error: isRTL ? 'حدث خطأ أثناء البحث' : 'An error occurred while looking up the order'
+      })
+    } finally {
       setIsLookingUp(false)
     }
   }
@@ -124,19 +150,37 @@ export default function ContactSecondary({ isRTL }: ContactSecondaryProps) {
             </form>
 
             {lookupResult && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center space-x-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-green-800">
-                    {isRTL ? 'تم العثور على الطلب' : 'Order Found'}
-                  </span>
-                </div>
-                <div className="text-sm text-green-700 space-y-1">
-                  <p><strong>{isRTL ? 'رقم الطلب:' : 'Order:'} {lookupResult.orderNumber}</strong></p>
-                  <p><strong>{isRTL ? 'الحالة:' : 'Status:'} {lookupResult.status}</strong></p>
-                  <p><strong>{isRTL ? 'التسليم المتوقع:' : 'Estimated Delivery:'} {lookupResult.estimatedDelivery}</strong></p>
-                  <p><strong>{isRTL ? 'رقم التتبع:' : 'Tracking:'} {lookupResult.trackingNumber}</strong></p>
-                </div>
+              <div className={`mt-4 p-4 border rounded-lg ${
+                lookupResult.error 
+                  ? 'bg-red-50 border-red-200' 
+                  : 'bg-green-50 border-green-200'
+              }`}>
+                {lookupResult.error ? (
+                  <div className="text-sm text-red-700">
+                    <p className="font-semibold">{lookupResult.error}</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">
+                        {isRTL ? 'تم العثور على الطلب' : 'Order Found'}
+                      </span>
+                    </div>
+                    <div className="text-sm text-green-700 space-y-1">
+                      <p><strong>{isRTL ? 'رقم الطلب:' : 'Order:'} {lookupResult.orderNumber}</strong></p>
+                      <p><strong>{isRTL ? 'الحالة:' : 'Status:'} {lookupResult.status}</strong></p>
+                      {lookupResult.estimatedDelivery && (
+                        <p><strong>{isRTL ? 'التسليم المتوقع:' : 'Estimated Delivery:'} {lookupResult.estimatedDelivery}</strong></p>
+                      )}
+                      {lookupResult.trackingNumber && (
+                        <p><strong>{isRTL ? 'رقم التتبع:' : 'Tracking:'} {lookupResult.trackingNumber}</strong></p>
+                      )}
+                      <p><strong>{isRTL ? 'إجمالي:' : 'Total:'} {lookupResult.total?.toFixed(2) || 'N/A'} {isRTL ? 'ريال' : 'SAR'}</strong></p>
+                      <p><strong>{isRTL ? 'عدد المنتجات:' : 'Items:'} {lookupResult.itemsCount}</strong></p>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </CardContent>

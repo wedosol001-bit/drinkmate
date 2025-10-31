@@ -2,57 +2,60 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '@/lib/contexts/translation-context'
+import { useAuth } from '@/lib/contexts/auth-context'
 import { Address } from '@/types/account'
 import { Button } from '@/components/ui/button'
 import { MapPin, Plus, Edit, Trash2, Star, ArrowLeft } from 'lucide-react'
 import AddressForm from '@/components/account/AddressForm'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 export default function AddressesPage() {
   const { t, language, isRTL: _isRTL } = useTranslation() // _isRTL for future RTL implementation
+  const { isAuthenticated, token } = useAuth()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingAddress, setEditingAddress] = useState<Address | null>(null)
 
-  // Mock data - replace with actual API call
-  const mockAddresses: Address[] = [
-    {
-      id: '1',
-      fullName: 'Ahmed Al-Rashid',
-      district: 'Al-Riyadh',
-      city: 'Riyadh',
-      country: 'Saudi Arabia',
-      nationalAddress: 'JESA3591',
-      phone: '+966501234567',
-      isDefault: true,
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: '2',
-      fullName: 'Ahmed Al-Rashid',
-      district: 'Al-Malaz',
-      city: 'Riyadh',
-      country: 'Saudi Arabia',
-      nationalAddress: 'KHRT2847',
-      phone: '+966501234567',
-      isDefault: false,
-      createdAt: '2024-01-05T00:00:00Z',
-      updatedAt: '2024-01-05T00:00:00Z'
-    }
-  ]
-
   useEffect(() => {
     const fetchAddresses = async () => {
+      if (!isAuthenticated || !token) {
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setAddresses(mockAddresses)
-      setLoading(false)
+      try {
+        const response = await fetch('/api/user/addresses', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (response.ok) {
+          const result = await response.json()
+          if (result.success && result.data) {
+            setAddresses(result.data)
+          } else {
+            setAddresses([])
+          }
+        } else {
+          console.error('Failed to fetch addresses:', response.status)
+          setAddresses([])
+        }
+      } catch (error) {
+        console.error('Error fetching addresses:', error)
+        setAddresses([])
+        toast.error(language === 'AR' ? 'فشل تحميل العناوين' : 'Failed to load addresses')
+      } finally {
+        setLoading(false)
+      }
     }
 
     fetchAddresses()
-  }, [])
+  }, [isAuthenticated, token, language])
 
   const handleAddAddress = () => {
     setEditingAddress(null)
@@ -65,38 +68,145 @@ export default function AddressesPage() {
   }
 
   const handleDeleteAddress = async (id: string) => {
-    if (window.confirm(language === 'AR' ? 'هل أنت متأكد من حذف هذا العنوان؟' : 'Are you sure you want to delete this address?')) {
-      setAddresses(prev => prev.filter(addr => addr.id !== id))
+    if (!window.confirm(language === 'AR' ? 'هل أنت متأكد من حذف هذا العنوان؟' : 'Are you sure you want to delete this address?')) {
+      return
+    }
+
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/user/addresses/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setAddresses(prev => prev.filter(addr => addr.id !== id))
+          toast.success(language === 'AR' ? 'تم حذف العنوان بنجاح' : 'Address deleted successfully')
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل حذف العنوان' : 'Failed to delete address'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل حذف العنوان' : 'Failed to delete address'))
+      }
+    } catch (error) {
+      console.error('Error deleting address:', error)
+      toast.error(language === 'AR' ? 'فشل حذف العنوان' : 'Failed to delete address')
     }
   }
 
   const handleSetDefault = async (id: string) => {
-    setAddresses(prev => prev.map(addr => ({
-      ...addr,
-      isDefault: addr.id === id
-    })))
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/user/addresses/${id}/default`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          // Update local state
+          setAddresses(prev => prev.map(addr => ({
+            ...addr,
+            isDefault: addr.id === id
+          })))
+          toast.success(language === 'AR' ? 'تم تحديث العنوان الافتراضي' : 'Default address updated')
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل تحديث العنوان الافتراضي' : 'Failed to set default address'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل تحديث العنوان الافتراضي' : 'Failed to set default address'))
+      }
+    } catch (error) {
+      console.error('Error setting default address:', error)
+      toast.error(language === 'AR' ? 'فشل تحديث العنوان الافتراضي' : 'Failed to set default address')
+    }
   }
 
-  const handleFormSubmit = (addressData: Omit<Address, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (editingAddress) {
-      // Update existing address
-      setAddresses(prev => prev.map(addr => 
-        addr.id === editingAddress.id 
-          ? { ...addr, ...addressData, updatedAt: new Date().toISOString() }
-          : addr
-      ))
-    } else {
-      // Add new address
-      const newAddress: Address = {
-        ...addressData,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-      setAddresses(prev => [...prev, newAddress])
+  const handleFormSubmit = async (addressData: Omit<Address, 'id' | 'createdAt' | 'updatedAt'>) => {
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
     }
-    setShowForm(false)
-    setEditingAddress(null)
+
+    try {
+      let response: Response
+      
+      if (editingAddress) {
+        // Update existing address
+        response = await fetch(`/api/user/addresses/${editingAddress.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(addressData)
+        })
+      } else {
+        // Create new address
+        response = await fetch('/api/user/addresses', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(addressData)
+        })
+      }
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          // Refresh addresses from API
+          const fetchResponse = await fetch('/api/user/addresses', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+          if (fetchResponse.ok) {
+            const fetchResult = await fetchResponse.json()
+            if (fetchResult.success && fetchResult.data) {
+              setAddresses(fetchResult.data)
+            }
+          }
+          
+          setShowForm(false)
+          setEditingAddress(null)
+          toast.success(
+            editingAddress 
+              ? (language === 'AR' ? 'تم تحديث العنوان بنجاح' : 'Address updated successfully')
+              : (language === 'AR' ? 'تم إضافة العنوان بنجاح' : 'Address added successfully')
+          )
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل حفظ العنوان' : 'Failed to save address'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل حفظ العنوان' : 'Failed to save address'))
+      }
+    } catch (error) {
+      console.error('Error saving address:', error)
+      toast.error(language === 'AR' ? 'فشل حفظ العنوان' : 'Failed to save address')
+    }
   }
 
   if (loading) {

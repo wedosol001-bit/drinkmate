@@ -2,53 +2,69 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '@/lib/contexts/translation-context'
+import { useAuth } from '@/lib/contexts/auth-context'
 import { Subscription } from '@/types/account'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { RefreshCw, Pause, Play, SkipForward, Edit, Trash2, Calendar, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Price } from '@/components/account/Price'
+import { toast } from 'sonner'
 
 export default function SubscriptionsPage() {
   const { language, isRTL } = useTranslation()
+  const { isAuthenticated, token } = useAuth()
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Mock data - replace with actual API call
-  const mockSubscriptions: Subscription[] = [
-    {
-      id: '1',
-      productId: 'prod-1',
-      productName: 'Starter Kit - Arctic Blue',
-      variant: 'Arctic Blue',
-      quantity: 1,
-      nextChargeAt: '2024-02-15T00:00:00Z',
-      interval: '4w',
-      status: 'active',
-      createdAt: '2024-01-15T00:00:00Z'
-    },
-    {
-      id: '2',
-      productId: 'prod-2',
-      productName: 'CO₂ Cylinder Refill',
-      quantity: 2,
-      nextChargeAt: '2024-02-20T00:00:00Z',
-      interval: '8w',
-      status: 'paused',
-      createdAt: '2024-01-10T00:00:00Z'
-    }
-  ]
-
   useEffect(() => {
     const fetchSubscriptions = async () => {
+      if (!isAuthenticated || !token) {
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setSubscriptions(mockSubscriptions)
-      setLoading(false)
+      try {
+        const response = await fetch('/api/user/subscriptions', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (response.ok) {
+          const result = await response.json()
+          if (result.success && result.subscriptions) {
+            setSubscriptions(result.subscriptions.map((sub: any) => ({
+              id: sub.id,
+              productId: sub.productId,
+              productName: sub.productName,
+              variant: sub.variant,
+              quantity: sub.quantity,
+              nextChargeAt: sub.nextChargeAt,
+              interval: sub.interval,
+              status: sub.status,
+              createdAt: sub.createdAt
+            })))
+          } else {
+            setSubscriptions([])
+          }
+        } else {
+          console.error('Failed to fetch subscriptions:', response.status)
+          setSubscriptions([])
+        }
+      } catch (error) {
+        console.error('Error fetching subscriptions:', error)
+        setSubscriptions([])
+        toast.error(language === 'AR' ? 'فشل تحميل الاشتراكات' : 'Failed to load subscriptions')
+      } finally {
+        setLoading(false)
+      }
     }
 
     fetchSubscriptions()
-  }, [])
+  }, [isAuthenticated, token, language])
 
   const getStatusLabel = (status: string) => {
     const statusMap = {
@@ -87,32 +103,170 @@ export default function SubscriptionsPage() {
   }
 
   const handlePause = async (id: string) => {
-    setSubscriptions(prev => prev.map(sub => 
-      sub.id === id ? { ...sub, status: 'paused' as const } : sub
-    ))
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/user/subscriptions/${id}/pause`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setSubscriptions(prev => prev.map(sub => 
+            sub.id === id ? { ...sub, status: 'paused' as const } : sub
+          ))
+          toast.success(language === 'AR' ? 'تم إيقاف الاشتراك' : 'Subscription paused')
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل إيقاف الاشتراك' : 'Failed to pause subscription'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل إيقاف الاشتراك' : 'Failed to pause subscription'))
+      }
+    } catch (error) {
+      console.error('Error pausing subscription:', error)
+      toast.error(language === 'AR' ? 'فشل إيقاف الاشتراك' : 'Failed to pause subscription')
+    }
   }
 
   const handleResume = async (id: string) => {
-    setSubscriptions(prev => prev.map(sub => 
-      sub.id === id ? { ...sub, status: 'active' as const } : sub
-    ))
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/user/subscriptions/${id}/resume`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setSubscriptions(prev => prev.map(sub => 
+            sub.id === id ? { ...sub, status: 'active' as const } : sub
+          ))
+          toast.success(language === 'AR' ? 'تم استئناف الاشتراك' : 'Subscription resumed')
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل استئناف الاشتراك' : 'Failed to resume subscription'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل استئناف الاشتراك' : 'Failed to resume subscription'))
+      }
+    } catch (error) {
+      console.error('Error resuming subscription:', error)
+      toast.error(language === 'AR' ? 'فشل استئناف الاشتراك' : 'Failed to resume subscription')
+    }
   }
 
   const handleSkip = async (id: string) => {
-    // Skip next delivery logic
-    console.log('Skip subscription:', id)
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/user/subscriptions/${id}/skip`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          // Refresh subscriptions to get updated nextChargeAt
+          const fetchResponse = await fetch('/api/user/subscriptions', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+          if (fetchResponse.ok) {
+            const fetchResult = await fetchResponse.json()
+            if (fetchResult.success && fetchResult.subscriptions) {
+              setSubscriptions(fetchResult.subscriptions.map((sub: any) => ({
+                id: sub.id,
+                productId: sub.productId,
+                productName: sub.productName,
+                variant: sub.variant,
+                quantity: sub.quantity,
+                nextChargeAt: sub.nextChargeAt,
+                interval: sub.interval,
+                status: sub.status,
+                createdAt: sub.createdAt
+              })))
+            }
+          }
+          toast.success(language === 'AR' ? 'تم تخطي التوصيل التالي' : 'Next delivery skipped')
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل تخطي التوصيل' : 'Failed to skip delivery'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل تخطي التوصيل' : 'Failed to skip delivery'))
+      }
+    } catch (error) {
+      console.error('Error skipping delivery:', error)
+      toast.error(language === 'AR' ? 'فشل تخطي التوصيل' : 'Failed to skip delivery')
+    }
   }
 
   const handleEdit = async (id: string) => {
-    // Edit subscription logic
+    // TODO: Open edit modal/dialog
     console.log('Edit subscription:', id)
+    toast.info(language === 'AR' ? 'قريباً' : 'Coming soon')
   }
 
   const handleCancel = async (id: string) => {
-    if (window.confirm(language === 'AR' ? 'هل أنت متأكد من إلغاء هذا الاشتراك؟' : 'Are you sure you want to cancel this subscription?')) {
-      setSubscriptions(prev => prev.map(sub => 
-        sub.id === id ? { ...sub, status: 'cancelled' as const } : sub
-      ))
+    if (!window.confirm(language === 'AR' ? 'هل أنت متأكد من إلغاء هذا الاشتراك؟' : 'Are you sure you want to cancel this subscription?')) {
+      return
+    }
+
+    if (!token) {
+      toast.error(language === 'AR' ? 'غير مصرح' : 'Not authenticated')
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/user/subscriptions/${id}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setSubscriptions(prev => prev.filter(sub => sub.id !== id))
+          toast.success(language === 'AR' ? 'تم إلغاء الاشتراك' : 'Subscription cancelled')
+        } else {
+          toast.error(result.error || (language === 'AR' ? 'فشل إلغاء الاشتراك' : 'Failed to cancel subscription'))
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || (language === 'AR' ? 'فشل إلغاء الاشتراك' : 'Failed to cancel subscription'))
+      }
+    } catch (error) {
+      console.error('Error cancelling subscription:', error)
+      toast.error(language === 'AR' ? 'فشل إلغاء الاشتراك' : 'Failed to cancel subscription')
     }
   }
 

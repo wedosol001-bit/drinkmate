@@ -101,7 +101,31 @@ const chatSchema = new mongoose.Schema({
     isRead: {
       type: Boolean,
       default: false
-    }
+    },
+    edited: {
+      type: Boolean,
+      default: false
+    },
+    editedAt: {
+      type: Date,
+      default: null
+    },
+    editHistory: [{
+      content: String,
+      editedAt: Date,
+      editedBy: mongoose.Schema.Types.ObjectId
+    }],
+    reactions: [{
+      emoji: String,
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now
+      }
+    }]
   }],
   
   // Chat metadata

@@ -57,7 +57,10 @@ export function getProductUrl(product: any): string {
   if (matchesCategory(category, ['co2-cylinders', 'co2-cylinder', 'co2'])) {
     return `/shop/co2-cylinders/${product.slug}`;
   }
-  if (matchesCategory(category, ['sodamakers', 'sodamaker', 'machine', 'machines', 'soda-maker', 'soda-makers', 'starter-kits', 'starter kits'])) {
+  // Handle starter-kits category (can be "starter-kits", "starter kits", "Starter Kits", etc.)
+  const normalizedCategory = category.replace(/[\s_-]/g, '').toLowerCase();
+  if (normalizedCategory.includes('starterkit') || 
+      matchesCategory(category, ['sodamakers', 'sodamaker', 'machine', 'machines', 'soda-maker', 'soda-makers', 'starter-kits', 'starter kits', 'starterkit'])) {
     return `/shop/sodamakers/${product.slug}`;
   }
   

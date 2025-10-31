@@ -24,7 +24,7 @@ export default function Footer() {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setErrorMessage("Please enter a valid email address")
+      setErrorMessage(language === 'AR' ? 'الرجاء إدخال عنوان بريد إلكتروني صحيح' : "Please enter a valid email address")
       setNewsletterStatus("error")
       return
     }
@@ -33,14 +33,25 @@ export default function Footer() {
     setErrorMessage("")
     
     try {
-      // Simulate API call - replace with actual newsletter subscription endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // For demo purposes, always succeed
-      setNewsletterStatus("success")
-      setEmail("")
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, source: 'footer' })
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setNewsletterStatus("success")
+        setEmail("")
+      } else {
+        setErrorMessage(data.message || (language === 'AR' ? 'حدث خطأ. الرجاء المحاولة مرة أخرى.' : "Something went wrong. Please try again."))
+        setNewsletterStatus("error")
+      }
     } catch (error) {
-      setErrorMessage("Something went wrong. Please try again.")
+      setErrorMessage(language === 'AR' ? 'حدث خطأ. الرجاء المحاولة مرة أخرى.' : "Something went wrong. Please try again.")
       setNewsletterStatus("error")
     } finally {
       setLoading(false)
@@ -252,7 +263,13 @@ export default function Footer() {
             {newsletterStatus === "success" ? (
               <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
                 <p className="text-sm text-emerald-800 font-medium">
-                  Thanks! Please check your inbox to confirm.
+                  {language === 'AR' ? 'شكراً لك! تم الاشتراك بنجاح.' : "Thanks! You've been successfully subscribed."}
+                </p>
+              </div>
+            ) : newsletterStatus === "error" && errorMessage ? (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-800 font-medium">
+                  {errorMessage}
                 </p>
               </div>
             ) : (

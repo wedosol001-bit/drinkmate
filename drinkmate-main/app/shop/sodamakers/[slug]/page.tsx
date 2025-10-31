@@ -1314,8 +1314,8 @@ export default function SodamakerProductDetail() {
                   </div>
 
                   {/* Short Description (below tags, above options/info sections) */}
-                  {(localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description) && (
-                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct?.shortDescription || localizedProduct?.description || product.shortDescription || product.description}</p>
+                  {localizedProduct?.shortDescription && (
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct.shortDescription}</p>
                   )}
 
                   {/* Enhanced Service Type */}

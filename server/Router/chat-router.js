@@ -97,4 +97,22 @@ router.delete('/:chatId', authenticateToken, isAdmin, chatController.deleteChat)
 // Update message status
 router.put('/:chatId/messages/:messageId/status', authenticateToken, chatController.updateMessageStatus);
 
+// Edit message (admin only)
+router.put('/:chatId/messages/:messageId/edit', authenticateToken, isAdmin, chatController.editMessage);
+
+// Delete message (admin only)
+router.delete('/:chatId/messages/:messageId', authenticateToken, isAdmin, chatController.deleteMessage);
+
+// Add reaction to message
+router.post('/:chatId/messages/:messageId/reaction', authenticateToken, chatController.addMessageReaction);
+
+// Assign conversation to admin (already exists but we'll keep both for compatibility)
+router.post('/:chatId/assign-admin', authenticateToken, isAdmin, chatController.assignConversation);
+
+// Update conversation priority
+router.put('/:chatId/priority', authenticateToken, isAdmin, chatController.updatePriority);
+
+// Update conversation tags
+router.put('/:chatId/tags', authenticateToken, isAdmin, chatController.updateTags);
+
 module.exports = router;

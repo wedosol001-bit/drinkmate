@@ -380,19 +380,41 @@ function ShopPageContent() {
         
         if (typeof category === 'object' && category) {
           // Category is an object with _id, name, slug
-          matches = category.slug === filters.category || 
+          const categorySlug = category.slug?.toLowerCase() || '';
+          const categoryName = category.name?.toLowerCase() || '';
+          const filterCategory = filters.category.toLowerCase();
+          const selectedSlug = selectedCategory?.slug?.toLowerCase() || '';
+          const selectedName = selectedCategory?.name?.toLowerCase() || '';
+          
+          // Normalize category names for comparison (handle "starter kits" vs "starter-kits")
+          const normalize = (str: string) => str.replace(/[\s_-]/g, '').toLowerCase();
+          
+          matches = categorySlug === filterCategory || 
                    category._id === categoryObjectId ||
-                   category.name?.toLowerCase() === selectedCategory?.name?.toLowerCase() ||
-                   category.slug?.toLowerCase() === filters.category.toLowerCase()
+                   categoryName === selectedName ||
+                   normalize(categorySlug) === normalize(filterCategory) ||
+                   normalize(categoryName) === normalize(selectedSlug) ||
+                   normalize(categoryName) === normalize(selectedName)
         } else if (typeof category === 'string') {
           // Category is a string - could be slug, name, or ObjectId
+          const categoryLower = category.toLowerCase();
+          const filterCategory = filters.category.toLowerCase();
+          const selectedSlug = selectedCategory?.slug?.toLowerCase() || '';
+          const selectedName = selectedCategory?.name?.toLowerCase() || '';
+          
+          // Normalize category names for comparison (handle "starter kits" vs "starter-kits")
+          const normalize = (str: string) => str.replace(/[\s_-]/g, '').toLowerCase();
+          
           matches = category === filters.category || 
                    category === categoryObjectId ||
-                   category.toLowerCase() === selectedCategory?.name?.toLowerCase() ||
-                   category.toLowerCase() === selectedCategory?.slug?.toLowerCase() ||
+                   categoryLower === selectedName ||
+                   categoryLower === selectedSlug ||
+                   normalize(categoryLower) === normalize(filterCategory) ||
+                   normalize(categoryLower) === normalize(selectedSlug) ||
+                   normalize(categoryLower) === normalize(selectedName) ||
                    // Additional fallback: check if the string contains the category name
-                   (selectedCategory?.name ? category.toLowerCase().includes(selectedCategory.name.toLowerCase()) : false) ||
-                   (selectedCategory?.slug ? category.toLowerCase().includes(selectedCategory.slug.toLowerCase()) : false)
+                   (selectedCategory?.name ? normalize(categoryLower).includes(normalize(selectedName)) : false) ||
+                   (selectedCategory?.slug ? normalize(categoryLower).includes(normalize(selectedSlug)) : false)
         }
         
         // Only log the first few products to avoid spam

@@ -817,16 +817,27 @@ function ContactPageContent() {
                 </div>
 
                 {/* FAQ Categories */}
-                <div className="space-y-3">
-                  {faqCategories.map((category) => (
-                    <FAQAccordion
-                      key={category.id}
-                      category={category.title}
-                      questions={category.questions}
-                      isExpanded={expandedFAQ === category.id}
-                      onToggle={() => setExpandedFAQ(expandedFAQ === category.id ? null : category.id)}
-                    />
-                  ))}
+                {filteredFaqCategories.length > 0 ? (
+                  <div className="space-y-3">
+                    {filteredFaqCategories.map((category) => (
+                      <FAQAccordion
+                        key={category.id}
+                        category={category.title}
+                        questions={category.questions}
+                        isExpanded={expandedFAQ === category.id}
+                        onToggle={() => setExpandedFAQ(expandedFAQ === category.id ? null : category.id)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">
+                      {language === 'AR' 
+                        ? 'لا توجد نتائج للبحث. حاول استخدام كلمات مختلفة.'
+                        : 'No search results found. Try using different keywords.'}
+                    </p>
+                  </div>
+                )}
                   
                   <div className="pt-4">
                     <button
@@ -918,16 +929,27 @@ function ContactPageContent() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  {faqCategories.map((category) => (
-                    <FAQAccordion
-                      key={category.id}
-                      category={category.title}
-                      questions={category.questions}
-                      isExpanded={expandedFAQ === category.id}
-                      onToggle={() => setExpandedFAQ(expandedFAQ === category.id ? null : category.id)}
-                    />
-                  ))}
+                {filteredFaqCategories.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredFaqCategories.map((category) => (
+                      <FAQAccordion
+                        key={category.id}
+                        category={category.title}
+                        questions={category.questions}
+                        isExpanded={expandedFAQ === category.id}
+                        onToggle={() => setExpandedFAQ(expandedFAQ === category.id ? null : category.id)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">
+                      {language === 'AR' 
+                        ? 'لا توجد نتائج للبحث. حاول استخدام كلمات مختلفة.'
+                        : 'No search results found. Try using different keywords.'}
+                    </p>
+                  </div>
+                )}
                   
                   <div className="text-center pt-4">
                     <button

@@ -30,34 +30,35 @@ async function getUserAddresses(req: AuthenticatedRequest) {
 
     const authToken = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
     
-    // Call backend API to get user profile (which contains address data)
+    // Call backend API to get addresses
     const response = await makeAuthenticatedRequest(
-      `/auth/profile`,
+      `/addresses`,
       { method: 'GET' },
       authToken
     )
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: 'Failed to fetch user profile' },
+        { error: 'Failed to fetch addresses' },
         { status: response.status }
       )
     }
 
-    const userData = await response.json()
+    const result = await response.json()
     
-    // Transform user profile data to addresses format
-    const addresses = [{
-      id: userData.user?._id || userData.user?.id,
-      firstName: userData.user?.name?.split(' ')[0] || '',
-      lastName: userData.user?.name?.split(' ').slice(1).join(' ') || '',
-      phone: userData.user?.phone || '',
-      district: userData.user?.district || '',
-      city: userData.user?.city || '',
-      country: 'Saudi Arabia',
-      nationalAddress: userData.user?.nationalAddress || '',
-      isDefault: true
-    }].filter(addr => addr.district && addr.city) // Only include if has address data
+    // Transform backend addresses to frontend format
+    const addresses = (result.data || []).map((addr: any) => ({
+      id: addr._id || addr.id,
+      fullName: addr.fullName || '',
+      phone: addr.phone || '',
+      district: addr.district || '',
+      city: addr.city || '',
+      country: addr.country || 'Saudi Arabia',
+      nationalAddress: addr.nationalAddress || '',
+      isDefault: addr.isDefault || false,
+      createdAt: addr.createdAt || new Date().toISOString(),
+      updatedAt: addr.updatedAt || new Date().toISOString()
+    }))
 
     return NextResponse.json({
       success: true,
@@ -93,19 +94,19 @@ async function createUserAddress(req: AuthenticatedRequest) {
 
     const body = await req.json()
     const { 
-      firstName, 
-      lastName, 
+      fullName, 
       phone, 
       district, 
       city, 
+      country = 'Saudi Arabia',
       nationalAddress,
       isDefault = false 
     } = body
 
     // Validation
-    if (!firstName || !lastName || !phone || !district || !city) {
+    if (!fullName || !phone || !district || !city) {
       return NextResponse.json(
-        { error: 'All required fields must be provided' },
+        { error: 'Full name, phone, district, and city are required' },
         { status: 400 }
       )
     }
@@ -120,50 +121,218 @@ async function createUserAddress(req: AuthenticatedRequest) {
 
     const authToken = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
     
-    // Call backend API to update user profile with address data
+    // Call backend API to create address
     const response = await makeAuthenticatedRequest(
-      `/auth/profile`,
+      `/addresses`,
       {
-        method: 'PUT',
+        method: 'POST',
         body: JSON.stringify({
-          name: `${sanitizeInput(firstName)} ${sanitizeInput(lastName)}`.trim(),
+          fullName: sanitizeInput(fullName),
           phone: sanitizeInput(phone),
           district: sanitizeInput(district),
           city: sanitizeInput(city),
-          nationalAddress: nationalAddress ? sanitizeInput(nationalAddress).toUpperCase() : ''
+          country: sanitizeInput(country),
+          nationalAddress: nationalAddress ? sanitizeInput(nationalAddress).toUpperCase() : '',
+          isDefault: isDefault
         })
       },
       authToken
     )
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
       return NextResponse.json(
-        { error: 'Failed to update user profile' },
+        { error: errorData.message || 'Failed to create address' },
         { status: response.status }
       )
     }
 
-    const userData = await response.json()
+    const result = await response.json()
     
-    // Return the updated address data
+    // Transform backend address to frontend format
+    const address = {
+      id: result.data?._id || result.data?.id,
+      fullName: result.data?.fullName || fullName,
+      phone: result.data?.phone || phone,
+      district: result.data?.district || district,
+      city: result.data?.city || city,
+      country: result.data?.country || country,
+      nationalAddress: result.data?.nationalAddress || nationalAddress || '',
+      isDefault: result.data?.isDefault || isDefault,
+      createdAt: result.data?.createdAt || new Date().toISOString(),
+      updatedAt: result.data?.updatedAt || new Date().toISOString()
+    }
+    
     return NextResponse.json({
       success: true,
-      message: 'Address updated successfully',
-      data: {
-        id: userData.user?._id || userData.user?.id,
-        firstName: sanitizeInput(firstName),
-        lastName: sanitizeInput(lastName),
-        phone: sanitizeInput(phone),
-        district: sanitizeInput(district),
-        city: sanitizeInput(city),
-        country: 'Saudi Arabia',
-        nationalAddress: nationalAddress ? sanitizeInput(nationalAddress).toUpperCase() : '',
-        isDefault: true
-      }
+      message: 'Address created successfully',
+      data: address
     })
 
   } catch (error) {
     console.error('Error creating user address:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+async function updateUserAddress(req: AuthenticatedRequest) {
+  try {
+    const userId = req.user?.id
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    const { id } = req.params || {}
+    const body = await req.json()
+    const { 
+      fullName, 
+      phone, 
+      district, 
+      city, 
+      country,
+      nationalAddress,
+      isDefault
+    } = body
+
+    const authToken = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
+    
+    // Call backend API to update address
+    const response = await makeAuthenticatedRequest(
+      `/addresses/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({
+          ...(fullName && { fullName: sanitizeInput(fullName) }),
+          ...(phone && { phone: sanitizeInput(phone) }),
+          ...(district && { district: sanitizeInput(district) }),
+          ...(city && { city: sanitizeInput(city) }),
+          ...(country && { country: sanitizeInput(country) }),
+          ...(nationalAddress !== undefined && { 
+            nationalAddress: nationalAddress ? sanitizeInput(nationalAddress).toUpperCase() : '' 
+          }),
+          ...(isDefault !== undefined && { isDefault })
+        })
+      },
+      authToken
+    )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      return NextResponse.json(
+        { error: errorData.message || 'Failed to update address' },
+        { status: response.status }
+      )
+    }
+
+    const result = await response.json()
+    
+    return NextResponse.json({
+      success: true,
+      message: 'Address updated successfully',
+      data: result.data
+    })
+
+  } catch (error) {
+    console.error('Error updating user address:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+async function deleteUserAddress(req: AuthenticatedRequest) {
+  try {
+    const userId = req.user?.id
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    const { id } = req.params || {}
+
+    const authToken = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
+    
+    // Call backend API to delete address
+    const response = await makeAuthenticatedRequest(
+      `/addresses/${id}`,
+      {
+        method: 'DELETE'
+      },
+      authToken
+    )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      return NextResponse.json(
+        { error: errorData.message || 'Failed to delete address' },
+        { status: response.status }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Address deleted successfully'
+    })
+
+  } catch (error) {
+    console.error('Error deleting user address:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+async function setDefaultAddress(req: AuthenticatedRequest) {
+  try {
+    const userId = req.user?.id
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    const { id } = req.params || {}
+
+    const authToken = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
+    
+    // Call backend API to set default address
+    const response = await makeAuthenticatedRequest(
+      `/addresses/${id}/default`,
+      {
+        method: 'PATCH'
+      },
+      authToken
+    )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      return NextResponse.json(
+        { error: errorData.message || 'Failed to set default address' },
+        { status: response.status }
+      )
+    }
+
+    const result = await response.json()
+    
+    return NextResponse.json({
+      success: true,
+      message: 'Default address updated successfully',
+      data: result.data
+    })
+
+  } catch (error) {
+    console.error('Error setting default address:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
