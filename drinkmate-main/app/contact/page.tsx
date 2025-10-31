@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import Banner from '@/components/layout/Banner'
 import Header from '@/components/layout/Header'
@@ -688,6 +688,20 @@ function ContactPageContent() {
       ]
     }
   ]
+
+  const filteredFaqCategories = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return faqCategories
+    }
+    const lowerCaseQuery = searchQuery.toLowerCase()
+    return faqCategories.map(category => ({
+      ...category,
+      questions: category.questions.filter(q =>
+        q.q.toLowerCase().includes(lowerCaseQuery) ||
+        q.a.toLowerCase().includes(lowerCaseQuery)
+      )
+    })).filter(category => category.questions.length > 0)
+  }, [faqCategories, searchQuery])
 
   return (
     <>
