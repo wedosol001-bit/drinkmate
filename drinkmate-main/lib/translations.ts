@@ -1910,6 +1910,8 @@ export interface Translations {
       material?: string
       dimensions?: string
       weight?: string
+      warranty?: string
+      compatibility?: string
       quickView?: string
       compareProducts?: string
     writeAReview: string
