@@ -44,7 +44,7 @@ export default function PageLayout({ children, currentPage }: PageLayoutProps) {
   
   return (
     <div 
-      className={`min-h-screen bg-white ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat'}`}
+      className={`min-h-screen bg-white font-primary`}
       dir={isHydrated && isRTL ? 'rtl' : 'ltr'}
       suppressHydrationWarning
     >

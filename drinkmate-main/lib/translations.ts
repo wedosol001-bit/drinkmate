@@ -1883,6 +1883,12 @@ export interface Translations {
       goToCart: string
       quantity: string
       keyFeatures: string
+      defaultFeature?: string
+      badges?: {
+        bestSeller: string
+        new: string
+        ecoFriendly: string
+      }
       safetyQuality?: string
       estimatedDelivery?: string
       options?: string
