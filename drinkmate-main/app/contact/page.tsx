@@ -853,7 +853,6 @@ function ContactPageContent() {
                   </div>
                 </div>
               </div>
-            </div>
 
             {/* Mobile Layout - Single Column */}
             <div className="lg:hidden space-y-8">
