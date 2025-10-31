@@ -88,6 +88,11 @@ interface CO2Cylinder {
   isNewProduct: boolean
   isEcoFriendly: boolean
   description: string
+  descriptionAr?: string
+  shortDescription?: string
+  shortDescriptionAr?: string
+  fullDescription?: string
+  fullDescriptionAr?: string
   features: string[]
   specifications: Record<string, string>
   images: string[]
