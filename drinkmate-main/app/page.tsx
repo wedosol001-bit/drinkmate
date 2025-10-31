@@ -119,7 +119,7 @@ function BlogCard({
 }
 
 export default function Home() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const router = useRouter()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeMachineColor, setActiveMachineColor] = useState("cyan") // Default to cyan
