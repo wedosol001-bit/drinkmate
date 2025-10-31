@@ -1912,6 +1912,14 @@ export interface Translations {
       weight?: string
       warranty?: string
       compatibility?: string
+      notFoundTitle?: string
+      notFoundDescription?: string
+      backToShop?: string
+      backToAccessories?: string
+      backToSodaMakers?: string
+      premium?: string
+      standard?: string
+      lightweight?: string
       quickView?: string
       compareProducts?: string
     writeAReview: string
