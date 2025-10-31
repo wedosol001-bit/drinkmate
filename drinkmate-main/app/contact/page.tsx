@@ -965,7 +965,6 @@ function ContactPageContent() {
                     </button>
                   </div>
                 </div>
-              </div>
 
               {/* Contact Form */}
               <ContactForm />
