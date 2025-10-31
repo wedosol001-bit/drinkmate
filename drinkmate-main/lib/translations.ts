@@ -1872,6 +1872,8 @@ export interface Translations {
       description: string
       specifications: string
       reviews: string
+      freeShipping?: string
+      featured?: string
       questions: string
       relatedProducts: string
       youMayAlsoLike: string
@@ -1881,6 +1883,12 @@ export interface Translations {
       goToCart: string
       quantity: string
       keyFeatures: string
+      safetyQuality?: string
+      estimatedDelivery?: string
+      options?: string
+      notifyWhenAvailable?: string
+      loadingDetails?: string
+      preparingExperience?: string
       technicalSpecifications: string
       allReviews: string
       allQuestions: string
@@ -1890,6 +1898,11 @@ export interface Translations {
       sold: string
       reviewsCount: string
       questionsCount: string
+      videos?: string
+      qa?: string
+      certifications?: string
+      quickView?: string
+      compareProducts?: string
     writeAReview: string
     askAQuestion: string
     submitReview: string
