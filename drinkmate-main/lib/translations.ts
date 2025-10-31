@@ -1907,6 +1907,9 @@ export interface Translations {
       videos?: string
       qa?: string
       certifications?: string
+      material?: string
+      dimensions?: string
+      weight?: string
       quickView?: string
       compareProducts?: string
     writeAReview: string
