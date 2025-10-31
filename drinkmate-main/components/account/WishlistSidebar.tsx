@@ -336,8 +336,6 @@ export default function WishlistSidebar({ className = "" }: WishlistSidebarProps
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
                       <Link href={`${language === 'AR' ? '/ar' : ''}/shop/${item.product.slug}`}>
                         <Button size="sm" variant="ghost" className="h-9 w-9 p-0">
                           <Eye className="w-4 h-4" />
