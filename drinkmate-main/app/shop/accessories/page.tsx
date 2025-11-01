@@ -165,24 +165,45 @@ export default function AccessoriesPage() {
         let accessoriesProducts = byCategoryResp.products || []
         
         // Helper function to check if product has cylinder subcategory (to exclude from accessories)
+        // Based on admin panel: Subcategory is "CO2 Cylinders" with slug "co2-cylinders" and ID "68c0583c2fc1cff30bf5c117"
         const isCylinderProduct = (product: any): boolean => {
           const subcategory = product.subcategory;
           
-          // Handle object subcategory (most common case)
+          // Handle object subcategory (populated by backend)
           if (typeof subcategory === 'object' && subcategory !== null) {
             const subcategoryName = (subcategory.name || '').toLowerCase();
             const subcategorySlug = (subcategory.slug || '').toLowerCase();
-            const subcategoryId = String(subcategory._id || '').toLowerCase();
+            const subcategoryId = String(subcategory._id || '');
             
-            // Check name, slug, and ID for cylinder keywords
-            return subcategoryName.includes('cylinder') ||
-                   subcategorySlug.includes('cylinder') ||
-                   subcategoryId.includes('cylinder');
+            // Exact match for "CO2 Cylinders" subcategory
+            const exactNameMatch = subcategoryName === 'co2 cylinders';
+            const exactSlugMatch = subcategorySlug === 'co2-cylinders';
+            const exactIdMatch = subcategoryId === '68c0583c2fc1cff30bf5c117';
+            
+            // Fallback: Contains "cylinder" (for flexibility)
+            const containsCylinder = subcategoryName.includes('cylinder') || subcategorySlug.includes('cylinder');
+            
+            return exactNameMatch || exactSlugMatch || exactIdMatch || containsCylinder;
           }
           
-          // Handle string subcategory
-          if (typeof subcategory === 'string') {
-            return subcategory.toLowerCase().includes('cylinder');
+          // Handle string subcategory (ObjectId before population or slug/name string)
+          if (typeof subcategory === 'string' && subcategory.trim()) {
+            const subcategoryLower = subcategory.toLowerCase().trim();
+            
+            // Check if it's the exact ObjectId for CO2 Cylinders subcategory
+            if (subcategoryLower === '68c0583c2fc1cff30bf5c117') {
+              return true;
+            }
+            
+            // Check if it's the exact slug
+            if (subcategoryLower === 'co2-cylinders') {
+              return true;
+            }
+            
+            // Check if it contains "cylinder" keyword
+            if (subcategoryLower.includes('cylinder')) {
+              return true;
+            }
           }
           
           return false;

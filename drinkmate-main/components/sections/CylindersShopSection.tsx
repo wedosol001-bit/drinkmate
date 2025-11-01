@@ -120,34 +120,62 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         const catalogResponse = await shopAPI.getProductsByCategory('accessories', { limit: 1000 });
         
         const allProducts = catalogResponse.products || catalogResponse.data?.products || [];
-        logger.debug('CATALOG CYLINDERS DEBUG - Total accessories products fetched:', allProducts.length);
+        console.log('🔍 CYLINDER SHOP DEBUG - Total accessories products fetched:', allProducts.length);
+        
+        // Log first few products to see their structure
+        if (allProducts.length > 0) {
+          console.log('🔍 CYLINDER SHOP DEBUG - Sample products:', allProducts.slice(0, 3).map((p: any) => ({
+            name: p.name,
+            subcategory: p.subcategory,
+            subcategoryType: typeof p.subcategory,
+            category: p.category
+          })));
+        }
         
         // Helper function to check if product has cylinder subcategory
+        // Based on admin panel: Subcategory is "CO2 Cylinders" with slug "co2-cylinders" and ID "68c0583c2fc1cff30bf5c117"
         const isCylinderProduct = (product: any): boolean => {
           const subcategory = product.subcategory;
           
-          // Handle object subcategory (most common case)
+          // Handle object subcategory (populated by backend)
           if (typeof subcategory === 'object' && subcategory !== null) {
             const subcategoryName = (subcategory.name || '').toLowerCase();
             const subcategorySlug = (subcategory.slug || '').toLowerCase();
-            const subcategoryId = String(subcategory._id || '').toLowerCase();
+            const subcategoryId = String(subcategory._id || '');
             
-            // Check name, slug, and ID for cylinder keywords
-            const matchesName = subcategoryName.includes('cylinder');
-            const matchesSlug = subcategorySlug.includes('cylinder');
-            const matchesId = subcategoryId.includes('cylinder');
+            // Exact match for "CO2 Cylinders" subcategory
+            const exactNameMatch = subcategoryName === 'co2 cylinders';
+            const exactSlugMatch = subcategorySlug === 'co2-cylinders';
+            const exactIdMatch = subcategoryId === '68c0583c2fc1cff30bf5c117';
             
-            if (matchesName || matchesSlug || matchesId) {
-              logger.debug('CATALOG CYLINDERS DEBUG - Found cylinder product (object):', product.name, 'subcategory:', subcategory);
+            // Fallback: Contains "cylinder" (for flexibility)
+            const containsCylinder = subcategoryName.includes('cylinder') || subcategorySlug.includes('cylinder');
+            
+            if (exactNameMatch || exactSlugMatch || exactIdMatch || containsCylinder) {
+              console.log('✅ CYLINDER SHOP DEBUG - Found cylinder product (object):', product.name, 'subcategory:', subcategory);
               return true;
             }
           }
           
-          // Handle string subcategory
-          if (typeof subcategory === 'string') {
-            const subcategoryLower = subcategory.toLowerCase();
+          // Handle string subcategory (ObjectId before population or slug/name string)
+          if (typeof subcategory === 'string' && subcategory.trim()) {
+            const subcategoryLower = subcategory.toLowerCase().trim();
+            
+            // Check if it's the exact ObjectId for CO2 Cylinders subcategory
+            if (subcategoryLower === '68c0583c2fc1cff30bf5c117') {
+              console.log('✅ CYLINDER SHOP DEBUG - Found cylinder product (by ID):', product.name);
+              return true;
+            }
+            
+            // Check if it's the exact slug
+            if (subcategoryLower === 'co2-cylinders') {
+              console.log('✅ CYLINDER SHOP DEBUG - Found cylinder product (by slug):', product.name);
+              return true;
+            }
+            
+            // Check if it contains "cylinder" keyword
             if (subcategoryLower.includes('cylinder')) {
-              logger.debug('CATALOG CYLINDERS DEBUG - Found cylinder product (string):', product.name, 'subcategory:', subcategory);
+              console.log('✅ CYLINDER SHOP DEBUG - Found cylinder product (string):', product.name, 'subcategory:', subcategory);
               return true;
             }
           }
@@ -157,7 +185,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         
         // Filter products by cylinder subcategory
         catalogProducts = allProducts.filter((product: any) => {
-          // Must be in accessories category
+          // Must be in accessories category (or check is more lenient - just needs to be from accessories category fetch)
           const categoryMatch = product.category && (
             (typeof product.category === 'string' && product.category.toLowerCase().includes('accessor')) ||
             (typeof product.category === 'object' && (
@@ -166,10 +194,16 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
             ))
           );
           
-          // Must have cylinder subcategory
+          // Must have cylinder subcategory (or be identified as cylinder by name)
           const hasCylinderSubcategory = isCylinderProduct(product);
           
-          return categoryMatch && hasCylinderSubcategory;
+          const shouldInclude = categoryMatch && hasCylinderSubcategory;
+          
+          if (!shouldInclude && hasCylinderSubcategory) {
+            console.log('⚠️ CYLINDER SHOP DEBUG - Cylinder product rejected (category mismatch):', product.name, 'category:', product.category);
+          }
+          
+          return shouldInclude;
         });
         
         // Preserve nameAr from API response
@@ -178,12 +212,11 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
           nameAr: product.nameAr || (product as any)?.nameAr,
         }));
         
-        logger.debug('CATALOG CYLINDERS DEBUG - Found products from cylinder subcategory:', catalogProducts.length);
+        console.log('✅ CYLINDER SHOP DEBUG - Found products from cylinder subcategory:', catalogProducts.length);
         if (catalogProducts.length > 0) {
-          logger.debug('CATALOG CYLINDERS DEBUG - Sample cylinder product:', {
-            name: catalogProducts[0].name,
-            subcategory: catalogProducts[0].subcategory
-          });
+          console.log('✅ CYLINDER SHOP DEBUG - Cylinder products found:', catalogProducts.map((p: any) => p.name));
+        } else {
+          console.warn('⚠️ CYLINDER SHOP DEBUG - NO CYLINDER PRODUCTS FOUND! Check subcategory field in database.');
         }
       } catch (catalogError) {
         logger.debug('CATALOG CYLINDERS DEBUG - Error fetching catalog products:', catalogError);

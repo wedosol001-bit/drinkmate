@@ -1,5 +1,6 @@
 const Product = require('../Models/product-model');
 const Category = require('../Models/category-model');
+const Subcategory = require('../Models/subcategory-model');
 const Bundle = require('../Models/bundle-model');
 const Review = require('../Models/review-model');
 
@@ -794,21 +795,60 @@ exports.getProductsByCategory = async (req, res) => {
         .sort({ createdAt: -1 })
         .lean();
         
-        // Manually populate category field for products
+        // Manually populate category and subcategory fields for products
         for (let product of products) {
+            // Populate category if it's a string
             if (product.category && typeof product.category === 'string') {
-                // If category is a string, try to find the category by slug or name only
-                const categoryObj = await Category.findOne({
-                    $or: [
-                        { slug: product.category },
-                        { name: product.category }
-                    ]
-                });
+                // Check if it's a valid ObjectId first
+                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.category);
+                
+                let categoryObj;
+                if (isObjectId) {
+                    // If it's a valid ObjectId, try to find by _id
+                    categoryObj = await Category.findById(product.category);
+                } else {
+                    // If it's not an ObjectId, try to find by slug or name
+                    categoryObj = await Category.findOne({
+                        $or: [
+                            { slug: product.category },
+                            { name: product.category }
+                        ]
+                    });
+                }
+                
                 if (categoryObj) {
                     product.category = {
                         _id: categoryObj._id,
                         name: categoryObj.name,
                         slug: categoryObj.slug
+                    };
+                }
+            }
+            
+            // Populate subcategory if it exists and is a string
+            if (product.subcategory && typeof product.subcategory === 'string') {
+                // Check if it's a valid ObjectId first
+                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.subcategory);
+                
+                let subcategoryObj;
+                if (isObjectId) {
+                    // If it's a valid ObjectId, try to find by _id
+                    subcategoryObj = await Subcategory.findById(product.subcategory);
+                } else {
+                    // If it's not an ObjectId, try to find by slug or name
+                    subcategoryObj = await Subcategory.findOne({
+                        $or: [
+                            { slug: product.subcategory },
+                            { name: product.subcategory }
+                        ]
+                    });
+                }
+                
+                if (subcategoryObj) {
+                    product.subcategory = {
+                        _id: subcategoryObj._id,
+                        name: subcategoryObj.name,
+                        slug: subcategoryObj.slug
                     };
                 }
             }
