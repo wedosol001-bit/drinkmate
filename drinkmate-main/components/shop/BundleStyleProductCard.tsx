@@ -265,7 +265,7 @@ export default function BundleStyleProductCard({
         <Link href={getProductUrl(product)} className="block mb-3 group">
           <h3 
             id={`product-title-${product.id}`}
-            className="font-bold text-xl text-gray-900 group-hover:text-cyan-600 transition-colors leading-tight tracking-tight"
+            className={`font-bold text-xl text-gray-900 group-hover:text-cyan-600 transition-colors leading-tight tracking-tight ${dir === "rtl" ? "text-right font-cairo" : "text-left font-montserrat"}`}
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,

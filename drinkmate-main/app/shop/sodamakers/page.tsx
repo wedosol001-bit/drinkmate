@@ -333,6 +333,7 @@ export default function SodamakersPage() {
       <BundleStyleProductCard
         key={product._id}
         product={productData}
+        dir={isRTL ? "rtl" : "ltr"}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
           const cartItem = {
             id: productId,
@@ -373,12 +374,6 @@ export default function SodamakersPage() {
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 flex items-center justify-between h-full p-4 sm:p-6">
-              <div className="text-black flex-1 relative z-10">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{t("shop.categoryPages.omnifizzTitle")}</h2>
-                <p className="text-xs sm:text-sm md:text-base opacity-80">{t("shop.categoryPages.omnifizzDescription")}</p>
-              </div>
-            </div>
           </div>
 
           {/* Luxe Banner */}
@@ -391,12 +386,6 @@ export default function SodamakersPage() {
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 flex items-center justify-between h-full p-4 sm:p-6">
-              <div className="text-white flex-1 relative z-10">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{t("shop.categoryPages.luxeTitle")}</h2>
-                <p className="text-xs sm:text-sm md:text-base opacity-90">{t("shop.categoryPages.luxeDescription")}</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -425,15 +414,18 @@ export default function SodamakersPage() {
                         {section.name}
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                        {section.bundles.map((bundle) => (
+                        {section.bundles.map((bundle) => {
+                          const bundleDisplayName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
+                          return (
                           <BundleStyleProductCard
                             key={bundle._id}
+                            dir={isRTL ? "rtl" : "ltr"}
                             product={{
                               _id: bundle._id,
                               id: bundle._id,
-                              name: bundle.name,
+                              name: bundleDisplayName,
                               slug: bundle.slug,
-                              title: bundle.name,
+                              title: bundleDisplayName,
                               image: bundle.image || "/placeholder.svg",
                               price: bundle.price,
                               compareAtPrice: bundle.originalPrice,
@@ -448,7 +440,7 @@ export default function SodamakersPage() {
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                               const cartItem = {
                                 id: productId,
-                                name: bundle.name,
+                                name: bundleDisplayName,
                                 price: bundle.price,
                                 quantity: qty,
                                 image: bundle.image || '/placeholder.svg',
@@ -464,7 +456,8 @@ export default function SodamakersPage() {
                             onProductView={() => {}}
                             className="h-full"
                           />
-                        ))}
+                          )
+                        })}
                       </div>
                     </div>
                   ))}

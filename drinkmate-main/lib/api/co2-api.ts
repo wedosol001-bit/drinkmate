@@ -43,14 +43,14 @@ const handleApiError = (error: any, context: string): void => {
 // CO2 Cylinders API
 export const co2API = {
   // Get all CO2 cylinders
-  getCylinders: async () => {
+  getCylinders: async (params?: { page?: number; limit?: number; brand?: string; type?: string; status?: string }) => {
     // Check connectivity first
     if (!isOnline()) {
-      console.warn('CO2API: Device appears to be offline, returning fallback data');
+      console.warn('CO2API: Device appears to be offline');
       return {
-        success: true,
-        cylinders: fallbackCylinders,
-        message: 'Using fallback data - device is offline'
+        success: false,
+        cylinders: [],
+        message: 'Device appears to be offline. Please check your connection.'
       };
     }
     
@@ -64,12 +64,23 @@ export const co2API = {
         const token = getAuthToken();
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
         
+        // Build query parameters
+        const queryParams: any = { _t: Date.now() }; // Cache busting
+        if (params) {
+          if (params.page) queryParams.page = params.page;
+          if (params.limit) queryParams.limit = params.limit;
+          if (params.brand) queryParams.brand = params.brand;
+          if (params.type) queryParams.type = params.type;
+          if (params.status) queryParams.status = params.status;
+        }
+        
         // Debug logging
         if (process.env.NODE_ENV === 'development') {
           console.log('CO2API Debug:', {
             baseURL: api.defaults.baseURL,
             endpoint: '/co2/cylinders',
             fullURL: `${api.defaults.baseURL}/co2/cylinders`,
+            queryParams,
             hasToken: !!token,
             timestamp: new Date().toISOString()
           });
@@ -78,7 +89,7 @@ export const co2API = {
         // Add cache-busting parameter to ensure fresh data
         const response = await api.get('/co2/cylinders', { 
           headers,
-          params: { _t: Date.now() }, // Cache busting
+          params: queryParams,
           timeout: 10000 // 10 second timeout
         });
         
@@ -89,11 +100,13 @@ export const co2API = {
       }, cacheKey, 3, 1500); // More retries with longer initial delay
     } catch (error) {
       handleApiError(error, 'getCylinders');
-      // Return fallback data in the same format as the API would
+      // Don't return fallback data - return error instead
+      // This allows the UI to show proper error messages
       return {
-        success: true,
-        cylinders: fallbackCylinders,
-        message: 'Using fallback data due to network error'
+        success: false,
+        cylinders: [],
+        message: 'Failed to fetch cylinders. Please check your connection and try again.',
+        error: error
       };
     }
   },
@@ -108,17 +121,11 @@ export const co2API = {
     
     // Check connectivity first
     if (!isOnline()) {
-      console.warn(`CO2API: Device is offline, returning fallback data for cylinder ${slugOrId}`);
-      // Find a matching cylinder from fallback data or return the first one
-      const fallbackCylinder = fallbackCylinders.find(c => 
-        c.id === slugOrId || 
-        c.id.toString() === slugOrId
-      ) || fallbackCylinders[0];
-      
+      console.warn(`CO2API: Device is offline for cylinder ${slugOrId}`);
       return {
-        success: true,
-        cylinder: fallbackCylinder,
-        message: 'Using fallback data - device is offline'
+        success: false,
+        cylinder: null,
+        message: 'Device appears to be offline. Please check your connection.'
       };
     }
     
@@ -143,16 +150,11 @@ export const co2API = {
     } catch (error) {
       handleApiError(error, `getCylinder(${slugOrId})`);
       
-      // Find a matching cylinder from fallback data or return the first one
-      const fallbackCylinder = fallbackCylinders.find(c => 
-        c.id === slugOrId || 
-        c.id.toString() === slugOrId
-      ) || fallbackCylinders[0];
-      
       return {
-        success: true,
-        cylinder: fallbackCylinder,
-        message: 'Using fallback data due to network error'
+        success: false,
+        cylinder: null,
+        message: 'Failed to fetch cylinder. Please check your connection and try again.',
+        error: error
       };
     }
   },

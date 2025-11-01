@@ -218,7 +218,7 @@ const productQA = [
 
 export default function CO2ProductDetail() {
   const params = useParams()
-  const { t, language } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
   const { addItem } = useCart()
   const router = useRouter()
 
@@ -397,9 +397,10 @@ export default function CO2ProductDetail() {
     setIsInCart(true)
 
     // Add item to cart context
+    const productDisplayName = (language === 'AR' && product.nameAr) ? product.nameAr : product.name
     addItem({
       id: product._id || product.id || productSlug,
-      name: product.name,
+      name: productDisplayName,
       price: product.price,
       image: product.image || product.images?.[0] || '/placeholder.svg',
       quantity: quantity,
@@ -473,7 +474,8 @@ export default function CO2ProductDetail() {
     (platform: string) => {
       if (!product) return
       const url = typeof window !== "undefined" ? window.location.href : ""
-      const text = `Check out this amazing ${product.name} - ${product.description.substring(0, 100)}...`
+      const productName = localizedProduct?.name || product.name
+      const text = `Check out this amazing ${productName} - ${(localizedProduct?.description || product.description || '').substring(0, 100)}...`
 
       switch (platform) {
         case "facebook":
@@ -719,7 +721,7 @@ export default function CO2ProductDetail() {
                 CO2 Cylinders
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{product.name}</span>
+              <span className="text-foreground font-medium">{localizedProduct?.name || product.name}</span>
             </nav>
           </div>
 
@@ -982,7 +984,7 @@ export default function CO2ProductDetail() {
                       )}
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight">{localizedProduct?.name || product.name}</h1>
+                    <h1 className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-balance leading-tight ${isRTL ? "text-right font-cairo" : "text-left font-montserrat"}`}>{localizedProduct?.name || product.name}</h1>
 
                     {/* Enhanced Rating */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">

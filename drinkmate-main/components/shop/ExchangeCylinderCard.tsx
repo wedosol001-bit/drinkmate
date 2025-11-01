@@ -229,7 +229,7 @@ export default function ExchangeCylinderCard({
         <Link href={getProductUrl(product)} className="block mb-3 group">
           <h3 
             id={`product-title-${product.id}`}
-            className="font-bold text-xl text-gray-900 group-hover:text-cyan-600 transition-colors leading-tight tracking-tight line-clamp-2"
+            className={`font-bold text-xl text-gray-900 group-hover:text-cyan-600 transition-colors leading-tight tracking-tight line-clamp-2 ${dir === "rtl" ? "text-right font-cairo" : "text-left font-montserrat"}`}
           >
             {product.title}
           </h3>

@@ -345,6 +345,7 @@ export default function AccessoriesPage() {
     return (
       <BundleStyleProductCard
         key={product._id}
+        dir={isRTL ? "rtl" : "ltr"}
         product={{
           _id: product._id,
           id: product._id,
@@ -439,15 +440,18 @@ export default function AccessoriesPage() {
                         {section.name}
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                        {section.bundles.map((bundle) => (
+                        {section.bundles.map((bundle) => {
+                          const bundleDisplayName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
+                          return (
                           <BundleStyleProductCard
                             key={bundle._id}
+                            dir={isRTL ? "rtl" : "ltr"}
                             product={{
                               _id: bundle._id,
                               id: bundle._id,
-                              name: bundle.name,
+                              name: bundleDisplayName,
                               slug: bundle.slug,
-                              title: bundle.name,
+                              title: bundleDisplayName,
                               image: bundle.image || "/placeholder.svg",
                               price: bundle.price,
                               compareAtPrice: bundle.originalPrice,
@@ -461,7 +465,7 @@ export default function AccessoriesPage() {
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                               const cartItem = {
                                 id: productId,
-                                name: bundle.name,
+                                name: bundleDisplayName,
                                 price: bundle.price,
                                 quantity: qty,
                                 image: bundle.image || '/placeholder.svg',
@@ -477,7 +481,8 @@ export default function AccessoriesPage() {
                             onProductView={() => {}}
                             className="h-full"
                           />
-                        ))}
+                          )
+                        })}
                       </div>
                     </div>
                   ))}

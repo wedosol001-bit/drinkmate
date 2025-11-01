@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import { fetchWithRetry } from "@/lib/utils/fetch-utils"
-import { co2API } from "@/lib/api"
+import { co2API, shopAPI } from "@/lib/api"
 import { exchangeCylinderAPI } from "@/lib/api/exchange-cylinder-api"
 import { logger } from "@/lib/logger"
 import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
@@ -17,6 +17,7 @@ interface CO2Cylinder {
   _id: string
   slug: string
   name: string
+  nameAr?: string
   brand: string
   type: string
   price: number
@@ -42,6 +43,31 @@ interface CO2Cylinder {
   // Exchange-specific fields
   exchangeType?: string
   estimatedTime?: string
+  // Product catalog fields
+  category?: any
+  subcategory?: string
+}
+
+interface Product {
+  _id: string
+  slug?: string
+  name: string
+  nameAr?: string
+  price: number
+  originalPrice?: number
+  image?: string
+  images?: any[]
+  category?: any
+  subcategory?: string
+  description?: string
+  inStock?: boolean
+  rating?: number
+  reviews?: number
+  averageRating?: number
+  totalReviews?: number
+  isBestSeller?: boolean
+  isFeatured?: boolean
+  brand?: string
 }
 
 interface CylindersShopSectionProps {
@@ -52,13 +78,15 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
   const { addItem } = useCart()
   const { isRTL } = useTranslation()
   const [cylinders, setCylinders] = useState<CO2Cylinder[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const handleAddToCart = useCallback((cylinder: CO2Cylinder, qty: number = 1) => {
+    const cylinderDisplayName = (isRTL && cylinder.nameAr) ? cylinder.nameAr : cylinder.name
     const cartItem = {
       id: cylinder._id,
-      name: cylinder.name,
+      name: cylinderDisplayName,
       price: cylinder.price,
       quantity: qty,
       image: cylinder.image || '/placeholder.svg',
@@ -69,14 +97,48 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
     }
     
     addItem(cartItem)
-  }, [addItem])
+  }, [addItem, isRTL])
 
   const fetchCylinders = useCallback(async () => {
+    let catalogProducts: Product[] = [];
+    
     try {
       setLoading(true)
       setError(null)
       
       let response;
+      
+      // Fetch products from main catalog with cylinder category/subcategory
+      try {
+        const catalogResponse = await shopAPI.getProducts({ 
+          limit: 1000,
+          category: 'cylinder' // or 'co2-cylinder' depending on your category slug
+        });
+        
+        if (catalogResponse.success && catalogResponse.products) {
+          // Filter products by subcategory "cylinders" if it exists
+          catalogProducts = catalogResponse.products.filter((product: Product) => {
+            const subcategory = product.subcategory || (product as any)?.subcategory?.name || (product as any)?.subcategory?.slug || '';
+            const categoryMatch = product.category && (
+              (typeof product.category === 'string' && (product.category.toLowerCase().includes('cylinder') || product.category.toLowerCase().includes('co2'))) ||
+              (typeof product.category === 'object' && (
+                product.category.name?.toLowerCase().includes('cylinder') ||
+                product.category.slug?.toLowerCase().includes('cylinder') ||
+                product.category.slug?.toLowerCase().includes('co2')
+              ))
+            );
+            const subcategoryMatch = subcategory && (
+              subcategory.toLowerCase().includes('cylinder') || 
+              subcategory.toLowerCase() === 'cylinders'
+            );
+            return categoryMatch || subcategoryMatch;
+          });
+          logger.debug('CATALOG CYLINDERS DEBUG - Found products:', catalogProducts.length);
+        }
+      } catch (catalogError) {
+        logger.debug('CATALOG CYLINDERS DEBUG - Error fetching catalog products:', catalogError);
+        // Continue even if catalog fetch fails
+      }
       
       // Use different API based on type
       if (type === 'exchange') {
@@ -85,7 +147,9 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         logger.debug('EXCHANGE CYLINDERS DEBUG - Raw Response:', JSON.stringify(response));
       } else {
         // Use regular CO2 API for other types
-        response = await co2API.getCylinders();
+        // Request a higher limit to get all cylinders, not just 10
+        // Only get active cylinders by default
+        response = await co2API.getCylinders({ limit: 1000, page: 1, status: 'active' });
         logger.debug('CO2 CYLINDERS DEBUG - Raw Response:', JSON.stringify(response));
       }
       
@@ -143,15 +207,26 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
       } else {
         const errorMessage = response.message || response.error || 'Failed to load cylinders'
         console.error('Failed to fetch cylinders:', errorMessage)
-        setError(errorMessage)
+        // Don't set error if we have catalog products
+        if (catalogProducts.length === 0) {
+          setError(errorMessage)
+        }
         setCylinders([])
       }
+      
+      // Set catalog products
+      setProducts(catalogProducts)
+      
     } catch (error: any) {
       console.error('CYLINDERS DEBUG - Error object:', error);
       const errorMessage = error?.response?.data?.message || error?.message || 'Failed to load cylinders'
       console.error('Error fetching cylinders:', errorMessage)
-      setError(errorMessage)
+      // Only set error if we don't have catalog products
+      if (products.length === 0 && catalogProducts.length === 0) {
+        setError(errorMessage)
+      }
       setCylinders([])
+      setProducts(catalogProducts || [])
     } finally {
       setLoading(false)
     }
@@ -283,19 +358,82 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         
       </div>
 
+      {products.length === 0 && cylinders.length === 0 && !loading ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">{isRTL ? 'لا توجد منتجات متاحة حالياً' : 'No products available at the moment'}</p>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
+        {/* Render catalog products first */}
+        {products.map((product) => {
+          const productDisplayName = (isRTL && product.nameAr) ? product.nameAr : product.name
+          const productImage = product.image || (product.images && Array.isArray(product.images) && product.images.length > 0 
+            ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url) 
+            : '/placeholder.svg')
+          
+          return (
+            <BundleStyleProductCard
+              key={`product-${product._id}`}
+              dir={isRTL ? "rtl" : "ltr"}
+              product={{
+                _id: product._id,
+                id: product._id,
+                name: productDisplayName,
+                slug: product.slug || product._id,
+                title: productDisplayName,
+                image: productImage,
+                price: product.price,
+                compareAtPrice: product.originalPrice,
+                rating: product.rating || product.averageRating || 0,
+                reviewCount: product.reviews || product.totalReviews || 0,
+                description: product.description || '',
+                category: product.category || 'co2-cylinder',
+                inStock: product.inStock !== undefined ? product.inStock : true,
+                badges: product.isBestSeller ? ["BESTSELLER"] : product.isFeatured ? ["FEATURED"] : undefined,
+              }}
+              onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+                const foundProduct = products.find(p => p._id === productId)
+                if (foundProduct) {
+                  const productDisplayName = (isRTL && foundProduct.nameAr) ? foundProduct.nameAr : foundProduct.name
+                  const productImage = foundProduct.image || (foundProduct.images && Array.isArray(foundProduct.images) && foundProduct.images.length > 0 
+                    ? (typeof foundProduct.images[0] === 'string' ? foundProduct.images[0] : foundProduct.images[0]?.url) 
+                    : '/placeholder.svg')
+                  const cartItem = {
+                    id: productId,
+                    name: productDisplayName,
+                    price: foundProduct.price,
+                    quantity: qty,
+                    image: productImage,
+                    category: typeof foundProduct.category === 'string' ? foundProduct.category : (foundProduct.category as any)?.name || 'co2-cylinder',
+                    productId: productId,
+                    productType: 'product' as const
+                  }
+                  addItem(cartItem)
+                }
+              }}
+              onAddToWishlist={() => {}}
+              onAddToComparison={() => {}}
+              onProductView={() => {}}
+              className="h-full"
+            />
+          )
+        })}
+        
+        {/* Render CO2 cylinders */}
         {cylinders.map((cylinder) => {
           const serviceType = getServiceType(cylinder.type)
+          const cylinderDisplayName = (isRTL && cylinder.nameAr) ? cylinder.nameAr : cylinder.name
           
           // Use ExchangeCylinderCard for exchange type or refill type
           if (type === "exchange" || (serviceType === "refill" && type === "refill")) {
             return (
               <ExchangeCylinderCard
                 key={`exchange-${cylinder._id}`}
+                dir={isRTL ? "rtl" : "ltr"}
                 product={{
                   id: cylinder._id,
                   slug: cylinder.slug,
-                  title: cylinder.name,
+                  title: cylinderDisplayName,
                   image: cylinder.image || "/placeholder.svg",
                   price: cylinder.price,
                   compareAtPrice: cylinder.originalPrice,
@@ -328,12 +466,13 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
           return (
             <BundleStyleProductCard
               key={cylinder._id}
+              dir={isRTL ? "rtl" : "ltr"}
               product={{
                 _id: cylinder._id,
                 id: cylinder._id,
-                name: cylinder.name,
+                name: cylinderDisplayName,
                 slug: cylinder.slug,
-                title: cylinder.name,
+                title: cylinderDisplayName,
                 image: cylinder.image || "/placeholder.svg",
                 price: cylinder.price,
                 compareAtPrice: cylinder.originalPrice,
@@ -358,6 +497,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
           )
         })}
       </div>
+      )}
     </div>
   )
 }
