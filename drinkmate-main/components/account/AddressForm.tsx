@@ -119,7 +119,7 @@ export default function AddressForm({ address, onSubmit, onCancel }: AddressForm
             value={formData.phone}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className={cn(errors.phone && 'border-red-500')}
-            placeholder="+966501234567"
+            placeholder="+966544671116"
           />
           {errors.phone && (
             <p className="text-sm text-red-600 mt-1">{errors.phone}</p>
@@ -171,7 +171,7 @@ export default function AddressForm({ address, onSubmit, onCancel }: AddressForm
             value={formData.phone}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className={cn(errors.phone && 'border-red-500')}
-            placeholder="+966501234567"
+            placeholder="+966544671116"
           />
           {errors.phone && (
             <p className="text-sm text-red-600 mt-1">{errors.phone}</p>

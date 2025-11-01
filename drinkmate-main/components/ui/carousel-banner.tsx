@@ -22,6 +22,7 @@ interface CarouselBannerProps {
   className?: string
   renderCustomContent?: (item: CarouselItem, isActive: boolean) => React.ReactNode
   heightClass?: string
+  isRTL?: boolean
 }
 
 export default function CarouselBanner({ 
@@ -30,22 +31,27 @@ export default function CarouselBanner({
   autoPlayInterval = 5000,
   className = "",
   renderCustomContent,
-  heightClass = "relative h-[600px] sm:h-[700px] md:h-[500px] lg:h-[550px] xl:h-[600px] 2xl:h-[650px]"
+  heightClass = "relative h-[600px] sm:h-[700px] md:h-[500px] lg:h-[550px] xl:h-[600px] 2xl:h-[650px]",
+  isRTL = false
 }: CarouselBannerProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStart, setTouchStart] = useState<number | null>(null)
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
-  // Auto-play functionality
+  // Auto-play functionality - reverse direction for RTL
   useEffect(() => {
     if (!autoPlay) return
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev === items.length - 1 ? 0 : prev + 1))
+      if (isRTL) {
+        setCurrentSlide((prev) => (prev === 0 ? items.length - 1 : prev - 1))
+      } else {
+        setCurrentSlide((prev) => (prev === items.length - 1 ? 0 : prev + 1))
+      }
     }, autoPlayInterval)
 
     return () => clearInterval(interval)
-  }, [autoPlay, autoPlayInterval, items.length])
+  }, [autoPlay, autoPlayInterval, items.length, isRTL])
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === items.length - 1 ? 0 : prev + 1))
@@ -59,7 +65,7 @@ export default function CarouselBanner({
     setCurrentSlide(index)
   }
 
-  // Touch handlers for mobile swipe
+  // Touch handlers for mobile swipe - reverse for RTL
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null)
     setTouchStart(e.targetTouches[0].clientX)
@@ -76,10 +82,19 @@ export default function CarouselBanner({
     const isLeftSwipe = distance > 50
     const isRightSwipe = distance < -50
 
-    if (isLeftSwipe) {
-      nextSlide()
-    } else if (isRightSwipe) {
-      prevSlide()
+    if (isRTL) {
+      // Reverse swipe direction for RTL
+      if (isLeftSwipe) {
+        prevSlide()
+      } else if (isRightSwipe) {
+        nextSlide()
+      }
+    } else {
+      if (isLeftSwipe) {
+        nextSlide()
+      } else if (isRightSwipe) {
+        prevSlide()
+      }
     }
   }
 

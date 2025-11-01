@@ -34,7 +34,7 @@ export default function ContactChannels({ chatStatus, isRTL }: ContactChannelsPr
       ctaColor: 'bg-green-600 hover:bg-green-700',
       helper: 'Replies 9-5; leave a message anytime.',
       helperAr: 'الردود 9-5؛ اترك رسالة في أي وقت.',
-      href: 'https://wa.me/966501234567?text=Hello! I need help with my order.',
+      href: 'https://wa.me/966544671116?text=Hello! I need help with my order.',
       disabled: false
     },
     {

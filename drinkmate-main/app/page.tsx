@@ -712,6 +712,7 @@ export default function Home() {
             items={carouselItems}
             autoPlay={true}
             autoPlayInterval={5000}
+            isRTL={isRTL}
             className="w-full"
             renderCustomContent={(item, isActive) => {
               if (item.type === "hero") {
@@ -1040,7 +1041,7 @@ export default function Home() {
                 </div>
               </div>
               <h3
-                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
+                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-center" : "font-montserrat text-center"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
               >
                 {t("home.productCategories.sodaMakers")}
               </h3>
@@ -1068,7 +1069,7 @@ export default function Home() {
                 </div>
               </div>
               <h3
-                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
+                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-center" : "font-montserrat text-center"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
               >
                 {t("home.productCategories.co2")}
               </h3>
@@ -1096,7 +1097,7 @@ export default function Home() {
                 </div>
               </div>
               <h3
-                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
+                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-center" : "font-montserrat text-center"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
               >
                 {t("home.productCategories.premiumItalianFlavors")}
               </h3>
@@ -1124,7 +1125,7 @@ export default function Home() {
                 </div>
               </div>
               <h3
-                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
+                className={`text-base md:text-xl font-semibold text-gray-800 ${isRTL ? "font-cairo text-center" : "font-montserrat text-center"} group-hover:text-[#12d6fa] transition-colors duration-300 tracking-wide`}
               >
                 {t("home.productCategories.accessories")}
               </h3>
@@ -1277,10 +1278,10 @@ export default function Home() {
         <div className="space-y-12">
           {/* Header */}
           <div className="text-center space-y-4 md:space-y-6" dir={isRTL ? "rtl" : "ltr"}>
-            <h2 className={`font-bold leading-tight text-[#12d6fa] text-[clamp(22px,6vw,44px)] ${isRTL ? "font-cairo text-end" : "font-montserrat text-center"}`}>
+            <h2 className={`font-bold leading-tight text-[#12d6fa] text-[clamp(22px,6vw,44px)] ${isRTL ? "font-cairo text-center" : "font-montserrat text-center"}`}>
               <Balancer>{t("home.howItWorks.title")}</Balancer>
             </h2>
-            <p className={`text-base md:text-lg text-black/70 leading-relaxed max-w-2xl mx-auto ${isRTL ? "font-noto-arabic text-end" : "font-noto-sans text-center"}`}>
+            <p className={`text-base md:text-lg text-black/70 leading-relaxed max-w-2xl mx-auto ${isRTL ? "font-noto-arabic text-center" : "font-noto-sans text-center"}`}>
               {t("home.howItWorks.subtitle")}
             </p>
           </div>
@@ -1583,6 +1584,29 @@ export default function Home() {
     quality={90}
     className="object-cover rounded-xl md:rounded-2xl"
   />
+  {/* Navigation arrows for future slideshow */}
+  <button
+    type="button"
+    className="absolute top-1/2 left-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 transform -translate-y-1/2 hover:scale-110"
+    aria-label="Previous slide"
+    onClick={(e) => {
+      e.preventDefault()
+      // Future slideshow functionality will go here
+    }}
+  >
+    <ChevronLeft className="w-5 h-5 text-gray-800" />
+  </button>
+  <button
+    type="button"
+    className="absolute top-1/2 right-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 transform -translate-y-1/2 hover:scale-110"
+    aria-label="Next slide"
+    onClick={(e) => {
+      e.preventDefault()
+      // Future slideshow functionality will go here
+    }}
+  >
+    <ChevronRight className="w-5 h-5 text-gray-800" />
+  </button>
 </div>
 
 
@@ -1624,56 +1648,60 @@ export default function Home() {
             </div>
 
             {/* Recipes */}
-            <div
-              className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up delay-200"
-              dir={isRTL ? "rtl" : "ltr"}
-            >
-              <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
-                <Image
-                  src="/images/drink-recipes.png"
-                  alt="Drink Recipes"
-                  width={342.8571472167969}
-                  height={270}
-                  className="object-contain rounded-2xl w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
+            <Link href="/recipes" className="block">
+              <div
+                className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up delay-200"
+                dir={isRTL ? "rtl" : "ltr"}
+              >
+                <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
+                  <Image
+                    src="/images/drink-recipes.png"
+                    alt="Drink Recipes"
+                    width={342.8571472167969}
+                    height={270}
+                    className="object-contain rounded-2xl w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3
+                  className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
+                >
+                  {t("home.additionalSections.recipes.title")}
+                </h3>
+                <p
+                  className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
+                >
+                  {t("home.additionalSections.recipes.description")}
+                </p>
               </div>
-              <h3
-                className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
-              >
-                {t("home.additionalSections.recipes.title")}
-              </h3>
-              <p
-                className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
-              >
-                {t("home.additionalSections.recipes.description")}
-              </p>
-            </div>
+            </Link>
 
             {/* Premium Italian Flavors */}
-            <div
-              className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up delay-400"
-              dir={isRTL ? "rtl" : "ltr"}
-            >
-              <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
-                <Image
-                  src="/images/premium-italian-flavors.png"
-                  alt="Premium Italian Flavors"
-                  width={342}
-                  height={251}
-                  className="object-contain rounded-2xl w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
+            <Link href="/shop/flavor" className="block">
+              <div
+                className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up delay-400"
+                dir={isRTL ? "rtl" : "ltr"}
+              >
+                <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
+                  <Image
+                    src="/images/premium-italian-flavors.png"
+                    alt="Premium Italian Flavors"
+                    width={342}
+                    height={251}
+                    className="object-contain rounded-2xl w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3
+                  className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
+                >
+                  {t("home.additionalSections.premiumFlavors.title")}
+                </h3>
+                <p
+                  className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
+                >
+                  {t("home.additionalSections.premiumFlavors.description")}
+                </p>
               </div>
-              <h3
-                className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
-              >
-                {t("home.additionalSections.premiumFlavors.title")}
-              </h3>
-              <p
-                className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
-              >
-                {t("home.additionalSections.premiumFlavors.description")}
-              </p>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

@@ -592,7 +592,7 @@ function ContactPageContent() {
     }
     
     const message = encodeURIComponent("Hello! I need help with my order.")
-    const url = `https://wa.me/966501234567?text=${message}`
+    const url = `https://wa.me/966544671116?text=${message}`
     window.open(url, '_blank')
   }
 
@@ -1070,7 +1070,8 @@ function ContactPageContent() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{t('contact.map.phone')}</p>
-                        <p className="text-gray-600">+966 11 123 4567</p>
+                        <p className="text-gray-600">+966544671116</p>
+                        <p className="text-gray-600 font-bold">TOLL FREE NUMBER: 920016893</p>
                       </div>
                     </div>
                   </div>

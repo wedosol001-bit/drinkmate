@@ -398,7 +398,7 @@ export default function ContactForm({ user, isAuthenticated, selectedTopic, onTo
               type="tel"
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
-              placeholder={isRTL ? '+966 50 123 4567' : '+966 50 123 4567'}
+              placeholder={isRTL ? '+966544671116' : '+966544671116'}
               dir="ltr"
             />
           </div>

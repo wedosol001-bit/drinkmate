@@ -87,7 +87,7 @@ class ChatSettingsService {
             autoAssign: true,
             maxConcurrentChats: 5,
             offlineMessage: 'Our chat support is currently offline. Please use our contact form or email us.',
-            whatsappNumber: '+966501234567',
+            whatsappNumber: '+966544671116',
             emailAddress: 'support@drinkmates.com'
           };
         }
@@ -263,7 +263,7 @@ class ChatSettingsService {
       autoAssign: true,
       maxConcurrentChats: 5,
       offlineMessage: 'Our chat support is currently offline. Please use our contact form or email us.',
-      whatsappNumber: '+966501234567',
+      whatsappNumber: '+966544671116',
       emailAddress: 'support@drinkmates.com',
       slaSettings: {
         firstResponseTime: 300, // 5 minutes

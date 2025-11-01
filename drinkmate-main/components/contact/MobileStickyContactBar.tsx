@@ -27,7 +27,7 @@ export default function MobileStickyContactBar({ isRTL, isAuthenticated, chatSta
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent("Hello! I need help with my order.")
-    const url = `https://wa.me/966501234567?text=${message}`
+    const url = `https://wa.me/966544671116?text=${message}`
     window.open(url, '_blank')
   }
 
@@ -39,7 +39,7 @@ export default function MobileStickyContactBar({ isRTL, isAuthenticated, chatSta
   }
 
   const handlePhoneClick = () => {
-    window.open('tel:+966501234567')
+    window.open('tel:+966544671116')
   }
 
   const handleChatClick = () => {

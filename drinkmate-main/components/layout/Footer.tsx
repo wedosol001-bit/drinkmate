@@ -144,20 +144,23 @@ export default function Footer() {
             <ul className={`mt-4 space-y-1 text-sm ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
               <li>
                 <a 
-                  href="tel:+966501234567" 
+                  href="tel:+966544671116" 
                   className="text-black/70 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
                   itemProp="telephone"
                 >
-                  +966 50 123 4567
+                  +966544671116
                 </a>
               </li>
               <li>
+                <strong>TOLL FREE NUMBER: 920016893</strong>
+              </li>
+              <li>
                 <a 
-                  href="mailto:info@drinkmate.sa" 
+                  href="mailto:cs@drinkmate.sa" 
                   className="text-black/70 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
                   itemProp="email"
                 >
-                  info@drinkmate.sa
+                  cs@drinkmate.sa
                 </a>
               </li>
               <li>
@@ -455,7 +458,7 @@ export default function Footer() {
 
           <nav aria-label="Follow us" className="flex items-center gap-3">
             <a 
-              href="https://wa.me/966501234567" 
+              href="https://wa.me/966544671116" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="h-9 w-9 grid place-items-center rounded-full bg-emerald-50 hover:bg-emerald-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"

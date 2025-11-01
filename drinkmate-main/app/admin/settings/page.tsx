@@ -112,7 +112,7 @@ export default function SettingsPage() {
     },
     store: {
       storeName: "Drinkmate Saudi Arabia",
-      storeEmail: "info@drinkmate.sa",
+      storeEmail: "cs@drinkmate.sa",
       storePhone: "+966 12 345 6789",
       storeAddress: "123 King Fahd Road, Riyadh",
       productsPerPage: 12,
@@ -647,7 +647,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="store-email">Store Email</Label>
-                    <Input id="store-email" defaultValue="info@drinkmate.sa" type="email" />
+                    <Input id="store-email" defaultValue="cs@drinkmate.sa" type="email" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="store-phone">Store Phone</Label>

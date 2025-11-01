@@ -25,7 +25,7 @@ export default function ChatSettingsPage() {
     autoAssign: true,
     maxConcurrentChats: 5,
     offlineMessage: 'Our chat support is currently offline. Please use our contact form or email us.',
-    whatsappNumber: '+966501234567',
+    whatsappNumber: '+966544671116',
     emailAddress: 'support@drinkmates.com'
   })
 
@@ -368,7 +368,7 @@ export default function ChatSettingsPage() {
                     id="whatsapp"
                     value={settings.whatsappNumber}
                     onChange={(e) => updateSetting('whatsappNumber', e.target.value)}
-                    placeholder="+966501234567"
+                    placeholder="+966544671116"
                   />
                   <p className="text-xs text-gray-500 mt-1">Include country code (e.g., +966 for Saudi Arabia)</p>
                 </div>

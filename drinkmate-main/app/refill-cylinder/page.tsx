@@ -69,13 +69,21 @@ export default function CO2() {
   const [cylinderType, setCylinderType] = useState("") // "drinkmate" or "non-drinkmate"
   const [nonDrinkmateBrand, setNonDrinkmateBrand] = useState("")
 
-  // Slideshow navigation
+  // Slideshow navigation - reverse for RTL
   const nextRefillSlide = () => {
-    setCurrentRefillSlide((prev) => (prev === refillSlides.length - 1 ? 0 : prev + 1))
+    if (isRTL) {
+      setCurrentRefillSlide((prev) => (prev === 0 ? refillSlides.length - 1 : prev - 1))
+    } else {
+      setCurrentRefillSlide((prev) => (prev === refillSlides.length - 1 ? 0 : prev + 1))
+    }
   }
 
   const prevRefillSlide = () => {
-    setCurrentRefillSlide((prev) => (prev === 0 ? refillSlides.length - 1 : prev - 1))
+    if (isRTL) {
+      setCurrentRefillSlide((prev) => (prev === refillSlides.length - 1 ? 0 : prev + 1))
+    } else {
+      setCurrentRefillSlide((prev) => (prev === 0 ? refillSlides.length - 1 : prev - 1))
+    }
   }
 
   // State for cylinders from API

@@ -364,39 +364,37 @@ export default function SodamakersPage() {
         {/* Category Banners */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* OmniFizz Banner */}
-          <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg bg-[#ffc232]">
-            <div className="flex items-center justify-between h-full p-4 sm:p-6">
-              <div className="text-black flex-1">
+          <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+            <Image
+              src="/images/banner/omnifizz.jpg"
+              alt="OmniFizz Soda Maker"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 flex items-center justify-between h-full p-4 sm:p-6">
+              <div className="text-black flex-1 relative z-10">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{t("shop.categoryPages.omnifizzTitle")}</h2>
                 <p className="text-xs sm:text-sm md:text-base opacity-80">{t("shop.categoryPages.omnifizzDescription")}</p>
-              </div>
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 flex-shrink-0 ml-2 sm:ml-4">
-                <Image
-                  src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559856/Banner-Omni-Fiz_yjehil.png"
-                  alt="OmniFizz Soda Maker"
-                  fill
-                  sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 128px"
-                  className="object-contain hover:scale-105 transition-transform duration-300"
-                />
               </div>
             </div>
           </div>
 
           {/* Luxe Banner */}
-          <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg bg-black">
-            <div className="flex items-center justify-between h-full p-4 sm:p-6">
-              <div className="text-white flex-1">
+          <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+            <Image
+              src="/images/banner/luxe.jpg"
+              alt="Luxe Soda Maker"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 flex items-center justify-between h-full p-4 sm:p-6">
+              <div className="text-white flex-1 relative z-10">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{t("shop.categoryPages.luxeTitle")}</h2>
                 <p className="text-xs sm:text-sm md:text-base opacity-90">{t("shop.categoryPages.luxeDescription")}</p>
-              </div>
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 flex-shrink-0 ml-2 sm:ml-4">
-                <Image
-                  src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559856/Banner-Luxe-Machine_obvfmq.png"
-                  alt="Luxe Soda Maker"
-                  fill
-                  sizes="(max-width: 640px) 80px, (max-width: 768px) 96px, 128px"
-                  className="object-contain hover:scale-105 transition-transform duration-300"
-                />
               </div>
             </div>
           </div>

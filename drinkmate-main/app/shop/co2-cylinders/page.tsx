@@ -95,32 +95,15 @@ export default function CO2() {
   return (
     <PageLayout currentPage="shop">
       {/* Hero Section */}
-      <section className="relative py-12 sm:py-16 md:py-20 bg-white animate-fade-in-up overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
+      <section className="relative w-full bg-white overflow-hidden">
+        <div className="relative w-full h-[280px] md:h-[320px] lg:h-[400px]">
           <Image
-            src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1757151268/banner-5185319_ntnjqe.jpg"
-            alt="CO2 Cylinders Background"
+            src="/images/banner/Web--Cylinder--Page (1).png"
+            alt="CO2 Cylinders"
             fill
-            className="object-cover"
+            className="object-cover w-full h-full"
             priority
           />
-          <div className="absolute inset-0 bg-black/50"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4">
-          <div className="text-center space-y-4 sm:space-y-6">
-            <h1
-              className={`text-2xl sm:text-3xl md:text-5xl font-bold text-white leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-up tracking-tight`}
-            >
-              {isRTL ? 'إعادة تعبئة / استبدال الأسطوانات' : 'Refill / Exchange Cylinders'}
-            </h1>
-            <p
-              className={`text-sm sm:text-base md:text-xl text-gray-200 max-w-3xl mx-auto ${isRTL ? "font-noto-arabic" : "font-noto-sans"} animate-slide-in-up delay-200 leading-relaxed`}
-            >
-              {isRTL ? 'لا تدع فقاعاتك تنفد مع خدمة إعادة التعبئة / الاستبدال السريعة والمميزة لدينا.' : 'Never let your sparkling run out with our fast and amazing refill / exchange service.'}
-            </p>
-          </div>
         </div>
       </section>
 
