@@ -404,7 +404,7 @@ export default function AccessoriesPage() {
           price: product.price,
           compareAtPrice: product.originalPrice,
           rating: product.rating || 0,
-          reviewCount: product.reviews || product.reviewCount || 0,
+          reviewCount: product.reviews || (product as any).reviewCount || 0,
           description: product.description,
           category: product.category,
           inStock: product.inStock !== false, // Match main shop logic
