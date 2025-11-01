@@ -393,10 +393,10 @@ export default function FlavorPage() {
           price: product.price,
           compareAtPrice: product.originalPrice,
           rating: product.rating || 0,
-          reviewCount: product.reviews || product.reviewCount || 0,
+          reviewCount: product.reviews || (product as any).reviewCount || 0,
           description: product.description,
           category: product.category,
-          inStock: product.inStock !== false, // Match main shop logic
+          inStock: (product as any).inStock !== false, // Match main shop logic
           badges: (product as any).badge ? [(product as any).badge] : undefined,
           // Pass the images array as well for better image handling
           images: product.images,
