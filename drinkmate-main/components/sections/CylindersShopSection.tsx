@@ -106,7 +106,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
       setLoading(true)
       setError(null)
       
-      let response;
+      let response: { success?: boolean; cylinders?: CO2Cylinder[]; message?: string; error?: any };
       
       // Fetch products from main catalog with cylinder subcategory under accessories category
       try {
