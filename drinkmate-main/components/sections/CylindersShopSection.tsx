@@ -147,7 +147,8 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
       // Regular products should come from catalog with cylinder subcategory
       if (type === 'exchange') {
         // Use exchange cylinder API for exchange type
-        response = await exchangeCylinderAPI.getExchangeCylinders();
+        const exchangeResponse = await exchangeCylinderAPI.getExchangeCylinders();
+        response = exchangeResponse as { success?: boolean; cylinders?: CO2Cylinder[]; message?: string; error?: any };
         logger.debug('EXCHANGE CYLINDERS DEBUG - Raw Response:', JSON.stringify(response));
       } else {
         // For 'all' and 'refill', don't use CO2 API - only use catalog products
