@@ -72,6 +72,7 @@ interface CO2Cylinder {
   id?: string // For compatibility with mock data
   slug: string
   name: string
+  nameAr?: string
   brand: string
   type: string
   price: number
