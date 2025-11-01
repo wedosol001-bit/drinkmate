@@ -8,7 +8,11 @@ import { exchangeCylinderAPI } from "@/lib/api/exchange-cylinder-api"
 import { logger } from "@/lib/logger"
 import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
 import ExchangeCylinderCard from "@/components/shop/ExchangeCylinderCard"
+import { convertVariants } from "@/lib/utils/product-formatting"
+import { getProductImageUrl } from "@/lib/utils/image-utils"
+import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCart } from "@/lib/contexts/cart-context"
+import { useCartAnimations } from "@/hooks/use-cart-animations"
 import { toast } from "sonner"
 import styles from "./CylindersShopSection.module.css"
 import { useTranslation } from '@/lib/contexts/translation-context'
@@ -76,6 +80,7 @@ interface CylindersShopSectionProps {
 
 export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps) {
   const { addItem } = useCart()
+  const { triggerAddAnimation } = useCartAnimations()
   const { isRTL } = useTranslation()
   const [cylinders, setCylinders] = useState<CO2Cylinder[]>([])
   const [products, setProducts] = useState<Product[]>([])
@@ -114,71 +119,71 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         // This is the same method used by other category shop pages
         const catalogResponse = await shopAPI.getProductsByCategory('accessories', { limit: 1000 });
         
-        if (catalogResponse.success && catalogResponse.products) {
-          // Filter products by subcategory "cylinders" - this is the key filter
-          catalogProducts = catalogResponse.products.filter((product: Product) => {
-            const subcategory = product.subcategory || (product as any)?.subcategory?.name || (product as any)?.subcategory?.slug || '';
-            const subcategoryStr = typeof subcategory === 'string' ? subcategory.toLowerCase() : '';
-            const subcategoryObj = (typeof product.subcategory === 'object' && product.subcategory !== null) ? (product.subcategory as any) : null;
-            const subcategoryName = subcategoryObj?.name?.toLowerCase() || '';
-            const subcategorySlug = subcategoryObj?.slug?.toLowerCase() || '';
+        const allProducts = catalogResponse.products || catalogResponse.data?.products || [];
+        logger.debug('CATALOG CYLINDERS DEBUG - Total accessories products fetched:', allProducts.length);
+        
+        // Helper function to check if product has cylinder subcategory
+        const isCylinderProduct = (product: any): boolean => {
+          const subcategory = product.subcategory;
+          
+          // Handle object subcategory (most common case)
+          if (typeof subcategory === 'object' && subcategory !== null) {
+            const subcategoryName = (subcategory.name || '').toLowerCase();
+            const subcategorySlug = (subcategory.slug || '').toLowerCase();
+            const subcategoryId = String(subcategory._id || '').toLowerCase();
             
-            // Only show products with "cylinder" or "cylinders" subcategory
-            // Check both string and object formats
-            const isCylinderSubcategory = 
-              subcategoryStr.includes('cylinder') || 
-              subcategoryStr === 'cylinders' ||
-              subcategoryName.includes('cylinder') ||
-              subcategorySlug.includes('cylinder');
+            // Check name, slug, and ID for cylinder keywords
+            const matchesName = subcategoryName.includes('cylinder');
+            const matchesSlug = subcategorySlug.includes('cylinder');
+            const matchesId = subcategoryId.includes('cylinder');
             
-            // Also check category matches accessories
-            const categoryMatch = product.category && (
-              (typeof product.category === 'string' && product.category.toLowerCase().includes('accessor')) ||
-              (typeof product.category === 'object' && (
-                product.category.name?.toLowerCase().includes('accessor') ||
-                product.category.slug?.toLowerCase().includes('accessor')
-              ))
-            );
-            
-            return categoryMatch && isCylinderSubcategory;
+            if (matchesName || matchesSlug || matchesId) {
+              logger.debug('CATALOG CYLINDERS DEBUG - Found cylinder product (object):', product.name, 'subcategory:', subcategory);
+              return true;
+            }
+          }
+          
+          // Handle string subcategory
+          if (typeof subcategory === 'string') {
+            const subcategoryLower = subcategory.toLowerCase();
+            if (subcategoryLower.includes('cylinder')) {
+              logger.debug('CATALOG CYLINDERS DEBUG - Found cylinder product (string):', product.name, 'subcategory:', subcategory);
+              return true;
+            }
+          }
+          
+          return false;
+        };
+        
+        // Filter products by cylinder subcategory
+        catalogProducts = allProducts.filter((product: any) => {
+          // Must be in accessories category
+          const categoryMatch = product.category && (
+            (typeof product.category === 'string' && product.category.toLowerCase().includes('accessor')) ||
+            (typeof product.category === 'object' && (
+              product.category.name?.toLowerCase().includes('accessor') ||
+              product.category.slug?.toLowerCase().includes('accessor')
+            ))
+          );
+          
+          // Must have cylinder subcategory
+          const hasCylinderSubcategory = isCylinderProduct(product);
+          
+          return categoryMatch && hasCylinderSubcategory;
+        });
+        
+        // Preserve nameAr from API response
+        catalogProducts = catalogProducts.map((product: any) => ({
+          ...product,
+          nameAr: product.nameAr || (product as any)?.nameAr,
+        }));
+        
+        logger.debug('CATALOG CYLINDERS DEBUG - Found products from cylinder subcategory:', catalogProducts.length);
+        if (catalogProducts.length > 0) {
+          logger.debug('CATALOG CYLINDERS DEBUG - Sample cylinder product:', {
+            name: catalogProducts[0].name,
+            subcategory: catalogProducts[0].subcategory
           });
-          // Preserve nameAr from API response
-          catalogProducts = catalogProducts.map((product: any) => ({
-            ...product,
-            nameAr: product.nameAr || (product as any)?.nameAr,
-          }));
-          logger.debug('CATALOG CYLINDERS DEBUG - Found products from cylinder subcategory:', catalogProducts.length);
-        } else if (catalogResponse.products) {
-          // Handle case where success field might not be present but products are
-          catalogProducts = catalogResponse.products.filter((product: Product) => {
-            const subcategory = product.subcategory || (product as any)?.subcategory?.name || (product as any)?.subcategory?.slug || '';
-            const subcategoryStr = typeof subcategory === 'string' ? subcategory.toLowerCase() : '';
-            const subcategoryObj = (typeof product.subcategory === 'object' && product.subcategory !== null) ? (product.subcategory as any) : null;
-            const subcategoryName = subcategoryObj?.name?.toLowerCase() || '';
-            const subcategorySlug = subcategoryObj?.slug?.toLowerCase() || '';
-            
-            const isCylinderSubcategory = 
-              subcategoryStr.includes('cylinder') || 
-              subcategoryStr === 'cylinders' ||
-              subcategoryName.includes('cylinder') ||
-              subcategorySlug.includes('cylinder');
-            
-            const categoryMatch = product.category && (
-              (typeof product.category === 'string' && product.category.toLowerCase().includes('accessor')) ||
-              (typeof product.category === 'object' && (
-                product.category.name?.toLowerCase().includes('accessor') ||
-                product.category.slug?.toLowerCase().includes('accessor')
-              ))
-            );
-            
-            return categoryMatch && isCylinderSubcategory;
-          });
-          // Preserve nameAr from API response
-          catalogProducts = catalogProducts.map((product: any) => ({
-            ...product,
-            nameAr: product.nameAr || (product as any)?.nameAr,
-          }));
-          logger.debug('CATALOG CYLINDERS DEBUG - Found products from cylinder subcategory (no success field):', catalogProducts.length);
         }
       } catch (catalogError) {
         logger.debug('CATALOG CYLINDERS DEBUG - Error fetching catalog products:', catalogError);
@@ -416,8 +421,9 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
             ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url) 
             : '/placeholder.svg')
           
-          // Include variants if present (for alignment with main shop)
-          const hasVariants = (product as any)?.hasVariants === true || ((product as any)?.variants && Array.isArray((product as any).variants) && (product as any).variants.length > 0)
+          // Convert variants to match main shop format
+          const convertedVariants = convertVariants(product, productImage)
+          const hasVariants = convertedVariants.length > 0 || (product as any)?.hasVariants === true
           
           return (
             <BundleStyleProductCard
@@ -433,33 +439,43 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
                 price: product.price,
                 compareAtPrice: product.originalPrice,
                 rating: product.rating || product.averageRating || 0,
-                reviewCount: product.reviews || product.totalReviews || 0,
+                reviewCount: (product as any).reviewsCount || product.reviews || product.totalReviews || 0,
                 description: product.description || '',
                 category: product.category || 'co2-cylinder',
-                inStock: product.inStock !== undefined ? product.inStock : true,
+                inStock: product.inStock !== false, // Match main shop logic
+                brand: (product as any).brand,
+                tags: (product as any).tags || [],
                 badges: product.isBestSeller ? ["BESTSELLER"] : product.isFeatured ? ["FEATURED"] : undefined,
                 hasVariants: hasVariants,
-                variants: (product as any)?.variants || [],
+                variants: convertedVariants, // Use converted variants matching main shop format
                 images: product.images || [],
               }}
               onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                 const foundProduct = products.find(p => p._id === productId)
                 if (foundProduct) {
+                  // Create unique cart item ID like main shop
+                  const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                  
                   const productDisplayName = (isRTL && foundProduct.nameAr) ? foundProduct.nameAr : foundProduct.name
-                  const productImage = foundProduct.image || (foundProduct.images && Array.isArray(foundProduct.images) && foundProduct.images.length > 0 
-                    ? (typeof foundProduct.images[0] === 'string' ? foundProduct.images[0] : foundProduct.images[0]?.url) 
-                    : '/placeholder.svg')
+                  
+                  // Use getProductImageUrl utility for consistent image processing
+                  const displayImage = getProductImageUrl(foundProduct, '/placeholder.svg')
+                  
+                  // Use getCategoryName utility for consistent category handling
+                  const categoryName = getCategoryName(foundProduct.category || 'co2-cylinder')
+                  
                   const cartItem = {
-                    id: productId,
+                    id: uniqueCartItemId,
                     name: productDisplayName,
                     price: foundProduct.price,
                     quantity: qty,
-                    image: productImage,
-                    category: typeof foundProduct.category === 'string' ? foundProduct.category : (foundProduct.category as any)?.name || 'co2-cylinder',
+                    image: displayImage, // Use processed image URL
+                    category: categoryName,
                     productId: productId,
                     productType: 'product' as const
                   }
                   addItem(cartItem)
+                  triggerAddAnimation(cartItem) // Match main shop animation
                 }
               }}
               onAddToWishlist={() => {}}

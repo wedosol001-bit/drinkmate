@@ -12,6 +12,10 @@ import { Star, Loader2, ShoppingCart } from "lucide-react"
 import { shopAPI } from "@/lib/api"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
+import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-formatting"
+import { getProductImageUrl } from "@/lib/utils/image-utils"
+import { getCategoryName } from "@/lib/utils/category-utils"
+import { useCartAnimations } from "@/hooks/use-cart-animations"
 
 // Define product types
 interface Product {
@@ -51,6 +55,7 @@ export default function AccessoriesPage() {
   const { t, isRTL } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
+  const { triggerAddAnimation } = useCartAnimations()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -157,7 +162,34 @@ export default function AccessoriesPage() {
 
         // Instead of filtering locally, fetch by category using slug (ensures subcategory field present)
         const byCategoryResp = await shopAPI.getProductsByCategory('accessories', { limit: 100 })
-        const accessoriesProducts = byCategoryResp.products || []
+        let accessoriesProducts = byCategoryResp.products || []
+        
+        // Helper function to check if product has cylinder subcategory (to exclude from accessories)
+        const isCylinderProduct = (product: any): boolean => {
+          const subcategory = product.subcategory;
+          
+          // Handle object subcategory (most common case)
+          if (typeof subcategory === 'object' && subcategory !== null) {
+            const subcategoryName = (subcategory.name || '').toLowerCase();
+            const subcategorySlug = (subcategory.slug || '').toLowerCase();
+            const subcategoryId = String(subcategory._id || '').toLowerCase();
+            
+            // Check name, slug, and ID for cylinder keywords
+            return subcategoryName.includes('cylinder') ||
+                   subcategorySlug.includes('cylinder') ||
+                   subcategoryId.includes('cylinder');
+          }
+          
+          // Handle string subcategory
+          if (typeof subcategory === 'string') {
+            return subcategory.toLowerCase().includes('cylinder');
+          }
+          
+          return false;
+        };
+        
+        // EXCLUDE cylinder products from accessories shop (they belong in cylinder shop only)
+        accessoriesProducts = accessoriesProducts.filter((product: any) => !isCylinderProduct(product))
 
         // Helper to pick first/primary image
         const pickImage = (imgs: any): string => {
@@ -168,24 +200,36 @@ export default function AccessoriesPage() {
         }
 
         // Format accessories products and capture subcategory
-        const formattedAccessories = accessoriesProducts.map((product: any) => ({
-          _id: product._id,
-          id: product._id,
-          slug: product.slug,
-          name: product.name,
-          nameAr: product.nameAr || product.titleAr, // Preserve Arabic name
-          price: product.price,
-          originalPrice: product.originalPrice,
-          image: pickImage(product.images),
+        // Use variant conversion utility to match main shop format
+        const formattedAccessories = accessoriesProducts.map((product: any) => {
+          const productImage = pickImage(product.images)
+          // Convert variants to match main shop format
+          const convertedVariants = convertVariants(product, productImage)
+          const hasVariants = convertedVariants.length > 0 || product.hasVariants === true
+          
+          return {
+            _id: product._id,
+            id: product._id,
+            slug: product.slug,
+            name: product.name,
+            nameAr: product.nameAr || product.titleAr, // Preserve Arabic name
+            price: product.price,
+            originalPrice: product.originalPrice,
+            image: productImage,
           category: "accessories",
           subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
-          rating: product.averageRating || 5,
-          reviews: product.reviewCount || 300,
-          description: product.shortDescription,
+          rating: product.rating || product.averageRating || 0,
+          reviewCount: product.reviewsCount || product.reviewCount || 0,
+          reviews: product.reviewsCount || product.reviewCount || 0, // Keep for compatibility
+          description: product.description || product.shortDescription,
           images: product.images,
-          hasVariants: product.hasVariants || false,
-          variants: product.variants || [],
-        }))
+          hasVariants: hasVariants,
+          variants: convertedVariants, // Use converted variants
+          brand: product.brand,
+          tags: product.tags || [],
+          inStock: product.inStock !== false, // Match main shop logic
+        }
+      })
 
         setAllAccessories(formattedAccessories)
 
@@ -360,10 +404,10 @@ export default function AccessoriesPage() {
           price: product.price,
           compareAtPrice: product.originalPrice,
           rating: product.rating || 0,
-          reviewCount: product.reviews || 0,
+          reviewCount: product.reviews || product.reviewCount || 0,
           description: product.description,
           category: product.category,
-          inStock: true,
+          inStock: product.inStock !== false, // Match main shop logic
           badges: (product as any).badge ? [(product as any).badge] : undefined,
           // Pass the images array as well for better image handling
           images: product.images,
@@ -374,18 +418,27 @@ export default function AccessoriesPage() {
           nameAr: (product as any)?.nameAr || undefined,
         }}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
-          // Use Arabic name if RTL, otherwise use display name (which already handles RTL)
+          // Create unique cart item ID like main shop
+          const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          
+          // Use getProductImageUrl utility for consistent image processing
+          const displayImage = getProductImageUrl(product, '/placeholder.svg')
+          
+          // Use getCategoryName utility for consistent category handling
+          const categoryName = getCategoryName(product.category)
+          
           const cartItem = {
-            id: productId,
+            id: uniqueCartItemId,
             name: displayName, // Already uses Arabic if RTL
             price: product.price,
             quantity: qty,
-            image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
-            category: typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product',
+            image: displayImage, // Use processed image URL
+            category: categoryName,
             productId: productId,
             productType: 'product' as const
           }
           addItem(cartItem)
+          triggerAddAnimation(cartItem) // Match main shop animation
         }}
         onAddToWishlist={handleAddToWishlist}
         onAddToComparison={handleAddToComparison}
@@ -473,18 +526,29 @@ export default function AccessoriesPage() {
                               badges: bundle.badge ? [bundle.badge] : undefined,
                             }}
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+                              // Create unique cart item ID like main shop
+                              const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                              
+                              // Use getProductImageUrl utility for consistent image processing
+                              const displayImage = getProductImageUrl(bundle, '/placeholder.svg')
+                              
+                              // Use getCategoryName utility for consistent category handling
+                              const categoryName = getCategoryName(bundle.category || 'Bundle')
+                              
                               const cartItem = {
-                                id: productId,
+                                id: uniqueCartItemId,
                                 name: bundleDisplayName,
                                 price: bundle.price,
                                 quantity: qty,
-                                image: bundle.image || '/placeholder.svg',
-                                category: typeof bundle.category === 'string' ? bundle.category : (bundle.category as any)?.name || 'Bundle',
+                                image: displayImage, // Use processed image URL
+                                category: categoryName,
                                 bundleId: productId,
+                                productId: undefined, // Bundles don't have productId
                                 productType: 'bundle' as const,
                                 isBundle: true
                               }
                               addItem(cartItem)
+                              triggerAddAnimation(cartItem) // Match main shop animation
                             }}
                             onAddToWishlist={() => {}}
                             onAddToComparison={() => {}}

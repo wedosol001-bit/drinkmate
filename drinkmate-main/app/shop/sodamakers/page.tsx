@@ -16,6 +16,10 @@ import { Star, Loader2, ShoppingCart } from "lucide-react"
 import { shopAPI } from "@/lib/api"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
+import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-formatting"
+import { getProductImageUrl } from "@/lib/utils/image-utils"
+import { getCategoryName } from "@/lib/utils/category-utils"
+import { useCartAnimations } from "@/hooks/use-cart-animations"
 
 // Define product types
 interface Product {
@@ -56,6 +60,7 @@ export default function SodamakersPage() {
   const { t, isRTL } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
+  const { triggerAddAnimation } = useCartAnimations()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -208,25 +213,37 @@ export default function SodamakersPage() {
       // Format products and capture subcategory
       // Include ALL products from BOTH soda makers AND starter kits categories
       // Show both starter kits (with variants) and regular soda maker products
+      // Use variant conversion utility to match main shop format
       const formattedSodaMakers = allProducts
-        .map((product: any) => ({
-          _id: product._id,
-          id: product._id,
-          slug: product.slug,
-          name: product.name,
-          nameAr: product.nameAr || product.titleAr, // Include Arabic name - check both nameAr and titleAr
-          price: product.price,
-          originalPrice: product.originalPrice,
-          image: pickImage(product.images),
+        .map((product: any) => {
+          const productImage = pickImage(product.images)
+          // Convert variants to match main shop format
+          const convertedVariants = convertVariants(product, productImage)
+          const hasVariants = convertedVariants.length > 0 || product.hasVariants === true
+          
+          return {
+            _id: product._id,
+            id: product._id,
+            slug: product.slug,
+            name: product.name,
+            nameAr: product.nameAr || product.titleAr, // Include Arabic name - check both nameAr and titleAr
+            price: product.price,
+            originalPrice: product.originalPrice,
+            image: productImage,
           category: "sodamakers",
           subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
-          rating: product.averageRating || 5,
-          reviews: product.reviewCount || 300,
-          description: product.shortDescription,
+          rating: product.rating || product.averageRating || 0,
+          reviewCount: product.reviewsCount || product.reviewCount || 0,
+          reviews: product.reviewsCount || product.reviewCount || 0, // Keep for compatibility
+          description: product.description || product.shortDescription,
           images: product.images,
-          hasVariants: product.hasVariants || false, // Ensure this is set
-          variants: product.variants || [], // Include variants array
-        }))
+          hasVariants: hasVariants, // Properly calculated
+          variants: convertedVariants, // Use converted variants matching main shop format
+          brand: product.brand,
+          tags: product.tags || [],
+          inStock: product.inStock !== false, // Match main shop logic
+        }
+      })
 
       setAllSodaMakers(formattedSodaMakers)
 
@@ -395,17 +412,27 @@ export default function SodamakersPage() {
         product={productData}
         dir={isRTL ? "rtl" : "ltr"}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+          // Create unique cart item ID like main shop
+          const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          
+          // Use getProductImageUrl utility for consistent image processing
+          const displayImage = getProductImageUrl(productData, '/placeholder.svg')
+          
+          // Use getCategoryName utility for consistent category handling
+          const categoryName = getCategoryName(product.category)
+          
           const cartItem = {
-            id: productId,
+            id: uniqueCartItemId,
             name: displayName,
             price: product.price,
             quantity: qty,
-            image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
-            category: typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product',
+            image: displayImage, // Use processed image URL
+            category: categoryName,
             productId: productId,
             productType: 'product' as const
           }
           addItem(cartItem)
+          triggerAddAnimation(cartItem) // Match main shop animation
         }}
         onAddToWishlist={handleAddToWishlist}
         onAddToComparison={handleAddToComparison}
@@ -498,18 +525,26 @@ export default function SodamakersPage() {
                               badges: bundle.badge ? [bundle.badge] : undefined,
                             }}
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+                              // Create unique cart item ID like main shop
+                              const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                              
+                              // Use getProductImageUrl utility for consistent image processing
+                              const displayImage = getProductImageUrl(bundle, '/placeholder.svg')
+                              
                               const cartItem = {
-                                id: productId,
+                                id: uniqueCartItemId,
                                 name: bundleDisplayName,
                                 price: bundle.price,
                                 quantity: qty,
-                                image: bundle.image || '/placeholder.svg',
+                                image: displayImage, // Use processed image URL
                                 category: "sodamakers",
                                 bundleId: productId,
+                                productId: undefined, // Bundles don't have productId
                                 productType: 'bundle' as const,
                                 isBundle: true
                               }
                               addItem(cartItem)
+                              triggerAddAnimation(cartItem) // Match main shop animation
                             }}
                             onAddToWishlist={() => {}}
                             onAddToComparison={() => {}}

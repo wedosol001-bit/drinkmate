@@ -778,6 +778,7 @@ exports.getProductsByCategory = async (req, res) => {
         const skip = (page - 1) * limit;
         
         // Get products in this category
+        // Include nameAr, hasVariants, and variants to match getAllProducts behavior
         const products = await Product.find({ 
             status: 'active',
             $or: [
@@ -787,7 +788,7 @@ exports.getProductsByCategory = async (req, res) => {
                 { category: category.name }
             ]
         })
-        .select('name slug price originalPrice images averageRating reviewCount shortDescription subcategory category')
+        .select('name nameAr slug price originalPrice images averageRating reviewCount shortDescription shortDescriptionAr subcategory category hasVariants variants.price variants.originalPrice variants.stock variants.sku variants.name variants.nameAr variants.image variants._id')
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })

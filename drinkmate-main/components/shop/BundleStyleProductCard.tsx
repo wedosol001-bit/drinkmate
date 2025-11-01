@@ -54,6 +54,14 @@ export default function BundleStyleProductCard({
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
 
+  // Get display name - use Arabic if RTL and nameAr exists, otherwise use title
+  const displayName = (() => {
+    if (dir === "rtl" && (product as any)?.nameAr) {
+      return (product as any).nameAr
+    }
+    return product.title || product.name || ''
+  })()
+
   // Get the best available image
   const getBestImage = () => {
     if (imageLoadError) return "/placeholder.svg"
@@ -273,7 +281,7 @@ export default function BundleStyleProductCard({
               overflow: 'hidden'
             }}
           >
-            {product.title}
+            {displayName}
           </h3>
         </Link>
 
