@@ -142,12 +142,12 @@ export default function BundleStyleProductCard({
       {/* Image Container */}
       <div className="relative">
         <Link href={getProductUrl(product)} className="block">
-          <div className={`relative h-[220px] sm:h-[260px] lg:h-[320px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden p-3 sm:p-4 ${styles.productImageContainer}`}>
+          <div className={`relative h-[220px] sm:h-[260px] lg:h-[280px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden p-3 sm:p-4 ${styles.productImageContainer}`}>
             <Image
               src={getBestImage()}
               alt={product.title || product.name || 'Product image'}
               fill
-              className={`object-contain object-top transition-all duration-500 scale-120 hover:scale-160 cursor-zoom-in ${styles.productImageZoom}`}
+              className={`object-contain object-top transition-transform duration-500 ${styles.productImageZoom}`}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               onError={() => setImageLoadError(true)}
               onLoad={() => setImageLoadError(false)}

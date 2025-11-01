@@ -108,49 +108,51 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
       
       let response;
       
-      // Fetch products from main catalog with cylinder category/subcategory
+      // Fetch products from main catalog with cylinder subcategory under accessories category
       try {
+        // First, try to get products from 'accessories' category
         const catalogResponse = await shopAPI.getProducts({ 
           limit: 1000,
-          category: 'cylinder' // or 'co2-cylinder' depending on your category slug
+          category: 'accessories' // Parent category is accessories
         });
         
         if (catalogResponse.success && catalogResponse.products) {
-          // Filter products by subcategory "cylinders" if it exists
+          // Filter products by subcategory "cylinders" - this is the key filter
           catalogProducts = catalogResponse.products.filter((product: Product) => {
             const subcategory = product.subcategory || (product as any)?.subcategory?.name || (product as any)?.subcategory?.slug || '';
+            const subcategoryStr = typeof subcategory === 'string' ? subcategory.toLowerCase() : '';
+            
+            // Only show products with "cylinder" or "cylinders" subcategory
+            const isCylinderSubcategory = subcategoryStr.includes('cylinder') || subcategoryStr === 'cylinders';
+            
+            // Also check category matches accessories
             const categoryMatch = product.category && (
-              (typeof product.category === 'string' && (product.category.toLowerCase().includes('cylinder') || product.category.toLowerCase().includes('co2'))) ||
+              (typeof product.category === 'string' && product.category.toLowerCase().includes('accessor')) ||
               (typeof product.category === 'object' && (
-                product.category.name?.toLowerCase().includes('cylinder') ||
-                product.category.slug?.toLowerCase().includes('cylinder') ||
-                product.category.slug?.toLowerCase().includes('co2')
+                product.category.name?.toLowerCase().includes('accessor') ||
+                product.category.slug?.toLowerCase().includes('accessor')
               ))
             );
-            const subcategoryMatch = subcategory && (
-              subcategory.toLowerCase().includes('cylinder') || 
-              subcategory.toLowerCase() === 'cylinders'
-            );
-            return categoryMatch || subcategoryMatch;
+            
+            return categoryMatch && isCylinderSubcategory;
           });
-          logger.debug('CATALOG CYLINDERS DEBUG - Found products:', catalogProducts.length);
+          logger.debug('CATALOG CYLINDERS DEBUG - Found products from cylinder subcategory:', catalogProducts.length);
         }
       } catch (catalogError) {
         logger.debug('CATALOG CYLINDERS DEBUG - Error fetching catalog products:', catalogError);
         // Continue even if catalog fetch fails
       }
       
-      // Use different API based on type
+      // Only use CO2 API for exchange type, not for regular products
+      // Regular products should come from catalog with cylinder subcategory
       if (type === 'exchange') {
         // Use exchange cylinder API for exchange type
         response = await exchangeCylinderAPI.getExchangeCylinders();
         logger.debug('EXCHANGE CYLINDERS DEBUG - Raw Response:', JSON.stringify(response));
       } else {
-        // Use regular CO2 API for other types
-        // Request a higher limit to get all cylinders, not just 10
-        // Only get active cylinders by default
-        response = await co2API.getCylinders({ limit: 1000, page: 1, status: 'active' });
-        logger.debug('CO2 CYLINDERS DEBUG - Raw Response:', JSON.stringify(response));
+        // For 'all' and 'refill', don't use CO2 API - only use catalog products
+        // Set empty response so we only show catalog products
+        response = { success: true, cylinders: [] };
       }
       
       // Debug - check exactly what we're getting
@@ -364,7 +366,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         </div>
       ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
-        {/* Render catalog products first */}
+        {/* Render catalog products - these are the main products from cylinder subcategory */}
         {products.map((product) => {
           const productDisplayName = (isRTL && product.nameAr) ? product.nameAr : product.name
           const productImage = product.image || (product.images && Array.isArray(product.images) && product.images.length > 0 

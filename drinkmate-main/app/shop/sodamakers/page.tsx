@@ -158,21 +158,39 @@ export default function SodamakersPage() {
       }
 
       // Format products and capture subcategory
-      const formattedSodaMakers = sodaMakerProducts.map((product: any) => ({
-        _id: product._id,
-        id: product._id,
-        slug: product.slug,
-        name: product.name,
-        price: product.price,
-        originalPrice: product.originalPrice,
-        image: pickImage(product.images),
-        category: "sodamakers",
-        subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
-        rating: product.averageRating || 5,
-        reviews: product.reviewCount || 300,
-        description: product.shortDescription,
-        images: product.images,
-      }))
+      // Filter out starter kits (products with variants) - they should not appear here
+      // Only show actual soda maker products (machines)
+      const formattedSodaMakers = sodaMakerProducts
+        .filter((product: any) => {
+          // Exclude products with variants (starter kits)
+          if (product.hasVariants === true || (product.variants && product.variants.length > 0)) {
+            return false;
+          }
+          // Exclude if name contains "starter kit" or "bundle"
+          const nameLower = (product.name || '').toLowerCase();
+          if (nameLower.includes('starter kit') || nameLower.includes('bundle')) {
+            return false;
+          }
+          return true;
+        })
+        .map((product: any) => ({
+          _id: product._id,
+          id: product._id,
+          slug: product.slug,
+          name: product.name,
+          nameAr: product.nameAr, // Include Arabic name
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: pickImage(product.images),
+          category: "sodamakers",
+          subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
+          rating: product.averageRating || 5,
+          reviews: product.reviewCount || 300,
+          description: product.shortDescription,
+          images: product.images,
+          hasVariants: product.hasVariants || false, // Ensure this is set
+          variants: product.variants || [], // Include variants array
+        }))
 
       setAllSodaMakers(formattedSodaMakers)
 
@@ -279,19 +297,20 @@ export default function SodamakersPage() {
   function renderProductCard(product: Product) {
     const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
       // Convert payload to proper cart item format
-      const cartItem = {
-        id: payload.productId,
-        name: product.name,
-        price: product.price,
-        quantity: payload.qty,
-        image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
-        category: typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product',
-        productId: payload.isBundle ? undefined : payload.productId,
-        bundleId: payload.isBundle ? payload.productId : undefined,
-        productType: payload.isBundle ? 'bundle' as const : 'product' as const,
-        isBundle: payload.isBundle || false
-      }
-      addItem(cartItem)
+    const productDisplayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
+    const cartItem = {
+      id: payload.productId,
+      name: productDisplayName, // Use Arabic name if RTL
+      price: product.price,
+      quantity: payload.qty,
+      image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
+      category: typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product',
+      productId: payload.isBundle ? undefined : payload.productId,
+      bundleId: payload.isBundle ? payload.productId : undefined,
+      productType: payload.isBundle ? 'bundle' as const : 'product' as const,
+      isBundle: payload.isBundle || false
+    }
+    addItem(cartItem)
     }
 
     const handleAddToWishlist = (product: any) => {
@@ -323,7 +342,10 @@ export default function SodamakersPage() {
       inStock: true,
       badges: (product as any).badge ? [(product as any).badge] : undefined,
       // Pass the images array as well for better image handling
-      images: product.images
+      images: product.images,
+      // Include variants if present - this will make the card navigate to detail page instead of direct add to cart
+      hasVariants: (product as any).hasVariants || false,
+      variants: (product as any).variants || []
     }
     
     console.log('Sodamaker page - product data for BundleStyleProductCard:', productData)

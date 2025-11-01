@@ -2,18 +2,19 @@
 .productImageZoom {
   object-position: center center; /* Center image */
   transform-origin: center center;
-  transform: scale(1.16); /* Default zoom (reduced) */
-  object-fit: cover; /* Fill container and crop as needed */
+  transform: scale(1.1); /* Consistent zoom across all pages */
+  object-fit: contain; /* Show full image without cropping */
   width: 100%;
   height: 100%;
   background-color: white;
+  transition: transform 0.3s ease-in-out;
 }
 
 .productImageZoom:hover {
   object-position: center center;
   transform-origin: center center;
-  transform: scale(1.0); /* No extra hover zoom */
-  object-fit: cover; /* Keep cover on hover */
+  transform: scale(1.05); /* Slight zoom out on hover for consistency */
+  object-fit: contain; /* Keep contain on hover */
   width: 100%;
   height: 100%;
   background-color: white;

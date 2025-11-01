@@ -314,9 +314,10 @@ export default function AccessoriesPage() {
   const renderProductCard = (product: Product) => {
     const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
       // Convert payload to proper cart item format
+      const productDisplayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
       const cartItem = {
         id: payload.productId,
-        name: product.name,
+        name: productDisplayName, // Use Arabic name if RTL
         price: product.price,
         quantity: payload.qty,
         image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
@@ -365,9 +366,10 @@ export default function AccessoriesPage() {
           images: product.images
         }}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+          // Use Arabic name if RTL, otherwise use display name (which already handles RTL)
           const cartItem = {
             id: productId,
-            name: displayName,
+            name: displayName, // Already uses Arabic if RTL
             price: product.price,
             quantity: qty,
             image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
