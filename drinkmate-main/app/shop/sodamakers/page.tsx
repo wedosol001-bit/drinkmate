@@ -129,25 +129,73 @@ export default function SodamakersPage() {
       
       setBundleSubcategorySections(bundleSections)
 
-      // Fetch categories and find Soda Makers category
+      // Fetch categories and find BOTH Soda Makers AND Starter Kits categories
       const categoriesResp = await shopAPI.getCategories()
       const categoriesWithSubs = categoriesResp.categories || []
+      
+      // Find Soda Makers category
       const sodaMakersCat = categoriesWithSubs.find((c: any) => {
         const name = (c.name || '').toLowerCase()
         const slug = (c.slug || '').toLowerCase()
-        return name.includes('soda') || name.includes('machine') || slug.includes('sodamaker') || slug.includes('machine') || slug === 'sodamakers' || slug === 'starter-kits' || slug === 'accessories'
+        return (name.includes('soda') && !name.includes('starter')) || 
+               (slug.includes('sodamaker') && !slug.includes('starter')) || 
+               slug === 'sodamakers' || 
+               slug === 'soda-makers'
       })
-      const sodaMakersSlug = sodaMakersCat?.slug || 'sodamakers'
+      
+      // Find Starter Kits category (separate category)
+      const starterKitsCat = categoriesWithSubs.find((c: any) => {
+        const name = (c.name || '').toLowerCase()
+        const slug = (c.slug || '').toLowerCase()
+        return name.includes('starter') || 
+               slug.includes('starter-kit') || 
+               slug === 'starter-kits' ||
+               slug === 'starterkits'
+      })
 
-      // Fetch products by category (returns subcategory field)
+      const sodaMakersSlug = sodaMakersCat?.slug || 'sodamakers'
+      const starterKitsSlug = starterKitsCat?.slug || 'starter-kits'
+
+      // Fetch products from BOTH categories and combine them
       let sodaMakerProducts = [];
+      let starterKitProducts = [];
+      
       try {
+        // Fetch from Soda Makers category
         const byCategoryResp = await shopAPI.getProductsByCategory(sodaMakersSlug, { limit: 100 })
         sodaMakerProducts = byCategoryResp.products || byCategoryResp.data?.products || []
+        console.log(`Found ${sodaMakerProducts.length} products from Soda Makers category (${sodaMakersSlug})`)
       } catch (apiError) {
-        console.error('API Error:', apiError);
+        console.error('API Error fetching Soda Makers products:', apiError);
         sodaMakerProducts = [];
       }
+      
+      try {
+        // Fetch from Starter Kits category (if different from soda makers)
+        if (starterKitsSlug !== sodaMakersSlug && starterKitsCat) {
+          const starterKitsResp = await shopAPI.getProductsByCategory(starterKitsSlug, { limit: 100 })
+          starterKitProducts = starterKitsResp.products || starterKitsResp.data?.products || []
+          console.log(`Found ${starterKitProducts.length} products from Starter Kits category (${starterKitsSlug})`)
+        }
+      } catch (apiError) {
+        console.error('API Error fetching Starter Kits products:', apiError);
+        starterKitProducts = [];
+      }
+      
+      // Combine products from both categories and remove duplicates (by _id)
+      const allProductsMap = new Map()
+      sodaMakerProducts.forEach((product: any) => {
+        if (product._id) {
+          allProductsMap.set(product._id, product)
+        }
+      })
+      starterKitProducts.forEach((product: any) => {
+        if (product._id && !allProductsMap.has(product._id)) {
+          allProductsMap.set(product._id, product)
+        }
+      })
+      const allProducts = Array.from(allProductsMap.values())
+      console.log(`Total unique products from both categories: ${allProducts.length}`)
 
       // Helper to pick first/primary image
       const pickImage = (imgs: any): string => {
@@ -158,27 +206,15 @@ export default function SodamakersPage() {
       }
 
       // Format products and capture subcategory
-      // Filter out starter kits (products with variants) - they should not appear here
-      // Only show actual soda maker products (machines)
-      const formattedSodaMakers = sodaMakerProducts
-        .filter((product: any) => {
-          // Exclude products with variants (starter kits)
-          if (product.hasVariants === true || (product.variants && product.variants.length > 0)) {
-            return false;
-          }
-          // Exclude if name contains "starter kit" or "bundle"
-          const nameLower = (product.name || '').toLowerCase();
-          if (nameLower.includes('starter kit') || nameLower.includes('bundle')) {
-            return false;
-          }
-          return true;
-        })
+      // Include ALL products from BOTH soda makers AND starter kits categories
+      // Show both starter kits (with variants) and regular soda maker products
+      const formattedSodaMakers = allProducts
         .map((product: any) => ({
           _id: product._id,
           id: product._id,
           slug: product.slug,
           name: product.name,
-          nameAr: product.nameAr, // Include Arabic name
+          nameAr: product.nameAr || product.titleAr, // Include Arabic name - check both nameAr and titleAr
           price: product.price,
           originalPrice: product.originalPrice,
           image: pickImage(product.images),
@@ -345,7 +381,9 @@ export default function SodamakersPage() {
       images: product.images,
       // Include variants if present - this will make the card navigate to detail page instead of direct add to cart
       hasVariants: (product as any).hasVariants || false,
-      variants: (product as any).variants || []
+      variants: (product as any).variants || [],
+      // Ensure nameAr is passed through for proper Arabic display
+      nameAr: (product as any)?.nameAr || undefined,
     }
     
     console.log('Sodamaker page - product data for BundleStyleProductCard:', productData)

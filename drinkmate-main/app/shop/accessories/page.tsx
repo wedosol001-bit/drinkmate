@@ -172,7 +172,8 @@ export default function AccessoriesPage() {
           _id: product._id,
           id: product._id,
           slug: product.slug,
-          name: (isRTL && product.nameAr) ? product.nameAr : product.name,
+          name: product.name,
+          nameAr: product.nameAr || product.titleAr, // Preserve Arabic name
           price: product.price,
           originalPrice: product.originalPrice,
           image: pickImage(product.images),
@@ -182,6 +183,8 @@ export default function AccessoriesPage() {
           reviews: product.reviewCount || 300,
           description: product.shortDescription,
           images: product.images,
+          hasVariants: product.hasVariants || false,
+          variants: product.variants || [],
         }))
 
         setAllAccessories(formattedAccessories)
@@ -363,7 +366,12 @@ export default function AccessoriesPage() {
           inStock: true,
           badges: (product as any).badge ? [(product as any).badge] : undefined,
           // Pass the images array as well for better image handling
-          images: product.images
+          images: product.images,
+          // Include variants for alignment with main shop
+          hasVariants: (product as any).hasVariants || false,
+          variants: (product as any).variants || [],
+          // Ensure nameAr is passed through
+          nameAr: (product as any)?.nameAr || undefined,
         }}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
           // Use Arabic name if RTL, otherwise use display name (which already handles RTL)
