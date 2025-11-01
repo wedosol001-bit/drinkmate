@@ -2201,7 +2201,7 @@ export const refillAPI = {
 // CO2 Cylinders API
 export const co2API = {
   // Get all CO2 cylinders
-  getCylinders: async () => {
+  getCylinders: async (params?: { page?: number; limit?: number; brand?: string; type?: string; status?: string }) => {
     // Clear cache to get fresh data
     const cacheKey = 'co2-cylinders';
     apiCache.delete(cacheKey);
@@ -2212,11 +2212,20 @@ export const co2API = {
         const token = getAuthToken();
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
         
+        // Build query parameters
+        const queryParams: any = { _t: Date.now() }; // Cache busting
+        if (params) {
+          if (params.page) queryParams.page = params.page;
+          if (params.limit) queryParams.limit = params.limit;
+          if (params.brand) queryParams.brand = params.brand;
+          if (params.type) queryParams.type = params.type;
+          if (params.status) queryParams.status = params.status;
+        }
         
         // Add cache-busting parameter to ensure fresh data
         const response = await api.get('/co2/cylinders', { 
           headers,
-          params: { _t: Date.now() } // Cache busting
+          params: queryParams
         });
         
         return response.data;
