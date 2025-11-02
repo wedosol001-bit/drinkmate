@@ -1076,7 +1076,7 @@ export default function FlavorDetailPage() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        {t("product.freeShipping") || "Free Shipping"}
+                        {t("product.freeShipping")}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
@@ -1186,7 +1186,7 @@ export default function FlavorDetailPage() {
                       <div className="text-sm text-muted-foreground">
                         {(product.stock ?? 0) > 0 ? (
                           <span className="text-green-600">
-                            ✓ {product.stock} {t("product.stockCount").replace("{count}", (product.stock ?? 0).toString())}
+                            ✓ {t("product.stockCount").replace("{count}", (product.stock ?? 0).toString())}
                           </span>
                         ) : (
                           <span className="text-red-600">
@@ -1351,7 +1351,7 @@ export default function FlavorDetailPage() {
                           )) || (
                             <li className="flex items-start">
                               <Check className="w-4 h-4 text-[#12d6fa] mr-3 mt-0.5 flex-shrink-0" />
-                              <span className="text-gray-700">Premium quality ingredients</span>
+                              <span className="text-gray-700">{t("product.defaultFeature")}</span>
                             </li>
                           )}
                         </ul>

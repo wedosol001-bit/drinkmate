@@ -642,8 +642,9 @@ export default function ShopProductDetail() {
   const getDeliveryDate = useMemo(() => {
     const today = new Date()
     const deliveryDate = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
-    return deliveryDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
-  }, [])
+    const locale = language === 'AR' ? 'ar-SA' : 'en-US'
+    return deliveryDate.toLocaleDateString(locale, { weekday: "long", month: "short", day: "numeric" })
+  }, [language])
 
   const getServiceTypeText = useCallback((type: string) => {
     switch (type) {
@@ -787,15 +788,15 @@ export default function ShopProductDetail() {
 
             {/* Enhanced Breadcrumb */}
             <nav className="text-sm text-muted-foreground flex items-center space-x-2">
-              <Link href="/" className="hover:text-[#12d6fa] transition-colors">
-                Home
+              <Link href={`${language === 'AR' ? '/ar' : ''}/`} className="hover:text-[#12d6fa] transition-colors">
+                {t("common.home")}
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <Link href="/shop" className="hover:text-[#12d6fa] transition-colors">
-                Shop
+              <Link href={`${language === 'AR' ? '/ar' : ''}/shop`} className="hover:text-[#12d6fa] transition-colors">
+                {t("header.shop")}
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{product.name}</span>
+              <span className="text-foreground font-medium">{localizedProduct?.name || product.name}</span>
             </nav>
           </div>
 
@@ -1136,7 +1137,7 @@ export default function ShopProductDetail() {
                       </Badge>
                       <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
                         <Truck className="w-3 h-3 mr-1" />
-                        {t("product.freeShipping") || "Free Shipping"}
+                        {t("product.freeShipping")}
                       </Badge>
                       {product.isFeatured && (
                         <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
@@ -2047,23 +2048,30 @@ export default function ShopProductDetail() {
                   </div>
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {relatedProducts.map((relatedProduct) => (
+                    {relatedProducts.map((relatedProduct) => {
+                      // Get localized name for related product
+                      const localizedRelatedProduct = getLocalizedProductData(relatedProduct as any, language)
+                      const relatedProductImage = relatedProduct.image || (() => {
+                        const img = relatedProduct.images?.[0]
+                        return typeof img === 'string' ? img : (img && typeof img === 'object' && 'url' in img ? (img as any).url : "/placeholder.svg")
+                      })()
+                      
+                      return (
                       <Link key={relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/${relatedProduct.slug}`} className="block group">
                         <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
                           <CardContent className="p-0">
-                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden">
-                              <img
-                                src={relatedProduct.image || (() => {
-                                  const img = relatedProduct.images?.[0]
-                                  return typeof img === 'string' ? img : img?.url || "/placeholder.svg"
-                                })()}
-                                alt={relatedProduct.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden relative">
+                              <Image
+                                src={relatedProductImage}
+                                alt={localizedRelatedProduct?.name || relatedProduct.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 768px) 50vw, 25vw"
                               />
                             </div>
                             <div className="p-4">
                               <h3 className="font-medium mb-2 line-clamp-2 group-hover:text-[#12d6fa] transition-colors">
-                                {relatedProduct.name}
+                                {localizedRelatedProduct?.name || relatedProduct.name}
                               </h3>
                               <div className="flex items-center space-x-2 mb-2">
                                 <div className="flex items-center">
@@ -2079,7 +2087,7 @@ export default function ShopProductDetail() {
                                   ))}
                                 </div>
                                 <span className="text-xs text-muted-foreground">
-                                  ({relatedProduct.reviewCount || relatedProduct.reviews || 0})
+                                  ({(relatedProduct.reviewCount || relatedProduct.reviews || 0).toLocaleString()} {t("product.reviewsCount")})
                                 </span>
                               </div>
                               <div className="flex items-center justify-between">
@@ -2096,15 +2104,16 @@ export default function ShopProductDetail() {
                           </CardContent>
                         </Card>
                       </Link>
-                    ))}
+                    )
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-10 bg-gray-50 rounded-lg">
                     <Package className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No related products found</h3>
-                    <p className="text-gray-500">Check out our other products in the shop</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{t("product.relatedProducts") || "No related products found"}</h3>
+                    <p className="text-gray-500">{t("shop.categoryPages.checkBackLater") || "Check out our other products in the shop"}</p>
                     <Button className="mt-4 bg-[#12d6fa] hover:bg-[#0fbfe0] text-white">
-                      <Link href="/shop">Browse All Products</Link>
+                      <Link href={`${language === 'AR' ? '/ar' : ''}/shop`}>{t("shop.categoryPages.explorePremium") || "Browse All Products"}</Link>
                     </Button>
                   </div>
                 )}
