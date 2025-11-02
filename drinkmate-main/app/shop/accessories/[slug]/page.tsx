@@ -605,12 +605,12 @@ export default function AccessoryDetailPage() {
   }, [newQuestion, qaData])
 
   const stockMessage = useMemo(() => {
-    if (!product || product.stock === undefined || product.stock === null) return "In stock"
-    if (product.stock === 0) return "Out of stock"
-    if (product.stock <= 5) return `Only ${product.stock} left in stock!`
-    if (product.stock <= 10) return `${product.stock} in stock`
-    return "In stock"
-  }, [product?.stock])
+    if (!product || product.stock === undefined || product.stock === null) return t("product.inStock")
+    if (product.stock === 0) return t("product.outOfStock")
+    if (product.stock <= 5) return t("product.onlyLeftInStock").replace("{count}", product.stock.toString())
+    if (product.stock <= 10) return t("product.stockCount").replace("{count}", product.stock.toString())
+    return t("product.inStock")
+  }, [product?.stock, t])
 
   const getStockColor = useCallback(() => {
     if (!product || product.stock === undefined || product.stock === null) return "text-green-600"
@@ -622,8 +622,10 @@ export default function AccessoryDetailPage() {
   const getDeliveryDate = useMemo(() => {
     const today = new Date()
     const deliveryDate = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
-    return deliveryDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
-  }, [])
+    // Use Arabic locale if language is AR
+    const locale = language === 'AR' ? 'ar-SA' : 'en-US'
+    return deliveryDate.toLocaleDateString(locale, { weekday: "long", month: "short", day: "numeric" })
+  }, [language])
 
   const getServiceTypeText = useCallback((type: string) => {
     switch (type) {
@@ -741,14 +743,14 @@ export default function AccessoryDetailPage() {
             {/* Enhanced Breadcrumb */}
             <nav className="text-sm text-muted-foreground flex items-center space-x-2">
               <Link href="/" className="hover:text-[#12d6fa] transition-colors">
-                Home
+                {t("common.home")}
               </Link>
               <ChevronRight className="w-3 h-3" />
                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"} className="hover:text-[#12d6fa] transition-colors">
-                 {t("header.accessories")}
+                 {t("shop.categoryPages.accessories.title")}
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{product.name}</span>
+              <span className="text-foreground font-medium">{localizedProduct?.name || product.name}</span>
             </nav>
           </div>
 
@@ -1038,7 +1040,7 @@ export default function AccessoryDetailPage() {
                             const rating = product.rating
                             const reviewsFallback = product.totalReviews || product.reviews || 0
                             return (typeof rating === 'object' ? (rating as any)?.count : reviewsFallback) || 0
-                          })()} reviews)
+                          })()} {t("product.reviewsCount")})
                         </span>
                       </div>
                       <Separator orientation="vertical" className="h-4 hidden sm:block" />
@@ -1048,7 +1050,7 @@ export default function AccessoryDetailPage() {
                           const rating = product.rating
                           const reviewsFallback = product.totalReviews || product.reviews || 0
                           return (typeof rating === 'object' ? (rating as any)?.count : reviewsFallback) || 0
-                        })()} reviews</span>
+                        })()} {t("product.reviewsCount")}</span>
                       </div>
                     </div>
 
@@ -1065,7 +1067,7 @@ export default function AccessoryDetailPage() {
                       )}
                       {calculateSavings() > 0 && (
                         <Badge className="bg-green-100 text-green-800 text-xs sm:text-sm">
-                          Save <SaudiRiyal amount={calculateSavings()} size="sm" />
+                          {t("product.save")} <SaudiRiyal amount={calculateSavings()} size="sm" />
                         </Badge>
                       )}
                     </div>
@@ -1189,11 +1191,11 @@ export default function AccessoryDetailPage() {
                       <div className="text-sm text-muted-foreground">
                         {(product.stock ?? 0) > 0 ? (
                           <span className="text-green-600">
-                            ✓ {product.stock} available
+                            ✓ {product.stock} {t("product.stockCount").replace("{count}", (product.stock ?? 0).toString())}
                           </span>
                         ) : (
                           <span className="text-red-600">
-                            ✗ Out of stock
+                            ✗ {t("product.outOfStock")}
                           </span>
                         )}
                       </div>
@@ -1521,7 +1523,7 @@ export default function AccessoryDetailPage() {
                               ))}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              Based on {product.totalReviews || product.reviews || 0} reviews
+                              {t("product.customerReviews")} ({(product.totalReviews || product.reviews || 0).toLocaleString()} {t("product.reviewsCount")})
                             </div>
                           </div>
                           <div className="space-y-2">
@@ -1901,7 +1903,7 @@ export default function AccessoryDetailPage() {
               <div className="mb-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center">
                   <Sparkles className="w-6 h-6 mr-2 text-[#12d6fa]" />
-                  You Might Also Like
+                  {t("product.youMayAlsoLike")}
                 </h2>
 
                 {loadingRelated ? (
@@ -1919,23 +1921,30 @@ export default function AccessoryDetailPage() {
                   </div>
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {relatedProducts.map((relatedProduct) => (
+                    {relatedProducts.map((relatedProduct) => {
+                      // Get localized name for related product
+                      const localizedRelatedProduct = getLocalizedProductData(relatedProduct as any, language)
+                      const relatedProductImage = relatedProduct.image || (() => {
+                        const img = relatedProduct.images?.[0]
+                        return typeof img === 'string' ? img : img?.url || "/placeholder.svg"
+                      })()
+                      
+                      return (
                       <Link key={relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/accessories/${relatedProduct.slug}`} className="block group">
                         <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
                           <CardContent className="p-0">
-                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden">
-                              <img
-                                src={relatedProduct.image || (() => {
-                                  const img = relatedProduct.images?.[0]
-                                  return typeof img === 'string' ? img : img?.url || "/placeholder.svg"
-                                })()}
-                                alt={relatedProduct.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden relative">
+                              <Image
+                                src={relatedProductImage}
+                                alt={localizedRelatedProduct?.name || relatedProduct.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 768px) 50vw, 25vw"
                               />
                             </div>
                             <div className="p-4">
                               <h3 className="font-medium mb-2 line-clamp-2 group-hover:text-[#12d6fa] transition-colors">
-                                {relatedProduct.name}
+                                {localizedRelatedProduct?.name || relatedProduct.name}
                               </h3>
                               <div className="flex items-center space-x-2 mb-2">
                                 <div className="flex items-center">
@@ -1951,7 +1960,7 @@ export default function AccessoryDetailPage() {
                                   ))}
                                 </div>
                                 <span className="text-xs text-muted-foreground">
-                                  ({relatedProduct.totalReviews || relatedProduct.reviews || 0})
+                                  ({relatedProduct.totalReviews || relatedProduct.reviews || 0} {t("product.reviewsCount")})
                                 </span>
                               </div>
                               <div className="flex items-center justify-between">
@@ -1968,7 +1977,8 @@ export default function AccessoryDetailPage() {
                           </CardContent>
                         </Card>
                       </Link>
-                    ))}
+                    )
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-10 bg-gray-50 rounded-lg">

@@ -1072,7 +1072,7 @@ export default function ShopProductDetail() {
                           {product.averageRating || (typeof product.rating === 'object' ? product.rating?.average : product.rating) || 0}
                         </span>
                         <span className="text-sm text-muted-foreground">
-                          ({product.reviewCount || product.reviews || (typeof product.rating === 'object' ? product.rating?.count : 0) || 0} reviews)
+                          ({(product.reviewCount || product.reviews || (typeof product.rating === 'object' ? product.rating?.count : 0) || 0).toLocaleString()} {t("product.reviewsCount")})
                         </span>
                       </div>
                       <Separator orientation="vertical" className="h-4 hidden sm:block" />
@@ -1615,7 +1615,7 @@ export default function ShopProductDetail() {
                               ))}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              Based on {product.reviewCount || product.reviews || 0} reviews
+                              {t("product.customerReviews")} ({(product.reviewCount || product.reviews || 0).toLocaleString()} {t("product.reviewsCount")})
                             </div>
                           </div>
                           <div className="space-y-2">

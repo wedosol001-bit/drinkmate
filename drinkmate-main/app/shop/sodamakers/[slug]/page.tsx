@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { useParams } from "next/navigation"
+import Image from "next/image"
 import Link from "next/link"
 import {
   Star,
@@ -823,12 +824,12 @@ export default function SodamakerProductDetail() {
   }, [newQuestion, qaData])
 
   const stockMessage = useMemo(() => {
-    if (!product) return "In stock"
-    if (product.stock === 0) return "Out of stock"
-    if (product.stock <= 5) return `Only ${product.stock} left in stock!`
-    if (product.stock <= 10) return `${product.stock} in stock`
-    return "In stock"
-  }, [product?.stock])
+    if (!product) return t("product.inStock")
+    if (product.stock === 0) return t("product.outOfStock")
+    if (product.stock <= 5) return t("product.onlyLeftInStock").replace("{count}", product.stock.toString())
+    if (product.stock <= 10) return t("product.stockCount").replace("{count}", product.stock.toString())
+    return t("product.inStock")
+  }, [product?.stock, t])
 
   const getStockColor = useCallback(() => {
     if (!product) return "text-green-600"
@@ -840,8 +841,10 @@ export default function SodamakerProductDetail() {
   const getDeliveryDate = useMemo(() => {
     const today = new Date()
     const deliveryDate = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
-    return deliveryDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
-  }, [])
+    // Use Arabic locale if language is AR
+    const locale = language === 'AR' ? 'ar-SA' : 'en-US'
+    return deliveryDate.toLocaleDateString(locale, { weekday: "long", month: "short", day: "numeric" })
+  }, [language])
 
   const getServiceTypeText = useCallback((type: string) => {
     switch (type) {
@@ -956,18 +959,14 @@ export default function SodamakerProductDetail() {
             {/* Enhanced Breadcrumb */}
             <nav className="text-sm text-muted-foreground flex items-center space-x-2">
               <Link href="/" className="hover:text-[#12d6fa] transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="w-3 h-3" />
-              <Link href="/shop" className="hover:text-[#12d6fa] transition-colors">
-                Shop
+                {t("common.home")}
               </Link>
               <ChevronRight className="w-3 h-3" />
                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"} className="hover:text-[#12d6fa] transition-colors">
-                 {t("header.sodamakers")}
+                 {t("shop.categoryPages.sodamakers.title")}
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{product.name}</span>
+              <span className="text-foreground font-medium">{localizedProduct?.name || product.name}</span>
             </nav>
           </div>
 
@@ -1265,7 +1264,7 @@ export default function SodamakerProductDetail() {
                           })()}
                         </span>
                         <span className="text-xs sm:text-sm text-muted-foreground">
-                          ({(product.totalReviews || product.reviewCount || 0).toLocaleString()} reviews)
+                          ({(product.totalReviews || product.reviewCount || 0).toLocaleString()} {t("product.reviewsCount")})
                         </span>
                       </div>
                       <Separator orientation="vertical" className="h-4 hidden sm:block" />
@@ -1286,7 +1285,7 @@ export default function SodamakerProductDetail() {
                             <SaudiRiyal amount={product.originalPrice} size="md" />
                           </span>
                           <Badge className="bg-green-100 text-green-800 border-green-200 text-xs sm:text-sm">
-                            Save <SaudiRiyal amount={calculateSavings()} size="sm" />
+                            {t("product.save")} <SaudiRiyal amount={calculateSavings()} size="sm" />
                           </Badge>
                         </div>
                       )}
@@ -1774,7 +1773,7 @@ export default function SodamakerProductDetail() {
                               ))}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              Based on {(product.totalReviews || product.reviewCount || 0).toLocaleString()} reviews
+                              {t("product.customerReviews")} ({(product.totalReviews || product.reviewCount || 0).toLocaleString()} {t("product.reviewsCount")})
                             </div>
                           </div>
 
@@ -2320,7 +2319,7 @@ export default function SodamakerProductDetail() {
               <div className="mb-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center">
                   <Sparkles className="w-6 h-6 mr-2 text-[#12d6fa]" />
-                  You Might Also Like
+                  {t("product.youMayAlsoLike")}
                 </h2>
                 
                 {loadingRelated ? (
@@ -2338,36 +2337,46 @@ export default function SodamakerProductDetail() {
                   </div>
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {relatedProducts.map((relatedProduct) => (
-                    <Link key={relatedProduct.id} href={`${language === 'AR' ? '/ar' : ''}/shop/sodamakers/${relatedProduct.slug}`} className="block group">
-                      <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
-                        <CardContent className="p-4">
-                          <div className="relative aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden">
-                            <img
-                              src={relatedProduct.image || "/placeholder.svg"}
-                              alt={relatedProduct.name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            {relatedProduct.badge && (
-                              <Badge className="absolute top-2 left-2 bg-[#12d6fa] text-white">
-                                {relatedProduct.badge}
-                              </Badge>
-                            )}
-                            {relatedProduct.originalPrice > relatedProduct.price && (
-                              <Badge className="absolute top-2 right-2 bg-red-500 text-white">
-                                {Math.round(
-                                  ((relatedProduct.originalPrice - relatedProduct.price) /
-                                    relatedProduct.originalPrice) *
-                                    100,
-                                )}%
-                                OFF
-                              </Badge>
-                            )}
-                          </div>
+                    {relatedProducts.map((relatedProduct) => {
+                      // Get localized name for related product
+                      const localizedRelatedProduct = getLocalizedProductData(relatedProduct as any, language)
+                      const relatedProductImage = relatedProduct.image || (() => {
+                        const img = relatedProduct.images?.[0]
+                        return typeof img === 'string' ? img : (img && typeof img === 'object' && 'url' in img ? (img as any).url : "/placeholder.svg")
+                      })()
+                      
+                      return (
+                      <Link key={relatedProduct.id || relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/sodamakers/${relatedProduct.slug}`} className="block group">
+                        <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
+                          <CardContent className="p-4">
+                            <div className="relative aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden">
+                              <Image
+                                src={relatedProductImage}
+                                alt={localizedRelatedProduct?.name || relatedProduct.name}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                              />
+                              {relatedProduct.badge && (
+                                <Badge className="absolute top-2 left-2 bg-[#12d6fa] text-white z-10">
+                                  {relatedProduct.badge}
+                                </Badge>
+                              )}
+                              {relatedProduct.originalPrice > relatedProduct.price && (
+                                <Badge className="absolute top-2 right-2 bg-red-500 text-white z-10">
+                                  {Math.round(
+                                    ((relatedProduct.originalPrice - relatedProduct.price) /
+                                      relatedProduct.originalPrice) *
+                                      100,
+                                  )}%
+                                  OFF
+                                </Badge>
+                              )}
+                            </div>
 
-                          <h3 className="font-semibold mb-2 group-hover:text-[#12d6fa] transition-colors line-clamp-2">
-                            {relatedProduct.name}
-                          </h3>
+                            <h3 className="font-semibold mb-2 group-hover:text-[#12d6fa] transition-colors line-clamp-2">
+                              {localizedRelatedProduct?.name || relatedProduct.name}
+                            </h3>
 
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center space-x-2">
@@ -2395,7 +2404,7 @@ export default function SodamakerProductDetail() {
                                   return ratingValue.toFixed(1);
                                 })()}
                               </span>
-                              <span className="text-xs text-muted-foreground">({relatedProduct.reviews})</span>
+                              <span className="text-xs text-muted-foreground">({relatedProduct.reviews || 0} {t("product.reviewsCount")})</span>
                             </div>
 
                             <Button
@@ -2404,12 +2413,13 @@ export default function SodamakerProductDetail() {
                               className="opacity-0 group-hover:opacity-100 transition-opacity border-[#12d6fa] text-[#12d6fa] hover:bg-[#12d6fa] hover:text-white bg-transparent"
                               onClick={(e) => {
                                 e.preventDefault()
+                                const cartItemName = localizedRelatedProduct?.name || relatedProduct.name
                                 const cartItem = {
                                   id: relatedProduct.id || relatedProduct._id,
-                                  name: relatedProduct.name,
+                                  name: cartItemName,
                                   price: relatedProduct.price,
                                   quantity: 1,
-                                  image: relatedProduct.image || "/placeholder.svg",
+                                  image: relatedProductImage,
                                   category: "sodamaker",
                                   productType: 'product' as const,
                                   productId: relatedProduct.id || relatedProduct._id
@@ -2423,7 +2433,8 @@ export default function SodamakerProductDetail() {
                         </CardContent>
                       </Card>
                     </Link>
-                  ))}
+                    )
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-10 bg-gray-50 rounded-lg">
