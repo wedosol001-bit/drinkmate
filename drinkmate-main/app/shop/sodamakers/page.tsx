@@ -161,7 +161,7 @@ export default function SodamakersPage() {
       const sodaMakersSlug = sodaMakersCat?.slug || 'sodamakers'
       const starterKitsSlug = starterKitsCat?.slug || 'starter-kits'
 
-      // Fetch products from BOTH categories and combine them
+      // Fetch products from BOTH categories separately (keep them separate for grouping)
       let sodaMakerProducts = [];
       let starterKitProducts = [];
       
@@ -186,21 +186,6 @@ export default function SodamakersPage() {
         console.error('API Error fetching Starter Kits products:', apiError);
         starterKitProducts = [];
       }
-      
-      // Combine products from both categories and remove duplicates (by _id)
-      const allProductsMap = new Map()
-      sodaMakerProducts.forEach((product: any) => {
-        if (product._id) {
-          allProductsMap.set(product._id, product)
-        }
-      })
-      starterKitProducts.forEach((product: any) => {
-        if (product._id && !allProductsMap.has(product._id)) {
-          allProductsMap.set(product._id, product)
-        }
-      })
-      const allProducts = Array.from(allProductsMap.values())
-      console.log(`Total unique products from both categories: ${allProducts.length}`)
 
       // Helper to pick first/primary image
       const pickImage = (imgs: any): string => {
@@ -210,54 +195,156 @@ export default function SodamakersPage() {
         return (imgs.find((img: any) => img.isPrimary)?.url) || first.url || "/images/02 - Soda Makers/Artic-Black-Machine---Front.png"
       }
 
-      // Format products and capture subcategory
-      // Include ALL products from BOTH soda makers AND starter kits categories
-      // Show both starter kits (with variants) and regular soda maker products
-      // Use variant conversion utility to match main shop format
-      const formattedSodaMakers = allProducts
-        .map((product: any) => {
-          const productImage = pickImage(product.images)
-          // Convert variants to match main shop format
-          const convertedVariants = convertVariants(product, productImage)
-          const hasVariants = convertedVariants.length > 0 || product.hasVariants === true
+      // Helper function to get subcategory name from product
+      const getSubcategoryName = (product: any): string | null => {
+        const subcategory = product.subcategory;
+        
+        // If subcategory is an object (populated by backend), get the name directly
+        if (typeof subcategory === 'object' && subcategory !== null) {
+          return subcategory.name || null;
+        }
+        
+        // If subcategory is a string (ObjectId or slug), try to match known subcategory IDs/slugs
+        if (typeof subcategory === 'string' && subcategory.trim()) {
+          const subcategoryLower = subcategory.toLowerCase().trim();
           
-          return {
-            _id: product._id,
-            id: product._id,
-            slug: product.slug,
-            name: product.name,
-            nameAr: product.nameAr || product.titleAr, // Include Arabic name - check both nameAr and titleAr
-            price: product.price,
-            originalPrice: product.originalPrice,
-            image: productImage,
+          // Known subcategory IDs from admin panel:
+          // - Artic Series: 68c0583c2fc1cff30bf5c110 (slug: artic-series)
+          // - Luxe Series: 68c0583c2fc1cff30bf5c111 (slug: luxe-series)
+          // - Omni Series: 68c0583c2fc1cff30bf5c112 (slug: omni-series)
+          
+          // Check for Artic Series
+          if (subcategoryLower === '68c0583c2fc1cff30bf5c110' || 
+              subcategoryLower === 'artic-series' || 
+              subcategoryLower.includes('artic')) {
+            return 'Artic Series';
+          }
+          
+          // Check for Luxe Series
+          if (subcategoryLower === '68c0583c2fc1cff30bf5c111' || 
+              subcategoryLower === 'luxe-series' || 
+              subcategoryLower.includes('luxe')) {
+            return 'Luxe Series';
+          }
+          
+          // Check for Omni Series
+          if (subcategoryLower === '68c0583c2fc1cff30bf5c112' || 
+              subcategoryLower === 'omni-series' || 
+              subcategoryLower.includes('omni')) {
+            return 'Omni Series';
+          }
+        }
+        
+        return null;
+      }
+
+      // Format soda maker products (group by subcategory)
+      const formattedSodaMakerProducts = sodaMakerProducts.map((product: any) => {
+        const productImage = pickImage(product.images)
+        const convertedVariants = convertVariants(product, productImage)
+        const hasVariants = convertedVariants.length > 0 || product.hasVariants === true
+        
+        return {
+          _id: product._id,
+          id: product._id,
+          slug: product.slug,
+          name: product.name,
+          nameAr: product.nameAr || product.titleAr,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: productImage,
           category: "sodamakers",
           subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
+          subcategoryName: getSubcategoryName(product), // Add subcategory name for grouping
           rating: product.rating || product.averageRating || 0,
           reviewCount: product.reviewsCount || product.reviewCount || 0,
-          reviews: product.reviewsCount || product.reviewCount || 0, // Keep for compatibility
+          reviews: product.reviewsCount || product.reviewCount || 0,
           description: product.description || product.shortDescription,
           images: product.images,
-          hasVariants: hasVariants, // Properly calculated
-          variants: convertedVariants, // Use converted variants matching main shop format
+          hasVariants: hasVariants,
+          variants: convertedVariants,
           brand: product.brand,
           tags: product.tags || [],
-          inStock: product.inStock !== false, // Match main shop logic
+          inStock: product.inStock !== false,
         }
       })
 
-      setAllSodaMakers(formattedSodaMakers)
+      // Format starter kit products (keep separate, they go under "Starter Kits" heading)
+      const formattedStarterKitProducts = starterKitProducts.map((product: any) => {
+        const productImage = pickImage(product.images)
+        const convertedVariants = convertVariants(product, productImage)
+        const hasVariants = convertedVariants.length > 0 || product.hasVariants === true
+        
+        return {
+          _id: product._id,
+          id: product._id,
+          slug: product.slug,
+          name: product.name,
+          nameAr: product.nameAr || product.titleAr,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: productImage,
+          category: "starter-kits",
+          subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
+          subcategoryName: null, // Starter kits don't have subcategories
+          rating: product.rating || product.averageRating || 0,
+          reviewCount: product.reviewsCount || product.reviewCount || 0,
+          reviews: product.reviewsCount || product.reviewCount || 0,
+          description: product.description || product.shortDescription,
+          images: product.images,
+          hasVariants: hasVariants,
+          variants: convertedVariants,
+          brand: product.brand,
+          tags: product.tags || [],
+          inStock: product.inStock !== false,
+        }
+      })
 
-      // Since subcategories are not available in the regular API, display all products in one section
-      const sections: Array<{ _id: string; name: string; products: Product[] }> = []
-      if (formattedSodaMakers.length > 0) {
-        sections.push({ 
-          _id: 'all-sodamakers', 
-          name: 'Soda Makers', 
-          products: formattedSodaMakers 
+      // Combine all products for setAllSodaMakers (for backward compatibility)
+      const allFormattedProducts = [...formattedSodaMakerProducts, ...formattedStarterKitProducts]
+      setAllSodaMakers(allFormattedProducts)
+
+      // Group soda maker products by subcategory
+      const productSections: Array<{ _id: string; name: string; products: Product[] }> = []
+      
+      // Group by subcategory for soda maker products
+      const productsBySubcategory: Record<string, Product[]> = {}
+      
+      formattedSodaMakerProducts.forEach((product: any) => {
+        const subcategoryName = product.subcategoryName || 'Other'
+        if (!productsBySubcategory[subcategoryName]) {
+          productsBySubcategory[subcategoryName] = []
+        }
+        productsBySubcategory[subcategoryName].push(product)
+      })
+      
+      // Create sections for each subcategory (order: Omni Series, Luxe Series, Artic Series, then others)
+      const subcategoryOrder = ['Omni Series', 'Luxe Series', 'Artic Series']
+      const orderedSubcategories = [
+        ...subcategoryOrder.filter(name => productsBySubcategory[name]),
+        ...Object.keys(productsBySubcategory).filter(name => !subcategoryOrder.includes(name))
+      ]
+      
+      orderedSubcategories.forEach(subcategoryName => {
+        if (productsBySubcategory[subcategoryName] && productsBySubcategory[subcategoryName].length > 0) {
+          productSections.push({
+            _id: subcategoryName.toLowerCase().replace(/\s+/g, '-'),
+            name: subcategoryName,
+            products: productsBySubcategory[subcategoryName]
+          })
+        }
+      })
+      
+      // Add Starter Kits section (if there are any starter kit products)
+      if (formattedStarterKitProducts.length > 0) {
+        productSections.push({
+          _id: 'starter-kits',
+          name: 'Starter Kits',
+          products: formattedStarterKitProducts
         })
       }
       
-      setSubcategorySections(sections)
+      setSubcategorySections(productSections)
     } catch (error) {
       console.error("Error fetching products:", error)
       setError(t("shop.categoryPages.failedToLoad"))
@@ -561,24 +648,28 @@ export default function SodamakersPage() {
             )}
 
 
-            {/* Product Sections */}
+            {/* Product Sections - Grouped by Subcategory */}
             {console.log('🔍 Rendering - subcategorySections:', subcategorySections)}
             {console.log('🔍 Rendering - subcategorySections.length:', subcategorySections.length)}
             {subcategorySections.length > 0 ? (
-              subcategorySections.filter(section => section.products.length > 0).map((section) => {
-                console.log('🔍 Rendering section:', section.name, 'with', section.products.length, 'products');
-                return (
-                  <div key={section._id} className="mb-12 sm:mb-16">
-                    <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{isRTL && section.name === 'Soda Makers' ? 'صانعات الصودا' : section.name}</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                      {section.products.map((product) => {
-                        console.log('🔍 Rendering product:', product.name);
-                        return renderProductCard(product);
-                      })}
+              <div className="space-y-12 sm:space-y-16">
+                {subcategorySections.filter(section => section.products.length > 0).map((section) => {
+                  console.log('🔍 Rendering section:', section.name, 'with', section.products.length, 'products');
+                  return (
+                    <div key={section._id} className="space-y-4 sm:space-y-6">
+                      <h2 className="text-base sm:text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                        {section.name}
+                      </h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                        {section.products.map((product) => {
+                          console.log('🔍 Rendering product:', product.name);
+                          return renderProductCard(product);
+                        })}
+                      </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })}
+              </div>
             ) : (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">{t("shop.categoryPages.noProductsFound")}</p>
