@@ -234,24 +234,40 @@ export default function ShopProductDetail() {
     })()
     const productSlug = product.slug || generateSlug(productTitle, productId)
     
-    // Process images array to extract URLs properly (same as main product processing)
-    const processedImages = (product.images || []).map((img: any) => {
-      if (typeof img === 'string' && img.trim() !== '') {
-        return img
+    // Extract primary image - EXACTLY match the logic used in flavor/page.tsx and accessories/page.tsx
+    // They directly use product.image without processing, and pass product.images as-is
+    // Priority: product.image > product.images[0] (string) > product.images[0].url > placeholder
+    const primaryImage = (() => {
+      // First try product.image (direct property)
+      if (product.image && typeof product.image === 'string' && product.image.trim() !== '' && !product.image.includes('undefined')) {
+        return product.image
       }
-      if (img && typeof img === 'object') {
-        return img.url || img.src || ''
+      // Then try images array - extract first image URL
+      if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+        const firstImage = product.images[0]
+        // If it's a string, use it directly
+        if (typeof firstImage === 'string' && firstImage.trim() !== '' && !firstImage.includes('undefined')) {
+          return firstImage
+        }
+        // If it's an object with url property
+        if (firstImage && typeof firstImage === 'object') {
+          const imgUrl = firstImage.url || firstImage.src
+          if (imgUrl && typeof imgUrl === 'string' && imgUrl.trim() !== '' && !imgUrl.includes('undefined')) {
+            return imgUrl
+          }
+        }
       }
-      return ''
-    }).filter((url: string) => url.trim() !== '')
+      // Last resort: try getProductImageUrl as fallback
+      const fallbackImage = getProductImageUrl(product, '/placeholder-product.jpg')
+      if (fallbackImage && fallbackImage !== '/placeholder.svg' && !fallbackImage.includes('undefined')) {
+        return fallbackImage
+      }
+      // Final fallback
+      return '/placeholder-product.jpg'
+    })()
     
-    // Get the primary image using the utility function (same as ProductGrid)
-    const primaryImage = getProductImageUrl(product, '/placeholder-product.jpg')
-    
-    // Ensure primaryImage is valid (not empty string)
-    const validPrimaryImage = (primaryImage && primaryImage.trim() !== '' && primaryImage !== '/placeholder.svg') 
-      ? primaryImage 
-      : (processedImages.length > 0 ? processedImages[0] : '/placeholder-product.jpg')
+    // Keep images array as-is (don't process it) - BundleStyleProductCard will handle extraction
+    // This matches how flavor/page.tsx does it - they pass product.images directly
 
     // Convert from old format (same structure as ProductGrid)
     // Spread product first, then override with converted values
@@ -262,8 +278,8 @@ export default function ShopProductDetail() {
       name: productTitle,
       slug: productSlug,
       title: productTitle,
-      image: validPrimaryImage, // Override with processed image
-      images: processedImages.length > 0 ? processedImages : (product.images || []), // Processed images array
+      image: primaryImage, // Override with processed image  
+      images: product.images || [], // Pass images array as-is (same as flavor/page.tsx)
       rating: product.rating || product.averageRating,
       reviewCount: product.reviewsCount || product.reviewCount || product.reviews || 0,
       price: product.price || product.salePrice || 0,
@@ -314,10 +330,14 @@ export default function ShopProductDetail() {
           // Debug logging for image issues
           console.log('Related product conversion:', {
             originalId: product._id,
+            originalName: product.name,
             originalImage: product.image,
             originalImages: product.images,
+            originalImagesLength: product.images?.length || 0,
             convertedImage: converted.image,
-            convertedImages: converted.images
+            convertedImages: converted.images,
+            convertedImagesLength: converted.images?.length || 0,
+            primaryImageResult: getProductImageUrl(product, 'NOT_FOUND')
           })
           return converted
         })
