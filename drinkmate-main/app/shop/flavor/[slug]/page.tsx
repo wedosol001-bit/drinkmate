@@ -11,6 +11,9 @@ import { shopAPI } from "@/lib/api"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { getLocalizedProductData } from "@/lib/utils/product-localization"
+import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
+import { getProductImageUrl, getImageUrl } from "@/lib/utils/image-utils"
+import { getCategoryName } from "@/lib/utils/product-url"
 import styles from './styles.module.css'
 import { Button } from "@/components/ui/button"
 import {
@@ -207,14 +210,14 @@ interface QA {
 
 export default function FlavorDetailPage() {
   const params = useParams()
-  const { t, language } = useTranslation()
+  const { t, language, isRTL } = useTranslation()
   const { addItem } = useCart()
   const router = useRouter()
 
   const productSlug = params?.slug as string
   const [product, setProduct] = useState<FlavorProduct | null>(null)
   const [loading, setLoading] = useState(true)
-  const [relatedProducts, setRelatedProducts] = useState<FlavorProduct[]>([])
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([])
   const [loadingRelated, setLoadingRelated] = useState(true)
 
   // Enhanced state management with more features
@@ -273,54 +276,129 @@ export default function FlavorDetailPage() {
     })
   }, [])
 
-  // Function to fetch related products
+  // Convert product using same logic as main shop detail page
+  const convertProduct = useCallback((product: any): any => {
+    if (!product) {
+      console.error('convertProduct called with undefined product')
+      return {} as any
+    }
+    
+    // Generate slug if missing
+    const generateSlug = (title: string, id: string): string => {
+      return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim() + `-${id.slice(-6)}`
+    }
+
+    const productId = product._id || product.id
+    const productTitle = (() => {
+      const arName = product?.nameAr || product?.titleAr
+      if (language === 'AR' && arName) return arName
+      return product.name || product.title || 'product'
+    })()
+    const productSlug = product.slug || generateSlug(productTitle, productId)
+    
+    // Extract primary image - EXACTLY match the logic used in main shop detail page
+    const primaryImage = (() => {
+      // First try product.image (direct property)
+      if (product.image && typeof product.image === 'string' && product.image.trim() !== '' && !product.image.includes('undefined')) {
+        return product.image
+      }
+      // Then try images array - extract first image URL
+      if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+        const firstImage = product.images[0]
+        // If it's a string, use it directly
+        if (typeof firstImage === 'string' && firstImage.trim() !== '' && !firstImage.includes('undefined')) {
+          return firstImage
+        }
+        // If it's an object with url property
+        if (firstImage && typeof firstImage === 'object') {
+          const imgUrl = firstImage.url || firstImage.src
+          if (imgUrl && typeof imgUrl === 'string' && imgUrl.trim() !== '' && !imgUrl.includes('undefined')) {
+            return imgUrl
+          }
+        }
+      }
+      // Last resort: try getProductImageUrl as fallback
+      const fallbackImage = getProductImageUrl(product, '/placeholder-product.jpg')
+      if (fallbackImage && fallbackImage !== '/placeholder.svg' && !fallbackImage.includes('undefined')) {
+        return fallbackImage
+      }
+      // Final fallback
+      return '/placeholder-product.jpg'
+    })()
+    
+    // Convert from old format (same structure as main shop detail page)
+    const convertedProduct = {
+      ...product, // Spread first to preserve all properties
+      _id: productId,
+      id: productId,
+      name: productTitle,
+      slug: productSlug,
+      title: productTitle,
+      image: primaryImage, // Override with processed image  
+      images: product.images || [], // Pass images array as-is
+      rating: product.rating || product.averageRating,
+      reviewCount: product.reviewsCount || product.reviewCount || product.reviews || 0,
+      price: product.price || product.salePrice || 0,
+      compareAtPrice: product.compareAtPrice || product.originalPrice,
+      inStock: product.inStock !== false && (product.stock ?? 0) > 0,
+      badges: product.badges || [],
+      variants: product.variants?.map((v: any) => {
+        const variantImage = getImageUrl(v.image || product.images?.[0] || primaryImage, primaryImage)
+        return {
+          id: v._id || v.id || `variant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          colorName: v.name || v.colorName,
+          colorHex: v.colorHex || v.value,
+          image: variantImage,
+          price: v.price || product.price,
+          compareAtPrice: v.compareAtPrice || product.compareAtPrice,
+          inStock: (v.stock || product.stock || 0) > 0
+        }
+      }) || [],
+      description: product.description,
+      category: product.category,
+      brand: product.brand,
+      tags: product.tags || [],
+      nameAr: product.nameAr
+    }
+    
+    return convertedProduct
+  }, [language])
+
+  // Function to fetch related products - using same data source and processing as main shop detail page
   const fetchRelatedProducts = useCallback(async (currentProductId: string) => {
     try {
       setLoadingRelated(true)
 
-      // Get related flavors
-      const response = await shopAPI.getProducts({
-        category: 'flavors',
-        limit: 4,
-        exclude: currentProductId
-      });
+      // Get all products from same source as main shop detail page
+      const response = await shopAPI.getProducts()
 
       if (response.success && response.products) {
-        // Process images to ensure they have absolute URLs
-        const processedProducts = response.products.map((flavor: FlavorProduct) => {
-          // Handle case where image might be undefined or null
-          const safeImage = flavor.image || ''
-          const safeImages = flavor.images || []
+        // Filter out the current product and get up to 4 other products
+        const otherProducts = response.products
+          .filter((product: any) => product._id !== currentProductId)
+          .slice(0, 4)
 
-          return {
-            ...flavor,
-            // Ensure image URL is absolute
-            image: safeImage.startsWith('http') ? safeImage :
-                   safeImage.startsWith('/') ? `http://localhost:3000${safeImage}` :
-                   '/placeholder.svg',
-            // Ensure image URLs in arrays are absolute
-            images: safeImages.map((img: any) => {
-              const imageUrl = typeof img === 'string' ? img : img?.url || img
-              return imageUrl?.startsWith('http') ? imageUrl :
-                     imageUrl?.startsWith('/') ? `http://localhost:3000${imageUrl}` :
-                     '/placeholder.svg'
-            })
-          }
-        });
+        // Convert products using same logic as main shop detail page for consistency
+        const convertedProducts = otherProducts.map((product: any) => convertProduct(product))
 
-        setRelatedProducts(processedProducts);
+        setRelatedProducts(convertedProducts)
       } else {
         // No related products found
-        setRelatedProducts([]);
+        setRelatedProducts([])
       }
     } catch (error) {
+      console.error('Error fetching related products:', error)
       // Error fetching related products - continue without them
-      // Set empty array on error
-      setRelatedProducts([]);
+      setRelatedProducts([])
     } finally {
-      setLoadingRelated(false);
+      setLoadingRelated(false)
     }
-  }, [])
+  }, [convertProduct])
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -1919,64 +1997,47 @@ export default function FlavorDetailPage() {
                     ))}
                   </div>
                 ) : relatedProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {relatedProducts.map((relatedProduct) => {
-                      // Get localized name for related product
-                      const localizedRelatedProduct = getLocalizedProductData(relatedProduct as any, language)
-                      const relatedProductImage = relatedProduct.image || (() => {
-                        const img = relatedProduct.images?.[0]
-                        return typeof img === 'string' ? img : img?.url || "/placeholder.svg"
-                      })()
-                      
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+                    {relatedProducts.map((relatedProduct, index) => {
+                      // Handler for add to cart - same logic as main shop detail page
+                      const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
+                        const product = relatedProducts.find(p => p.id === payload.productId || p._id === payload.productId)
+                        if (!product) {
+                          console.error('Product not found with ID:', payload.productId)
+                          return
+                        }
+                        
+                        // Use the same image URL that's displayed on the shop page
+                        const displayImage = getProductImageUrl(product, '/placeholder-product.jpg')
+                        
+                        const isBundle = payload.isBundle || (product as any).isBundle || false
+                        const uniqueCartItemId = `${payload.productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                        
+                        const cartItem = {
+                          id: uniqueCartItemId,
+                          name: product.title || product.name || '',
+                          price: product.price,
+                          quantity: payload.qty,
+                          image: displayImage,
+                          category: getCategoryName(product.category),
+                          productId: isBundle ? undefined : payload.productId,
+                          bundleId: isBundle ? payload.productId : undefined,
+                          productType: isBundle ? 'bundle' as const : 'product' as const,
+                          isBundle: isBundle
+                        }
+                        
+                        addItem(cartItem)
+                      }
+
                       return (
-                      <Link key={relatedProduct._id} href={`${language === 'AR' ? '/ar' : ''}/shop/flavor/${relatedProduct.slug}`} className="block group">
-                        <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">
-                          <CardContent className="p-0">
-                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden relative">
-                              <Image
-                                src={relatedProductImage}
-                                alt={localizedRelatedProduct?.name || relatedProduct.name}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                sizes="(max-width: 768px) 50vw, 25vw"
-                              />
-                            </div>
-                            <div className="p-4">
-                              <h3 className="font-medium mb-2 line-clamp-2 group-hover:text-[#12d6fa] transition-colors">
-                                {localizedRelatedProduct?.name || relatedProduct.name}
-                              </h3>
-                              <div className="flex items-center space-x-2 mb-2">
-                                <div className="flex items-center">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={`w-3 h-3 ${
-                                        star <= (relatedProduct.averageRating || relatedProduct.rating || 0)
-                                          ? "text-yellow-400 fill-current"
-                                          : "text-gray-300"
-                                      }`}
-                                    />
-                                  ))}
-                                </div>
-                                <span className="text-xs text-muted-foreground">
-                                  ({relatedProduct.totalReviews || relatedProduct.reviews || 0} {t("product.reviewsCount")})
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <span className="text-lg font-bold text-[#12d6fa]">
-                                  <SaudiRiyal amount={relatedProduct.salePrice || relatedProduct.price} size="sm" />
-                                </span>
-                                {(relatedProduct?.originalPrice || relatedProduct?.salePrice) && (relatedProduct?.originalPrice || relatedProduct?.salePrice)! > (relatedProduct?.salePrice || relatedProduct?.price)! && (
-                                  <span className="text-sm text-muted-foreground line-through">
-                                    <SaudiRiyal amount={relatedProduct?.originalPrice || relatedProduct?.salePrice} size="sm" />
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    )
+                        <BundleStyleProductCard
+                          key={relatedProduct.id || relatedProduct._id || `related-${index}`}
+                          product={relatedProduct}
+                          dir={isRTL ? "rtl" : "ltr"}
+                          onAddToCart={handleAddToCart}
+                          isInWishlist={false}
+                        />
+                      )
                     })}
                   </div>
                 ) : (
