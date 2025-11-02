@@ -55,10 +55,16 @@ export default function BundleStyleProductCard({
   const [showOverlay, setShowOverlay] = useState(false)
 
   // Get display name - use Arabic if RTL and nameAr exists, otherwise use title
+  // Priority: nameAr (if RTL) > title > name
   const displayName = (() => {
-    if (dir === "rtl" && (product as any)?.nameAr) {
-      return (product as any).nameAr
+    // Always check for nameAr first when RTL, regardless of what title is set to
+    if (dir === "rtl") {
+      const arabicName = (product as any)?.nameAr
+      if (arabicName) {
+        return arabicName
+      }
     }
+    // Fallback to title or name
     return product.title || product.name || ''
   })()
 

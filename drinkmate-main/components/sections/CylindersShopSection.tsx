@@ -449,7 +449,6 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
         {/* Render catalog products - these are the main products from cylinder subcategory */}
         {products.map((product) => {
-          const productDisplayName = (isRTL && product.nameAr) ? product.nameAr : product.name
           const productImage = product.image || (product.images && Array.isArray(product.images) && product.images.length > 0 
             ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url) 
             : '/placeholder.svg')
@@ -465,9 +464,9 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
               product={{
                 _id: product._id,
                 id: product._id,
-                name: productDisplayName,
+                name: product.name, // Keep original name, component will handle display
                 slug: product.slug || product._id,
-                title: productDisplayName,
+                title: product.name, // Keep original name as title, component will use nameAr if available
                 image: productImage,
                 price: product.price,
                 compareAtPrice: product.originalPrice,
@@ -482,6 +481,8 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
                 hasVariants: hasVariants,
                 variants: convertedVariants, // Use converted variants matching main shop format
                 images: product.images || [],
+                // Ensure nameAr is passed through - this is crucial for Arabic display
+                nameAr: (product as any)?.nameAr || undefined,
               }}
               onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                 const foundProduct = products.find(p => p._id === productId)
@@ -522,10 +523,11 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
         {/* Render CO2 cylinders */}
         {cylinders.map((cylinder) => {
           const serviceType = getServiceType(cylinder.type)
-          const cylinderDisplayName = (isRTL && cylinder.nameAr) ? cylinder.nameAr : cylinder.name
           
           // Use ExchangeCylinderCard for exchange type or refill type
           if (type === "exchange" || (serviceType === "refill" && type === "refill")) {
+            // For ExchangeCylinderCard, calculate display name here as it may not handle nameAr
+            const cylinderDisplayName = (isRTL && cylinder.nameAr) ? cylinder.nameAr : cylinder.name
             return (
               <ExchangeCylinderCard
                 key={`exchange-${cylinder._id}`}
@@ -570,9 +572,9 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
               product={{
                 _id: cylinder._id,
                 id: cylinder._id,
-                name: cylinderDisplayName,
+                name: cylinder.name, // Keep original name, component will handle display
                 slug: cylinder.slug,
-                title: cylinderDisplayName,
+                title: cylinder.name, // Keep original name as title, component will use nameAr if available
                 image: cylinder.image || "/placeholder.svg",
                 price: cylinder.price,
                 compareAtPrice: cylinder.originalPrice,
@@ -582,6 +584,8 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
                 category: "co2-cylinder",
                 inStock: cylinder.stock > 0,
                 badges: cylinder.isBestSeller ? ["BESTSELLER"] : cylinder.isFeatured ? ["FEATURED"] : undefined,
+                // Ensure nameAr is passed through - this is crucial for Arabic display
+                nameAr: cylinder.nameAr || undefined,
               }}
               onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                 const cylinder = cylinders.find(c => c._id === productId)

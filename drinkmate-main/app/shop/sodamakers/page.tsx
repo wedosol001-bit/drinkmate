@@ -92,6 +92,7 @@ export default function SodamakersPage() {
         id: bundle._id,
         slug: bundle.slug,
         name: bundle.name,
+        nameAr: bundle.nameAr || bundle.titleAr, // Preserve Arabic name
         price: bundle.price,
         originalPrice: bundle.originalPrice,
         subcategory: bundle.subcategory || "Bundles & Promotions of Soda Makers",
@@ -465,13 +466,13 @@ export default function SodamakersPage() {
       // Add product view functionality if needed
     }
 
-    const displayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
+    // Keep original name and title, let BundleStyleProductCard handle Arabic display via nameAr
     const productData = {
       _id: product._id,
       id: product._id,
-      name: displayName,
+      name: product.name, // Keep original name, component will handle display
       slug: product.slug || product._id,
-      title: displayName,
+      title: product.name, // Keep original name as title, component will use nameAr if available
       image: product.image,
       price: product.price,
       compareAtPrice: product.originalPrice,
@@ -486,7 +487,7 @@ export default function SodamakersPage() {
       // Include variants if present - this will make the card navigate to detail page instead of direct add to cart
       hasVariants: (product as any).hasVariants || false,
       variants: (product as any).variants || [],
-      // Ensure nameAr is passed through for proper Arabic display
+      // Ensure nameAr is passed through for proper Arabic display - this is crucial
       nameAr: (product as any)?.nameAr || undefined,
     }
     
@@ -508,9 +509,11 @@ export default function SodamakersPage() {
           // Use getCategoryName utility for consistent category handling
           const categoryName = getCategoryName(product.category)
           
+          // Use Arabic name for cart if RTL
+          const cartItemName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
           const cartItem = {
             id: uniqueCartItemId,
-            name: displayName,
+            name: cartItemName, // Use Arabic name if RTL
             price: product.price,
             quantity: qty,
             image: displayImage, // Use processed image URL
@@ -589,7 +592,6 @@ export default function SodamakersPage() {
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                         {section.bundles.map((bundle) => {
-                          const bundleDisplayName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
                           return (
                           <BundleStyleProductCard
                             key={bundle._id}
@@ -597,9 +599,9 @@ export default function SodamakersPage() {
                             product={{
                               _id: bundle._id,
                               id: bundle._id,
-                              name: bundleDisplayName,
+                              name: bundle.name, // Keep original name, component will handle display
                               slug: bundle.slug,
-                              title: bundleDisplayName,
+                              title: bundle.name, // Keep original name as title, component will use nameAr if available
                               image: bundle.image || "/placeholder.svg",
                               price: bundle.price,
                               compareAtPrice: bundle.originalPrice,
@@ -610,6 +612,8 @@ export default function SodamakersPage() {
                               subcategory: bundle.subcategory || "Bundles & Promotions of Soda Makers",
                               inStock: true,
                               badges: bundle.badge ? [bundle.badge] : undefined,
+                              // Ensure nameAr is passed through - this is crucial for Arabic display
+                              nameAr: (bundle as any)?.nameAr || undefined,
                             }}
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                               // Create unique cart item ID like main shop
@@ -618,9 +622,11 @@ export default function SodamakersPage() {
                               // Use getProductImageUrl utility for consistent image processing
                               const displayImage = getProductImageUrl(bundle, '/placeholder.svg')
                               
+                              // Use Arabic name for cart if RTL
+                              const bundleCartName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
                               const cartItem = {
                                 id: uniqueCartItemId,
-                                name: bundleDisplayName,
+                                name: bundleCartName, // Use Arabic name if RTL
                                 price: bundle.price,
                                 quantity: qty,
                                 image: displayImage, // Use processed image URL

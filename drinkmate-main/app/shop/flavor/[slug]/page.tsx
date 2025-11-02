@@ -336,6 +336,7 @@ export default function FlavorDetailPage() {
         if (productData && (productData._id || productData.id)) {
 
           // Ensure image URLs are absolute
+          // Note: Spread operator preserves all fields including nameAr, descriptionAr, etc.
           const processedProduct = {
             ...productData,
             // Ensure image URL is absolute

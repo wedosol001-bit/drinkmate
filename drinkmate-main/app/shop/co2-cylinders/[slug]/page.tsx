@@ -344,6 +344,7 @@ export default function CO2ProductDetail() {
         if (cylinderData && (cylinderData._id || cylinderData.id)) {
           
           // Ensure image URLs are absolute
+          // Note: Spread operator preserves all fields including nameAr, descriptionAr, etc.
           const processedCylinder = {
             ...cylinderData,
             // Ensure image URL is absolute

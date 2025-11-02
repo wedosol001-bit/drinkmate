@@ -503,6 +503,7 @@ export default function SodamakerProductDetail() {
           console.log('📋 Mock product data:', productData);
           
           // Process the mock product data
+          // Note: Spread operator preserves all fields including nameAr, descriptionAr, etc.
           const processedProduct = {
             ...productData,
             // Ensure image URLs are absolute
@@ -585,6 +586,7 @@ export default function SodamakerProductDetail() {
         if (productData && (productData._id || productData.id)) {
           
           // Ensure image URLs are absolute
+          // Note: Spread operator preserves all fields including nameAr, descriptionAr, etc.
           const processedProduct = {
             ...productData,
             // Ensure image URL is absolute

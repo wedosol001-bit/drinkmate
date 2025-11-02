@@ -101,6 +101,7 @@ export default function FlavorPage() {
         id: bundle._id,
         slug: bundle.slug,
         name: bundle.name,
+        nameAr: bundle.nameAr || bundle.titleAr, // Preserve Arabic name
         price: bundle.price,
         originalPrice: bundle.originalPrice,
         subcategory: bundle.subcategory || (isRTL ? "العروض والتجميعات للنكهات" : "Bundles & Promotions of Flavors"),
@@ -378,7 +379,6 @@ export default function FlavorPage() {
       // Add product view functionality if needed
     }
 
-    const displayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
     return (
       <BundleStyleProductCard
         key={product._id}
@@ -386,9 +386,9 @@ export default function FlavorPage() {
         product={{
           _id: product._id,
           id: product._id,
-          name: displayName,
+          name: product.name, // Keep original name, component will handle display
           slug: (product as any).slug || product._id,
-          title: displayName,
+          title: product.name, // Keep original name as title, component will use nameAr if available
           image: product.image,
           price: product.price,
           compareAtPrice: product.originalPrice,
@@ -403,7 +403,7 @@ export default function FlavorPage() {
           // Include variants for alignment with main shop
           hasVariants: (product as any).hasVariants || false,
           variants: (product as any).variants || [],
-          // Ensure nameAr is passed through
+          // Ensure nameAr is passed through - this is crucial for Arabic display
           nameAr: (product as any)?.nameAr || undefined,
         }}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
@@ -416,9 +416,11 @@ export default function FlavorPage() {
           // Use getCategoryName utility for consistent category handling
           const categoryName = getCategoryName(product.category)
           
+          // Use Arabic name for cart if RTL
+          const cartItemName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
           const cartItem = {
             id: uniqueCartItemId,
-            name: displayName, // Already uses Arabic if RTL
+            name: cartItemName, // Use Arabic name if RTL
             price: product.price,
             quantity: qty,
             image: displayImage, // Use processed image URL
@@ -497,7 +499,6 @@ export default function FlavorPage() {
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                         {section.bundles.map((bundle) => {
-                          const bundleDisplayName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
                           return (
                           <BundleStyleProductCard
                             key={bundle._id}
@@ -505,9 +506,9 @@ export default function FlavorPage() {
                             product={{
                               _id: bundle._id,
                               id: bundle._id,
-                              name: bundleDisplayName,
+                              name: bundle.name, // Keep original name, component will handle display
                               slug: bundle.slug,
-                              title: bundleDisplayName,
+                              title: bundle.name, // Keep original name as title, component will use nameAr if available
                               image: bundle.image || "/placeholder.svg",
                               price: bundle.price,
                               compareAtPrice: bundle.originalPrice,
@@ -518,6 +519,8 @@ export default function FlavorPage() {
                               subcategory: bundle.subcategory || "Bundles & Promotions of Flavors",
                               inStock: true,
                               badges: bundle.badge ? [bundle.badge] : undefined,
+                              // Ensure nameAr is passed through - this is crucial for Arabic display
+                              nameAr: (bundle as any)?.nameAr || undefined,
                             }}
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                               // Create unique cart item ID like main shop
@@ -526,9 +529,11 @@ export default function FlavorPage() {
                               // Use getProductImageUrl utility for consistent image processing
                               const displayImage = getProductImageUrl(bundle, '/placeholder.svg')
                               
+                              // Use Arabic name for cart if RTL
+                              const bundleCartName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
                               const cartItem = {
                                 id: uniqueCartItemId,
-                                name: bundleDisplayName,
+                                name: bundleCartName, // Use Arabic name if RTL
                                 price: bundle.price,
                                 quantity: qty,
                                 image: displayImage, // Use processed image URL
