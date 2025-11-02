@@ -234,8 +234,24 @@ export default function ShopProductDetail() {
     })()
     const productSlug = product.slug || generateSlug(productTitle, productId)
     
+    // Process images array to extract URLs properly (same as main product processing)
+    const processedImages = (product.images || []).map((img: any) => {
+      if (typeof img === 'string' && img.trim() !== '') {
+        return img
+      }
+      if (img && typeof img === 'object') {
+        return img.url || img.src || ''
+      }
+      return ''
+    }).filter((url: string) => url.trim() !== '')
+    
     // Get the primary image using the utility function (same as ProductGrid)
     const primaryImage = getProductImageUrl(product, '/placeholder-product.jpg')
+    
+    // Ensure primaryImage is valid (not empty string)
+    const validPrimaryImage = (primaryImage && primaryImage.trim() !== '' && primaryImage !== '/placeholder.svg') 
+      ? primaryImage 
+      : (processedImages.length > 0 ? processedImages[0] : '/placeholder-product.jpg')
 
     // Convert from old format (same structure as ProductGrid)
     // Spread product first, then override with converted values
@@ -246,8 +262,8 @@ export default function ShopProductDetail() {
       name: productTitle,
       slug: productSlug,
       title: productTitle,
-      image: primaryImage, // Override with processed image
-      images: product.images || [], // Pass through the full images array
+      image: validPrimaryImage, // Override with processed image
+      images: processedImages.length > 0 ? processedImages : (product.images || []), // Processed images array
       rating: product.rating || product.averageRating,
       reviewCount: product.reviewsCount || product.reviewCount || product.reviews || 0,
       price: product.price || product.salePrice || 0,
@@ -293,7 +309,18 @@ export default function ShopProductDetail() {
           .slice(0, 4)
 
         // Convert products using same logic as ProductGrid for consistency
-        const convertedProducts = otherProducts.map((product: ShopProduct) => convertProduct(product))
+        const convertedProducts = otherProducts.map((product: ShopProduct) => {
+          const converted = convertProduct(product)
+          // Debug logging for image issues
+          console.log('Related product conversion:', {
+            originalId: product._id,
+            originalImage: product.image,
+            originalImages: product.images,
+            convertedImage: converted.image,
+            convertedImages: converted.images
+          })
+          return converted
+        })
 
         setRelatedProducts(convertedProducts)
       } else {

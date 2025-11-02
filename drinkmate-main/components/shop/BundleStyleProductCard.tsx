@@ -71,7 +71,28 @@ export default function BundleStyleProductCard({
   // Get the best available image
   const getBestImage = () => {
     if (imageLoadError) return "/placeholder.svg"
-    return getProductImageUrl(product, "/placeholder.svg")
+    
+    // Get image using utility function
+    let imageUrl = getProductImageUrl(product, "/placeholder.svg")
+    
+    // Ensure we have a valid image URL
+    if (!imageUrl || imageUrl.trim() === '' || imageUrl === '/placeholder.svg') {
+      // Fallback: try to get image from images array directly
+      if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+        const firstImg = product.images[0]
+        if (typeof firstImg === 'string' && firstImg.trim() !== '') {
+          imageUrl = firstImg
+        } else if (firstImg && typeof firstImg === 'object' && firstImg.url) {
+          imageUrl = firstImg.url
+        }
+      }
+      // Final fallback
+      if (!imageUrl || imageUrl.trim() === '') {
+        imageUrl = product.image || "/placeholder.svg"
+      }
+    }
+    
+    return imageUrl || "/placeholder.svg"
   }
 
   const onAdd = async (e: React.MouseEvent) => {
