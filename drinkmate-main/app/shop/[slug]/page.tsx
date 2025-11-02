@@ -14,6 +14,7 @@ import { useTranslation } from "@/lib/contexts/translation-context"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { getLocalizedProductData } from "@/lib/utils/product-localization"
 import { getProductDisplayPrice, getDefaultVariant, getProductDisplayImage, formatPriceRange } from '@/lib/utils/product-variants'
+import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { Button } from "@/components/ui/button"
 import { Product as ShopProduct, BaseProduct } from '@/lib/types'
 import {
@@ -217,7 +218,7 @@ export default function ShopProductDetail() {
           .filter((product: ShopProduct) => product._id !== currentProductId)
           .slice(0, 4)
 
-        // Process images to ensure they have absolute URLs
+        // Process images - keep relative URLs as-is for Next.js Image component
         const processedProducts = otherProducts.map((product: ShopProduct) => {
           // Handle case where image might be undefined or null
           const safeImage = product.image || ''
@@ -225,16 +226,20 @@ export default function ShopProductDetail() {
 
           return {
             ...product,
-            // Ensure image URL is absolute
-            image: safeImage.startsWith('http') ? safeImage :
-                   safeImage.startsWith('/') ? `http://localhost:3000${safeImage}` :
-                   '/placeholder.svg',
-            // Ensure image URLs in arrays are absolute
+            // Keep image URL as-is if it's valid, otherwise use placeholder
+            image: safeImage && safeImage.trim() !== '' && safeImage !== 'undefined' ? safeImage : '/placeholder.svg',
+            // Process images array - preserve original structure
             images: safeImages.map((img: any) => {
-              const imageUrl = typeof img === 'string' ? img : img?.url || img
-              return imageUrl?.startsWith('http') ? imageUrl :
-                     imageUrl?.startsWith('/') ? `http://localhost:3000${imageUrl}` :
-                     '/placeholder.svg'
+              // If it's already a string, return as-is if valid
+              if (typeof img === 'string') {
+                return img && img.trim() !== '' && img !== 'undefined' ? img : '/placeholder.svg'
+              }
+              // If it's an object with url property, return the object
+              if (img && typeof img === 'object' && img.url) {
+                return img
+              }
+              // Fallback to placeholder
+              return '/placeholder.svg'
             })
           }
         })
@@ -2051,9 +2056,10 @@ export default function ShopProductDetail() {
                     {relatedProducts.map((relatedProduct) => {
                       // Get localized name for related product
                       const localizedRelatedProduct = getLocalizedProductData(relatedProduct as any, language)
+                      // Extract image URL - try image property first, then images array
                       const relatedProductImage = relatedProduct.image || (() => {
                         const img = relatedProduct.images?.[0]
-                        return typeof img === 'string' ? img : (img && typeof img === 'object' && 'url' in img ? (img as any).url : "/placeholder.svg")
+                        return typeof img === 'string' ? img : (img && typeof img === 'object' && 'url' in img ? img.url : "/placeholder.svg")
                       })()
                       
                       return (
@@ -2062,8 +2068,8 @@ export default function ShopProductDetail() {
                           <CardContent className="p-0">
                             <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-lg overflow-hidden relative">
                               <Image
-                                src={relatedProductImage}
-                                alt={localizedRelatedProduct?.name || relatedProduct.name}
+                                src={relatedProductImage || '/placeholder.svg'}
+                                alt={localizedRelatedProduct?.name || relatedProduct.name || 'Product image'}
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                                 sizes="(max-width: 768px) 50vw, 25vw"
