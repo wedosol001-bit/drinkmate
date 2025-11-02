@@ -146,7 +146,7 @@ export default function ShopProductDetail() {
   
   const [product, setProduct] = useState<ShopProduct | null>(null)
   const [loading, setLoading] = useState(true)
-  const [relatedProducts, setRelatedProducts] = useState<ShopProduct[]>([])
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([])
   const [loadingRelated, setLoadingRelated] = useState(true)
 
   // Enhanced state management with more features
@@ -213,10 +213,8 @@ export default function ShopProductDetail() {
       return {} as ProductType
     }
     
-    // If it's already in the new format, return as is
-    if (product.id && product.slug) {
-      return product as ProductType
-    }
+    // Always process the image, even if product seems to be in correct format
+    // The image URL might need to be extracted from images array
 
     // Generate slug if missing
     const generateSlug = (title: string, id: string): string => {
@@ -240,13 +238,15 @@ export default function ShopProductDetail() {
     const primaryImage = getProductImageUrl(product, '/placeholder-product.jpg')
 
     // Convert from old format (same structure as ProductGrid)
+    // Spread product first, then override with converted values
     const convertedProduct: ProductType = {
+      ...product, // Spread first to preserve all properties
       _id: productId,
       id: productId,
       name: productTitle,
       slug: productSlug,
       title: productTitle,
-      image: primaryImage,
+      image: primaryImage, // Override with processed image
       images: product.images || [], // Pass through the full images array
       rating: product.rating || product.averageRating,
       reviewCount: product.reviewsCount || product.reviewCount || product.reviews || 0,
@@ -272,9 +272,7 @@ export default function ShopProductDetail() {
       category: product.category,
       brand: product.brand,
       tags: product.tags || [],
-      nameAr: product.nameAr,
-      // Preserve any other properties that might be needed
-      ...product
+      nameAr: product.nameAr
     }
     
     return convertedProduct
