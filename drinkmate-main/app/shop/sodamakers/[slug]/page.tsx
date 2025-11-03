@@ -494,13 +494,27 @@ export default function SodamakerProductDetail() {
               found = findInList(allProducts)
             }
 
+            // 3) If still not found, try search API using humanized name
+            if (!found) {
+              const query = humanName
+              if (query && query.length >= 3) {
+                try {
+                  const searchResp = await shopAPI.searchProducts(query, { category: 'sodamakers', limit: 10 })
+                  const results = searchResp.products || searchResp.data?.products || searchResp || []
+                  found = findInList(results)
+                } catch (searchErr) {
+                  console.log('❌ Search API failed:', searchErr)
+                }
+              }
+            }
+
             if (found) {
               console.log('✅ Found product via category/list search:', found)
               productData = found
-            }
-          } catch (searchError) {
+              }
+            } catch (searchError) {
             console.log('❌ Error searching product lists:', searchError)
-          }
+            }
           }
         }
         
