@@ -249,8 +249,8 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
             setChatSession(prev => {
               if (!prev) return null
               
-              const prevIds = new Set(prev.messages.map(m => m.id))
-              const newIds = new Set(processedMessages.map(m => m.id))
+              const prevIds = new Set(prev.messages.map((m: Message) => m.id))
+              const newIds = new Set(processedMessages.map((m: Message) => m.id))
               
               if (prev.messages.length !== processedMessages.length || 
                   prevIds.size !== newIds.size || 
