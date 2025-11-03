@@ -16,8 +16,8 @@ export async function PUT(
       )
     }
 
-    // Make request to backend
-    const backendUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/checkout/admin/orders/${id}/status`
+    // Make request to backend - admin router is mounted at /admin
+    const backendUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/admin/orders/${id}/status`
     
     const response = await fetch(backendUrl, {
       method: 'PUT',
@@ -28,11 +28,19 @@ export async function PUT(
       body: JSON.stringify({ status })
     })
 
-    if (!response.ok) {
-      throw new Error(`Backend responded with status: ${response.status}`)
-    }
-
     const data = await response.json()
+    
+    if (!response.ok) {
+      // Backend returns error in data.error or data.message
+      const errorMessage = data?.data?.error || data?.message || data?.error || `Backend responded with status: ${response.status}`
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: errorMessage
+        },
+        { status: response.status }
+      )
+    }
     
     return NextResponse.json(data)
   } catch (error) {

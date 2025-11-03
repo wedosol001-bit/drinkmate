@@ -146,6 +146,8 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
       if (socket && isConnected) {
         console.log(`🔥 ModernAdminChatWidget: Joining socket room for chat: ${selectedConversation.id}`)
         joinChat(selectedConversation.id)
+      } else {
+        console.warn('🔥 ModernAdminChatWidget: Socket not connected, will use polling fallback')
       }
 
       try {
@@ -212,6 +214,71 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
       }
     }
   }, [selectedConversation, socket, isConnected, joinChat, leaveChat])
+
+  // Polling fallback when socket is not connected - check for new messages every 3 seconds
+  useEffect(() => {
+    if (!selectedConversation || isConnected) {
+      // Don't poll if socket is connected (socket will handle updates)
+      return
+    }
+
+    console.log('🔥 ModernAdminChatWidget: Socket not connected, starting polling fallback')
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
+        if (!token) return
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/chat/${selectedConversation.id}/messages`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.data?.chat?.messages) {
+            const processedMessages = data.data.chat.messages.map((message: any): Message => ({
+              id: message._id || message.id,
+              content: message.content,
+              sender: message.sender === 'admin' || message.sender === 'agent' ? 'agent' : 'customer',
+              timestamp: (message as any).createdAt || message.timestamp,
+              isNote: message.isNote || false,
+              attachments: message.attachments || [],
+              readAt: message.readAt,
+              status: message.status || 'sent'
+            }))
+
+            // Only update if message count changed (to avoid unnecessary re-renders)
+            setMessages(prev => {
+              if (prev.length !== processedMessages.length) {
+                console.log(`🔥 ModernAdminChatWidget: Polling detected ${processedMessages.length - prev.length} new messages`)
+                return processedMessages
+              }
+              
+              // Check if any message IDs are different (new messages added)
+              const prevIds = new Set(prev.map(m => m.id))
+              const newIds = new Set(processedMessages.map(m => m.id))
+              if (prevIds.size !== newIds.size || [...prevIds].some(id => !newIds.has(id))) {
+                console.log(`🔥 ModernAdminChatWidget: Polling detected new messages (ID difference)`)
+                return processedMessages
+              }
+              
+              return prev
+            })
+            setFilteredMessages(processedMessages)
+          }
+        }
+      } catch (error) {
+        console.error('🔥 ModernAdminChatWidget: Polling error:', error)
+      }
+    }, 3000) // Poll every 3 seconds
+
+    return () => {
+      clearInterval(pollInterval)
+    }
+  }, [selectedConversation, isConnected])
 
   // Filter messages based on search query
   useEffect(() => {
@@ -393,32 +460,63 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
     const messageContent = messageInput.trim()
     if (!messageContent || !selectedConversation || isSending) return
 
-    setIsSending(true)
+    // Create optimistic message immediately (both for socket and API fallback)
+    const tempMessage: Message = {
+      id: `temp_${Date.now()}`,
+      content: messageContent,
+      sender: 'agent',
+      timestamp: new Date().toISOString(),
+      isNote: false,
+      attachments: [],
+      status: 'sending'
+    }
+
+    // Add optimistic message immediately so user sees it
+    setMessages(prev => [...prev, tempMessage])
+    scrollToBottom()
+    
+    // Clear input after adding optimistic message (not before)
     setMessageInput('')
+    setIsSending(true)
 
     try {
       if (socketSendMessage && isConnected) {
-        // Send via socket - don't add optimistic update as socket will provide real-time feedback
+        // Send via socket - optimistic message already added
         console.log('🔥 ModernAdminChatWidget: Sending via socket')
-        await socketSendMessage(selectedConversation.id, messageContent, 'text')
-      } else {
-        // Fallback to API - add optimistic update since no real-time feedback
-        console.log('🔥 ModernAdminChatWidget: Sending via API fallback')
-        
-        // Create optimistic message
-        const tempMessage: Message = {
-          id: `temp_${Date.now()}`,
-          content: messageContent,
-          sender: 'agent',
-          timestamp: new Date().toISOString(),
-          isNote: false,
-          attachments: [],
-          status: 'sending'
+        try {
+          socketSendMessage(selectedConversation.id, messageContent, 'text')
+          // Update optimistic message status - socket will provide real message via event
+          setMessages(prev => prev.map(msg => 
+            msg.id === tempMessage.id 
+              ? { ...msg, status: 'sent' }
+              : msg
+          ))
+          
+          // Also send via API as backup for persistence (in case socket event is missed)
+          const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
+          if (token) {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/chat/${selectedConversation.id}/message`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                content: messageContent,
+                messageType: 'text'
+              })
+            }).catch(err => {
+              console.error('🔥 ModernAdminChatWidget: API backup send failed:', err)
+            })
+          }
+        } catch (socketError) {
+          // If socket fails, fall through to API fallback
+          console.error('🔥 ModernAdminChatWidget: Socket send failed, using API fallback:', socketError)
+          throw socketError
         }
-
-        // Add to messages immediately
-        setMessages(prev => [...prev, tempMessage])
-        scrollToBottom()
+      } else {
+        // Fallback to API - optimistic message already added above
+        console.log('🔥 ModernAdminChatWidget: Sending via API fallback')
 
         const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
         if (!token) throw new Error('No authentication token')
@@ -455,15 +553,22 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
       }
     } catch (error) {
       console.error('🔥 ModernAdminChatWidget: Error sending message:', error)
+      toast.error('Failed to send message. Please try again.')
       
-      // Only update message status to failed if we added an optimistic message
-      if (!socketSendMessage || !isConnected) {
-        setMessages(prev => prev.map(msg => 
-          msg.content === messageContent && msg.sender === 'agent' && msg.status === 'sending'
-            ? { ...msg, status: 'failed' }
-            : msg
-        ))
-      }
+      // Mark optimistic message as failed
+      setMessages(prev => prev.map(msg => 
+        msg.id === tempMessage.id
+          ? { ...msg, status: 'failed' }
+          : msg
+      ))
+      
+      // Restore message to input so user can retry
+      setMessageInput(messageContent)
+      
+      // Remove failed optimistic message after a delay
+      setTimeout(() => {
+        setMessages(prev => prev.filter(msg => msg.id !== tempMessage.id))
+      }, 3000)
     } finally {
       setIsSending(false)
     }

@@ -199,45 +199,41 @@ export default function OrderDetailsPage() {
     try {
       setUpdating(true)
       
-      // For now, simulate status update with mock data
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Get token from both localStorage and sessionStorage (consistent with getAuthToken)
+      const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
       
-      if (order) {
-        setOrder({
-          ...order,
-          status: newStatus,
-          updatedAt: new Date().toISOString()
-        })
-        toast.success('Order status updated successfully')
+      if (!token) {
+        toast.error('Authentication required. Please log in again.')
+        return
       }
-
-      // Uncomment this when backend is ready:
-      /*
+      
       const response = await fetch(`/api/checkout/admin/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ status: newStatus })
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to update order status')
+      let data
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        // If response is not JSON, use status text
+        throw new Error(response.statusText || `Server error (${response.status})`)
       }
 
-      const data = await response.json()
-      
-      if (data.success) {
-        toast.success('Order status updated successfully')
-        fetchOrderDetails() // Refresh the order data
-      } else {
-        toast.error(data.message || 'Failed to update order status')
+      if (!response.ok || !data.success) {
+        const errorMessage = data?.message || data?.error || data?.data?.error || `Failed to update order status (${response.status})`
+        throw new Error(errorMessage)
       }
-      */
+      
+      toast.success('Order status updated successfully')
+      fetchOrderDetails() // Refresh the order data
     } catch (error) {
       console.error('Error updating order status:', error)
-      toast.error('Failed to update order status')
+      toast.error(error instanceof Error ? error.message : 'Failed to update order status')
     } finally {
       setUpdating(false)
     }

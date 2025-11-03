@@ -210,6 +210,72 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
     }
   }, [isOpen, chatSession, isConnected, socket, joinChat])
 
+  // Polling fallback when socket is not connected
+  useEffect(() => {
+    if (!chatSession || isConnected) {
+      // Don't poll if socket is connected
+      return
+    }
+
+    console.log('🔥 FloatingChatWidget: Socket not connected, starting polling fallback')
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const token = getAuthToken()
+        if (!token || !chatSession) return
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/chat/${chatSession._id}/messages`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.data?.chat?.messages) {
+            const processedMessages = data.data.chat.messages.map((msg: any): Message => ({
+              id: msg._id || msg.id,
+              content: msg.content,
+              sender: msg.sender === 'admin' || msg.sender === 'agent' ? 'agent' : 'customer',
+              timestamp: msg.createdAt || msg.timestamp,
+              isNote: msg.isNote || false,
+              attachments: msg.attachments || [],
+              readAt: msg.readAt,
+              status: msg.status || 'sent'
+            }))
+
+            // Only update if messages changed
+            setChatSession(prev => {
+              if (!prev) return null
+              
+              const prevIds = new Set(prev.messages.map(m => m.id))
+              const newIds = new Set(processedMessages.map(m => m.id))
+              
+              if (prev.messages.length !== processedMessages.length || 
+                  prevIds.size !== newIds.size || 
+                  [...prevIds].some(id => !newIds.has(id))) {
+                console.log(`🔥 FloatingChatWidget: Polling detected new messages`)
+                return {
+                  ...prev,
+                  messages: processedMessages
+                }
+              }
+              
+              return prev
+            })
+          }
+        }
+      } catch (error) {
+        console.error('🔥 FloatingChatWidget: Polling error:', error)
+      }
+    }, 3000) // Poll every 3 seconds
+
+    return () => {
+      clearInterval(pollInterval)
+    }
+  }, [chatSession, isConnected, getAuthToken])
+
   // Socket event listeners
   useEffect(() => {
     if (!socket) return
@@ -406,15 +472,51 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
     if (!newMessage.trim() || !chatSession) return
 
     const messageContent = newMessage.trim()
+    
+    // Create optimistic message immediately
+    const tempMessage: Message = {
+      id: `temp_${Date.now()}`,
+      content: messageContent,
+      sender: 'customer',
+      timestamp: new Date().toISOString(),
+      isNote: false,
+      attachments: [],
+      status: 'sending'
+    }
+    
+    // Add optimistic message to UI immediately
+    setChatSession(prev => {
+      if (!prev) return null
+      return {
+        ...prev,
+        messages: [...prev.messages, tempMessage]
+      }
+    })
+    
+    // Clear input after adding optimistic message
     setNewMessage('')
     stopTyping(chatSession._id)
 
     try {
       // Send via socket first (real-time)
-      sendMessage(chatSession._id, messageContent, 'text')
+      if (socket && isConnected) {
+        sendMessage(chatSession._id, messageContent, 'text')
+        // Update optimistic message status
+        setChatSession(prev => {
+          if (!prev) return null
+          return {
+            ...prev,
+            messages: prev.messages.map(msg => 
+              msg.id === tempMessage.id 
+                ? { ...msg, status: 'sent' }
+                : msg
+            )
+          }
+        })
+      }
       
       // Also send via API for persistence (fallback)
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/chat/${chatSession._id}/message`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/chat/${chatSession._id}/message`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${getAuthToken()}`,
@@ -425,6 +527,24 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
           messageType: 'text'
         })
       })
+      
+      if (response.ok) {
+        const responseData = await response.json()
+        // Update optimistic message with real ID
+        if (responseData.data?.message?._id) {
+          setChatSession(prev => {
+            if (!prev) return null
+            return {
+              ...prev,
+              messages: prev.messages.map(msg => 
+                msg.id === tempMessage.id 
+                  ? { ...msg, id: responseData.data.message._id, status: 'sent' }
+                  : msg
+              )
+            }
+          })
+        }
+      }
     } catch (err) {
       console.error('Error sending message:', err)
       let errorMessage = 'Failed to send message. Please try again.'
@@ -446,8 +566,33 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
       }
       
       setError(errorMessage)
-      // Restore message if sending failed
+      
+      // Mark optimistic message as failed
+      setChatSession(prev => {
+        if (!prev) return null
+        return {
+          ...prev,
+          messages: prev.messages.map(msg => 
+            msg.id === tempMessage.id 
+              ? { ...msg, status: 'failed' }
+              : msg
+          )
+        }
+      })
+      
+      // Restore message to input so user can retry
       setNewMessage(messageContent)
+      
+      // Remove failed optimistic message after a delay
+      setTimeout(() => {
+        setChatSession(prev => {
+          if (!prev) return null
+          return {
+            ...prev,
+            messages: prev.messages.filter(msg => msg.id !== tempMessage.id)
+          }
+        })
+      }, 3000)
     }
   }
 

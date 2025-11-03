@@ -134,23 +134,33 @@ class AdminOrderController {
         ));
       }
 
-      const order = await Order.findByIdAndUpdate(
+      const order = await Order.findById(id);
+      
+      if (!order) {
+        return res.status(404).json(createErrorResponse(
+          'Order not found',
+          'Order with the specified ID does not exist'
+        ));
+      }
+
+      // Simply update status using findByIdAndUpdate (simpler, avoids pre-save hook issues)
+      const updatedOrder = await Order.findByIdAndUpdate(
         id,
         { 
-          status: status,
+          $set: { status: status },
           $push: {
-            statusHistory: {
-              status: status,
+            timeline: {
+              status: String(status),
+              description: notes ? `Status changed: ${notes}` : `Order status updated to ${status}`,
               timestamp: new Date(),
-              notes: notes || '',
-              updatedBy: req.user.id
+              updatedBy: 'admin'
             }
           }
         },
-        { new: true, runValidators: true }
-      ).populate('customer', 'firstName lastName email phone');
+        { new: true, runValidators: false }
+      ).populate('user', 'firstName lastName email phone username');
 
-      if (!order) {
+      if (!updatedOrder) {
         return res.status(404).json(createErrorResponse(
           'Order not found',
           'Order with the specified ID does not exist'
@@ -160,14 +170,18 @@ class AdminOrderController {
       res.json({
         success: true,
         message: 'Order status updated successfully',
-        order: order
+        order: updatedOrder
       });
     } catch (error) {
+      console.error('Order status update error details:', {
+        message: error.message,
+        stack: error.stack,
+        orderId: req.params.id,
+        status: req.body.status
+      });
       logError(error, 'updateOrderStatus');
-      res.status(500).json(createErrorResponse(
-        'Failed to update order status',
-        error.message
-      ));
+      const errorResponse = createErrorResponse(error, req);
+      res.status(errorResponse.status).json(errorResponse.data);
     }
   };
 
