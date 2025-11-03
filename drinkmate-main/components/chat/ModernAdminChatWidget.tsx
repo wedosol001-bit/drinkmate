@@ -258,8 +258,8 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
               }
               
               // Check if any message IDs are different (new messages added)
-              const prevIds = new Set(prev.map(m => m.id))
-              const newIds = new Set(processedMessages.map(m => m.id))
+              const prevIds = new Set(prev.map((m: Message) => m.id))
+              const newIds = new Set(processedMessages.map((m: Message) => m.id))
               if (prevIds.size !== newIds.size || [...prevIds].some(id => !newIds.has(id))) {
                 console.log(`🔥 ModernAdminChatWidget: Polling detected new messages (ID difference)`)
                 return processedMessages
