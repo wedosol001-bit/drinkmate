@@ -228,13 +228,28 @@ export default function SodamakerProductDetail() {
   const router = useRouter()
 
   const productSlug = params?.slug as string
-  const [product, setProduct] = useState<SodamakerProduct | null>(null)
-  
-  // Get localized product data
-  const localizedProduct = product ? getLocalizedProductData(product, language) : null
-  const [loading, setLoading] = useState(true)
-  const [relatedProducts, setRelatedProducts] = useState<any[]>([])
-  const [loadingRelated, setLoadingRelated] = useState(true)
+  // Redirect to generic product detail to unify source of truth
+  useEffect(() => {
+    if (productSlug) {
+      const prefix = language === 'AR' ? '/ar' : ''
+      router.replace(`${prefix}/shop/${productSlug}`)
+    }
+  }, [productSlug, language, router])
+
+  // Show minimal loader during redirect
+  return (
+    <PageLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#12d6fa] mx-auto"></div>
+            <div className="text-lg font-medium">{t("product.loadingDetails") || "Loading premium product details..."}</div>
+            <div className="text-sm text-muted-foreground">{t("product.preparingExperience") || "Preparing the best experience for you"}</div>
+          </div>
+        </div>
+      </div>
+    </PageLayout>
+  )
 
   // Enhanced state management with more features
   const [selectedImage, setSelectedImage] = useState(0)
