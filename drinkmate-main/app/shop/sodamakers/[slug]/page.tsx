@@ -429,9 +429,24 @@ export default function SodamakerProductDetail() {
         console.log('📋 Product data type:', typeof productData);
         console.log('📋 Product data keys:', productData ? Object.keys(productData) : 'null');
         
-        // If product not found, try to find by name mapping
+        // If product not found, try additional fallbacks
         if (!productData || (!productData._id && !productData.id)) {
-          console.log('🔍 Product not found by slug, trying name mapping...');
+          console.log('🔍 Product not found by slug, trying unified and name/category fallbacks...');
+
+          // 1) Try unified slug lookup across product types
+          try {
+            const unified = await shopAPI.getProductBySlugUnified(productSlug)
+            if (unified?.success && unified.product) {
+              console.log('✅ Found product via unified slug lookup:', unified.product)
+              productData = unified.product
+            }
+          } catch (unifiedErr) {
+            console.log('❌ Unified slug lookup failed:', unifiedErr)
+          }
+
+          // 2) If still not found, try known name mappings then category search
+          if (!productData || (!productData._id && !productData.id)) {
+            console.log('🔍 Product still not found, trying name mapping + category search...')
           
           // Map common slug variations to actual product names
           const slugMappings: Record<string, string> = {
@@ -443,27 +458,49 @@ export default function SodamakerProductDetail() {
           };
           
           const mappedName = slugMappings[productSlug];
-          if (mappedName) {
-            console.log(`🔄 Trying to find product by name: ${mappedName}`);
-            
-            // Try to fetch all products and find by name
-            try {
-              const allProductsResponse = await shopAPI.getProducts({ category: 'sodamakers' });
-              const allProducts = allProductsResponse.products || allProductsResponse || [];
-              
-              const foundProduct = allProducts.find((p: any) => 
-                p.name === mappedName || 
-                p.name?.toLowerCase().includes(mappedName.toLowerCase()) ||
-                p.slug === productSlug
-              );
-              
-              if (foundProduct) {
-                console.log('✅ Found product by name mapping:', foundProduct);
-                productData = foundProduct;
-              }
-            } catch (searchError) {
-              console.log('❌ Error searching for product by name:', searchError);
+          // Build a set of candidate names to search by
+          const candidateNames: string[] = []
+          if (mappedName) candidateNames.push(mappedName)
+          const humanName = productSlug.replace(/-/g, ' ').trim()
+          if (humanName && humanName.length > 0) candidateNames.push(humanName)
+
+          // Helper: try a list response and search for matches by slug or name
+          const findInList = (list: any[]) => list.find((p: any) => {
+            const pSlug = (p?.slug || '').toString().toLowerCase()
+            const pName = (p?.name || p?.title || '').toString().toLowerCase()
+            const slugLc = productSlug.toLowerCase()
+            return pSlug === slugLc || pSlug.endsWith(`/${slugLc}`) ||
+                   pSlug.includes(slugLc) ||
+                   candidateNames.some(n => pName.includes(n.toLowerCase()))
+          })
+
+          try {
+            // Prefer category API for sodamakers
+            const catResp = await shopAPI.getProductsByCategory('sodamakers', { limit: 200 })
+            const catProducts = catResp.products || catResp.data?.products || []
+            let found = findInList(catProducts)
+
+            // Also check starter kits (often routed under sodamakers)
+            if (!found) {
+              const skResp = await shopAPI.getProductsByCategory('starter-kits', { limit: 200 })
+              const skProducts = skResp.products || skResp.data?.products || []
+              found = findInList(skProducts)
             }
+
+            // As a final fallback, scan general products list
+            if (!found) {
+              const allResp = await shopAPI.getProducts({ limit: 300 })
+              const allProducts = allResp.products || allResp.data?.products || allResp || []
+              found = findInList(allProducts)
+            }
+
+            if (found) {
+              console.log('✅ Found product via category/list search:', found)
+              productData = found
+            }
+          } catch (searchError) {
+            console.log('❌ Error searching product lists:', searchError)
+          }
           }
         }
         
