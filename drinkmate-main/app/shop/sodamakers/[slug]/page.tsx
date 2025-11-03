@@ -519,21 +519,25 @@ export default function SodamakerProductDetail() {
         }
         
         if (productData && (productData._id || productData.id)) {
-          
+
+          // Robust image URL resolver (handles string or object with url/src)
+          const resolveImageUrl = (val: any): string => {
+            const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
+            const url = typeof val === 'string' ? val : (val && typeof val === 'object' ? (val.url || val.src || '') : '')
+            if (!url || typeof url !== 'string') return '/placeholder.svg'
+            if (url.startsWith('http')) return url
+            if (url.startsWith('/')) return `${origin}${url}`
+            return '/placeholder.svg'
+          }
+
           // Ensure image URLs are absolute
           // Note: Spread operator preserves all fields including nameAr, descriptionAr, etc.
           const processedProduct = {
             ...productData,
-            // Ensure image URL is absolute
-            image: productData.image?.startsWith('http') ? productData.image : 
-                   productData.image?.startsWith('/') ? `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}${productData.image}` : 
-                   '/placeholder.svg',
-            // Ensure image URLs in arrays are absolute
-            images: Array.isArray(productData.images) ? productData.images.map((img: string) => 
-              img?.startsWith('http') ? img : 
-              img?.startsWith('/') ? `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}${img}` : 
-              '/placeholder.svg'
-            ) : [],
+            image: resolveImageUrl(productData.image),
+            images: Array.isArray(productData.images)
+              ? productData.images.map((img: any) => resolveImageUrl(img))
+              : [],
             // Add any missing properties with default values
             specifications: productData.specifications || {},
             videos: Array.isArray(productData.videos) ? productData.videos : [],
