@@ -162,7 +162,12 @@ class ImprovedSocketService {
       // Handle join chat room
       socket.on('join_chat', async (data) => {
         try {
-          const { chatId } = data;
+          // Handle both string and object formats for backward compatibility
+          const chatId = typeof data === 'string' ? data : (data?.chatId || data?._id);
+          if (!chatId) {
+            socket.emit('error', { message: 'Invalid chat ID' });
+            return;
+          }
           console.log('🔥 User joining chat:', chatId, 'User:', socket.userId);
           
           // Verify user has access to this chat
@@ -191,10 +196,15 @@ class ImprovedSocketService {
 
       // Handle leave chat room
       socket.on('leave_chat', (data) => {
-        const { chatId } = data;
-        socket.leave(`chat_${chatId}`);
-        console.log('👋 User left chat room:', `chat_${chatId}`);
-        socket.emit('left_chat', { chatId: chatId });
+        // Handle both string and object formats for backward compatibility
+        const chatId = typeof data === 'string' ? data : (data?.chatId || data?._id);
+        if (chatId) {
+          socket.leave(`chat_${chatId}`);
+          console.log('👋 User left chat room:', `chat_${chatId}`);
+          socket.emit('left_chat', { chatId: chatId });
+        } else {
+          console.warn('⚠️ Leave chat called with invalid data:', data);
+        }
       });
 
       // Handle sending message with improved error handling

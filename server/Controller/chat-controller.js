@@ -224,7 +224,7 @@ const addMessage = async (req, res) => {
     const senderId = req.user.id;
     const isAdmin = req.user.isAdmin;
     
-    console.log('🔥 Message received:', {
+    console.log('🔥 Message received via API:', {
       chatId,
       content: content?.substring(0, 50) + '...',
       messageType,
@@ -249,12 +249,38 @@ const addMessage = async (req, res) => {
     // Get the last message that was just added
     const lastMessage = chat.messages[chat.messages.length - 1];
     
-    console.log('🔥 Message added successfully:', {
+    console.log('🔥 Message added successfully via API:', {
       messageId: lastMessage._id,
       content: lastMessage.content?.substring(0, 50) + '...',
       sender: lastMessage.sender,
       timestamp: lastMessage.timestamp
     });
+    
+    // CRITICAL: Emit socket event to broadcast message to all connected clients in the chat room
+    // This ensures real-time updates even when messages are sent via API (not just socket)
+    const io = req.app.get('io');
+    if (io) {
+      const roomName = `chat_${chatId}`;
+      const messageData = {
+        chatId: chatId,
+        message: lastMessage // Send the full message object (same format as socket service)
+      };
+      
+      console.log('🔥 API Controller: Emitting new_message to room:', roomName);
+      console.log('🔥 API Controller: Room size:', io.sockets.adapter.rooms.get(roomName)?.size || 0);
+      console.log('🔥 API Controller: Message data:', {
+        chatId: messageData.chatId,
+        messageId: messageData.message._id,
+        content: messageData.message.content?.substring(0, 50) + '...'
+      });
+      
+      // Broadcast to all clients in the chat room
+      io.to(roomName).emit('new_message', messageData);
+      
+      console.log('✅ API Controller: Socket event emitted successfully');
+    } else {
+      console.warn('⚠️ API Controller: Socket.io instance not available, message will not be broadcast in real-time');
+    }
     
     res.json({
       success: true,
