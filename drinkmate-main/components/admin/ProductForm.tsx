@@ -152,7 +152,7 @@ export default function ProductForm({
     if (categories.length > 0 && !formData.category) {
       setFormData(prev => ({
         ...prev,
-        category: categories[0]._id
+        category: categories[0].slug || categories[0]._id
       }))
     }
   }, [categories, formData.category])

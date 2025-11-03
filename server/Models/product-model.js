@@ -397,15 +397,27 @@ productSchema.index({ status: 1, stock: 1, 'rating.count': -1, 'rating.average':
 productSchema.index({ status: 1, stock: 1, createdAt: -1 });
 
 // Pre-save middleware
-productSchema.pre('save', function(next) {
+productSchema.pre('save', async function(next) {
   this.updatedAt = Date.now();
   
-  // Generate slug if not provided
+  // Generate slug if not provided, and ensure uniqueness
   if (!this.slug && this.name) {
-    this.slug = this.name
+    const base = this.name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
       .replace(/(^-|-$)/g, '');
+
+    let candidate = base || String(this._id);
+    let counter = 0;
+    const Product = this.constructor;
+    while (await Product.findOne({ slug: candidate, _id: { $ne: this._id } })) {
+      counter += 1;
+      candidate = `${base}-${counter}`;
+      if (counter > 1000) break;
+    }
+    this.slug = candidate;
   }
   
   next();

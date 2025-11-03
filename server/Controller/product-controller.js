@@ -288,12 +288,29 @@ exports.getProduct = async (req, res) => {
             product = await Product.findOne({ slug: idOrSlug });
         }
         
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: 'Product not found'
-            });
+    if (!product) {
+      // Fallback: try to find by name derived from slug
+      try {
+        const human = idOrSlug.replace(/-/g, ' ').trim();
+        if (human && human.length >= 3) {
+          // Search for products whose name includes all significant words
+          const words = human.split(/\s+/).filter(w => w.length >= 2);
+          if (words.length > 0) {
+            const regex = new RegExp(words.map(w => `(?=.*${w.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`).join(''), 'i');
+            product = await Product.findOne({ name: regex });
+          }
         }
+      } catch (fallbackErr) {
+        // ignore fallback errors
+      }
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: 'Product not found'
+        });
+      }
+    }
         
         // Populate category if it's an ObjectId
         try {
