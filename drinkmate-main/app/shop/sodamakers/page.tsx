@@ -404,6 +404,10 @@ export default function SodamakersPage() {
         .replace(/-+/g, '-')
         .substring(0, 120)
     }
+    // Use backend-provided slug when available; otherwise fall back to _id so detail can resolve by ID
+    const resolvedSlug = ((product as any)?.slug && (product as any).slug.trim().length > 0)
+      ? (product as any).slug
+      : String(product._id)
     const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
       // Convert payload to proper cart item format
     const productDisplayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
@@ -439,7 +443,7 @@ export default function SodamakersPage() {
       _id: product._id,
       id: product._id,
       name: product.name, // Keep original name, component will handle display
-      slug: safeSlug((product as any)?.slug),
+      slug: resolvedSlug,
       title: product.name, // Keep original name as title, component will use nameAr if available
       image: product.image,
       price: product.price,
