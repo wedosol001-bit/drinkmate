@@ -251,7 +251,7 @@ export default function SodamakerProductDetail() {
     </PageLayout>
   )
 
-  // Enhanced state management with more features
+  /* Enhanced state management with more features
   const [selectedImage, setSelectedImage] = useState(0)
   const [isShowingVideo, setIsShowingVideo] = useState(false)
   const [quantity, setQuantity] = useState(1)
@@ -2504,4 +2504,5 @@ export default function SodamakerProductDetail() {
       </TooltipProvider>
     </PageLayout>
   );
+*/
 }
