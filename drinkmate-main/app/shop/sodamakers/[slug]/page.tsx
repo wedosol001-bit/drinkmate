@@ -549,8 +549,42 @@ export default function SodamakerProductDetail() {
           // Fetch related products after getting the current product
           fetchRelatedProducts(productData._id);
         } else {
-          // Final fallback: Redirect to generic shop product detail, which has robust redirect logic
-          console.log('❌ No product data found; redirecting to generic detail route for fallback handling');
+          // Final fallback: try to find the closest matching Soda Maker and redirect directly to it
+          console.log('❌ No product data found; attempting smart redirect within sodamakers category')
+
+          try {
+            const toWords = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean)
+            const score = (a: string, b: string) => {
+              const aw = new Set(toWords(a))
+              const bw = new Set(toWords(b))
+              let overlap = 0
+              bw.forEach(w => { if (aw.has(w)) overlap++ })
+              return overlap / Math.max(1, bw.size)
+            }
+
+            const catResp = await shopAPI.getProductsByCategory('sodamakers', { limit: 200 })
+            const list = catResp.products || catResp.data?.products || []
+            let best = null as any
+            let bestScore = 0
+            for (const p of list) {
+              const s = score(productSlug, `${p.slug || ''} ${p.name || ''} ${p.title || ''}`)
+              if (s > bestScore) { best = p; bestScore = s }
+            }
+
+            if (best && (best.slug || best._id)) {
+              const targetSlug = best.slug || String(best._id)
+              const prefix = language === 'AR' ? '/ar' : ''
+              const targetUrl = `${prefix}/shop/sodamakers/${targetSlug}`
+              console.log('🔄 Redirecting to best-match sodamaker:', { targetSlug, score: bestScore, targetUrl })
+              router.replace(targetUrl)
+              return
+            }
+          } catch (redirErr) {
+            console.log('❌ Smart redirect failed:', redirErr)
+          }
+
+          // Fallback of last resort: generic detail route
+          console.log('↪️ Falling back to generic detail route')
           const prefix = language === 'AR' ? '/ar' : ''
           router.replace(`${prefix}/shop/${productSlug}`)
           return
