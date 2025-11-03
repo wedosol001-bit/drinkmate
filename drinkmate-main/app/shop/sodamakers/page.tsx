@@ -350,51 +350,8 @@ export default function SodamakersPage() {
       console.error("Error fetching products:", error)
       setError(t("shop.categoryPages.failedToLoad"))
 
-      // Fallback to static data if API fails
-      setAllSodaMakers([
-        {
-          _id: "201",
-          id: 201,
-          slug: "omnifizz-soda-maker-artic-black",
-          name: "OmniFizz Soda Maker - Artic Black",
-          price: 599.99,
-          originalPrice: 699.99,
-          image: "/images/02 - Soda Makers/Artic-Black-Machine---Front.png",
-          category: "sodamakers",
-          subcategory: undefined,
-          rating: 5,
-          reviews: 320,
-          description: "Premium carbonation for all beverages",
-        },
-        {
-          _id: "202",
-          id: 202,
-          slug: "omnifizz-soda-maker-artic-blue",
-          name: "OmniFizz Soda Maker - Artic Blue",
-          price: 599.99,
-          originalPrice: 699.99,
-          image: "/images/02 - Soda Makers/Artic-Blue-Machine---Front.png",
-          category: "sodamakers",
-          subcategory: undefined,
-          rating: 5,
-          reviews: 380,
-          description: "Premium carbonation for all beverages",
-        },
-        {
-          _id: "301",
-          id: 301,
-          slug: "luxe-soda-maker-stainless-steel",
-          name: "Luxe Soda Maker - Stainless Steel",
-          price: 799.99,
-          originalPrice: 999.99,
-          image: "/images/02 - Soda Makers/Banner-Luxe-Machine.png",
-          category: "sodamakers",
-          subcategory: undefined,
-          rating: 5,
-          reviews: 450,
-          description: "Luxurious and elegant carbonation experience",
-        },
-      ])
+      // Do not use static fallback data
+      setAllSodaMakers([])
       setSubcategorySections([])
       setBundles([])
     } finally {
@@ -436,6 +393,17 @@ export default function SodamakersPage() {
 
   // Function to render product cards using bundle-style ProductCard component
   function renderProductCard(product: Product) {
+    const safeSlug = (value?: string) => {
+      if (value && typeof value === 'string' && value.trim().length > 0) return value
+      const base = (product as any)?.name || String(product._id || '')
+      return String(base)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .substring(0, 120)
+    }
     const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
       // Convert payload to proper cart item format
     const productDisplayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
@@ -471,7 +439,7 @@ export default function SodamakersPage() {
       _id: product._id,
       id: product._id,
       name: product.name, // Keep original name, component will handle display
-      slug: product.slug || product._id,
+      slug: safeSlug((product as any)?.slug),
       title: product.name, // Keep original name as title, component will use nameAr if available
       image: product.image,
       price: product.price,
@@ -479,7 +447,8 @@ export default function SodamakersPage() {
       rating: product.rating || 0,
       reviewCount: product.reviews || 0,
       description: product.description,
-      category: product.category,
+      // Force category context to sodamakers so URL generator routes correctly
+      category: 'sodamakers',
       inStock: true,
       badges: (product as any).badge ? [(product as any).badge] : undefined,
       // Pass the images array as well for better image handling

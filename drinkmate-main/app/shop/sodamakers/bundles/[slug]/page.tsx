@@ -77,115 +77,7 @@ interface Bundle {
   reviewCount?: number
 }
 
-// Mock bundle data for fallback
-const mockBundle = {
-  _id: "mock-bundle-001",
-  name: "Aqualine Starter Kit Soda Maker",
-  description: "Complete starter kit for home soda making with everything you need to get started.",
-  price: 499.00,
-  originalPrice: 549.00,
-  bundleDiscount: 9.1,
-  category: "Soda Maker Bundle",
-  subcategory: "Starter Kit",
-  images: ["/images/04 - Kits/Starter-Kit---Example---Do-Not-Use.png"],
-  videos: [],
-  youtubeLinks: [],
-  badge: {
-    text: "Bundle Deal",
-    color: "#12d6fa"
-  },
-  sku: "BNDL-SM-001",
-  isActive: true,
-  isFeatured: true,
-  isNewArrival: false,
-  isBestSeller: true,
-  isLimited: false,
-  stock: 50,
-  createdAt: "2024-01-01T00:00:00.000Z",
-  // Legacy fields
-  discount: 50.00,
-  items: [
-    {
-      product: "soda-maker-001",
-      name: "Aqualine Soda Maker Machine",
-      price: 299.00,
-      image: "/images/placeholder.svg"
-    },
-    {
-      product: "co2-cylinder-001",
-      name: "CO2 Cylinder (80L)",
-      price: 149.00,
-      image: "/images/placeholder.svg"
-    },
-    {
-      product: "flavor-syrup-001",
-      name: "Flavor Syrup Set (6 bottles)",
-      price: 89.00,
-      image: "/images/placeholder.svg"
-    },
-    {
-      product: "accessories-001",
-      name: "Accessories Kit",
-      price: 39.00,
-      image: "/images/placeholder.svg"
-    }
-  ],
-  // Legacy fields
-  averageRating: 4.5,
-  reviewCount: 24
-}
-
-// Mock data for bundle reviews
-const bundleReviews = [
-  {
-    id: 1,
-    user: "Ahmed Al-Rashid",
-    avatar: "/male-user-avatar.png",
-    rating: 5,
-    date: "2024-01-15",
-    verified: true,
-    comment:
-      "Excellent bundle! This complete soda maker kit has everything I needed to start making sparkling drinks at home. The quality is outstanding and the setup was incredibly easy. The CO2 cylinder included is perfect for my needs. Highly recommend for anyone looking to save money and get professional results!",
-    helpful: 24,
-    images: ["/placeholder.svg", "/placeholder.svg"],
-    pros: ["Complete kit", "Easy setup", "Great quality", "Good value"],
-    cons: ["Slightly heavy"],
-    wouldRecommend: true,
-    purchaseVerified: true,
-  },
-  {
-    id: 2,
-    user: "Fatima Hassan",
-    avatar: "/female-user-avatar.png",
-    rating: 5,
-    date: "2024-01-10",
-    verified: true,
-    comment:
-      "Perfect starter bundle for home carbonation! I was hesitant at first, but this kit exceeded my expectations. Everything works perfectly together and the instructions are clear. The flavor options included are great too. My family loves making different sparkling drinks now!",
-    helpful: 18,
-    images: [],
-    pros: ["Easy to use", "Great variety", "Quality components", "Good instructions"],
-    cons: [],
-    wouldRecommend: true,
-    purchaseVerified: true,
-  },
-  {
-    id: 3,
-    user: "Mohammed Al-Zahra",
-    avatar: "/user-avatar-male-2.jpg",
-    rating: 4,
-    date: "2023-12-28",
-    verified: true,
-    comment:
-      "Solid bundle with good value. The soda maker works well and the CO2 cylinder lasts longer than expected. Only minor issue is that some parts could be easier to clean, but overall very satisfied. Would recommend for beginners looking to try home carbonation.",
-    helpful: 12,
-    images: ["/placeholder.svg"],
-    pros: ["Good value", "Reliable performance", "Long-lasting CO2", "Easy operation"],
-    cons: ["Cleaning could be easier"],
-    wouldRecommend: true,
-    purchaseVerified: true,
-  },
-]
+// Removed mock bundle and mock reviews; rely solely on API data
 
 const bundleQA = [
   {
@@ -271,7 +163,7 @@ export default function BundleDetailPage() {
     cons: "",
     wouldRecommend: true,
   })
-  const [reviews, setReviews] = useState(bundleReviews)
+  const [reviews, setReviews] = useState<any[]>([])
   const [qaData, setQAData] = useState(bundleQA)
   const [showQuestionForm, setShowQuestionForm] = useState(false)
   const [newQuestion, setNewQuestion] = useState({
@@ -434,21 +326,18 @@ export default function BundleDetailPage() {
           console.log('Not a product either, falling back to mock data')
         }
         
-        // Use mock data as fallback - but only if user is actually looking for a bundle
-        console.log('Using mock data fallback')
-        setBundle(mockBundle)
+        // No bundle found via API; leave bundle unset and handle UI accordingly
+        setBundle(null as any)
         setSelectedImage(0)
-        fetchRelatedProducts(mockBundle._id)
       }
     } catch (error) {
       console.error("=== FETCH BUNDLE ERROR ===")
       console.error("Error fetching sodamaker bundle:", error)
       console.error("Error details:", error instanceof Error ? error.message : String(error))
       console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace')
-      // Use mock data as fallback on error
-      setBundle(mockBundle)
+      // On error, do not use mock data; clear state and show error UI
+      setBundle(null as any)
       setSelectedImage(0)
-      fetchRelatedProducts(mockBundle._id)
     } finally {
       console.log('=== FETCH BUNDLE FINALLY ===')
       console.log('Setting loading to false')
