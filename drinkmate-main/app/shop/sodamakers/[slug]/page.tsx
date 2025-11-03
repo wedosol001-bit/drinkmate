@@ -535,11 +535,11 @@ export default function SodamakerProductDetail() {
           // Fetch related products after getting the current product
           fetchRelatedProducts(productData._id);
         } else {
-          // Set empty product if API fails
-          console.log('❌ No product data found in response');
-          setProduct(null)
-          
-          // No related products to fetch when product is null
+          // Final fallback: Redirect to generic shop product detail, which has robust redirect logic
+          console.log('❌ No product data found; redirecting to generic detail route for fallback handling');
+          const prefix = language === 'AR' ? '/ar' : ''
+          router.replace(`${prefix}/shop/${productSlug}`)
+          return
         }
         setLoading(false)
       } catch (error) {
