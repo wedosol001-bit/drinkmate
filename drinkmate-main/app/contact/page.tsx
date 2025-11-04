@@ -75,17 +75,12 @@ function ContactOptionCard({
     }
   }
 
-  // Ensure Icon component is valid before rendering
-  if (!Icon || typeof Icon !== 'function') {
-    console.error('ContactOptionCard: Invalid icon component provided')
-  }
-
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-[#12d6fa]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-            {Icon && typeof Icon === 'function' ? (
+            {Icon ? (
               <Icon className="h-6 w-6 text-[#12d6fa]" aria-hidden="true" />
             ) : (
               <div className="h-6 w-6 bg-[#12d6fa] rounded" aria-label="Icon placeholder" />
@@ -374,7 +369,7 @@ function ContactForm() {
                       : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  {t(`contact.form.reasons.${reason.value}`)}
+                  {t(`shop.contact.form.reasons.${reason.value}`)}
                 </button>
               ))}
             </div>
@@ -1015,14 +1010,18 @@ function ContactPageContent() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Map */}
               <div className="relative h-96 rounded-2xl overflow-hidden shadow-lg">
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <div className="text-center text-gray-600">
-                    <MapPin className="h-12 w-12 mx-auto mb-2" />
-                    <p className="text-lg font-medium">{t('shop.contact.map.city')}</p>
-                    <p className="text-sm">{t('shop.contact.map.country')}</p>
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-black/20"></div>
+                <iframe
+                  src="https://maps.google.com/maps?q=As+Salamah,Jeddah,Saudi+Arabia&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="absolute inset-0 w-full h-full"
+                  title="Office Location Map"
+                />
+                <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
                 <div className="absolute bottom-4 left-4 right-4">
                   <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
                     <div className="flex items-center gap-3">
