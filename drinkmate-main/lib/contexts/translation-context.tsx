@@ -80,6 +80,12 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
     }
     if (typeof fallback === 'string') return fallback
 
+    // In development, log missing keys and return a visible placeholder
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.warn(`[Translation] Missing key: ${key} (language: ${language})`)
+      return `[${key}]` // Show key in development for debugging
+    }
+    
     // Final fallback: return empty string to avoid exposing keys in UI
     return ''
   }

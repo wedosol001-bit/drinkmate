@@ -75,21 +75,30 @@ function ContactOptionCard({
     }
   }
 
+  // Ensure Icon component is valid before rendering
+  if (!Icon || typeof Icon !== 'function') {
+    console.error('ContactOptionCard: Invalid icon component provided')
+  }
+
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-[#12d6fa]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Icon className="h-6 w-6 text-[#12d6fa]" />
+            {Icon && typeof Icon === 'function' ? (
+              <Icon className="h-6 w-6 text-[#12d6fa]" aria-hidden="true" />
+            ) : (
+              <div className="h-6 w-6 bg-[#12d6fa] rounded" aria-label="Icon placeholder" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900 text-base">{title}</h3>
+              <h3 className="font-semibold text-gray-900 text-base">{title || 'Contact Option'}</h3>
               <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor()} ml-2`}>
                 {getStatusText()}
               </span>
             </div>
-            <p className="text-sm text-gray-600 mt-1 leading-relaxed">{availability}</p>
+            <p className="text-sm text-gray-600 mt-1 leading-relaxed">{availability || ''}</p>
           </div>
         </div>
       </div>
@@ -106,7 +115,7 @@ function ContactOptionCard({
         }`}
         title={disabled ? t('contact.options.chat.checking') : ""}
       >
-        {buttonText}
+        {buttonText || 'Contact'}
       </button>
     </div>
   )
@@ -125,6 +134,10 @@ function FAQAccordion({
   onToggle: () => void
 }) {
   const { t } = useTranslation()
+  
+  // Filter out empty questions (only spaces or empty strings)
+  const validQuestions = questions.filter(q => q.q && q.q.trim() && q.a && q.a.trim())
+  
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
       <button 
@@ -132,27 +145,33 @@ function FAQAccordion({
         onClick={onToggle}
       >
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900 text-sm">{category}</h3>
+          <h3 className="font-semibold text-gray-900 text-sm">{category || 'FAQ Category'}</h3>
           <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
       </button>
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-gray-100">
-          <div className="space-y-3 pt-3">
-            {questions.slice(0, 3).map((faq, index) => (
-              <div key={index} className="border-l-2 border-[#12d6fa]/20 pl-3">
-                <h4 className="font-medium text-gray-900 text-sm mb-1">{faq.q}</h4>
-                <p className="text-xs text-gray-600 leading-relaxed">{faq.a}</p>
-              </div>
-            ))}
-            {questions.length > 3 && (
-              <div className="pt-2">
-                <button className="text-xs text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
-                  {t('contact.faq.viewAll').replace('{{count}}', String(questions.length))}
-                </button>
-              </div>
-            )}
-          </div>
+          {validQuestions.length > 0 ? (
+            <div className="space-y-3 pt-3">
+              {validQuestions.slice(0, 3).map((faq, index) => (
+                <div key={index} className="border-l-2 border-[#12d6fa]/20 pl-3">
+                  <h4 className="font-medium text-gray-900 text-sm mb-1">{faq.q}</h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">{faq.a}</p>
+                </div>
+              ))}
+              {validQuestions.length > 3 && (
+                <div className="pt-2">
+                  <button className="text-xs text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+                    {t('contact.faq.viewAll')?.replace('{{count}}', String(validQuestions.length)) || `View all ${validQuestions.length} questions →`}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="pt-3 pb-2 text-sm text-gray-500">
+              No questions available in this category yet.
+            </div>
+          )}
         </div>
       )}
     </div>
