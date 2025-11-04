@@ -490,7 +490,7 @@ const PORT = parseInt(process.env.PORT, 10) || 3000;
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
     console.log(`📋 API Status: http://localhost:${PORT}/api-status`);
     console.log(`💬 Socket.io server is running`);
-    console.log(`⏰ Session timeout service is running (4-hour timeout)`);
+    console.log(`⏰ Session timeout service is running (2-hour timeout)`);
   });
   
   server.on('error', (error) => {

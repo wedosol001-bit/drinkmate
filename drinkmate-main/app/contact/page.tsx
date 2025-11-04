@@ -357,13 +357,13 @@ function ContactForm() {
           {/* Reason Selection */}
           <div>
             <Label className="text-sm font-medium text-gray-900 mb-4 block">{t('shop.contact.form.reason')}</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {reasons.map((reason) => (
                 <button
                   key={reason.value}
                   type="button"
                   onClick={() => handleInputChange('reason', reason.value)}
-                  className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#12d6fa] focus:ring-offset-2 ${
+                  className={`px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium rounded-xl border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#12d6fa] focus:ring-offset-2 ${
                     formData.reason === reason.value
                       ? 'border-[#12d6fa] bg-[#12d6fa] text-white shadow-sm'
                       : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'

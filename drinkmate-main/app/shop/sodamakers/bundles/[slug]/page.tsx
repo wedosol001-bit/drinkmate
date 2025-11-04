@@ -2138,7 +2138,7 @@ export default function BundleDetailPage() {
 
         {/* Media Gallery Modal */}
         <Dialog open={showImageGallery} onOpenChange={setShowImageGallery}>
-          <DialogContent className="max-w-4xl max-h-[90vh] p-0 w-[95vw] sm:w-full">
+          <DialogContent className="max-w-4xl max-h-[90vh] p-0 w-[95vw] sm:w-full mx-4 sm:mx-auto">
             <div className="relative">
               {isShowingVideo ? (
                 <div className="w-full h-[60vh] sm:h-[80vh]">

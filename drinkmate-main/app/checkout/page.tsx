@@ -801,14 +801,14 @@ export default function CheckoutPage() {
               </div>
 
               {/* District and City */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.district")} *</label>
                    <input
                      type="text"
                     value={deliveryAddress.district}
                     onChange={(e) => handleAddressChange("district", e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg"
+                    className="w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base sm:text-lg"
                     placeholder={t("checkout.district")}
                      required
                    />
@@ -819,7 +819,7 @@ export default function CheckoutPage() {
                      type="text"
                     value={deliveryAddress.city}
                     onChange={(e) => handleAddressChange("city", e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg"
+                    className="w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base sm:text-lg"
                     placeholder={t("checkout.city")}
                      required
                    />
@@ -908,14 +908,14 @@ export default function CheckoutPage() {
                    required
                  />
               </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.district")} *</label>
                  <input
                    type="text"
                         value={shippingAddress.district}
                         onChange={(e) => handleShippingAddressChange("district", e.target.value)}
-                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa]"
+                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base"
                         placeholder={t("checkout.district")}
                         required
                  />
@@ -926,7 +926,7 @@ export default function CheckoutPage() {
                      type="text"
                         value={shippingAddress.city}
                         onChange={(e) => handleShippingAddressChange("city", e.target.value)}
-                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa]"
+                     className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base"
                      placeholder={t("checkout.city")}
                      required
                    />

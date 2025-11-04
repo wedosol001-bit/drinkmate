@@ -124,12 +124,12 @@ class SessionTimeoutService {
     try {
       const now = new Date();
       const thirtyMinutesFromNow = new Date(now.getTime() + (30 * 60 * 1000));
-      const fourHoursAgo = new Date(now.getTime() - (4 * 60 * 60 * 1000));
+      const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
 
       const nearExpirySessions = await Chat.find({
         status: { $in: ['active', 'waiting'] },
         lastMessageAt: { 
-          $gte: fourHoursAgo,
+          $gte: twoHoursAgo,
           $lte: thirtyMinutesFromNow
         }
       }).populate('assignedTo', 'firstName lastName email');
@@ -139,8 +139,8 @@ class SessionTimeoutService {
         customerName: chat.customer.name,
         assignedTo: chat.assignedTo ? `${chat.assignedTo.firstName} ${chat.assignedTo.lastName}` : 'Unassigned',
         lastActivity: chat.lastMessageAt,
-        timeUntilExpiry: (4 * 60 * 60 * 1000) - (now.getTime() - chat.lastMessageAt.getTime()),
-        expiresAt: new Date(chat.lastMessageAt.getTime() + (4 * 60 * 60 * 1000))
+        timeUntilExpiry: (2 * 60 * 60 * 1000) - (now.getTime() - chat.lastMessageAt.getTime()),
+        expiresAt: new Date(chat.lastMessageAt.getTime() + (2 * 60 * 60 * 1000))
       }));
     } catch (error) {
       console.error('Error getting sessions near expiry:', error);

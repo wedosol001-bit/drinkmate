@@ -825,18 +825,18 @@ export default function Home() {
                           {t("home.hero.description")}
                         </p>
                         <div
-                          className={`flex flex-row ${isRTL ? "space-x-reverse space-x-4 flex-row-reverse" : "space-x-4"} justify-center md:${isRTL ? "justify-start" : "justify-start"} gap-4 animate-slide-in-left delay-500`}
+                          className={`flex flex-col sm:flex-row ${isRTL ? "sm:space-x-reverse sm:space-x-4 sm:flex-row-reverse" : "sm:space-x-4"} justify-center md:${isRTL ? "justify-start" : "justify-start"} gap-3 sm:gap-4 animate-slide-in-left delay-500`}
                         >
                           <Button
                             onClick={() => router.push("/shop")}
                             variant="outline"
-                            className="px-8 py-4 text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
+                            className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
                           >
                             {t("home.hero.exploreMore")}
                           </Button>
                           <Button
                             onClick={() => router.push("/shop")}
-                            className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-8 py-4 min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20"
+                            className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-6 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20 text-sm sm:text-base"
                           >
                             {t("home.hero.buyNow")}
                           </Button>
@@ -896,7 +896,7 @@ export default function Home() {
                         router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
                       }
                     }}
-                    className={`font-medium px-6 py-3 rounded-full min-w-[140px] ${
+                    className={`font-medium px-4 sm:px-6 py-2.5 sm:py-3 rounded-full min-w-[120px] sm:min-w-[140px] text-sm sm:text-base ${
                       slide.buttonText === "Shop Now"
                         ? "bg-[#a8f387] hover:bg-[#9ae374] text-black"
                         : "bg-[#a8f387] hover:bg-[#9ae374] text-black"

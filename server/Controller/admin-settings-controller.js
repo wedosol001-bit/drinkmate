@@ -43,7 +43,7 @@ class AdminSettingsController {
         maintenance_mode: false
       },
       security: {
-        session_timeout: 4 * 60 * 60 * 1000, // 4 hours
+        session_timeout: 2 * 60 * 60 * 1000, // 2 hours
         max_login_attempts: 5,
         lockout_duration: 15 * 60 * 1000, // 15 minutes
         password_min_length: 8,

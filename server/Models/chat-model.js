@@ -225,7 +225,7 @@ const chatSchema = new mongoose.Schema({
     },
     resolutionTarget: {
       type: Number,
-      default: 240 // 4 hours
+      default: 120 // 2 hours
     }
   }
 }, {
@@ -468,13 +468,13 @@ chatSchema.statics.getChatStats = function() {
   ]);
 };
 
-// Method to check if chat session has expired (4 hours)
+// Method to check if chat session has expired (2 hours)
 chatSchema.methods.isSessionExpired = function() {
   const now = new Date();
   const lastActivity = this.lastMessageAt || this.createdAt;
-  const fourHoursAgo = new Date(now.getTime() - (4 * 60 * 60 * 1000)); // 4 hours in milliseconds
+  const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000)); // 2 hours in milliseconds
   
-  return lastActivity < fourHoursAgo;
+  return lastActivity < twoHoursAgo;
 };
 
 // Method to close expired session
@@ -484,12 +484,12 @@ chatSchema.methods.closeExpiredSession = function() {
     this.resolution = {
       resolvedAt: new Date(),
       resolvedBy: null, // System closure
-      resolutionNotes: 'Session expired after 4 hours of inactivity'
+      resolutionNotes: 'Session expired after 2 hours of inactivity'
     };
     this.messages.push({
       sender: 'system',
       senderId: null,
-      content: 'Chat session expired after 4 hours of inactivity and has been automatically closed',
+      content: 'Chat session expired after 2 hours of inactivity and has been automatically closed',
       messageType: 'system',
       timestamp: new Date()
     });
@@ -503,12 +503,12 @@ chatSchema.methods.closeExpiredSession = function() {
 chatSchema.statics.closeExpiredSessions = async function() {
   try {
     const now = new Date();
-    const fourHoursAgo = new Date(now.getTime() - (4 * 60 * 60 * 1000));
+    const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
     
     // Use lean() for better performance and add timeout
     const expiredChats = await this.find({
       status: { $in: ['active', 'waiting'] },
-      lastMessageAt: { $lt: fourHoursAgo }
+      lastMessageAt: { $lt: twoHoursAgo }
     })
     .lean() // Use lean for better performance
     .maxTimeMS(10000); // 10 second timeout
@@ -571,14 +571,14 @@ chatSchema.statics.getSessionTimeoutInfo = function(chatId) {
     
     const now = new Date();
     const lastActivity = chat.lastMessageAt || chat.createdAt;
-    const timeUntilExpiry = (4 * 60 * 60 * 1000) - (now.getTime() - lastActivity.getTime());
+    const timeUntilExpiry = (2 * 60 * 60 * 1000) - (now.getTime() - lastActivity.getTime());
     
     return {
       chatId: chat._id,
       lastActivity: lastActivity,
       timeUntilExpiry: Math.max(0, timeUntilExpiry),
       isExpired: chat.isSessionExpired(),
-      expiresAt: new Date(lastActivity.getTime() + (4 * 60 * 60 * 1000))
+      expiresAt: new Date(lastActivity.getTime() + (2 * 60 * 60 * 1000))
     };
   });
 };

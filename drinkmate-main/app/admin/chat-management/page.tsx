@@ -1244,7 +1244,129 @@ export default function ChatManagementPage() {
 
         {/* 3-Pane Console - Redesigned */}
         <div className="flex-1 flex overflow-hidden min-h-0 relative">
-          {/* Left Pane - Conversation List */}
+          {/* Mobile: Conversation List Drawer */}
+          {showMobileQueue && (
+            <div className="lg:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setShowMobileQueue(false)}>
+              <div className="absolute left-0 top-0 bottom-0 w-80 bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+                {/* Queue Tabs */}
+                <div className="flex-shrink-0 border-b">
+                  <Tabs value={activeQueueTab} onValueChange={(value: string) => setActiveQueueTab(value as any)}>
+                    <TabsList className="grid grid-cols-3 w-full rounded-none">
+                      <TabsTrigger value="my-inbox" className="text-xs">My Inbox</TabsTrigger>
+                      <TabsTrigger value="unassigned" className="text-xs">Unassigned</TabsTrigger>
+                      <TabsTrigger value="waiting-customer" className="text-xs">Waiting</TabsTrigger>
+                    </TabsList>
+                    <TabsList className="grid grid-cols-3 w-full rounded-none border-t">
+                      <TabsTrigger value="waiting-agent" className="text-xs">Agent Wait</TabsTrigger>
+                      <TabsTrigger value="high-priority" className="text-xs">High Priority</TabsTrigger>
+                      <TabsTrigger value="closed" className="text-xs">Closed</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+
+                {/* Search */}
+                <div className="flex-shrink-0 p-4 border-b">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search conversations..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                {/* Queue List */}
+                <div className="flex-1 overflow-y-auto">
+                  {filteredConversations.map((conversation, index) => {
+                    const ChannelIcon = getChannelIcon(conversation.channel)
+                    const isSelected = selectedConversation?.id === conversation.id
+                    const isUrgent = conversation.sla.firstResponse <= 30
+                    const isWarning = conversation.sla.firstResponse <= 90 && conversation.sla.firstResponse > 30
+                    const isDeleting = deletingConversation === conversation.id
+                    
+                    return (
+                      <div
+                        key={conversation.id}
+                        className={cn(
+                          "p-4 border-b cursor-pointer hover:bg-gray-50 transition-all duration-300 relative",
+                          isSelected && "bg-blue-50 border-blue-200",
+                          isUrgent && "bg-red-50 border-red-200",
+                          isWarning && "bg-amber-50 border-amber-200",
+                          isDeleting && "opacity-50 blur-sm pointer-events-none"
+                        )}
+                        onClick={() => {
+                          if (!isDeleting) {
+                            handleConversationSelect(conversation)
+                            setShowMobileQueue(false)
+                          }
+                        }}
+                      >
+                        {isDeleting && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-red-50/90 z-10 rounded">
+                            <div className="flex flex-col items-center gap-2 text-red-600">
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              <span className="text-sm font-medium">Deleting conversation...</span>
+                            </div>
+                          </div>
+                        )}
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className={cn("p-1 rounded", getChannelColor(conversation.channel))}>
+                              <ChannelIcon className="h-3 w-3" />
+                            </div>
+                            <span className="font-medium text-sm truncate">{conversation.customer.name}</span>
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (confirm('Are you sure you want to delete this conversation?')) {
+                                  handleDeleteConversation(conversation.id)
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                            <Badge className={cn("text-xs", getStatusColor(conversation.status))}>
+                              {conversation.status.replace('_', ' ')}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <div className="text-xs text-gray-600 mb-2 line-clamp-2">
+                          {conversation.lastMessage.content}
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>{formatRelativeTime(conversation.lastMessage.timestamp)}</span>
+                          <div className="flex items-center gap-2">
+                            {conversation.assignee && (
+                              <div className="flex items-center gap-1">
+                                <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <User className="h-2 w-2 text-blue-600" />
+                                </div>
+                                <span className="truncate max-w-[60px]">{conversation.assignee.name}</span>
+                              </div>
+                            )}
+                            <span className={cn("font-mono", getSLAColor(conversation.sla.firstResponse))}>
+                              {formatTime(conversation.sla.firstResponse)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Left Pane - Conversation List (Desktop) */}
           <div className="w-80 border-r bg-white flex flex-col relative z-10 hidden lg:flex">
             {/* Queue Tabs */}
             <div className="flex-shrink-0 border-b relative z-20">
@@ -1388,24 +1510,40 @@ export default function ChatManagementPage() {
                 {/* Simplified Header - Just Customer Name and Status */}
                 <div className="flex-shrink-0 p-3 border-b bg-gray-50 relative z-50">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-sm">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      {/* Mobile: Show conversation list button */}
+                      <button
+                        onClick={() => setShowMobileQueue(true)}
+                        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        aria-label="Show conversations"
+                      >
+                        <MessageSquare className="h-5 w-5 text-gray-600" />
+                      </button>
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
                         <MessageCircle className="h-4 w-4 text-white" />
                       </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                           {selectedConversation.customer.name || 'Unknown Customer'}
                         </h3>
                         <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
                             selectedConversation.status === 'active' ? 'bg-green-400' : 'bg-gray-400'
                           }`}></div>
-                          <span className="text-sm text-gray-500 capitalize">
+                          <span className="text-xs sm:text-sm text-gray-500 capitalize truncate">
                             {selectedConversation.status.replace('_', ' ')}
                           </span>
                         </div>
                       </div>
                     </div>
+                    {/* Mobile: Show context button */}
+                    <button
+                      onClick={() => setShowMobileContext(true)}
+                      className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+                      aria-label="Show customer context"
+                    >
+                      <User className="h-5 w-5 text-gray-600" />
+                    </button>
                   </div>
                 </div>
 
@@ -1472,7 +1610,50 @@ export default function ChatManagementPage() {
             )}
           </div>
 
-          {/* Right Pane - Context */}
+          {/* Mobile: Context Drawer */}
+          {showMobileContext && selectedConversation && (
+            <div className="xl:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setShowMobileContext(false)}>
+              <div className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-xl" onClick={(e) => e.stopPropagation()}>
+                {/* Customer Profile - Clean & Organized */}
+                <div className="flex-shrink-0 p-4 border-b">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-gray-900">Customer Information</h3>
+                    <button
+                      onClick={() => setShowMobileContext(false)}
+                      className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      aria-label="Close context"
+                    >
+                      <X className="h-5 w-5 text-gray-600" />
+                    </button>
+                  </div>
+                  
+                  {/* Contact Info */}
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <User className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate">{selectedConversation.customer.name}</div>
+                        <div className="text-xs text-gray-500 truncate">{selectedConversation.customer.email}</div>
+                      </div>
+                    </div>
+                    
+                    {selectedConversation.customer.phone && (
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Phone className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className="text-sm text-gray-700 truncate">{selectedConversation.customer.phone}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Right Pane - Context (Desktop) */}
           <div className="w-80 border-l bg-white flex flex-col relative z-10 hidden xl:flex">
             {selectedConversation ? (
               <>
