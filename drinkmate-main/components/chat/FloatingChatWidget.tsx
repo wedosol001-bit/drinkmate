@@ -287,12 +287,23 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
 
   // Socket event listeners
   useEffect(() => {
-    if (!socket) return
+    if (!socket) {
+      console.log('🔥 FloatingChatWidget: No socket available for event listeners')
+      return
+    }
+
+    console.log('🔥 FloatingChatWidget: Setting up socket event listeners, chatSession:', chatSession?._id)
 
     const handleNewMessage = (data: { chatId: string; message: any }) => {
       console.log('🔥 FloatingChatWidget: New message received:', data)
       console.log('🔥 FloatingChatWidget: Current chat session ID:', chatSession?._id)
       console.log('🔥 FloatingChatWidget: Socket connected:', isConnected)
+      console.log('🔥 FloatingChatWidget: Message sender:', data.message?.sender, 'senderId:', data.message?.senderId)
+      
+      // Ensure we're still in the room (in case of reconnection)
+      if (chatSession && socket && isConnected) {
+        ensureInRoom()
+      }
       
       if (chatSession && data.chatId === chatSession._id) {
         setChatSession(prev => {
@@ -416,20 +427,31 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
       }
     }
 
+    // Remove existing listeners first to prevent duplicates
+    socket.off('new_message', handleNewMessage)
+    socket.off('user_typing', handleTyping)
+    socket.off('chat_updated', handleChatUpdate)
+    socket.off('chat_created', handleChatCreated)
+    socket.off('chat_closed', handleChatClosed)
+    
+    // Register new listeners
     socket.on('new_message', handleNewMessage)
     socket.on('user_typing', handleTyping)
     socket.on('chat_updated', handleChatUpdate)
     socket.on('chat_created', handleChatCreated)
     socket.on('chat_closed', handleChatClosed)
 
+    console.log('🔥 FloatingChatWidget: Socket event listeners registered')
+
     return () => {
+      console.log('🔥 FloatingChatWidget: Cleaning up socket event listeners')
       socket.off('new_message', handleNewMessage)
       socket.off('user_typing', handleTyping)
       socket.off('chat_updated', handleChatUpdate)
       socket.off('chat_created', handleChatCreated)
       socket.off('chat_closed', handleChatClosed)
     }
-  }, [socket, chatSession, isOpen])
+  }, [socket, chatSession, isOpen, isConnected, ensureInRoom])
 
   const createOrGetChatSession = async () => {
     try {

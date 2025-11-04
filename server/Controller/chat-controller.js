@@ -261,9 +261,24 @@ const addMessage = async (req, res) => {
     const io = req.app.get('io');
     if (io) {
       const roomName = `chat_${chatId}`;
+      // Format message data to match socket service format exactly
       const messageData = {
         chatId: chatId,
-        message: lastMessage // Send the full message object (same format as socket service)
+        message: {
+          _id: lastMessage._id || new Date().getTime().toString(),
+          content: lastMessage.content,
+          sender: lastMessage.sender,
+          senderId: lastMessage.senderId,
+          timestamp: lastMessage.timestamp,
+          messageType: lastMessage.messageType,
+          isFromAdmin: senderType === 'admin',
+          createdAt: lastMessage.timestamp,
+          formattedTime: new Date(lastMessage.timestamp).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          })
+        }
       };
       
       console.log('🔥 API Controller: Emitting new_message to room:', roomName);
@@ -271,13 +286,15 @@ const addMessage = async (req, res) => {
       console.log('🔥 API Controller: Message data:', {
         chatId: messageData.chatId,
         messageId: messageData.message._id,
-        content: messageData.message.content?.substring(0, 50) + '...'
+        content: messageData.message.content?.substring(0, 50) + '...',
+        sender: messageData.message.sender,
+        senderId: messageData.message.senderId
       });
       
-      // Broadcast to all clients in the chat room
+      // Broadcast to all clients in the chat room (using io.to, not io.emit)
       io.to(roomName).emit('new_message', messageData);
       
-      console.log('✅ API Controller: Socket event emitted successfully');
+      console.log('✅ API Controller: Socket event emitted successfully to room:', roomName);
     } else {
       console.warn('⚠️ API Controller: Socket.io instance not available, message will not be broadcast in real-time');
     }
