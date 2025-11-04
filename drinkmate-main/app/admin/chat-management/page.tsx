@@ -538,21 +538,29 @@ export default function ChatManagementPage() {
       console.log('🔥 Admin Chat Management: Socket connected:', isConnected)
       console.log('🔥 Admin Chat Management: Selected conversation ID:', selectedConversation?.id)
       
-      // Skip if this is a message from the current admin (already handled optimistically)
-      // But only skip if we're sure it's the same message (check by content and timestamp)
-      if (data.message.senderId === user?._id) {
-        const isDuplicate = selectedConversation?.messages.some(msg => 
-          msg.content === data.message.content && 
-          Math.abs(new Date(msg.timestamp).getTime() - new Date(data.message.timestamp).getTime()) < 1000
-        )
-        if (isDuplicate) {
-          console.log('🔥 Admin Chat Management: Skipping own duplicate message')
-          return
-        }
-      }
-      
-      // Determine if this is an admin/agent message based on sender type
+      // CRITICAL: Skip if this is a message from the current admin
+      // ModernAdminChatWidget handles its own messages, so we don't need to update here
+      // This prevents duplication when the parent and child both try to add the message
       const isAgentMessage = data.message.sender === 'admin' || data.message.sender === 'agent'
+      if (isAgentMessage && data.message.senderId === user?._id) {
+        console.log('🔥 Admin Chat Management: Skipping own admin message (handled by ModernAdminChatWidget)')
+        // Still update the conversation list's lastMessage, but don't add to messages
+        setConversations(prev => prev.map(conv => {
+          if (conv.id === data.chatId) {
+            return {
+              ...conv,
+              lastMessage: {
+                content: data.message.content,
+                timestamp: data.message.timestamp,
+                sender: 'agent' as 'agent' | 'customer'
+              },
+              updatedAt: new Date().toISOString()
+            }
+          }
+          return conv
+        }))
+        return
+      }
       
       const newMessage: Message = {
         id: data.message._id || data.message.timestamp,

@@ -330,37 +330,63 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
       if (data.chatId === selectedConversation.id) {
         setMessages(prev => {
           const realMessageId = (data.message as any)._id || data.message.id
+          const isAgentMessage = data.message.sender === 'admin' || data.message.sender === 'agent'
+          const isFromCurrentAdmin = isAgentMessage && data.message.senderId === user?._id
           
-          // Check for duplicates by real database ID only
-          const messageExists = prev.some(msg => {
-            if (realMessageId && (msg.id === realMessageId)) {
-              return true
-            }
-            // For temporary IDs, never consider them duplicates
-            if (msg.id.toString().startsWith('temp_')) {
-              return false
-            }
-            return false
+          // Check for duplicates by real database ID first (most reliable)
+          const messageExistsById = prev.some(msg => {
+            return realMessageId && (msg.id === realMessageId)
           })
 
-          if (messageExists) {
+          if (messageExistsById) {
             console.log('🔥 ModernAdminChatWidget: Message with ID already exists, skipping:', realMessageId)
             return prev
           }
 
-          // Check if we need to replace a temporary message (within last 5 seconds)
+          // CRITICAL: If this is the current admin's own message, check if we already have it (optimistic or real)
+          if (isFromCurrentAdmin) {
+            // Check if there's already a message with the same content (could be temp or real)
+            const existingMessage = prev.find(msg => {
+              // Check by content first (for temp messages)
+              if (msg.content === data.message.content) {
+                const msgTime = new Date(msg.timestamp).getTime()
+                const dataTime = new Date(data.message.timestamp || data.message.createdAt).getTime()
+                // If timestamps are within 10 seconds, it's likely the same message
+                return Math.abs(msgTime - dataTime) < 10000
+              }
+              return false
+            })
+
+            if (existingMessage) {
+              // If we found an existing message (temp or real), replace it with the real one
+              console.log('🔥 ModernAdminChatWidget: Found existing admin message, replacing with real message')
+              return prev.map(msg => {
+                if (msg.id === existingMessage.id) {
+                  return {
+                    ...msg,
+                    id: realMessageId || msg.id,
+                    timestamp: (data.message as any).createdAt || data.message.timestamp || msg.timestamp,
+                    status: data.message.status || 'delivered'
+                  }
+                }
+                return msg
+              })
+            }
+          }
+
+          // Check if we need to replace a temporary message (within last 10 seconds)
           const tempMessageIndex = prev.findIndex(msg => {
             if (!msg.id.toString().startsWith('temp_')) {
               return false
             }
             
-            const isSameSender = msg.sender === (data.message.sender === 'admin' || data.message.sender === 'agent' ? 'agent' : 'customer')
+            const isSameSender = msg.sender === (isAgentMessage ? 'agent' : 'customer')
             const isSameContent = msg.content === data.message.content
             
-            // Check if it's within last 5 seconds (to avoid replacing old temp messages)
+            // Check if it's within last 10 seconds (increased from 5 to be more lenient)
             const messageTime = new Date(msg.timestamp).getTime()
-            const nowTime = Date.now()
-            const isRecent = (nowTime - messageTime) < 5000
+            const dataTime = new Date(data.message.timestamp || data.message.createdAt).getTime()
+            const isRecent = Math.abs(messageTime - dataTime) < 10000
             
             return isSameSender && isSameContent && isRecent
           })
@@ -377,10 +403,17 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
             return updatedMessages
           }
 
+          // Only add new message if it's not from current admin (admin messages are already handled above)
+          // OR if it's from admin but we didn't find a matching temp message (shouldn't happen, but safety check)
+          if (isFromCurrentAdmin) {
+            console.log('🔥 ModernAdminChatWidget: Skipping own admin message that was not found in existing messages')
+            return prev
+          }
+
           const newMessage: Message = {
             id: realMessageId || `temp_${Date.now()}`,
             content: data.message.content || '',
-            sender: data.message.sender === 'admin' || data.message.sender === 'agent' ? 'agent' : 'customer',
+            sender: isAgentMessage ? 'agent' : 'customer',
             timestamp: (data.message as any).createdAt || data.message.timestamp || new Date().toISOString(),
             isNote: data.message.isNote || false,
             attachments: data.message.attachments || [],
