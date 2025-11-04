@@ -351,6 +351,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     try {
       if (socket && isConnected) {
+        // CRITICAL: Ensure we're in the room BEFORE sending message
+        joinChat(state.currentChat._id)
         // Use socket - don't add optimistic update as socket will provide real-time feedback
         await socketSendMessage(state.currentChat._id, content.trim(), type)
       } else {
@@ -717,7 +719,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       // Leave current chat if connected
       if (socket && state.currentChat) {
         console.log('🔥 ChatProvider: Leaving chat on cleanup:', state.currentChat)
-        socket.emit('leave_chat', state.currentChat)
+        socket.emit('leave_chat', state.currentChat._id)
       }
     }
   }, [socket, state.currentChat])
@@ -728,12 +730,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       if (document.hidden) {
         console.log('🔥 ChatProvider: Page hidden, leaving chat if connected')
         if (socket && state.currentChat) {
-          socket.emit('leave_chat', state.currentChat)
+          socket.emit('leave_chat', state.currentChat._id)
         }
       } else {
         console.log('🔥 ChatProvider: Page visible, rejoining chat if connected')
         if (socket && state.currentChat) {
-          socket.emit('join_chat', state.currentChat)
+          socket.emit('join_chat', state.currentChat._id)
         }
       }
     }

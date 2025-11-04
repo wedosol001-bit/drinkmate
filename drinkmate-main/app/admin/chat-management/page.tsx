@@ -737,9 +737,17 @@ export default function ChatManagementPage() {
   }, [socket, isConnected, fetchChats]) // Removed selectedConversation from dependencies
 
   // Join chat room when conversation is selected and socket is connected
+  // CRITICAL: Must join BEFORE sending messages to receive real-time updates
   useEffect(() => {
     if (selectedConversation && socket && isConnected) {
       console.log('🔥 Admin: Auto-joining chat room for selected conversation:', selectedConversation.id)
+      socket.emit('join_chat', selectedConversation.id)
+    }
+  }, [selectedConversation, socket, isConnected])
+  
+  // Ensure we're in the room before sending messages
+  const ensureInRoom = useCallback(() => {
+    if (selectedConversation && socket && isConnected) {
       socket.emit('join_chat', selectedConversation.id)
     }
   }, [selectedConversation, socket, isConnected])
@@ -748,7 +756,8 @@ export default function ChatManagementPage() {
   const handleConversationSelect = (conversation: Conversation) => {
     setSelectedConversation(conversation)
     
-    // Join the chat room for real-time updates
+    // CRITICAL: Join the chat room FIRST for real-time updates
+    // This must happen before any messages are sent
     if (socket && isConnected && typeof socket.emit === 'function') {
       console.log('🔥 Admin joining chat room:', conversation.id)
       socket.emit('join_chat', conversation.id)
@@ -822,6 +831,9 @@ export default function ChatManagementPage() {
     
     try {
       const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
+      
+      // CRITICAL: Ensure we're in the room BEFORE sending message
+      ensureInRoom()
       
       // Send via socket for real-time updates
       if (socket && isConnected && typeof socket.emit === 'function') {

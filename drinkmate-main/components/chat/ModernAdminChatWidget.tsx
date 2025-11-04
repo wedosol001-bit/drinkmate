@@ -481,6 +481,10 @@ const ModernAdminChatWidget: React.FC<ModernAdminChatWidgetProps> = ({
 
     try {
       if (socketSendMessage && isConnected) {
+        // CRITICAL: Ensure we're in the room BEFORE sending message
+        if (socket && selectedConversation) {
+          joinChat(selectedConversation.id)
+        }
         // Send via socket - optimistic message already added
         console.log('🔥 ModernAdminChatWidget: Sending via socket')
         try {

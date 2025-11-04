@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { MessageCircle, X, Send, Minimize2, Maximize2, User, Clock, CheckCircle } from 'lucide-react'
 import { useSocket } from '@/lib/contexts/socket-context'
 import { useAuth, getAuthToken } from '@/lib/contexts/auth-context'
@@ -195,6 +195,7 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
   }, [isOpen, user, isAuthenticated, isConnected])
 
   // Join chat room when chat session is available and socket is connected
+  // CRITICAL: Must join BEFORE sending messages to receive real-time updates
   useEffect(() => {
     if (chatSession && isConnected && socket) {
       console.log('🔥 FloatingChatWidget: Joining chat room after connection:', chatSession._id)
@@ -209,6 +210,14 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
       joinChat(chatSession._id)
     }
   }, [isOpen, chatSession, isConnected, socket, joinChat])
+
+  // Ensure we're in the room before sending messages
+  const ensureInRoom = useCallback(() => {
+    if (chatSession && socket && isConnected) {
+      // Join the room if not already joined (socket.io handles this gracefully)
+      joinChat(chatSession._id)
+    }
+  }, [chatSession, socket, isConnected, joinChat])
 
   // Polling fallback when socket is not connected
   useEffect(() => {
@@ -280,7 +289,7 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
   useEffect(() => {
     if (!socket) return
 
-    const handleNewMessage = (data: { chatId: string; message: Message }) => {
+    const handleNewMessage = (data: { chatId: string; message: any }) => {
       console.log('🔥 FloatingChatWidget: New message received:', data)
       console.log('🔥 FloatingChatWidget: Current chat session ID:', chatSession?._id)
       console.log('🔥 FloatingChatWidget: Socket connected:', isConnected)
@@ -289,33 +298,81 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
         setChatSession(prev => {
           if (!prev) return null
           
-          // Check for duplicates
+          // Extract message ID from the socket data
+          const realMessageId = data.message._id || data.message.id
+          
+          // Check for duplicates by real database ID only
           const messageExists = prev.messages.some(msg => {
-            // Check by real ID
-            if (msg.id === data.message.id || msg.id === (data.message as any)._id) {
+            // Check by real ID first (most reliable)
+            if (realMessageId && (msg.id === realMessageId)) {
               return true
             }
-            
-            // Check by content and timestamp (for temporary messages)
-            if (msg.content === data.message.content) {
+            // For temporary IDs that match content, don't consider them duplicates if they're from the same sender
+            // The socket message will replace the temp one
+            if (msg.id.toString().startsWith('temp_') && msg.content === data.message.content) {
               const msgTime = new Date(msg.timestamp).getTime()
-              const dataTime = new Date(data.message.timestamp).getTime()
-              // If timestamps are within 5 seconds, consider it a duplicate
-              return Math.abs(msgTime - dataTime) < 5000
+              const dataTime = new Date(data.message.timestamp || data.message.createdAt).getTime()
+              // If timestamps are within 5 seconds and same sender, consider it a replacement candidate
+              return Math.abs(msgTime - dataTime) < 5000 && msg.sender === (data.message.sender === 'admin' || data.message.sender === 'agent' ? 'agent' : 'customer')
             }
             
             return false
           })
 
-          if (messageExists) {
+          if (messageExists && !prev.messages.some(msg => msg.id.toString().startsWith('temp_') && msg.content === data.message.content)) {
             console.log('🔥 FloatingChatWidget: Duplicate message detected, skipping')
             return prev
+          }
+
+          // Check if we need to replace a temporary message
+          const tempMessageIndex = prev.messages.findIndex(msg => {
+            if (!msg.id.toString().startsWith('temp_')) {
+              return false
+            }
+            const isSameSender = msg.sender === (data.message.sender === 'admin' || data.message.sender === 'agent' ? 'agent' : 'customer')
+            const isSameContent = msg.content === data.message.content
+            const msgTime = new Date(msg.timestamp).getTime()
+            const dataTime = new Date(data.message.timestamp || data.message.createdAt).getTime()
+            const isRecent = Math.abs(msgTime - dataTime) < 5000
+            
+            return isSameSender && isSameContent && isRecent
+          })
+
+          if (tempMessageIndex !== -1) {
+            console.log('🔥 FloatingChatWidget: Replacing temporary message with real message')
+            const updatedMessages = [...prev.messages]
+            updatedMessages[tempMessageIndex] = {
+              id: realMessageId || prev.messages[tempMessageIndex].id,
+              content: data.message.content,
+              sender: data.message.sender === 'admin' || data.message.sender === 'agent' ? 'agent' : 'customer',
+              timestamp: data.message.timestamp || data.message.createdAt || new Date().toISOString(),
+              isNote: data.message.isNote || false,
+              attachments: data.message.attachments || [],
+              readAt: data.message.readAt,
+              status: data.message.status || 'sent'
+            }
+            return {
+              ...prev,
+              messages: updatedMessages
+            }
+          }
+
+          // Create proper message object from socket data
+          const newMessage: Message = {
+            id: realMessageId || `msg_${Date.now()}`,
+            content: data.message.content,
+            sender: data.message.sender === 'admin' || data.message.sender === 'agent' ? 'agent' : 'customer',
+            timestamp: data.message.timestamp || data.message.createdAt || new Date().toISOString(),
+            isNote: data.message.isNote || false,
+            attachments: data.message.attachments || [],
+            readAt: data.message.readAt,
+            status: data.message.status || 'sent'
           }
 
           console.log('🔥 FloatingChatWidget: Adding new message to chat')
           return {
             ...prev,
-            messages: [...prev.messages, data.message]
+            messages: [...prev.messages, newMessage]
           }
         })
         
@@ -498,6 +555,9 @@ export default function FloatingChatWidget({ isOnline }: FloatingChatWidgetProps
     stopTyping(chatSession._id)
 
     try {
+      // CRITICAL: Ensure we're in the room BEFORE sending message
+      ensureInRoom()
+      
       // Send via socket first (real-time)
       if (socket && isConnected) {
         sendMessage(chatSession._id, messageContent, 'text')

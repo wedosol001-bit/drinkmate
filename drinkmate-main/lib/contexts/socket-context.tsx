@@ -196,8 +196,8 @@ export function SocketProvider({ children }: SocketProviderProps) {
       console.log('🔥 SocketContext: Joining chat room:', chatId)
       console.log('🔥 SocketContext: Socket ID:', socket.id)
       console.log('🔥 SocketContext: Socket connected:', isConnected)
-      // Backend expects an object with chatId property, not just the string
-      socket.emit('join_chat', { chatId })
+      // Backend expects a string, not an object
+      socket.emit('join_chat', chatId)
     } else {
       console.log('🔥 SocketContext: Cannot join chat - socket:', !!socket, 'connected:', isConnected)
     }
@@ -205,8 +205,8 @@ export function SocketProvider({ children }: SocketProviderProps) {
 
   const leaveChat = (chatId: string) => {
     if (socket) {
-      // Backend expects an object with chatId property, not just the string
-      socket.emit('leave_chat', { chatId })
+      // Backend can handle both string and object, but sending string is more consistent
+      socket.emit('leave_chat', chatId)
     }
   }
 
