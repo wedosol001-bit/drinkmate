@@ -335,6 +335,26 @@ function ShopPageContent() {
     fetchData()
   }, [fetchData])
 
+  // Build a map of all subcategories from categories for matching
+  const subcategoryMap = useMemo(() => {
+    const map = new Map<string, { slug: string; _id: string; name: string }>()
+    categories.forEach(category => {
+      category.subcategories?.forEach((sub: any) => {
+        const slug = sub.slug || sub._id?.toString()
+        const _id = sub._id?.toString() || sub._id
+        const name = sub.name?.toLowerCase() || ''
+        
+        // Map by slug (primary key)
+        if (slug) map.set(slug, { slug, _id, name })
+        // Also map by ID
+        if (_id && _id !== slug) map.set(_id, { slug, _id, name })
+        // Also map by lowercase name
+        if (name && name !== slug && name !== _id) map.set(name, { slug, _id, name })
+      })
+    })
+    return map
+  }, [categories])
+
   // Filter products based on current filters
   const filteredProducts = useMemo(() => {
     console.log('🔍 Starting product filtering with:', {
@@ -652,7 +672,7 @@ function ShopPageContent() {
     })
 
     return filtered
-  }, [products, filters, sortBy, sortOrder, debouncedSearchQuery])
+  }, [products, filters, sortBy, sortOrder, debouncedSearchQuery, categories, subcategoryMap])
 
   // Pagination
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
@@ -697,26 +717,6 @@ function ShopPageContent() {
     if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000) count++
     return count
   }, [filters])
-
-  // Build a map of all subcategories from categories for matching
-  const subcategoryMap = useMemo(() => {
-    const map = new Map<string, { slug: string; _id: string; name: string }>()
-    categories.forEach(category => {
-      category.subcategories?.forEach((sub: any) => {
-        const slug = sub.slug || sub._id?.toString()
-        const _id = sub._id?.toString() || sub._id
-        const name = sub.name?.toLowerCase() || ''
-        
-        // Map by slug (primary key)
-        if (slug) map.set(slug, { slug, _id, name })
-        // Also map by ID
-        if (_id && _id !== slug) map.set(_id, { slug, _id, name })
-        // Also map by lowercase name
-        if (name && name !== slug && name !== _id) map.set(name, { slug, _id, name })
-      })
-    })
-    return map
-  }, [categories])
 
   // Calculate product counts for each filter option
   const filterCounts = useMemo(() => {
@@ -844,7 +844,7 @@ function ShopPageContent() {
         subcategoryType: typeof p.subcategory
       }))
     })
-    
+
     return counts
   }, [products, subcategoryMap])
 
