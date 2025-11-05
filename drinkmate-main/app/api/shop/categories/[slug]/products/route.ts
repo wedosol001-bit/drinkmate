@@ -15,6 +15,7 @@ export async function GET(
     // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
+    const subcategory = searchParams.get('subcategory')
     const search = searchParams.get('search')
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
@@ -31,6 +32,7 @@ export async function GET(
       category: slug // Use the slug as the category parameter
     })
 
+    if (subcategory) queryParams.append('subcategory', subcategory)
     if (search) queryParams.append('search', search)
     if (minPrice) queryParams.append('minPrice', minPrice)
     if (maxPrice) queryParams.append('maxPrice', maxPrice)

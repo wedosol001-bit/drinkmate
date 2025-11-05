@@ -157,6 +157,64 @@ exports.getAllProducts = async (req, res) => {
             filter.$or = stockAndVariantConditions.$or;
         }
         
+        // Subcategory filter (supports multiple subcategories as comma-separated list)
+        if (req.query.subcategory) {
+            const subcategoryParams = Array.isArray(req.query.subcategory) 
+                ? req.query.subcategory 
+                : req.query.subcategory.split(',').map(s => s.trim()).filter(Boolean);
+            
+            if (subcategoryParams.length > 0) {
+                // Find all matching subcategories by slug, ID, or name
+                const subcategoryMatches = [];
+                
+                for (const subParam of subcategoryParams) {
+                    // Check if it's a valid ObjectId
+                    const isObjectId = /^[0-9a-fA-F]{24}$/.test(subParam);
+                    
+                    let subcategory;
+                    if (isObjectId) {
+                        subcategory = await Subcategory.findById(subParam);
+                    } else {
+                        // Try to find by slug or name
+                        subcategory = await Subcategory.findOne({
+                            $or: [
+                                { slug: subParam },
+                                { name: subParam },
+                                { slug: subParam.toLowerCase() },
+                                { name: { $regex: new RegExp(`^${subParam}$`, 'i') } }
+                            ]
+                        });
+                    }
+                    
+                    if (subcategory) {
+                        // Support products where subcategory is stored as ObjectId, stringified id, slug, or name
+                        subcategoryMatches.push(
+                            subcategory._id,
+                            subcategory._id.toString(),
+                            subcategory.slug,
+                            subcategory.name
+                        );
+                    }
+                }
+                
+                if (subcategoryMatches.length > 0) {
+                    // Add subcategory filter to existing $and array or create new one
+                    if (filter.$and) {
+                        filter.$and.push({
+                            subcategory: { $in: subcategoryMatches }
+                        });
+                    } else {
+                        filter.$and = [
+                            stockAndVariantConditions,
+                            {
+                                subcategory: { $in: subcategoryMatches }
+                            }
+                        ];
+                    }
+                }
+            }
+        }
+        
         // Price range filter
         if (req.query.minPrice || req.query.maxPrice) {
             filter.price = {};
@@ -213,7 +271,7 @@ exports.getAllProducts = async (req, res) => {
         
         // Execute query with pagination
         const products = await Product.find(filter)
-            .select('name nameAr slug price originalPrice images averageRating reviewCount category shortDescription shortDescriptionAr hasVariants variants.price variants.originalPrice variants.stock variants.sku variants.name variants.nameAr variants.image')
+            .select('name nameAr slug price originalPrice images averageRating reviewCount category subcategory shortDescription shortDescriptionAr hasVariants variants.price variants.originalPrice variants.stock variants.sku variants.name variants.nameAr variants.image')
             .sort(sort)
             .skip(skip)
             .limit(limit)

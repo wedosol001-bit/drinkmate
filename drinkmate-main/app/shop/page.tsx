@@ -255,14 +255,23 @@ function ShopPageContent() {
   }, [debouncedSearchQuery, updateURL])
 
   // Fetch data
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (apiFilters?: { category?: string; subcategory?: string }) => {
     try {
       setLoading(true)
       setError(null)
 
+      // Build API params including subcategory filter if provided
+      const apiParams: any = { limit: 100 }
+      if (apiFilters?.category && apiFilters.category !== 'all') {
+        apiParams.category = apiFilters.category
+      }
+      if (apiFilters?.subcategory) {
+        apiParams.subcategory = apiFilters.subcategory
+      }
+
       // Fetch products, categories, and other data
       const [productsResponse, categoriesResponse] = await Promise.all([
-        shopAPI.getProducts({ limit: 100 }), // Fetch up to 100 products to get all
+        shopAPI.getProducts(apiParams), // Fetch up to 100 products with filters
         shopAPI.getCategories()
       ])
 
@@ -331,9 +340,22 @@ function ShopPageContent() {
     }
   }, [])
 
+  // Initial fetch
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Refetch when subcategory filter changes (use backend filtering for efficiency)
+  // Note: We only refetch if subcategory filter is active, otherwise rely on client-side filtering
+  useEffect(() => {
+    if (filters.subcategory.length > 0) {
+      const subcategoryParam = filters.subcategory.join(',')
+      fetchData({
+        category: filters.category !== 'all' ? filters.category : undefined,
+        subcategory: subcategoryParam
+      })
+    }
+  }, [filters.subcategory.join(',')]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build a map of all subcategories from categories for matching
   const subcategoryMap = useMemo(() => {
@@ -486,10 +508,13 @@ function ShopPageContent() {
         subcategoryFull: JSON.stringify((p as any)?.subcategory)
       })))
       
+      console.log('🔍 SubcategoryMap contents:', Array.from(subcategoryMap.entries()).slice(0, 10))
+      console.log('🔍 Selected subcategories to filter:', filters.subcategory)
+      
       filtered = filtered.filter(product => {
         const productSubcategory = (product as any)?.subcategory
         
-        // If no subcategory, skip this product
+        // If no subcategory, skip this product (they need subcategories assigned in the database)
         if (!productSubcategory) {
           console.log('🔍 Product has no subcategory:', (product as any)?.name)
           return false

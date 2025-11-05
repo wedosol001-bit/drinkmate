@@ -172,8 +172,12 @@ export default function ProductForm({
       setFormData({
         name: product.name || "",
         nameAr: product.nameAr || "",
-        category: product.category || "",
-        subcategory: product.subcategory || "",
+        category: typeof product.category === 'object' && product.category?._id 
+          ? product.category._id 
+          : (product.category || ""),
+        subcategory: typeof product.subcategory === 'object' && product.subcategory?._id 
+          ? product.subcategory._id 
+          : (product.subcategory || ""),
         price: product.price || "",
         originalPrice: product.originalPrice || "",
         stock: product.stock || "",
@@ -272,7 +276,13 @@ export default function ProductForm({
 
   // Get subcategories for selected category
   const getSubcategoriesForCategory = (categoryId: string) => {
-    const category = categories.find(cat => cat._id === categoryId)
+    if (!categoryId) return []
+    // Try to find category by ID first, then by slug
+    const category = categories.find(cat => 
+      cat._id === categoryId || 
+      cat._id?.toString() === categoryId || 
+      cat.slug === categoryId
+    )
     return category?.subcategories || []
   }
   

@@ -28,6 +28,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
 
   // Extract filter parameters
   const category = searchParams.get('category')
+  const subcategory = searchParams.get('subcategory')
   const search = searchParams.get('search')
   const minPrice = searchParams.get('minPrice')
   const maxPrice = searchParams.get('maxPrice')
@@ -53,6 +54,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   })
 
   if (category) params.append('category', category)
+  if (subcategory) params.append('subcategory', subcategory)
   if (search) params.append('search', search)
   if (minPrice) params.append('minPrice', minPrice)
   if (maxPrice) params.append('maxPrice', maxPrice)
