@@ -1702,12 +1702,30 @@ export interface Translations {
     retry: string
     carousel: { goTo: string }
     choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
-    qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string }
+    qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string; cylinder: string; emptyCylinders: string }
     discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
     cta: { addToCart: string; subscribe: string; premium: string }
     why: { title: string; f1: string; f2: string; f3: string; f4: string }
-    summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string }
+    summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string; co2RefillExchange: string }
     tabs: { faqs: string; description: string; reviews: string; faqsTitle: string; faqsSubtitle: string; productDescription: string; keyFeatures: string; customerReviews: string }
+    howItWorks: {
+      step1: { title: string; description: string; label: string }
+      step2: { title: string; description: string; label: string }
+      step3: { title: string; description: string; label: string }
+    }
+    faqs: {
+      q1: string
+      a1: string
+      q2: string
+      a2: string
+      q3: string
+      a3: string
+      q4: string
+      a4: string
+      q5: string
+      a5: string
+    }
+    carouselDescription: { refill4: string }
   }
 
   // Account
@@ -4494,12 +4512,30 @@ export const translations: Record<Language, Translations> = {
       retry: "Retry",
       carousel: { goTo: "Go to slide" },
       choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
-      qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days" },
+      qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days", cylinder: "cylinder", emptyCylinders: "empty cylinders" },
       discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
       cta: { addToCart: "Add cylinders to cart", subscribe: "Subscribe & save 20%", premium: "Premium membership" },
       why: { title: "Why choose our service?", f1: "Food-grade CO2 for beverages", f2: "3-5 day turnaround", f3: "Home pickup and delivery", f4: "Quality guaranteed" },
-      summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:" },
-      tabs: { faqs: "FAQs", description: "Description", reviews: "Reviews", faqsTitle: "Frequently Asked Questions", faqsSubtitle: "Everything you need to know about our cylinder service", productDescription: "Product Description", keyFeatures: "Key Features:", customerReviews: "Customer Reviews" }
+      summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:", co2RefillExchange: "CO2 Cylinder Refill/Exchange" },
+      tabs: { faqs: "FAQs", description: "Description", reviews: "Reviews", faqsTitle: "Frequently Asked Questions", faqsSubtitle: "Everything you need to know about our cylinder service", productDescription: "Product Description", keyFeatures: "Key Features:", customerReviews: "Customer Reviews" },
+      howItWorks: {
+        step1: { title: "Order Online", description: "Choose your cylinder type and quantity, then place your order on our website with one click.", label: "Order Online" },
+        step2: { title: "Schedule Pickup", description: "We'll schedule a convenient time to pick up empty cylinders from your location at no extra cost.", label: "Schedule Pickup" },
+        step3: { title: "Receive Refilled Cylinders", description: "Get freshly refilled CO2 cylinders delivered to your doorstep within 3-5 business days, ready to use.", label: "Receive Refilled" }
+      },
+      faqs: {
+        q1: "How long does the refill/exchange process take?",
+        a1: "Our standard turnaround time is 3-5 business days from pickup to delivery. We'll schedule a convenient pickup time and notify you when your refilled cylinders are ready for delivery.",
+        q2: "What cylinder brands do you accept?",
+        a2: "We accept cylinders from all major brands including Drinkmate, SodaStream, Errva, Fawwar, Phillips, and many other brands. If you're not sure about compatibility, please contact our support team.",
+        q3: "Is the CO2 food-grade and safe?",
+        a3: "Yes, we use only premium food-grade CO2 that meets all safety and quality standards for beverage use. Every cylinder is tested and filled according to industry regulations.",
+        q4: "Do I need to return the same number of cylinders?",
+        a4: "Yes, please make sure to return the same number of empty cylinders that you're ordering refills for. This helps us maintain the exchange program efficiently.",
+        q5: "What are the quantity discounts?",
+        a5: "We offer tiered pricing: 5% off for 2+ cylinders, 10% off for 3+ cylinders, and 15% off for 4+ cylinders. Additionally, orders of 4+ cylinders get free delivery!"
+      },
+      carouselDescription: { refill4: "Now refill 4 cylinders all together for the price of {amount} each cylinder." }
     },
     cart: {
       title: "Shopping Cart",
@@ -6791,12 +6827,30 @@ export const translations: Record<Language, Translations> = {
       retry: "إعادة المحاولة",
       carousel: { goTo: "اذهب إلى الشريحة" },
       choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "غير درينك ميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
-      qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل" },
+      qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل", cylinder: "أسطوانة", emptyCylinders: "أسطوانة فارغة" },
       discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
       cta: { addToCart: "أضف الأسطوانات إلى السلة", subscribe: "اشترك ووفر 20%", premium: "عضوية مميزة" },
       why: { title: "لماذا تختار خدمتنا؟", f1: "CO2 صالح للاستخدام الغذائي", f2: "دورة 3-5 أيام", f3: "استلام وتسليم من المنزل", f4: "جودة مضمونة" },
-      summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:" },
-      tabs: { faqs: "الأسئلة الشائعة", description: "الوصف", reviews: "التقييمات", faqsTitle: "الأسئلة الشائعة", faqsSubtitle: "كل ما تحتاج لمعرفته حول خدمة الأسطوانات", productDescription: "وصف المنتج", keyFeatures: "الميزات الرئيسية:", customerReviews: "آراء العملاء" }
+      summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:", co2RefillExchange: "إعادة تعبئة/تبديل أسطوانة CO2" },
+      tabs: { faqs: "الأسئلة الشائعة", description: "الوصف", reviews: "التقييمات", faqsTitle: "الأسئلة الشائعة", faqsSubtitle: "كل ما تحتاج لمعرفته حول خدمة الأسطوانات المميزة", productDescription: "وصف المنتج", keyFeatures: "الميزات الرئيسية:", customerReviews: "آراء العملاء" },
+      howItWorks: {
+        step1: { title: "اطلب عبر الإنترنت", description: "اختر نوع الأسطوانة والكمية، ثم ضع طلبك عبر موقعنا الإلكتروني بنقرة واحدة.", label: "اطلب عبر الإنترنت" },
+        step2: { title: "جدولة الاستلام", description: "سنحدد وقت مناسب لاستلام الأسطوانات الفارغة من موقعك بدون تكلفة إضافية.", label: "جدولة الاستلام" },
+        step3: { title: "استلام الأسطوانات المعاد تعبئتها", description: "احصل على أسطوانات CO2 المعاد تعبئتها حديثاً على باب منزلك خلال 3-5 أيام عمل، جاهزة للاستخدام.", label: "استلام المعاد تعبئته" }
+      },
+      faqs: {
+        q1: "كم من الوقت تستغرق عملية إعادة التعبئة/التبديل؟",
+        a1: "وقت الدوران المعياري لدينا هو 3-5 أيام عمل من الاستلام إلى التسليم. سنحدد وقت استلام مناسب ونخطرك عندما تكون أسطواناتك المعاد تعبئتها جاهزة للتسليم.",
+        q2: "ما العلامات التجارية للأسطوانات التي تقبلونها؟",
+        a2: "نقبل أسطوانات من جميع العلامات التجارية الرئيسية بما في ذلك درينكميت، سوداستريم، إيرفا، فووار، فيليبس، والعديد من العلامات الأخرى. إذا لم تكن متأكداً من التوافق، يرجى الاتصال بفريق الدعم لدينا.",
+        q3: "هل CO2 صالح للاستخدام الغذائي وآمن؟",
+        a3: "نعم، نستخدم فقط CO2 مميز صالح للاستخدام الغذائي يلبي جميع معايير السلامة والجودة للاستخدام في المشروبات. كل أسطوانة يتم اختبارها وملؤها وفقاً للوائح الصناعة.",
+        q4: "هل أحتاج لإرجاع نفس عدد الأسطوانات؟",
+        a4: "نعم، يرجى التأكد من إرجاع نفس عدد الأسطوانات الفارغة التي تطلبها معاد تعبئتها. هذا يساعدنا في الحفاظ على برنامج التبديل بكفاءة.",
+        q5: "ما هي خصومات الكمية؟",
+        a5: "نقدم تسعير متدرج: خصم 5% لـ 2+ أسطوانات، خصم 10% لـ 3+ أسطوانات، وخصم 15% لـ 4+ أسطوانات. بالإضافة إلى ذلك، طلبات 4+ أسطوانات تحصل على تسليم مجاني!"
+      },
+      carouselDescription: { refill4: "الآن أعد تعبئة 4 أسطوانات معاً بسعر {amount} لكل أسطوانة." }
     },
     cart: {
       title: "سلة التسوق",

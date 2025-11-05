@@ -421,8 +421,17 @@ export default function CO2() {
                     {refillSlides[currentRefillSlide].headline}
                   </h2>
                   <p className="text-gray-700 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
-                    {refillSlides[currentRefillSlide].headline === "أعد التعبئة أكثر. وفر أكثر." ? (
-                      <>الآن أعد تعبئة 4 أسطوانات معاً بسعر <SaudiRiyal amount={55} size="sm" className="font-bold text-[#12d6fa]" /> لكل أسطوانة.</>
+                    {refillSlides[currentRefillSlide].headline === t("home.refill.title") ? (
+                      <>
+                        {t('refill.carouselDescription.refill4').split('{amount}').map((part, i, arr) => 
+                          i === arr.length - 1 ? part : (
+                            <span key={i}>
+                              {part}
+                              <SaudiRiyal amount={55} size="sm" className="font-bold text-[#12d6fa]" />
+                            </span>
+                          )
+                        )}
+                      </>
                     ) : (
                       refillSlides[currentRefillSlide].description
                     )}
@@ -730,7 +739,7 @@ export default function CO2() {
                         <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.twoPlusLabel')}</div>
                         {quantity >= 2 && (
                           <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
-                            ✓ نشط
+                            {t('refill.discounts.active')}
                           </div>
                         )}
                       </div>
@@ -752,7 +761,7 @@ export default function CO2() {
                         <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.threePlusLabel')}</div>
                         {quantity >= 3 && (
                           <div className="mt-1 text-xs font-semibold text-[#12d6fa] animate-pulse">
-                            ✓ نشط
+                            {t('refill.discounts.active')}
                           </div>
                         )}
                       </div>
@@ -853,7 +862,7 @@ export default function CO2() {
                           </div>
                           <div>
                             <h4 className="font-bold text-gray-900">{selectedCylinderData.name}</h4>
-                            <p className="text-sm text-gray-600">إعادة تعبئة/تبديل أسطوانة CO2</p>
+                            <p className="text-sm text-gray-600">{t('refill.summary.co2RefillExchange')}</p>
                           </div>
                         </div>
                       </div>
@@ -863,15 +872,15 @@ export default function CO2() {
                     <div className="mb-6 space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-700">{t('refill.qty.title')}:</span>
-                        <span className="font-semibold text-gray-900">{quantity} أسطوانة</span>
+                        <span className="font-semibold text-gray-900">{quantity} {t('refill.qty.cylinder')}{quantity > 1 && !isRTL ? 's' : ''}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-700">{t('refill.summary.requiredReturn')}</span>
-                        <span className="font-semibold text-gray-900">{quantity} أسطوانة فارغة</span>
+                        <span className="font-semibold text-gray-900">{quantity} {t('refill.qty.emptyCylinders')}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-700">{t('refill.summary.deliveryTime')}</span>
-                        <span className="font-semibold text-[#12d6fa]">3-5 أيام عمل</span>
+                        <span className="font-semibold text-[#12d6fa]">{t('refill.qty.deliveryTime')}</span>
                       </div>
                     </div>
                     
@@ -948,13 +957,13 @@ export default function CO2() {
                       <div className="w-24 h-24 bg-[#12d6fa] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
                         <ShoppingCart className="w-12 h-12 text-white" />
                       </div>
-                      <p className="text-[#12d6fa] font-bold text-lg">اطلب عبر الإنترنت</p>
+                      <p className="text-[#12d6fa] font-bold text-lg">{t('refill.howItWorks.step1.label')}</p>
                     </div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-black mb-4">اطلب عبر الإنترنت</h3>
+                <h3 className="text-2xl font-bold text-black mb-4">{t('refill.howItWorks.step1.title')}</h3>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                  اختر نوع الأسطوانة والكمية، ثم ضع طلبك عبر موقعنا الإلكتروني بنقرة واحدة.
+                  {t('refill.howItWorks.step1.description')}
                 </p>
               </div>
 
@@ -966,13 +975,13 @@ export default function CO2() {
                       <div className="w-24 h-24 bg-[#12d6fa] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
                         <Truck className="w-12 h-12 text-black" />
                       </div>
-                      <p className="text-[#12d6fa] font-bold text-lg">جدولة الاستلام</p>
+                      <p className="text-[#12d6fa] font-bold text-lg">{t('refill.howItWorks.step2.label')}</p>
                     </div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-black mb-4">جدولة الاستلام</h3>
+                <h3 className="text-2xl font-bold text-black mb-4">{t('refill.howItWorks.step2.title')}</h3>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                  سنحدد وقت مناسب لاستلام الأسطوانات الفارغة من موقعك بدون تكلفة إضافية.
+                  {t('refill.howItWorks.step2.description')}
                 </p>
               </div>
 
@@ -984,13 +993,13 @@ export default function CO2() {
                       <div className="w-24 h-24 bg-[#12d6fa] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
                         <Shield className="w-12 h-12 text-white" />
                       </div>
-                      <p className="text-[#12d6fa] font-bold text-lg">استلام المعاد تعبئته</p>
+                      <p className="text-[#12d6fa] font-bold text-lg">{t('refill.howItWorks.step3.label')}</p>
                     </div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-black mb-4">استلام الأسطوانات المعاد تعبئتها</h3>
+                <h3 className="text-2xl font-bold text-black mb-4">{t('refill.howItWorks.step3.title')}</h3>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                  احصل على أسطوانات CO2 المعاد تعبئتها حديثاً على باب منزلك خلال 3-5 أيام عمل، جاهزة للاستخدام.
+                  {t('refill.howItWorks.step3.description')}
                 </p>
               </div>
             </div>
@@ -1015,7 +1024,7 @@ export default function CO2() {
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <Info className="w-5 h-5" />
-                    <span>الأسئلة الشائعة</span>
+                    <span>{t('refill.tabs.faqs')}</span>
                   </div>
                 </button>
                 <button 
@@ -1028,7 +1037,7 @@ export default function CO2() {
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <Shield className="w-5 h-5" />
-                    <span>الوصف</span>
+                    <span>{t('refill.tabs.description')}</span>
                   </div>
                 </button>
                 <button 
@@ -1041,7 +1050,7 @@ export default function CO2() {
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <Star className="w-5 h-5" />
-                    <span>التقييمات</span>
+                    <span>{t('refill.tabs.reviews')}</span>
                   </div>
                 </button>
               </div>
@@ -1051,30 +1060,30 @@ export default function CO2() {
                 {activeTab === "faqs" && (
                   <div>
                     <div className="text-center mb-12">
-                      <h3 className="text-3xl font-black text-black mb-4">الأسئلة الشائعة</h3>
-                      <p className="text-gray-600 text-lg">كل ما تحتاج لمعرفته حول خدمة الأسطوانات المميزة</p>
+                      <h3 className="text-3xl font-black text-black mb-4">{t('refill.tabs.faqsTitle')}</h3>
+                      <p className="text-gray-600 text-lg">{t('refill.tabs.faqsSubtitle')}</p>
                     </div>
                     <div className="space-y-6">
                       {[
                         {
-                          question: "كم من الوقت تستغرق عملية إعادة التعبئة/التبديل؟",
-                          answer: "وقت الدوران المعياري لدينا هو 3-5 أيام عمل من الاستلام إلى التسليم. سنحدد وقت استلام مناسب ونخطرك عندما تكون أسطواناتك المعاد تعبئتها جاهزة للتسليم."
+                          question: t('refill.faqs.q1'),
+                          answer: t('refill.faqs.a1')
                         },
                         {
-                          question: "ما العلامات التجارية للأسطوانات التي تقبلونها؟",
-                          answer: "نقبل أسطوانات من جميع العلامات التجارية الرئيسية بما في ذلك درينكميت، سوداستريم، إيرفا، فووار، فيليبس، والعديد من العلامات الأخرى. إذا لم تكن متأكداً من التوافق، يرجى الاتصال بفريق الدعم لدينا."
+                          question: t('refill.faqs.q2'),
+                          answer: t('refill.faqs.a2')
                         },
                         {
-                          question: "هل CO2 صالح للاستخدام الغذائي وآمن؟",
-                          answer: "نعم، نستخدم فقط CO2 مميز صالح للاستخدام الغذائي يلبي جميع معايير السلامة والجودة للاستخدام في المشروبات. كل أسطوانة يتم اختبارها وملؤها وفقاً للوائح الصناعة."
+                          question: t('refill.faqs.q3'),
+                          answer: t('refill.faqs.a3')
                         },
                         {
-                          question: "هل أحتاج لإرجاع نفس عدد الأسطوانات؟",
-                          answer: "نعم، يرجى التأكد من إرجاع نفس عدد الأسطوانات الفارغة التي تطلبها معاد تعبئتها. هذا يساعدنا في الحفاظ على برنامج التبديل بكفاءة."
+                          question: t('refill.faqs.q4'),
+                          answer: t('refill.faqs.a4')
                         },
                         {
-                          question: "ما هي خصومات الكمية؟",
-                          answer: "نقدم تسعير متدرج: خصم 5% لـ 2+ أسطوانات، خصم 10% لـ 3+ أسطوانات، وخصم 15% لـ 4+ أسطوانات. بالإضافة إلى ذلك، طلبات 4+ أسطوانات تحصل على تسليم مجاني!"
+                          question: t('refill.faqs.q5'),
+                          answer: t('refill.faqs.a5')
                         }
                       ].map((faq, index) => (
                         <div key={index} className="border-2 border-gray-100 rounded-2xl overflow-hidden hover:shadow-sm hover:border-[#12d6fa]/30 transition-all duration-300 group">
@@ -1102,7 +1111,7 @@ export default function CO2() {
 
                 {activeTab === "description" && (
                   <div>
-                    <h3 className="text-2xl font-bold text-black mb-8">Product Description</h3>
+                    <h3 className="text-2xl font-bold text-black mb-8">{t('refill.tabs.productDescription')}</h3>
                     <div className="grid md:grid-cols-2 gap-12">
                       {/* Left Side - Text */}
                       <div className="space-y-6">
@@ -1112,7 +1121,7 @@ export default function CO2() {
                           highest safety standards.
                         </p>
                         <div>
-                          <h4 className="font-bold text-black text-xl mb-4">Key Features:</h4>
+                          <h4 className="font-bold text-black text-xl mb-4">{t('refill.tabs.keyFeatures')}</h4>
                           <div className="space-y-3">
                             {[
                               "Food-grade CO2 certified for beverage use",
@@ -1155,7 +1164,7 @@ export default function CO2() {
 
                 {activeTab === "reviews" && (
                   <div>
-                    <h3 className="text-2xl font-bold text-black mb-8">Customer Reviews</h3>
+                    <h3 className="text-2xl font-bold text-black mb-8">{t('refill.tabs.customerReviews')}</h3>
                     <div className="space-y-6">
                       {[
                         {

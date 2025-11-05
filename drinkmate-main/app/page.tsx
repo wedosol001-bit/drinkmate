@@ -153,9 +153,9 @@ export default function Home() {
     {
       id: 4,
       type: "banner" as const,
-      src: "/images/banner/flavors3-banner-re.jpg",
+      src: "/images/banner/flavors3-banner-theresult.jpg",
       alt: "Premium Flavors Collection",
-      mobileSrc: "/images/banner/flavors3-banner-re.jpg",
+      mobileSrc: "/images/banner/flavors3-banner-theresult.jpg",
       mobileAlt: "Premium Flavors Collection",
       objectFit: "cover" as const,
       objectPosition: "center center"
