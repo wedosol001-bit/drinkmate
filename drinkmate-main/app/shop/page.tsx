@@ -72,8 +72,8 @@ function ShopPageContent() {
 
   // Filter and view state
   const [filters, setFilters] = useState({
-    category: [] as string[], // Changed to array for multiple selection
-    subcategory: [] as string[],
+    category: '', // Single category selection
+    subcategory: '', // Single optional subcategory selection
     priceRange: [0, 10000] as [number, number],
     brand: [] as string[],
     rating: 0,
@@ -149,18 +149,17 @@ function ShopPageContent() {
     console.log('🔍 Current pathname:', window.location.pathname)
     
     // Read filters from URL
-    // Only apply category filter if we're on the main shop page and it's explicitly set
     const catParam = params.get('cat')
-    const category = catParam ? (catParam === 'all' ? [] : catParam.split(',').filter(Boolean)) : []
+    const category = catParam && catParam !== 'all' ? catParam : ''
     console.log('🔍 Category from URL:', category)
     
-    // If we're on the main shop page and no category is specified, show all products
-    const isMainShopPage = window.location.pathname === '/shop'
-    const finalCategory = isMainShopPage && !catParam ? [] : category
-    console.log('🔍 Final category after main shop check:', finalCategory)
+    const subcategoryParam = params.get('subcategory')
+    const subcategory = subcategoryParam ? subcategoryParam : ''
+    console.log('🔍 Subcategory from URL:', subcategory)
+    
     const priceMin = parseInt(params.get('priceMin') || '0')
     const priceMax = parseInt(params.get('priceMax') || '10000')
-    const brand = params.get('brand') ? params.get('brand')!.split(',') : []
+    const brand = params.get('brand') ? params.get('brand')!.split(',').filter(Boolean) : []
     const rating = parseInt(params.get('rating') || '0')
     const inStock = params.get('inStock') === 'true'
     const isNewProduct = params.get('new') === 'true'
@@ -172,10 +171,9 @@ function ShopPageContent() {
 
     // Only update state if values are different to prevent loops
     setFilters(prevFilters => {
-      const subcategory = params.get('subcategory') ? params.get('subcategory')!.split(',').filter(Boolean) : []
       const newFilters = {
-        category: finalCategory,
-        subcategory: subcategory, // Support multiple subcategories from URL
+        category: category,
+        subcategory: subcategory,
         priceRange: [priceMin, priceMax] as [number, number],
         brand,
         rating,
@@ -211,8 +209,8 @@ function ShopPageContent() {
     
     const params = new URLSearchParams()
     
-    if (newFilters.category.length > 0) params.set('cat', newFilters.category.join(','))
-    if (newFilters.subcategory.length > 0) params.set('subcategory', newFilters.subcategory.join(','))
+    if (newFilters.category && newFilters.category !== '') params.set('cat', newFilters.category)
+    if (newFilters.subcategory && newFilters.subcategory !== '') params.set('subcategory', newFilters.subcategory)
     if (newFilters.priceRange[0] > 0) params.set('priceMin', newFilters.priceRange[0].toString())
     if (newFilters.priceRange[1] < 10000) params.set('priceMax', newFilters.priceRange[1].toString())
     if (newFilters.brand.length > 0) params.set('brand', newFilters.brand.join(','))
@@ -349,21 +347,8 @@ function ShopPageContent() {
     fetchData()
   }, [])
 
-  // Refetch when category or subcategory filter changes (use backend filtering for efficiency)
-  useEffect(() => {
-    const hasCategoryFilter = filters.category.length > 0
-    const hasSubcategoryFilter = filters.subcategory.length > 0
-    
-    if (hasCategoryFilter || hasSubcategoryFilter) {
-      fetchData({
-        category: hasCategoryFilter ? filters.category.join(',') : undefined,
-        subcategory: hasSubcategoryFilter ? filters.subcategory.join(',') : undefined
-      })
-    } else {
-      // If no filters, fetch all products
-      fetchData()
-    }
-  }, [filters.category.join(','), filters.subcategory.join(',')])
+  // Initial fetch only - no refetch on filter changes (use client-side filtering for instant results)
+  // Removed the useEffect that was causing the white screen/loading state on filter changes
 
   // Build a map of all subcategories from categories for matching
   const subcategoryMap = useMemo(() => {
@@ -424,30 +409,23 @@ function ShopPageContent() {
       console.log('🔍 After search filter:', filtered.length)
     }
 
-    // Category filter (supports multiple categories)
-    if (filters.category && filters.category.length > 0) {
+    // Category filter (single category selection)
+    if (filters.category && filters.category !== '') {
       console.log('🔍 Applying category filter:', filters.category)
-      console.log('🔍 Available categories:', categories.map(c => ({ name: c.name, slug: c.slug, _id: c._id })))
-      console.log('🔍 Total categories loaded:', categories.length)
-      console.log('🔍 Sample product categories before filter:', filtered.slice(0, 3).map(p => ({
-        name: (p as any)?.name,
-        category: (p as any)?.category,
-        categoryType: typeof (p as any)?.category
-      })))
       
-      // Find all selected category objects
-      const selectedCategories = categories.filter(cat => 
-        filters.category.includes(cat.slug) || 
-        filters.category.includes(cat._id?.toString())
+      // Find the selected category object
+      const selectedCategory = categories.find(cat => 
+        cat.slug === filters.category || 
+        cat._id?.toString() === filters.category
       )
       
-      console.log('🔍 Selected categories:', selectedCategories.map(c => ({ name: c.name, slug: c.slug })))
-      
-      filtered = filtered.filter(product => {
-        const category = (product as any)?.category
+      if (selectedCategory) {
+        console.log('🔍 Selected category:', { name: selectedCategory.name, slug: selectedCategory.slug })
         
-        // Check if product matches any of the selected categories
-        return selectedCategories.some(selectedCategory => {
+        filtered = filtered.filter(product => {
+          const category = (product as any)?.category
+          
+          // Check if product matches the selected category
           if (typeof category === 'object' && category) {
             // Category is an object with _id, name, slug
             return category._id === selectedCategory._id ||
@@ -463,29 +441,19 @@ function ShopPageContent() {
           }
           return false
         })
-      })
+      }
       console.log('🔍 After category filter:', filtered.length)
     }
 
-    // Subcategory filter (supports multiple subcategories)
-    if (filters.subcategory && filters.subcategory.length > 0) {
+    // Subcategory filter (single subcategory selection)
+    if (filters.subcategory && filters.subcategory !== '') {
       console.log('🔍 Applying subcategory filter:', filters.subcategory)
-      console.log('🔍 Sample product subcategories before filter:', filtered.slice(0, 3).map(p => ({
-        name: (p as any)?.name,
-        subcategory: (p as any)?.subcategory,
-        subcategoryType: typeof (p as any)?.subcategory,
-        subcategoryFull: JSON.stringify((p as any)?.subcategory)
-      })))
-      
-      console.log('🔍 SubcategoryMap contents:', Array.from(subcategoryMap.entries()).slice(0, 10))
-      console.log('🔍 Selected subcategories to filter:', filters.subcategory)
       
       filtered = filtered.filter(product => {
         const productSubcategory = (product as any)?.subcategory
         
-        // If no subcategory, skip this product (they need subcategories assigned in the database)
+        // If no subcategory, skip this product
         if (!productSubcategory) {
-          console.log('🔍 Product has no subcategory:', (product as any)?.name)
           return false
         }
         
@@ -516,61 +484,42 @@ function ShopPageContent() {
           matchedSubcategory = subcategoryMap.get(productSubName)!
         }
         
-        // Check if product's subcategory matches any of the selected subcategories
-        const matches = filters.subcategory.some(selectedSub => {
-          const selectedSubLower = selectedSub.toLowerCase().trim()
-          
-          // If we found a match in the map, use the canonical slug
-          if (matchedSubcategory) {
-            return matchedSubcategory.slug === selectedSub || 
-                   matchedSubcategory.slug.toLowerCase() === selectedSubLower ||
-                   matchedSubcategory._id === selectedSub ||
-                   matchedSubcategory.name === selectedSubLower
-          }
-          
-          // Fallback: try direct matching
-          // Try matching by ID
-          if (productSubId && (productSubId === selectedSub || productSubId.toLowerCase() === selectedSubLower)) {
-            return true
-          }
-          
-          // Try matching by slug
-          if (productSubSlug && (productSubSlug === selectedSub || productSubSlug.toLowerCase() === selectedSubLower)) {
-            return true
-          }
-          
-          // Try matching by name
-          if (productSubName && productSubName === selectedSubLower) {
-            return true
-          }
-          
-          // Try partial name matching
-          if (productSubName && (productSubName.includes(selectedSubLower) || selectedSubLower.includes(productSubName))) {
-            return true
-          }
-          
-          return false
-        })
+        // Check if product's subcategory matches the selected subcategory
+        const selectedSub = filters.subcategory
+        const selectedSubLower = selectedSub.toLowerCase().trim()
         
-        if (!matches) {
-          console.log('🔍 Product subcategory did not match:', {
-            productName: (product as any)?.name,
-            productSubcategory,
-            productSubId,
-            productSubSlug,
-            productSubName,
-            matchedSubcategory,
-            selectedSubcategories: filters.subcategory
-          })
+        // If we found a match in the map, use the canonical slug
+        if (matchedSubcategory) {
+          return matchedSubcategory.slug === selectedSub || 
+                 matchedSubcategory.slug.toLowerCase() === selectedSubLower ||
+                 matchedSubcategory._id === selectedSub ||
+                 matchedSubcategory.name === selectedSubLower
         }
         
-        return matches
+        // Fallback: try direct matching
+        // Try matching by ID
+        if (productSubId && (productSubId === selectedSub || productSubId.toLowerCase() === selectedSubLower)) {
+          return true
+        }
+        
+        // Try matching by slug
+        if (productSubSlug && (productSubSlug === selectedSub || productSubSlug.toLowerCase() === selectedSubLower)) {
+          return true
+        }
+        
+        // Try matching by name
+        if (productSubName && productSubName === selectedSubLower) {
+          return true
+        }
+        
+        // Try partial name matching
+        if (productSubName && (productSubName.includes(selectedSubLower) || selectedSubLower.includes(productSubName))) {
+          return true
+        }
+        
+        return false
       })
       console.log('🔍 After subcategory filter:', filtered.length)
-      console.log('🔍 Sample products after subcategory filter:', filtered.slice(0, 3).map(p => ({
-        name: (p as any)?.name,
-        subcategory: (p as any)?.subcategory
-      })))
     }
 
     // Price range filter
@@ -700,8 +649,8 @@ function ShopPageContent() {
   // Count active filters
   const activeFilterCount = useMemo(() => {
     let count = 0
-    if (filters.category.length > 0) count += filters.category.length
-    if (filters.subcategory.length > 0) count += filters.subcategory.length
+    if (filters.category && filters.category !== '') count++
+    if (filters.subcategory && filters.subcategory !== '') count++
     if (filters.brand.length > 0) count += filters.brand.length
     if (filters.rating > 0) count++
     if (filters.inStock) count++
@@ -852,8 +801,8 @@ function ShopPageContent() {
 
   const handleClearFilters = useCallback(() => {
     const clearedFilters = {
-      category: [] as string[],
-      subcategory: [] as string[],
+      category: '',
+      subcategory: '',
       priceRange: [0, 10000] as [number, number],
       brand: [] as string[],
       rating: 0,
@@ -1215,7 +1164,7 @@ function ShopPageContent() {
               
               {/* Debug indicator */}
               <div className="text-xs text-gray-500 bg-yellow-50 px-2 py-1 rounded">
-                Filter: {filters.category} | Total: {products.length} | Filtered: {filteredProducts.length}
+                Cat: {filters.category || 'all'} | Sub: {filters.subcategory || 'none'} | Total: {products.length} | Filtered: {filteredProducts.length}
               </div>
 
               {/* Enhanced Sort Dropdown */}
@@ -1375,7 +1324,7 @@ function ShopPageContent() {
                   </div>
                 ) : (
                   <ProductGrid
-                    key={`products-${filters.category}-${filters.subcategory}-${filters.brand.join(',')}-${filters.priceRange[0]}-${filters.priceRange[1]}-${filters.rating}-${filters.inStock}-${filters.isNewProduct}-${filters.isBestSeller}-${filters.isOnSale}-${debouncedSearchQuery}-${sortBy}-${sortOrder}-${currentPage}`}
+                    key={`products-${filters.category || 'all'}-${filters.subcategory || 'all'}-${filters.brand.join(',')}-${filters.priceRange[0]}-${filters.priceRange[1]}-${filters.rating}-${filters.inStock}-${filters.isNewProduct}-${filters.isBestSeller}-${filters.isOnSale}-${debouncedSearchQuery}-${sortBy}-${sortOrder}-${currentPage}`}
                     products={paginatedProducts}
                     loading={false}
                     dir={isRTL ? "rtl" : "ltr"}

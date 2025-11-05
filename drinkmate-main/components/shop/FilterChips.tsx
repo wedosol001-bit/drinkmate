@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 interface FilterChipsProps {
   filters: {
     category: string
+    subcategory: string
     priceRange: [number, number]
     brand: string[]
     rating: number
@@ -33,12 +34,22 @@ export default function FilterChips({
     const activeFilters = []
 
     // Category filter
-    if (filters.category !== 'all') {
+    if (filters.category && filters.category !== '') {
       activeFilters.push({
         key: 'category',
         label: `Category: ${filters.category}`,
         icon: <Tag className="w-3 h-3" />,
         color: 'bg-blue-100 text-blue-700 border-blue-200'
+      })
+    }
+
+    // Subcategory filter
+    if (filters.subcategory && filters.subcategory !== '') {
+      activeFilters.push({
+        key: 'subcategory',
+        label: `Subcategory: ${filters.subcategory}`,
+        icon: <Tag className="w-3 h-3" />,
+        color: 'bg-indigo-100 text-indigo-700 border-indigo-200'
       })
     }
 
@@ -125,7 +136,9 @@ export default function FilterChips({
 
   const handleRemoveFilter = (filterKey: string) => {
     if (filterKey === 'category') {
-      onFiltersChange({ ...filters, category: 'all' })
+      onFiltersChange({ ...filters, category: '', subcategory: '' })
+    } else if (filterKey === 'subcategory') {
+      onFiltersChange({ ...filters, subcategory: '' })
     } else if (filterKey === 'priceRange') {
       onFiltersChange({ ...filters, priceRange: [0, 10000] })
     } else if (filterKey.startsWith('brand-')) {
