@@ -141,46 +141,64 @@ export default function ShopFilters({
 
   const handleCategoryChange = useCallback((categorySlug: string) => {
     console.log('🔧 ShopFilters: handleCategoryChange called with:', categorySlug)
-    const newCategory = filters.category === categorySlug ? 'all' : categorySlug
-    console.log('🔧 ShopFilters: newCategory will be:', newCategory)
     
-    // When category changes, clear subcategories for that category only
-    // Keep subcategories from other categories if any
+    // Toggle category selection (support multiple selections)
+    const currentCategories = Array.isArray(filters.category) ? filters.category : (filters.category === 'all' ? [] : [filters.category])
+    const newCategories = currentCategories.includes(categorySlug)
+      ? currentCategories.filter(cat => cat !== categorySlug)
+      : [...currentCategories, categorySlug]
+    
+    console.log('🔧 ShopFilters: newCategories will be:', newCategories)
+    
+    // When category is deselected, clear subcategories for that category
     const selectedCategory = categories.find(cat => cat.slug === categorySlug)
     let updatedSubcategories = [...filters.subcategory]
     
-    if (newCategory === 'all') {
-      // Clear all subcategories when "all" is selected
-      updatedSubcategories = []
-    } else if (selectedCategory) {
-      // Remove subcategories that belong to the previously selected category
-      const prevCategory = categories.find(cat => cat.slug === filters.category)
-      if (prevCategory && prevCategory.subcategories) {
-        const prevSubcategorySlugs = prevCategory.subcategories.map(sub => sub.slug)
-        updatedSubcategories = updatedSubcategories.filter(sub => !prevSubcategorySlugs.includes(sub))
-      }
-      
-      // Auto-expand category when selected (if it has subcategories)
-      if (selectedCategory.subcategories && selectedCategory.subcategories.length > 0) {
-        setExpandedCategories(prev => new Set(prev).add(categorySlug))
+    if (selectedCategory && selectedCategory.subcategories) {
+      const subcategorySlugs = selectedCategory.subcategories.map(sub => sub.slug || sub._id)
+      if (newCategories.includes(categorySlug)) {
+        // Category is being selected - auto-expand if it has subcategories
+        if (selectedCategory.subcategories.length > 0) {
+          setExpandedCategories(prev => new Set(prev).add(categorySlug))
+        }
+      } else {
+        // Category is being deselected - remove its subcategories
+        updatedSubcategories = updatedSubcategories.filter(sub => !subcategorySlugs.includes(sub))
       }
     }
     
     const newFilters = {
       ...filters,
-      category: newCategory,
+      category: newCategories,
       subcategory: updatedSubcategories
     }
     onFiltersChange(newFilters)
   }, [filters, onFiltersChange, categories])
 
-  const handleSubcategoryChange = useCallback((subcategorySlug: string) => {
+  const handleSubcategoryChange = useCallback((subcategorySlug: string, parentCategorySlug?: string) => {
     // Toggle subcategory selection (support multiple selections)
     const newSubcategories = filters.subcategory.includes(subcategorySlug)
       ? filters.subcategory.filter(sub => sub !== subcategorySlug)
       : [...filters.subcategory, subcategorySlug]
-    handleFilterChange('subcategory', newSubcategories)
-  }, [filters.subcategory, handleFilterChange])
+    
+    // Auto-select parent category when subcategory is selected
+    const currentCategories = Array.isArray(filters.category) ? filters.category : (filters.category === 'all' ? [] : [filters.category])
+    let newCategories = [...currentCategories]
+    
+    if (newSubcategories.includes(subcategorySlug) && parentCategorySlug) {
+      // Subcategory is being selected - ensure parent category is also selected
+      if (!newCategories.includes(parentCategorySlug)) {
+        newCategories.push(parentCategorySlug)
+      }
+    }
+    
+    // Update both category and subcategory
+    onFiltersChange({
+      ...filters,
+      category: newCategories,
+      subcategory: newSubcategories
+    })
+  }, [filters, onFiltersChange])
 
   const handleBrandChange = useCallback((brand: string) => {
     const newBrands = filters.brand.includes(brand)
@@ -309,8 +327,14 @@ export default function ShopFilters({
             <div className="flex items-center space-x-3">
               <Checkbox
                 id="category-all"
-                checked={filters.category === 'all'}
-                onCheckedChange={() => handleCategoryChange('all')}
+                checked={!Array.isArray(filters.category) ? filters.category === 'all' : filters.category.length === 0}
+                onCheckedChange={() => {
+                  onFiltersChange({
+                    ...filters,
+                    category: [],
+                    subcategory: []
+                  })
+                }}
                 className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
               />
               <Label htmlFor="category-all" className="text-sm font-medium cursor-pointer">
@@ -333,11 +357,12 @@ export default function ShopFilters({
                   <div className="flex items-center space-x-3 flex-1">
                     <Checkbox
                       id={`category-${category.slug}`}
-                      checked={filters.category === category.slug}
+                      checked={Array.isArray(filters.category) ? filters.category.includes(category.slug) : filters.category === category.slug}
                       onCheckedChange={() => {
                         handleCategoryChange(category.slug)
                         // Auto-expand if category has subcategories and is being selected
-                        if (filters.category !== category.slug && hasSubcategories) {
+                        const currentCategories = Array.isArray(filters.category) ? filters.category : (filters.category === 'all' ? [] : [filters.category])
+                        if (!currentCategories.includes(category.slug) && hasSubcategories) {
                           setExpandedCategories(prev => new Set(prev).add(category.slug))
                         }
                       }}
@@ -407,7 +432,7 @@ export default function ShopFilters({
                             <Checkbox
                               id={`subcategory-${subcategorySlug}`}
                               checked={isSelected}
-                              onCheckedChange={() => handleSubcategoryChange(subcategorySlug)}
+                              onCheckedChange={() => handleSubcategoryChange(subcategorySlug, category.slug)}
                               className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
                             />
                             <Label 

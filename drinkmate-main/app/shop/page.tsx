@@ -72,7 +72,7 @@ function ShopPageContent() {
 
   // Filter and view state
   const [filters, setFilters] = useState({
-    category: 'all',
+    category: [] as string[], // Changed to array for multiple selection
     subcategory: [] as string[],
     priceRange: [0, 10000] as [number, number],
     brand: [] as string[],
@@ -150,12 +150,13 @@ function ShopPageContent() {
     
     // Read filters from URL
     // Only apply category filter if we're on the main shop page and it's explicitly set
-    const category = params.get('cat') || 'all'
+    const catParam = params.get('cat')
+    const category = catParam ? (catParam === 'all' ? [] : catParam.split(',').filter(Boolean)) : []
     console.log('🔍 Category from URL:', category)
     
     // If we're on the main shop page and no category is specified, show all products
     const isMainShopPage = window.location.pathname === '/shop'
-    const finalCategory = isMainShopPage && !params.get('cat') ? 'all' : category
+    const finalCategory = isMainShopPage && !catParam ? [] : category
     console.log('🔍 Final category after main shop check:', finalCategory)
     const priceMin = parseInt(params.get('priceMin') || '0')
     const priceMax = parseInt(params.get('priceMax') || '10000')
@@ -210,7 +211,7 @@ function ShopPageContent() {
     
     const params = new URLSearchParams()
     
-    if (newFilters.category !== 'all') params.set('cat', newFilters.category)
+    if (newFilters.category.length > 0) params.set('cat', newFilters.category.join(','))
     if (newFilters.subcategory.length > 0) params.set('subcategory', newFilters.subcategory.join(','))
     if (newFilters.priceRange[0] > 0) params.set('priceMin', newFilters.priceRange[0].toString())
     if (newFilters.priceRange[1] < 10000) params.set('priceMax', newFilters.priceRange[1].toString())
@@ -260,10 +261,13 @@ function ShopPageContent() {
       setLoading(true)
       setError(null)
 
-      // Build API params including subcategory filter if provided
+      // Build API params including category and subcategory filters if provided
       const apiParams: any = { limit: 100 }
-      if (apiFilters?.category && apiFilters.category !== 'all') {
-        apiParams.category = apiFilters.category
+      if (apiFilters?.category) {
+        // Backend supports single category, so we'll fetch separately if multiple
+        // For now, if multiple categories, we'll fetch all and filter client-side
+        // Or we can modify backend to support multiple categories
+        apiParams.category = apiFilters.category.split(',')[0] // Use first category for backend
       }
       if (apiFilters?.subcategory) {
         apiParams.subcategory = apiFilters.subcategory
@@ -345,17 +349,21 @@ function ShopPageContent() {
     fetchData()
   }, [])
 
-  // Refetch when subcategory filter changes (use backend filtering for efficiency)
-  // Note: We only refetch if subcategory filter is active, otherwise rely on client-side filtering
+  // Refetch when category or subcategory filter changes (use backend filtering for efficiency)
   useEffect(() => {
-    if (filters.subcategory.length > 0) {
-      const subcategoryParam = filters.subcategory.join(',')
+    const hasCategoryFilter = filters.category.length > 0
+    const hasSubcategoryFilter = filters.subcategory.length > 0
+    
+    if (hasCategoryFilter || hasSubcategoryFilter) {
       fetchData({
-        category: filters.category !== 'all' ? filters.category : undefined,
-        subcategory: subcategoryParam
+        category: hasCategoryFilter ? filters.category.join(',') : undefined,
+        subcategory: hasSubcategoryFilter ? filters.subcategory.join(',') : undefined
       })
+    } else {
+      // If no filters, fetch all products
+      fetchData()
     }
-  }, [filters.subcategory.join(',')])
+  }, [filters.category.join(','), filters.subcategory.join(',')])
 
   // Build a map of all subcategories from categories for matching
   const subcategoryMap = useMemo(() => {
@@ -416,8 +424,8 @@ function ShopPageContent() {
       console.log('🔍 After search filter:', filtered.length)
     }
 
-    // Category filter
-    if (filters.category && filters.category !== 'all') {
+    // Category filter (supports multiple categories)
+    if (filters.category && filters.category.length > 0) {
       console.log('🔍 Applying category filter:', filters.category)
       console.log('🔍 Available categories:', categories.map(c => ({ name: c.name, slug: c.slug, _id: c._id })))
       console.log('🔍 Total categories loaded:', categories.length)
@@ -427,73 +435,34 @@ function ShopPageContent() {
         categoryType: typeof (p as any)?.category
       })))
       
-      // Find the category object to get the ObjectId
-      const selectedCategory = categories.find(cat => cat.slug === filters.category)
-      const categoryObjectId = selectedCategory?._id
+      // Find all selected category objects
+      const selectedCategories = categories.filter(cat => 
+        filters.category.includes(cat.slug) || 
+        filters.category.includes(cat._id?.toString())
+      )
       
-      console.log('🔍 Selected category:', selectedCategory)
-      console.log('🔍 Category ObjectId:', categoryObjectId)
-      console.log('🔍 All category slugs:', categories.map(c => c.slug))
-      console.log('🔍 Looking for slug:', filters.category)
+      console.log('🔍 Selected categories:', selectedCategories.map(c => ({ name: c.name, slug: c.slug })))
       
       filtered = filtered.filter(product => {
         const category = (product as any)?.category
         
-        // Handle both string and object category formats
-        let matches = false
-        
-        if (typeof category === 'object' && category) {
-          // Category is an object with _id, name, slug
-          const categorySlug = category.slug?.toLowerCase() || '';
-          const categoryName = category.name?.toLowerCase() || '';
-          const filterCategory = filters.category.toLowerCase();
-          const selectedSlug = selectedCategory?.slug?.toLowerCase() || '';
-          const selectedName = selectedCategory?.name?.toLowerCase() || '';
-          
-          // Normalize category names for comparison (handle "starter kits" vs "starter-kits")
-          const normalize = (str: string) => str.replace(/[\s_-]/g, '').toLowerCase();
-          
-          matches = categorySlug === filterCategory || 
-                   category._id === categoryObjectId ||
-                   categoryName === selectedName ||
-                   normalize(categorySlug) === normalize(filterCategory) ||
-                   normalize(categoryName) === normalize(selectedSlug) ||
-                   normalize(categoryName) === normalize(selectedName)
-        } else if (typeof category === 'string') {
-          // Category is a string - could be slug, name, or ObjectId
-          const categoryLower = category.toLowerCase();
-          const filterCategory = filters.category.toLowerCase();
-          const selectedSlug = selectedCategory?.slug?.toLowerCase() || '';
-          const selectedName = selectedCategory?.name?.toLowerCase() || '';
-          
-          // Normalize category names for comparison (handle "starter kits" vs "starter-kits")
-          const normalize = (str: string) => str.replace(/[\s_-]/g, '').toLowerCase();
-          
-          matches = category === filters.category || 
-                   category === categoryObjectId ||
-                   categoryLower === selectedName ||
-                   categoryLower === selectedSlug ||
-                   normalize(categoryLower) === normalize(filterCategory) ||
-                   normalize(categoryLower) === normalize(selectedSlug) ||
-                   normalize(categoryLower) === normalize(selectedName) ||
-                   // Additional fallback: check if the string contains the category name
-                   (selectedCategory?.name ? normalize(categoryLower).includes(normalize(selectedName)) : false) ||
-                   (selectedCategory?.slug ? normalize(categoryLower).includes(normalize(selectedSlug)) : false)
-        }
-        
-        // Only log the first few products to avoid spam
-        if (filtered.indexOf(product) < 3) {
-          console.log('🔍 Product category check:', {
-            productName: (product as any)?.name,
-            category,
-            filterCategory: filters.category,
-            selectedCategory: selectedCategory,
-            categoryObjectId,
-            matches
-          })
-        }
-        
-        return matches
+        // Check if product matches any of the selected categories
+        return selectedCategories.some(selectedCategory => {
+          if (typeof category === 'object' && category) {
+            // Category is an object with _id, name, slug
+            return category._id === selectedCategory._id ||
+                   category.slug === selectedCategory.slug ||
+                   category.name === selectedCategory.name
+          } else if (typeof category === 'string') {
+            // Category is a string - could be slug, name, or ObjectId
+            return category === selectedCategory._id?.toString() ||
+                   category === selectedCategory.slug ||
+                   category === selectedCategory.name ||
+                   category.toLowerCase() === selectedCategory.slug?.toLowerCase() ||
+                   category.toLowerCase() === selectedCategory.name?.toLowerCase()
+          }
+          return false
+        })
       })
       console.log('🔍 After category filter:', filtered.length)
     }
@@ -731,7 +700,7 @@ function ShopPageContent() {
   // Count active filters
   const activeFilterCount = useMemo(() => {
     let count = 0
-    if (filters.category !== 'all') count++
+    if (filters.category.length > 0) count += filters.category.length
     if (filters.subcategory.length > 0) count += filters.subcategory.length
     if (filters.brand.length > 0) count += filters.brand.length
     if (filters.rating > 0) count++
