@@ -219,8 +219,9 @@ exports.getAllProducts = async (req, res) => {
             .limit(limit)
             .lean();
             
-        // Manually populate category field for products
+        // Manually populate category and subcategory fields for products
         for (let product of products) {
+            // Populate category
             if (product.category && typeof product.category === 'string') {
                 // Check if it's a valid ObjectId first
                 const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.category);
@@ -244,6 +245,35 @@ exports.getAllProducts = async (req, res) => {
                         _id: category._id,
                         name: category.name,
                         slug: category.slug
+                    };
+                }
+            }
+            
+            // Populate subcategory if it exists and is a string
+            if (product.subcategory && typeof product.subcategory === 'string') {
+                const Subcategory = require('../Models/subcategory-model');
+                // Check if it's a valid ObjectId first
+                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.subcategory);
+                
+                let subcategoryObj;
+                if (isObjectId) {
+                    // If it's a valid ObjectId, try to find by _id
+                    subcategoryObj = await Subcategory.findById(product.subcategory);
+                } else {
+                    // If it's not an ObjectId, try to find by slug or name
+                    subcategoryObj = await Subcategory.findOne({
+                        $or: [
+                            { slug: product.subcategory },
+                            { name: product.subcategory }
+                        ]
+                    });
+                }
+                
+                if (subcategoryObj) {
+                    product.subcategory = {
+                        _id: subcategoryObj._id,
+                        name: subcategoryObj.name,
+                        slug: subcategoryObj.slug
                     };
                 }
             }

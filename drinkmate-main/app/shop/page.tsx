@@ -445,24 +445,71 @@ function ShopPageContent() {
     // Subcategory filter (supports multiple subcategories)
     if (filters.subcategory && filters.subcategory.length > 0) {
       console.log('🔍 Applying subcategory filter:', filters.subcategory)
+      console.log('🔍 Sample product subcategories before filter:', filtered.slice(0, 3).map(p => ({
+        name: (p as any)?.name,
+        subcategory: (p as any)?.subcategory,
+        subcategoryType: typeof (p as any)?.subcategory
+      })))
+      
       filtered = filtered.filter(product => {
-        const subcategory = (product as any)?.subcategory
-        const subcategoryId = typeof subcategory === 'object' ? subcategory?._id : subcategory
-        const subcategorySlug = typeof subcategory === 'object' ? subcategory?.slug : null
-        const subcategoryName = typeof subcategory === 'object' ? subcategory?.name : subcategory
+        const productSubcategory = (product as any)?.subcategory
+        
+        // Handle different subcategory formats:
+        // 1. Object with _id, slug, name
+        // 2. String that could be ID, slug, or name
+        let subcategoryId: string | null = null
+        let subcategorySlug: string | null = null
+        let subcategoryName: string | null = null
+        
+        if (!productSubcategory) {
+          return false // No subcategory, skip
+        }
+        
+        if (typeof productSubcategory === 'object') {
+          subcategoryId = productSubcategory?._id?.toString() || null
+          subcategorySlug = productSubcategory?.slug || null
+          subcategoryName = productSubcategory?.name || null
+        } else if (typeof productSubcategory === 'string') {
+          // Could be ID, slug, or name - store as potential match for all
+          const subcategoryStr = productSubcategory.trim()
+          subcategoryId = subcategoryStr
+          subcategorySlug = subcategoryStr
+          subcategoryName = subcategoryStr
+        }
         
         // Check if product's subcategory matches any of the selected subcategories
-        return filters.subcategory.some(selectedSub => {
-          const matchesId = subcategoryId === selectedSub
-          const matchesSlug = subcategorySlug === selectedSub
-          const matchesName = subcategoryName && (
-            subcategoryName.toLowerCase().includes(selectedSub.toLowerCase()) ||
-            selectedSub.toLowerCase().includes(subcategoryName.toLowerCase())
-          )
-          return matchesId || matchesSlug || matchesName
+        const matches = filters.subcategory.some(selectedSub => {
+          const selectedSubLower = selectedSub.toLowerCase().trim()
+          
+          // Try matching by ID (as string)
+          if (subcategoryId && subcategoryId.toLowerCase() === selectedSubLower) return true
+          if (subcategoryId && subcategoryId.toString() === selectedSub) return true
+          
+          // Try matching by slug
+          if (subcategorySlug && subcategorySlug.toLowerCase() === selectedSubLower) return true
+          
+          // Try matching by name (case-insensitive partial match)
+          if (subcategoryName) {
+            const nameLower = subcategoryName.toLowerCase()
+            if (nameLower === selectedSubLower) return true
+            if (nameLower.includes(selectedSubLower) || selectedSubLower.includes(nameLower)) return true
+          }
+          
+          // Also try direct string comparison for the stored value
+          if (typeof productSubcategory === 'string' && productSubcategory.toLowerCase() === selectedSubLower) {
+            return true
+          }
+          
+          return false
         })
+        
+        return matches
       })
       console.log('🔍 After subcategory filter:', filtered.length)
+      console.log('🔍 Sample products after subcategory filter:', filtered.slice(0, 3).map(p => ({
+        name: (p as any)?.name,
+        subcategory: (p as any)?.subcategory
+      })))
     }
 
     // Price range filter

@@ -149,10 +149,11 @@ export default function ProductGrid({
     )
   }
 
-  // Empty state
-  if (products.length === 0) {
-    return <EmptyState isRTL={dir === "rtl"} />
-  }
+  // Empty state - removed to avoid duplicate with shop page's empty state
+  // The parent component (shop page) handles empty states more comprehensively
+  // if (products.length === 0) {
+  //   return <EmptyState isRTL={dir === "rtl"} />
+  // }
 
   const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
     console.log('handleAddToCart called with payload:', payload)
@@ -191,6 +192,12 @@ export default function ProductGrid({
     console.log('Final cart item:', cartItem)
     addItem(cartItem)
     triggerAddAnimation(cartItem)
+  }
+
+  // If no products, return empty div to avoid showing duplicate empty state
+  // (the parent shop page handles empty states)
+  if (convertedProducts.length === 0) {
+    return <div className={className}></div>
   }
 
   return (
