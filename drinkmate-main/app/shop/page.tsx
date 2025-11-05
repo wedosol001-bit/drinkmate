@@ -58,7 +58,13 @@ function ShopPageContent() {
   const [products, setProducts] = useState<Product[]>([])
   const [bundles, setBundles] = useState<Bundle[]>([])
   const [cylinders, setCylinders] = useState<CO2Cylinder[]>([])
-  const [categories, setCategories] = useState<Array<{ _id: string; name: string; slug: string; count?: number }>>([])
+  const [categories, setCategories] = useState<Array<{ 
+    _id: string; 
+    name: string; 
+    slug: string; 
+    count?: number;
+    subcategories?: Array<{ _id: string; name: string; slug: string }>
+  }>>([])
   const [brands, setBrands] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
