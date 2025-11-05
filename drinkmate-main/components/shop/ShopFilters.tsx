@@ -239,7 +239,7 @@ export default function ShopFilters({
 
   const getActiveFilterCount = useCallback(() => {
     let count = 0
-    if (filters.category !== 'all') count++
+    if (filters.category.length > 0) count += filters.category.length
     if (filters.subcategory.length > 0) count += filters.subcategory.length
     if (filters.brand.length > 0) count += filters.brand.length
     if (filters.rating > 0) count++
