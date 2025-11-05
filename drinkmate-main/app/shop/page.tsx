@@ -852,7 +852,7 @@ function ShopPageContent() {
 
   const handleClearFilters = useCallback(() => {
     const clearedFilters = {
-      category: 'all',
+      category: [] as string[],
       subcategory: [] as string[],
       priceRange: [0, 10000] as [number, number],
       brand: [] as string[],
