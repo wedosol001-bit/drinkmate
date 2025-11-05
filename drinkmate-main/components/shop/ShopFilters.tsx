@@ -34,7 +34,7 @@ interface FilterOption {
   color?: string
 }
 
-interface ShopFiltersProps {
+export interface ShopFiltersProps {
   filters: {
     category: string[]
     subcategory: string[]
