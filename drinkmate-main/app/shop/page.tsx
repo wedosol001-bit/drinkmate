@@ -287,10 +287,18 @@ function ShopPageContent() {
         )] as string[]
         setBrands(uniqueBrands)
         
+        // Debug: Check subcategories in products
+        const productsWithSubcategories = processedProducts.filter((p: any) => p.subcategory)
         console.log('📊 Processed products for stats:', {
           totalProducts: processedProducts.length,
           inStockCount: processedProducts.filter((p: any) => p.inStock).length,
           brands: uniqueBrands,
+          productsWithSubcategories: productsWithSubcategories.length,
+          sampleSubcategories: productsWithSubcategories.slice(0, 5).map((p: any) => ({
+            name: p.name,
+            subcategory: p.subcategory,
+            subcategoryType: typeof p.subcategory
+          })),
           sampleProduct: processedProducts[0]
         })
       }
@@ -651,6 +659,26 @@ function ShopPageContent() {
     return count
   }, [filters])
 
+  // Build a map of all subcategories from categories for matching
+  const subcategoryMap = useMemo(() => {
+    const map = new Map<string, { slug: string; _id: string; name: string }>()
+    categories.forEach(category => {
+      category.subcategories?.forEach((sub: any) => {
+        const slug = sub.slug || sub._id?.toString()
+        const _id = sub._id?.toString() || sub._id
+        const name = sub.name?.toLowerCase() || ''
+        
+        // Map by slug (primary key)
+        if (slug) map.set(slug, { slug, _id, name })
+        // Also map by ID
+        if (_id && _id !== slug) map.set(_id, { slug, _id, name })
+        // Also map by lowercase name
+        if (name && name !== slug && name !== _id) map.set(name, { slug, _id, name })
+      })
+    })
+    return map
+  }, [categories])
+
   // Calculate product counts for each filter option
   const filterCounts = useMemo(() => {
     const counts = {
@@ -690,14 +718,50 @@ function ShopPageContent() {
         counts.categories[categorySlug] = (counts.categories[categorySlug] || 0) + 1
       }
 
-      // Subcategory counts
+      // Subcategory counts - match product subcategory to category subcategory slugs
       const subcategory = (product as any)?.subcategory
-      const subcategorySlug = typeof subcategory === 'object' ? subcategory?.slug : subcategory
-      const subcategoryName = typeof subcategory === 'object' ? subcategory?.name : subcategory
-      if (subcategorySlug) {
-        counts.subcategories[subcategorySlug] = (counts.subcategories[subcategorySlug] || 0) + 1
-      } else if (subcategoryName) {
-        counts.subcategories[subcategoryName] = (counts.subcategories[subcategoryName] || 0) + 1
+      
+      if (subcategory) {
+        // Try to match product's subcategory to a known subcategory from categories
+        let matchedSubcategory: { slug: string; _id: string; name: string } | null = null
+        
+        if (typeof subcategory === 'object' && subcategory !== null) {
+          // Product has subcategory as object
+          const productSubId = subcategory._id?.toString() || subcategory._id
+          const productSubSlug = subcategory.slug
+          const productSubName = subcategory.name?.toLowerCase()
+          
+          // Try matching by slug first
+          if (productSubSlug && subcategoryMap.has(productSubSlug)) {
+            matchedSubcategory = subcategoryMap.get(productSubSlug)!
+          }
+          // Try matching by ID
+          else if (productSubId && subcategoryMap.has(productSubId)) {
+            matchedSubcategory = subcategoryMap.get(productSubId)!
+          }
+          // Try matching by name
+          else if (productSubName && subcategoryMap.has(productSubName)) {
+            matchedSubcategory = subcategoryMap.get(productSubName)!
+          }
+        } else if (typeof subcategory === 'string') {
+          // Product has subcategory as string (could be ID, slug, or name)
+          const subcategoryStr = subcategory.trim()
+          const subcategoryStrLower = subcategoryStr.toLowerCase()
+          
+          // Try matching by exact value
+          if (subcategoryMap.has(subcategoryStr)) {
+            matchedSubcategory = subcategoryMap.get(subcategoryStr)!
+          }
+          // Try matching by lowercase
+          else if (subcategoryMap.has(subcategoryStrLower)) {
+            matchedSubcategory = subcategoryMap.get(subcategoryStrLower)!
+          }
+        }
+        
+        // Count using the matched subcategory's slug (the canonical key)
+        if (matchedSubcategory) {
+          counts.subcategories[matchedSubcategory.slug] = (counts.subcategories[matchedSubcategory.slug] || 0) + 1
+        }
       }
 
       // Brand counts
@@ -731,8 +795,19 @@ function ShopPageContent() {
       }
     })
 
+    // Debug: Log subcategory counts
+    console.log('🔍 Filter counts calculated:', {
+      totalSubcategoryKeys: Object.keys(counts.subcategories).length,
+      subcategoryCounts: counts.subcategories,
+      sampleProducts: products.slice(0, 3).map((p: any) => ({
+        name: p.name,
+        subcategory: p.subcategory,
+        subcategoryType: typeof p.subcategory
+      }))
+    })
+    
     return counts
-  }, [products])
+  }, [products, subcategoryMap])
 
   // Event handlers
   const handleFiltersChange = useCallback((newFilters: any) => {

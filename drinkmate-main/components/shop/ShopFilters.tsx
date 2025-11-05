@@ -88,6 +88,20 @@ export default function ShopFilters({
   onClose
 }: ShopFiltersProps) {
   const { t, language } = useTranslation() as any
+  
+  // Debug: Log subcategories and filter counts
+  useEffect(() => {
+    console.log('🔍 ShopFilters - Categories with subcategories:', categories.map(cat => ({
+      name: cat.name,
+      slug: cat.slug,
+      subcategories: cat.subcategories?.map((sub: any) => ({
+        _id: sub._id,
+        slug: sub.slug,
+        name: sub.name
+      })) || []
+    })))
+    console.log('🔍 ShopFilters - Filter counts subcategories:', filterCounts?.subcategories)
+  }, [categories, filterCounts])
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['category', 'price']))
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(filters.priceRange)
@@ -370,8 +384,17 @@ export default function ShopFilters({
                   <div className="ml-8 space-y-1 border-l-2 border-gray-200 pl-4">
                     {categorySubcategories.map((subcategory) => {
                       const subcategorySlug = subcategory.slug || subcategory._id
-                      const subcategoryCount = filterCounts?.subcategories[subcategorySlug] || 0
-                      const isSelected = filters.subcategory.includes(subcategorySlug)
+                      // Try multiple keys for matching (slug, _id, name)
+                      const subcategoryId = subcategory._id?.toString() || subcategory._id
+                      const subcategoryName = subcategory.name?.toLowerCase() || null
+                      const subcategoryCount = 
+                        filterCounts?.subcategories[subcategorySlug] || 
+                        filterCounts?.subcategories[subcategoryId] ||
+                        (subcategoryName ? filterCounts?.subcategories[subcategoryName] : 0) ||
+                        0
+                      const isSelected = filters.subcategory.includes(subcategorySlug) || 
+                                        filters.subcategory.includes(subcategoryId) ||
+                                        (subcategoryName && filters.subcategory.includes(subcategoryName))
                       
                       return (
                         <div 
