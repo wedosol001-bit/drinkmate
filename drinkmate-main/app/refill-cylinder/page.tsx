@@ -396,7 +396,7 @@ export default function CO2() {
             className="rounded-full w-12 h-12 flex items-center justify-center border-2 border-white bg-white/90 text-gray-700 shadow-sm z-10 hover:bg-white hover:border-[#12d6fa] hover:scale-110 transition-all duration-300 backdrop-blur-sm"
             onClick={prevRefillSlide}
           >
-            <ChevronLeft className="w-6 h-6" />
+            {isRTL ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
           </Button>
 
           {/* Enhanced Main Content Area */}
@@ -463,7 +463,7 @@ export default function CO2() {
             className="rounded-full w-12 h-12 flex items-center justify-center border-2 border-white bg-white/90 text-gray-700 shadow-sm z-10 hover:bg-white hover:border-[#12d6fa] hover:scale-110 transition-all duration-300 backdrop-blur-sm"
             onClick={nextRefillSlide}
           >
-            <ChevronRight className="w-6 h-6" />
+            {isRTL ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
           </Button>
 
           {/* Enhanced Slideshow Dots */}

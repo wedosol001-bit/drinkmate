@@ -67,7 +67,7 @@ function ShopPageContent() {
   // Filter and view state
   const [filters, setFilters] = useState({
     category: 'all',
-    subcategory: 'all',
+    subcategory: [] as string[],
     priceRange: [0, 10000] as [number, number],
     brand: [] as string[],
     rating: 0,
@@ -165,9 +165,10 @@ function ShopPageContent() {
 
     // Only update state if values are different to prevent loops
     setFilters(prevFilters => {
+      const subcategory = params.get('subcategory') ? params.get('subcategory')!.split(',').filter(Boolean) : []
       const newFilters = {
         category: finalCategory,
-        subcategory: 'all', // Reset subcategory when reading from URL
+        subcategory: subcategory, // Support multiple subcategories from URL
         priceRange: [priceMin, priceMax] as [number, number],
         brand,
         rating,
@@ -204,6 +205,7 @@ function ShopPageContent() {
     const params = new URLSearchParams()
     
     if (newFilters.category !== 'all') params.set('cat', newFilters.category)
+    if (newFilters.subcategory.length > 0) params.set('subcategory', newFilters.subcategory.join(','))
     if (newFilters.priceRange[0] > 0) params.set('priceMin', newFilters.priceRange[0].toString())
     if (newFilters.priceRange[1] < 10000) params.set('priceMax', newFilters.priceRange[1].toString())
     if (newFilters.brand.length > 0) params.set('brand', newFilters.brand.join(','))
@@ -294,7 +296,13 @@ function ShopPageContent() {
       }
 
       if (categoriesResponse.success && categoriesResponse.categories) {
-        setCategories(categoriesResponse.categories)
+        // Filter out test category from the list
+        const filteredCategories = categoriesResponse.categories.filter(
+          (cat: any) => 
+            cat.slug?.toLowerCase() !== 'test-category' && 
+            cat.name?.toLowerCase() !== 'test category'
+        )
+        setCategories(filteredCategories)
       }
 
       // Set bundles and cylinders (if available)
@@ -434,8 +442,8 @@ function ShopPageContent() {
       console.log('🔍 After category filter:', filtered.length)
     }
 
-    // Subcategory filter
-    if (filters.subcategory && filters.subcategory !== 'all') {
+    // Subcategory filter (supports multiple subcategories)
+    if (filters.subcategory && filters.subcategory.length > 0) {
       console.log('🔍 Applying subcategory filter:', filters.subcategory)
       filtered = filtered.filter(product => {
         const subcategory = (product as any)?.subcategory
@@ -443,15 +451,16 @@ function ShopPageContent() {
         const subcategorySlug = typeof subcategory === 'object' ? subcategory?.slug : null
         const subcategoryName = typeof subcategory === 'object' ? subcategory?.name : subcategory
         
-        // Check ID, slug, and name matches
-        const matchesId = subcategoryId === filters.subcategory
-        const matchesSlug = subcategorySlug === filters.subcategory
-        const matchesName = subcategoryName && (
-          subcategoryName.toLowerCase().includes(filters.subcategory.toLowerCase()) ||
-          filters.subcategory.toLowerCase().includes(subcategoryName.toLowerCase())
-        )
-        
-        return matchesId || matchesSlug || matchesName
+        // Check if product's subcategory matches any of the selected subcategories
+        return filters.subcategory.some(selectedSub => {
+          const matchesId = subcategoryId === selectedSub
+          const matchesSlug = subcategorySlug === selectedSub
+          const matchesName = subcategoryName && (
+            subcategoryName.toLowerCase().includes(selectedSub.toLowerCase()) ||
+            selectedSub.toLowerCase().includes(subcategoryName.toLowerCase())
+          )
+          return matchesId || matchesSlug || matchesName
+        })
       })
       console.log('🔍 After subcategory filter:', filtered.length)
     }
@@ -584,7 +593,7 @@ function ShopPageContent() {
   const activeFilterCount = useMemo(() => {
     let count = 0
     if (filters.category !== 'all') count++
-    if (filters.subcategory !== 'all') count++
+    if (filters.subcategory.length > 0) count += filters.subcategory.length
     if (filters.brand.length > 0) count += filters.brand.length
     if (filters.rating > 0) count++
     if (filters.inStock) count++
@@ -689,7 +698,7 @@ function ShopPageContent() {
   const handleClearFilters = useCallback(() => {
     const clearedFilters = {
       category: 'all',
-      subcategory: 'all',
+      subcategory: [] as string[],
       priceRange: [0, 10000] as [number, number],
       brand: [] as string[],
       rating: 0,

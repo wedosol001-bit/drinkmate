@@ -37,7 +37,7 @@ interface FilterOption {
 interface ShopFiltersProps {
   filters: {
     category: string
-    subcategory: string
+    subcategory: string[]
     priceRange: [number, number]
     brand: string[]
     rating: number
@@ -89,6 +89,7 @@ export default function ShopFilters({
 }: ShopFiltersProps) {
   const { t, language } = useTranslation() as any
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['category', 'price']))
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(filters.priceRange)
 
   // Update local price range when filters change
@@ -108,6 +109,18 @@ export default function ShopFilters({
     })
   }, [])
 
+  const toggleCategory = useCallback((categorySlug: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(categorySlug)) {
+        newSet.delete(categorySlug)
+      } else {
+        newSet.add(categorySlug)
+      }
+      return newSet
+    })
+  }, [])
+
   const handleFilterChange = useCallback((key: string, value: any) => {
     onFiltersChange({ ...filters, [key]: value })
   }, [filters, onFiltersChange])
@@ -117,18 +130,42 @@ export default function ShopFilters({
     const newCategory = filters.category === categorySlug ? 'all' : categorySlug
     console.log('🔧 ShopFilters: newCategory will be:', newCategory)
     
-    // Update both category and subcategory in a single call
+    // When category changes, clear subcategories for that category only
+    // Keep subcategories from other categories if any
+    const selectedCategory = categories.find(cat => cat.slug === categorySlug)
+    let updatedSubcategories = [...filters.subcategory]
+    
+    if (newCategory === 'all') {
+      // Clear all subcategories when "all" is selected
+      updatedSubcategories = []
+    } else if (selectedCategory) {
+      // Remove subcategories that belong to the previously selected category
+      const prevCategory = categories.find(cat => cat.slug === filters.category)
+      if (prevCategory && prevCategory.subcategories) {
+        const prevSubcategorySlugs = prevCategory.subcategories.map(sub => sub.slug)
+        updatedSubcategories = updatedSubcategories.filter(sub => !prevSubcategorySlugs.includes(sub))
+      }
+      
+      // Auto-expand category when selected (if it has subcategories)
+      if (selectedCategory.subcategories && selectedCategory.subcategories.length > 0) {
+        setExpandedCategories(prev => new Set(prev).add(categorySlug))
+      }
+    }
+    
     const newFilters = {
       ...filters,
       category: newCategory,
-      subcategory: newCategory !== 'all' ? 'all' : filters.subcategory
+      subcategory: updatedSubcategories
     }
     onFiltersChange(newFilters)
-  }, [filters, onFiltersChange])
+  }, [filters, onFiltersChange, categories])
 
   const handleSubcategoryChange = useCallback((subcategorySlug: string) => {
-    const newSubcategory = filters.subcategory === subcategorySlug ? 'all' : subcategorySlug
-    handleFilterChange('subcategory', newSubcategory)
+    // Toggle subcategory selection (support multiple selections)
+    const newSubcategories = filters.subcategory.includes(subcategorySlug)
+      ? filters.subcategory.filter(sub => sub !== subcategorySlug)
+      : [...filters.subcategory, subcategorySlug]
+    handleFilterChange('subcategory', newSubcategories)
   }, [filters.subcategory, handleFilterChange])
 
   const handleBrandChange = useCallback((brand: string) => {
@@ -171,7 +208,7 @@ export default function ShopFilters({
   const getActiveFilterCount = useCallback(() => {
     let count = 0
     if (filters.category !== 'all') count++
-    if (filters.subcategory !== 'all') count++
+    if (filters.subcategory.length > 0) count += filters.subcategory.length
     if (filters.brand.length > 0) count += filters.brand.length
     if (filters.rating > 0) count++
     if (filters.inStock) count++
@@ -247,7 +284,7 @@ export default function ShopFilters({
         )}
       </div>
 
-      {/* Category Filter */}
+      {/* Category Filter with Expandable Subcategories */}
       <FilterSection
         title={t("shop.filters.categories")}
         sectionKey="category"
@@ -272,89 +309,110 @@ export default function ShopFilters({
           </div>
           {categories.map((category) => {
             const count = filterCounts?.categories[category.slug] || 0
+            const isExpanded = expandedCategories.has(category.slug)
+            const hasSubcategories = category.subcategories && category.subcategories.length > 0
+            const categorySubcategories = category.subcategories || []
+            
             return (
-              <div key={category._id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
-                <div className="flex items-center space-x-3">
-                  <Checkbox
-                    id={`category-${category.slug}`}
-                    checked={filters.category === category.slug}
-                    onCheckedChange={() => handleCategoryChange(category.slug)}
-                    className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
-                  />
-                  <Label htmlFor={`category-${category.slug}`} className="text-sm font-medium cursor-pointer">
-                    {getCategoryLabel(category)}
-                  </Label>
+              <div key={category._id} className="space-y-1">
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                  <div className="flex items-center space-x-3 flex-1">
+                    <Checkbox
+                      id={`category-${category.slug}`}
+                      checked={filters.category === category.slug}
+                      onCheckedChange={() => {
+                        handleCategoryChange(category.slug)
+                        // Auto-expand if category has subcategories and is being selected
+                        if (filters.category !== category.slug && hasSubcategories) {
+                          setExpandedCategories(prev => new Set(prev).add(category.slug))
+                        }
+                      }}
+                      className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
+                    />
+                    <Label 
+                      htmlFor={`category-${category.slug}`} 
+                      className="text-sm font-medium cursor-pointer flex-1"
+                    >
+                      {getCategoryLabel(category)}
+                    </Label>
+                    {hasSubcategories && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleCategory(category.slug)
+                        }}
+                        className="p-1 hover:bg-gray-200 rounded transition-colors"
+                        aria-label={isExpanded ? "Collapse subcategories" : "Expand subcategories"}
+                      >
+                        {isExpanded ? (
+                          <ChevronUp className="w-4 h-4 text-gray-600" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-gray-600" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      "px-2 py-1",
+                      count > 0 
+                        ? "bg-brand-100 text-brand-700" 
+                        : "bg-gray-100 text-gray-400"
+                    )}
+                  >
+                    {count}
+                  </Badge>
                 </div>
-                <Badge 
-                  variant="secondary" 
-                  className={cn(
-                    "px-2 py-1",
-                    count > 0 
-                      ? "bg-brand-100 text-brand-700" 
-                      : "bg-gray-100 text-gray-400"
-                  )}
-                >
-                  {count}
-                </Badge>
+                
+                {/* Subcategories nested under category */}
+                {hasSubcategories && isExpanded && (
+                  <div className="ml-8 space-y-1 border-l-2 border-gray-200 pl-4">
+                    {categorySubcategories.map((subcategory) => {
+                      const subcategorySlug = subcategory.slug || subcategory._id
+                      const subcategoryCount = filterCounts?.subcategories[subcategorySlug] || 0
+                      const isSelected = filters.subcategory.includes(subcategorySlug)
+                      
+                      return (
+                        <div 
+                          key={subcategory._id} 
+                          className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50"
+                        >
+                          <div className="flex items-center space-x-2 flex-1">
+                            <Checkbox
+                              id={`subcategory-${subcategorySlug}`}
+                              checked={isSelected}
+                              onCheckedChange={() => handleSubcategoryChange(subcategorySlug)}
+                              className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
+                            />
+                            <Label 
+                              htmlFor={`subcategory-${subcategorySlug}`} 
+                              className="text-sm font-normal cursor-pointer text-gray-700"
+                            >
+                              {subcategory.name || subcategorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </Label>
+                          </div>
+                          <Badge 
+                            variant="secondary" 
+                            className={cn(
+                              "px-2 py-0.5 text-xs",
+                              subcategoryCount > 0 
+                                ? "bg-brand-100 text-brand-700" 
+                                : "bg-gray-100 text-gray-400"
+                            )}
+                          >
+                            {subcategoryCount}
+                          </Badge>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             )
           })}
         </div>
       </FilterSection>
-
-      {/* Subcategory Filter */}
-      {filters.category !== 'all' && (
-        <FilterSection
-          title="Subcategories"
-          sectionKey="subcategory"
-          icon={<Tag className="w-4 h-4 text-brand-600" />}
-        >
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="subcategory-all"
-                  checked={filters.subcategory === 'all'}
-                  onCheckedChange={() => handleSubcategoryChange('all')}
-                  className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
-                />
-                <Label htmlFor="subcategory-all" className="text-sm font-medium cursor-pointer">
-                  All Subcategories
-                </Label>
-              </div>
-              <Badge variant="secondary" className="bg-brand-100 text-brand-700 px-2 py-1">
-                {productCount}
-              </Badge>
-            </div>
-            {Object.entries(filterCounts?.subcategories || {}).map(([subcategorySlug, count]) => (
-              <div key={subcategorySlug} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
-                <div className="flex items-center space-x-3">
-                  <Checkbox
-                    id={`subcategory-${subcategorySlug}`}
-                    checked={filters.subcategory === subcategorySlug}
-                    onCheckedChange={() => handleSubcategoryChange(subcategorySlug)}
-                    className="data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500"
-                  />
-                  <Label htmlFor={`subcategory-${subcategorySlug}`} className="text-sm font-medium cursor-pointer">
-                    {subcategorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </Label>
-                </div>
-                <Badge 
-                  variant="secondary" 
-                  className={cn(
-                    "px-2 py-1",
-                    count > 0 
-                      ? "bg-brand-100 text-brand-700" 
-                      : "bg-gray-100 text-gray-400"
-                  )}
-                >
-                  {count}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </FilterSection>
-      )}
 
       {/* Price Range Filter */}
       <FilterSection
