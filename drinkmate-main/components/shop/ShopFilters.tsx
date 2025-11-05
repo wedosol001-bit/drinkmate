@@ -392,9 +392,11 @@ export default function ShopFilters({
                         filterCounts?.subcategories[subcategoryId] ||
                         (subcategoryName ? filterCounts?.subcategories[subcategoryName] : 0) ||
                         0
-                      const isSelected = filters.subcategory.includes(subcategorySlug) || 
-                                        filters.subcategory.includes(subcategoryId) ||
-                                        (subcategoryName && filters.subcategory.includes(subcategoryName))
+                      const isSelected = Boolean(
+                        filters.subcategory.includes(subcategorySlug) || 
+                        filters.subcategory.includes(subcategoryId) ||
+                        (subcategoryName && filters.subcategory.includes(subcategoryName))
+                      )
                       
                       return (
                         <div 
