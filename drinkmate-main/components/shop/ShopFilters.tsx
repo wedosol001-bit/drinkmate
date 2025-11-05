@@ -36,7 +36,7 @@ interface FilterOption {
 
 interface ShopFiltersProps {
   filters: {
-    category: string
+    category: string[]
     subcategory: string[]
     priceRange: [number, number]
     brand: string[]
