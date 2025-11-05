@@ -343,7 +343,7 @@ function ShopPageContent() {
   // Initial fetch
   useEffect(() => {
     fetchData()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   // Refetch when subcategory filter changes (use backend filtering for efficiency)
   // Note: We only refetch if subcategory filter is active, otherwise rely on client-side filtering
@@ -355,7 +355,7 @@ function ShopPageContent() {
         subcategory: subcategoryParam
       })
     }
-  }, [filters.subcategory.join(',')]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filters.subcategory.join(',')])
 
   // Build a map of all subcategories from categories for matching
   const subcategoryMap = useMemo(() => {
@@ -1122,7 +1122,7 @@ function ShopPageContent() {
               <p className="text-gray-600">{error}</p>
             </div>
             <Button 
-              onClick={fetchData} 
+              onClick={() => fetchData()} 
               className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-xl"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
