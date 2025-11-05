@@ -29,7 +29,8 @@ async function checkAqualineFinal() {
       console.log('Is bundle?', isBundle);
       
       // Check if matches sodamakers category
-      const matches = categorySlug === 'starter-kits' || 
+      const matches = categorySlug === 'kits' || 
+                     categorySlug === 'starter-kits' || 
                      categorySlug === 'starter kits' || 
                      categoryName.includes('starter') ||
                      categorySlug.includes('sodamaker');

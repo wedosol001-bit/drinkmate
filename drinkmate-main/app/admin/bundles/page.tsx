@@ -1558,7 +1558,7 @@ export default function BundlesPage() {
                       id="subcategory"
                       value={formData.subcategory}
                       onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                      placeholder="e.g., Starter Kit, Premium Bundle"
+                      placeholder="e.g., Starter Kit, Premium Bundle, Standard Kit"
                     />
                     {formData.category && (
                       <div className="text-xs text-gray-500">

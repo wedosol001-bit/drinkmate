@@ -135,7 +135,7 @@ export default function SodamakersPage() {
       
       setBundleSubcategorySections(bundleSections)
 
-      // Fetch categories and find BOTH Soda Makers AND Starter Kits categories
+      // Fetch categories and find BOTH Soda Makers AND Kits categories
       const categoriesResp = await shopAPI.getCategories()
       const categoriesWithSubs = categoriesResp.categories || []
       
@@ -149,22 +149,21 @@ export default function SodamakersPage() {
                slug === 'soda-makers'
       })
       
-      // Find Starter Kits category (separate category)
-      const starterKitsCat = categoriesWithSubs.find((c: any) => {
+      // Find Kits category (separate category)
+      const kitsCat = categoriesWithSubs.find((c: any) => {
         const name = (c.name || '').toLowerCase()
         const slug = (c.slug || '').toLowerCase()
-        return name.includes('starter') || 
-               slug.includes('starter-kit') || 
-               slug === 'starter-kits' ||
-               slug === 'starterkits'
+        return name === 'kits' || 
+               slug === 'kits' ||
+               (name.includes('kit') && !name.includes('starter'))
       })
 
       const sodaMakersSlug = sodaMakersCat?.slug || 'sodamakers'
-      const starterKitsSlug = starterKitsCat?.slug || 'starter-kits'
+      const kitsSlug = kitsCat?.slug || 'kits'
 
       // Fetch products from BOTH categories separately (keep them separate for grouping)
       let sodaMakerProducts = [];
-      let starterKitProducts = [];
+      let kitProducts = [];
       
       try {
         // Fetch from Soda Makers category
@@ -177,15 +176,15 @@ export default function SodamakersPage() {
       }
       
       try {
-        // Fetch from Starter Kits category (if different from soda makers)
-        if (starterKitsSlug !== sodaMakersSlug && starterKitsCat) {
-          const starterKitsResp = await shopAPI.getProductsByCategory(starterKitsSlug, { limit: 100 })
-          starterKitProducts = starterKitsResp.products || starterKitsResp.data?.products || []
-          console.log(`Found ${starterKitProducts.length} products from Starter Kits category (${starterKitsSlug})`)
+        // Fetch from Kits category (if different from soda makers)
+        if (kitsSlug !== sodaMakersSlug && kitsCat) {
+          const kitsResp = await shopAPI.getProductsByCategory(kitsSlug, { limit: 100 })
+          kitProducts = kitsResp.products || kitsResp.data?.products || []
+          console.log(`Found ${kitProducts.length} products from Kits category (${kitsSlug})`)
         }
       } catch (apiError) {
-        console.error('API Error fetching Starter Kits products:', apiError);
-        starterKitProducts = [];
+        console.error('API Error fetching Kits products:', apiError);
+        kitProducts = [];
       }
 
       // Helper to pick first/primary image
@@ -270,11 +269,26 @@ export default function SodamakersPage() {
         }
       })
 
-      // Format starter kit products (keep separate, they go under "Starter Kits" heading)
-      const formattedStarterKitProducts = starterKitProducts.map((product: any) => {
+      // Format kit products (keep separate, they go under "Kits" heading)
+      const formattedKitProducts = kitProducts.map((product: any) => {
         const productImage = pickImage(product.images)
         const convertedVariants = convertVariants(product, productImage)
         const hasVariants = convertedVariants.length > 0 || product.hasVariants === true
+        
+        // Get subcategory name for kits
+        const getKitSubcategoryName = (product: any): string | null => {
+          const subcategory = product.subcategory;
+          if (typeof subcategory === 'object' && subcategory !== null) {
+            return subcategory.name || null;
+          }
+          if (typeof subcategory === 'string' && subcategory.trim()) {
+            const subcategoryLower = subcategory.toLowerCase().trim();
+            if (subcategoryLower.includes('standard') || subcategoryLower === 'standard') return 'Standard';
+            if (subcategoryLower.includes('starter') || subcategoryLower === 'starter') return 'Starter';
+            if (subcategoryLower.includes('premium') || subcategoryLower === 'premium') return 'Premium';
+          }
+          return null;
+        }
         
         return {
           _id: product._id,
@@ -285,9 +299,9 @@ export default function SodamakersPage() {
           price: product.price,
           originalPrice: product.originalPrice,
           image: productImage,
-          category: "starter-kits",
+          category: "kits",
           subcategory: (typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id) || product.subcategory,
-          subcategoryName: null, // Starter kits don't have subcategories
+          subcategoryName: getKitSubcategoryName(product), // Kits have subcategories: standard, starter, premium
           rating: product.rating || product.averageRating || 0,
           reviewCount: product.reviewsCount || product.reviewCount || 0,
           reviews: product.reviewsCount || product.reviewCount || 0,
@@ -302,7 +316,7 @@ export default function SodamakersPage() {
       })
 
       // Combine all products for setAllSodaMakers (for backward compatibility)
-      const allFormattedProducts = [...formattedSodaMakerProducts, ...formattedStarterKitProducts]
+      const allFormattedProducts = [...formattedSodaMakerProducts, ...formattedKitProducts]
       setAllSodaMakers(allFormattedProducts)
 
       // Group soda maker products by subcategory
@@ -336,13 +350,44 @@ export default function SodamakersPage() {
         }
       })
       
-      // Add Starter Kits section (if there are any starter kit products)
-      if (formattedStarterKitProducts.length > 0) {
-        productSections.push({
-          _id: 'starter-kits',
-          name: 'Starter Kits',
-          products: formattedStarterKitProducts
+      // Add Kits section (if there are any kit products)
+      if (formattedKitProducts.length > 0) {
+        // Group kit products by subcategory (standard, starter, premium)
+        const kitsBySubcategory: Record<string, Product[]> = {}
+        
+        formattedKitProducts.forEach((product: any) => {
+          const subcategoryName = product.subcategoryName || 'Other'
+          if (!kitsBySubcategory[subcategoryName]) {
+            kitsBySubcategory[subcategoryName] = []
+          }
+          kitsBySubcategory[subcategoryName].push(product)
         })
+        
+        // Create sections for each kit subcategory (order: Standard, Starter, Premium)
+        const kitSubcategoryOrder = ['Standard', 'Starter', 'Premium']
+        const orderedKitSubcategories = [
+          ...kitSubcategoryOrder.filter(name => kitsBySubcategory[name]),
+          ...Object.keys(kitsBySubcategory).filter(name => !kitSubcategoryOrder.includes(name))
+        ]
+        
+        orderedKitSubcategories.forEach(subcategoryName => {
+          if (kitsBySubcategory[subcategoryName] && kitsBySubcategory[subcategoryName].length > 0) {
+            productSections.push({
+              _id: `kits-${subcategoryName.toLowerCase().replace(/\s+/g, '-')}`,
+              name: `Kits - ${subcategoryName}`,
+              products: kitsBySubcategory[subcategoryName]
+            })
+          }
+        })
+        
+        // If no subcategories, add as a single "Kits" section
+        if (orderedKitSubcategories.length === 0) {
+          productSections.push({
+            _id: 'kits',
+            name: 'Kits',
+            products: formattedKitProducts
+          })
+        }
       }
       
       setSubcategorySections(productSections)

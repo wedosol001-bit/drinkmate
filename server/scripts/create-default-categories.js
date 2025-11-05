@@ -43,8 +43,8 @@ db.once('open', async () => {
         isActive: true
       },
       {
-        name: 'Starter Kits',
-        slug: 'starter-kits',
+        name: 'Kits',
+        slug: 'kits',
         description: 'Complete starter packages',
         isActive: true
       }
@@ -124,18 +124,25 @@ db.once('open', async () => {
         isActive: true
       },
       
-      // Starter Kits subcategories
+      // Kits subcategories
       {
-        name: 'Basic Kits',
-        slug: 'basic-kits',
+        name: 'Standard',
+        slug: 'standard',
+        description: 'Standard starter packages',
+        category: createdCategories[3]._id,
+        isActive: true
+      },
+      {
+        name: 'Starter',
+        slug: 'starter',
         description: 'Essential starter packages',
         category: createdCategories[3]._id,
         isActive: true
       },
       {
-        name: 'Premium Kits',
-        slug: 'premium-kits',
-        description: 'Advanced starter packages',
+        name: 'Premium',
+        slug: 'premium',
+        description: 'Premium starter packages',
         category: createdCategories[3]._id,
         isActive: true
       }

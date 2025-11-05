@@ -53,7 +53,7 @@ db.once('open', async () => {
       { name: 'Soda Makers', slug: 'sodamakers', isActive: true },
       { name: 'Flavors', slug: 'flavors', isActive: true },
       { name: 'Accessories', slug: 'accessories', isActive: true },
-      { name: 'Starter Kits', slug: 'starter-kits', isActive: true }
+      { name: 'Kits', slug: 'kits', isActive: true }
     ];
     
     const createdCategories = [];
@@ -151,8 +151,8 @@ db.once('open', async () => {
         slug: 'drinkmate-starter-kit',
         description: 'Complete starter kit including soda maker, 3 flavor syrups, CO2 cylinder, and 2 BPA-free bottles. Everything you need to start making soda at home.',
         descriptionAr: 'طقم درينكمايت للمبتدئين - طقم مبتدئين كامل يشمل آلة الصودا، 3 شراب نكهات، أسطوانة CO2، وزجاجتين خاليتين من BPA. كل ما تحتاجه لبدء صنع الصودا في المنزل.',
-        category: createdCategories[3]._id, // Starter Kits category
-        subcategory: 'basic-kits',
+        category: createdCategories[3]._id, // Kits category
+        subcategory: 'starter', // Updated to use new subcategory
         price: 399.99,
         priceCents: 39999,
         currency: 'SAR',
@@ -189,7 +189,7 @@ db.once('open', async () => {
     console.log('- /shop/sodamakers (soda makers)');
     console.log('- /shop/flavors (flavors)');
     console.log('- /shop/accessories (accessories)');
-    console.log('- /shop/starter-kits (starter kits)');
+    console.log('- /shop/kits (kits)');
     
   } catch (error) {
     console.error('Error during seeding:', error);

@@ -241,7 +241,7 @@ export default function ShopFilters({
     if (slug.includes('accessor') || name.includes('accessor')) return t('home.productCategories.accessories')
     if (slug.includes('flavor') || name.includes('flavor')) return t('home.productCategories.premiumItalianFlavors')
     if (slug.includes('co2') || name.includes('co2')) return t('home.productCategories.co2')
-    if (slug.includes('starter') || name.includes('starter')) return language === 'AR' ? 'مجموعات البداية' : 'Starter Kits'
+    if (slug.includes('kit') || name.includes('kit')) return language === 'AR' ? 'مجموعات' : 'Kits'
     if (name === 'test category') return language === 'AR' ? 'فئة الاختبار' : 'Test Category'
     return category.name
   }, [t, language])

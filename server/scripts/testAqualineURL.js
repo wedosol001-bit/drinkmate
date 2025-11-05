@@ -1,7 +1,7 @@
 const product = {
   name: 'Aqualine Starter Kit Soda Maker',
   slug: 'aqualine-starter-kit-soda-maker',
-  category: { name: 'Starter Kits', slug: 'starter-kits' },
+  category: { name: 'Kits', slug: 'kits' },
   subcategory: '',
   hasVariants: true
 };

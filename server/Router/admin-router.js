@@ -218,7 +218,7 @@ router.post('/create-default-categories', authMiddleware, adminMiddleware, async
     }
     
     // Check if default categories already exist
-    const defaultCategoryNames = ['Soda Makers', 'Flavors', 'Accessories', 'Starter Kits'];
+    const defaultCategoryNames = ['Soda Makers', 'Flavors', 'Accessories', 'Kits'];
     const existingDefaultCategories = await Category.find({ name: { $in: defaultCategoryNames } });
     
     if (existingDefaultCategories.length === defaultCategoryNames.length && !forceReset) {
@@ -253,8 +253,8 @@ router.post('/create-default-categories', authMiddleware, adminMiddleware, async
         isActive: true
       },
       {
-        name: 'Starter Kits',
-        slug: 'starter-kits',
+        name: 'Kits',
+        slug: 'kits',
         description: 'Complete starter packages',
         isActive: true
       }
@@ -357,19 +357,26 @@ router.post('/create-default-categories', authMiddleware, adminMiddleware, async
           );
           break;
           
-        case 'Starter Kits':
+        case 'Kits':
           subcategories.push(
             {
-              name: 'Basic Kits',
-              slug: 'basic-kits',
+              name: 'Standard',
+              slug: 'standard',
+              description: 'Standard starter packages',
+              category: category._id,
+              isActive: true
+            },
+            {
+              name: 'Starter',
+              slug: 'starter',
               description: 'Essential starter packages',
               category: category._id,
               isActive: true
             },
             {
-              name: 'Premium Kits',
-              slug: 'premium-kits',
-              description: 'Advanced starter packages',
+              name: 'Premium',
+              slug: 'premium',
+              description: 'Premium starter packages',
               category: category._id,
               isActive: true
             }
