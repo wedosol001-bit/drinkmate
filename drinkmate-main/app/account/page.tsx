@@ -137,11 +137,16 @@ export default function AccountDashboard() {
       }))
     }
     // Reset the flag after a short delay
+    let timer: NodeJS.Timeout | null = null
     if (justSavedProfile.current) {
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         justSavedProfile.current = false
       }, 1000)
-      return () => clearTimeout(timer)
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
     }
   }, [user])
 
