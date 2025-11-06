@@ -989,50 +989,53 @@ export default function AccountDashboard() {
                       <p className="text-gray-600">{t('account.orders.noOrders') || 'No orders found'}</p>
                     </div>
                   ) : (
-                    orders.map((order) => (
-                    <div key={order.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-white">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="font-bold text-lg text-gray-900">#{order.number}</span>
-                          <Badge className={cn("px-3 py-1", getStatusColor(order.status))}>
-                            <span className="flex items-center gap-2">
-                              {getStatusIcon(order.status)}
-                              {order.status}
-                            </span>
-                          </Badge>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-xl text-gray-900">
-                            <SaudiRiyal amount={order.total} size="lg" />
+                    <>
+                      {orders.map((order) => (
+                        <div key={order.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-white">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-lg text-gray-900">#{order.number}</span>
+                              <Badge className={cn("px-3 py-1", getStatusColor(order.status))}>
+                                <span className="flex items-center gap-2">
+                                  {getStatusIcon(order.status)}
+                                  {order.status}
+                                </span>
+                              </Badge>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-xl text-gray-900">
+                                <SaudiRiyal amount={order.total} size="lg" />
+                              </div>
+                              <p className="text-sm text-gray-500">{order.itemsCount} {t('account.orders.itemsSuffix')}</p>
+                            </div>
                           </div>
-                          <p className="text-sm text-gray-500">{order.itemsCount} {t('account.orders.itemsSuffix')}</p>
+                          <div className="flex items-center text-sm text-gray-600 mb-4">
+                            <Calendar className="h-4 w-4 mr-2" />
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm text-gray-700">
+                              {order.items.map((item, index) => (
+                                <span key={index}>
+                                  {item.name} (x{item.quantity})
+                                  {index < order.items.length - 1 && ', '}
+                                </span>
+                              ))}
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleViewOrder(order.id)}
+                              className="hover:bg-orange-50 hover:border-orange-200"
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              {t('account.orders.view')}
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600 mb-4">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-gray-700">
-                          {order.items.map((item, index) => (
-                            <span key={index}>
-                              {item.name} (x{item.quantity})
-                              {index < order.items.length - 1 && ', '}
-                            </span>
-                          ))}
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleViewOrder(order.id)}
-                          className="hover:bg-orange-50 hover:border-orange-200"
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          {t('account.orders.view')}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                      ))}
+                    </>
+                  )}
                   <Button 
                     variant="outline" 
                     className="w-full h-12 text-lg font-semibold hover:bg-orange-50 hover:border-orange-200"
