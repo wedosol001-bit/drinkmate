@@ -707,14 +707,27 @@ const updateUserProfile = async (req, res) => {
                 
                 await user.save();
                 
+                // Verify the save by re-fetching the user
+                const savedUser = await User.findById(userId);
                 console.log('User updated successfully:', {
-                    _id: user._id,
-                    name: user.name,
-                    phone: user.phone,
-                    district: user.district,
-                    city: user.city,
-                    nationalAddress: user.nationalAddress
+                    _id: savedUser._id,
+                    name: savedUser.name,
+                    phone: savedUser.phone,
+                    district: savedUser.district,
+                    city: savedUser.city,
+                    nationalAddress: savedUser.nationalAddress
                 });
+                
+                // Verify critical fields were saved
+                if (district !== undefined && savedUser.district !== district) {
+                    console.warn('⚠️ District mismatch after save:', { expected: district, actual: savedUser.district });
+                }
+                if (city !== undefined && savedUser.city !== city) {
+                    console.warn('⚠️ City mismatch after save:', { expected: city, actual: savedUser.city });
+                }
+                if (nationalAddress !== undefined && savedUser.nationalAddress !== nationalAddress) {
+                    console.warn('⚠️ National address mismatch after save:', { expected: nationalAddress, actual: savedUser.nationalAddress });
+                }
                 
                 return res.status(200).json({
                     success: true,
@@ -740,25 +753,16 @@ const updateUserProfile = async (req, res) => {
             }
         } catch (mongoError) {
             console.error("MongoDB error during profile update:", mongoError);
+            // Return error response instead of fallback
+            return res.status(500).json({
+                error: 'Database error: Failed to save profile. Please try again.',
+                details: process.env.NODE_ENV === 'development' ? mongoError.message : undefined
+            });
         }
         
-        // Fallback response if MongoDB is unavailable
-        res.status(200).json({
-            success: true,
-            message: 'Profile update simulated (MongoDB unavailable)',
-            user: {
-                _id: req.user._id,
-                username: username || req.user.username || 'User',
-                email: email || req.user.email || 'user@example.com',
-                firstName: firstName || req.user.firstName,
-                lastName: lastName || req.user.lastName,
-                phone: phone || req.user.phone,
-                avatar: req.user.avatar,
-                isAdmin: req.user.isAdmin || false,
-                status: 'active',
-                createdAt: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
-            }
+        // If user not found, return error
+        return res.status(404).json({
+            error: 'User not found'
         });
     } catch (err) {
         console.error(err);

@@ -67,9 +67,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Verify token and get user data
+        // Get user data from profile endpoint for fresh data from database
+        // Fallback to verifyToken if getProfile fails
         try {
-          const data = await authAPI.verifyToken();
+          let data;
+          try {
+            // Try getProfile first to get fresh data from database
+            data = await authAPI.getProfile();
+            // Handle both response structures: { user: {...} } and { success: true, user: {...} }
+            const userData = data?.user || (data?.success && data?.user ? data.user : null);
+            if (userData) {
+              setAuthState({
+                user: {
+                  _id: userData._id || userData.id,
+                  username: userData.username || userData.name || '',
+                  name: userData.name || userData.username || '',
+                  email: userData.email || '',
+                  phone: userData.phone || '',
+                  avatar: userData.avatar,
+                  isAdmin: userData.isAdmin || false,
+                  role: userData.role,
+                  createdAt: userData.createdAt,
+                  lastLogin: userData.lastLogin,
+                  // Include address fields
+                  district: userData.district,
+                  city: userData.city,
+                  nationalAddress: userData.nationalAddress,
+                },
+                token,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+              // Switch to user's cart when loading from saved token
+              switchUserCart(userData._id || userData.id);
+              return; // Success, exit early
+            }
+          } catch (profileError: any) {
+            // If getProfile fails, fallback to verifyToken
+            console.log('getProfile failed, falling back to verifyToken:', profileError);
+          }
+          
+          // Fallback to verifyToken
+          data = await authAPI.verifyToken();
           
           if (data && data.user) {
             setAuthState({

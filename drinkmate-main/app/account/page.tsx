@@ -139,12 +139,13 @@ export default function AccountDashboard() {
         ...prev,
         id: user._id || '1',
         name: user.name || user.username || prev.name || '',
-        email: user.email || prev.email,
-        phone: (user as any)?.phone || prev.phone,
-        district: (user as any)?.district || prev.district,
-        city: (user as any)?.city || prev.city,
+        email: user.email || prev.email || '',
+        // Use user data if available, otherwise keep previous (but prefer user data)
+        phone: (user as any)?.phone ?? prev.phone ?? '',
+        district: (user as any)?.district ?? prev.district ?? '',
+        city: (user as any)?.city ?? prev.city ?? '',
         country: 'Saudi Arabia',
-        nationalAddress: (user as any)?.nationalAddress || prev.nationalAddress
+        nationalAddress: (user as any)?.nationalAddress ?? prev.nationalAddress ?? ''
       }))
     }
     // Note: justSavedProfile flag is now reset in handleProfileSave after refreshUser completes
@@ -169,10 +170,10 @@ export default function AccountDashboard() {
       try {
         setLoading(true)
         
-        // Refresh user data to ensure we have the latest from database
-        await refreshUser()
+        // User data is already loaded fresh by auth context on mount
+        // No need to refresh again here to avoid race conditions
         
-        // Then fetch account data
+        // Fetch account data
         const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
         if (!token) {
           setError(t('account.errors.notAuthenticated'))
