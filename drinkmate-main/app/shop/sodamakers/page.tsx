@@ -210,7 +210,7 @@ export default function SodamakersPage() {
           
           // Known subcategory IDs from admin panel:
           // - Artic Series: 68c0583c2fc1cff30bf5c110 (slug: artic-series)
-          // - Luxe Series: 68c0583c2fc1cff30bf5c111 (slug: luxe-series)
+          // - Lux Series: 68c0583c2fc1cff30bf5c111 (slug: lux-series)
           // - Omni Series: 68c0583c2fc1cff30bf5c112 (slug: omni-series)
           
           // Check for Artic Series
@@ -220,11 +220,12 @@ export default function SodamakersPage() {
             return 'Artic Series';
           }
           
-          // Check for Luxe Series
+          // Check for Lux Series
           if (subcategoryLower === '68c0583c2fc1cff30bf5c111' || 
+              subcategoryLower === 'lux-series' || 
               subcategoryLower === 'luxe-series' || 
-              subcategoryLower.includes('luxe')) {
-            return 'Luxe Series';
+              subcategoryLower.includes('lux')) {
+            return 'Lux Series';
           }
           
           // Check for Omni Series
@@ -333,8 +334,8 @@ export default function SodamakersPage() {
         productsBySubcategory[subcategoryName].push(product)
       })
       
-      // Create sections for each subcategory (order: Omni Series, Luxe Series, Artic Series, then others)
-      const subcategoryOrder = ['Omni Series', 'Luxe Series', 'Artic Series']
+      // Create sections for each subcategory (order: Omni Series, Lux Series, Artic Series, then others)
+      const subcategoryOrder = ['Omni Series', 'Lux Series', 'Artic Series']
       const orderedSubcategories = [
         ...subcategoryOrder.filter(name => productsBySubcategory[name]),
         ...Object.keys(productsBySubcategory).filter(name => !subcategoryOrder.includes(name))
@@ -571,11 +572,11 @@ export default function SodamakersPage() {
             />
           </div>
 
-          {/* Luxe Banner */}
+          {/* Lux Banner */}
           <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
             <Image
               src="/images/banner/luxe.jpg"
-              alt="Luxe Soda Maker"
+              alt="Lux Soda Maker"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"

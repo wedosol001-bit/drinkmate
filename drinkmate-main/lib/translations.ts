@@ -2773,7 +2773,7 @@ export const translations: Record<Language, Translations> = {
         shopAllProducts: "Shop All Products",
         omnifizzTitle: "OmniFizz Soda Makers",
         omnifizzDescription: "Premium carbonation for all beverages",
-        luxeTitle: "Luxe Soda Makers",
+        luxeTitle: "Lux Soda Makers",
         luxeDescription: "Luxurious and elegant carbonation experience",
         sodamakers: {
           title: "Explore Our Premium Soda Makers"

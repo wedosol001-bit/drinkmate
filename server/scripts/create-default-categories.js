@@ -64,8 +64,8 @@ db.once('open', async () => {
         isActive: true
       },
       {
-        name: 'Luxe Series',
-        slug: 'luxe-series',
+        name: 'Lux Series',
+        slug: 'lux-series',
         description: 'Luxury soda makers',
         category: createdCategories[0]._id,
         isActive: true

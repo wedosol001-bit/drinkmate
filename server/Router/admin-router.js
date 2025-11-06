@@ -289,8 +289,8 @@ router.post('/create-default-categories', authMiddleware, adminMiddleware, async
               isActive: true
             },
             {
-              name: 'Luxe Series',
-              slug: 'luxe-series',
+              name: 'Lux Series',
+              slug: 'lux-series',
               description: 'Luxury soda makers',
               category: category._id,
               isActive: true
