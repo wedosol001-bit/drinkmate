@@ -88,6 +88,8 @@ export default function AccountDashboard() {
   
   // Ref to prevent useEffect from overwriting profile after save
   const justSavedProfile = useRef(false)
+  // Ref to track if we've already loaded user data on mount
+  const hasLoadedUserData = useRef(false)
   
   // Profile state
   const [profile, setProfile] = useState<UserProfile>({
@@ -148,15 +150,33 @@ export default function AccountDashboard() {
     // Note: justSavedProfile flag is now reset in handleProfileSave after refreshUser completes
   }, [user])
 
+  // Separate effect for initial data load - only runs once when authenticated
   useEffect(() => {
-    const fetchAccountData = async () => {
+    if (!isAuthenticated || !user) {
+      setLoading(false)
+      hasLoadedUserData.current = false
+      return
+    }
+
+    // Only run once on initial load
+    if (hasLoadedUserData.current) {
+      return
+    }
+
+    hasLoadedUserData.current = true
+
+    const loadInitialData = async () => {
       try {
         setLoading(true)
         
-        // Get auth token
+        // Refresh user data to ensure we have the latest from database
+        await refreshUser()
+        
+        // Then fetch account data
         const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
         if (!token) {
           setError(t('account.errors.notAuthenticated'))
+          setLoading(false)
           return
         }
 
@@ -309,16 +329,10 @@ export default function AccountDashboard() {
       }
     }
 
-    if (isAuthenticated && user) {
-      // Refresh user data to ensure we have the latest from database
-      refreshUser().then(() => {
-        fetchAccountData()
-      })
-    } else {
-      setLoading(false)
-    }
+    loadInitialData()
+    // Only run when isAuthenticated changes from false to true
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, user])
+  }, [isAuthenticated])
 
   const handleProfileSave = async () => {
     try {
