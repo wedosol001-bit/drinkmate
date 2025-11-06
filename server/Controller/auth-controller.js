@@ -639,149 +639,159 @@ const updateUserProfile = async (req, res) => {
         
         // Try to update user in MongoDB first
         try {
+            // First check if user exists
             const user = await User.findById(userId);
-            if (user) {
-                // Ensure password field is not marked as modified
-                // This prevents password validation from running when we're not updating password
-                // Check if username or email is being changed and if it's already taken
-                if (username && username !== user.username) {
-                    const existingUser = await User.findOne({ 
-                        username, 
-                        _id: { $ne: userId } 
-                    });
-                    if (existingUser) {
-                        return res.status(400).json({ 
-                            error: 'Username is already taken' 
-                        });
-                    }
-                    user.username = username;
-                }
-                
-                if (email && email !== user.email) {
-                    const existingUser = await User.findOne({ 
-                        email, 
-                        _id: { $ne: userId } 
-                    });
-                    if (existingUser) {
-                        return res.status(400).json({ 
-                            error: 'Email is already taken' 
-                        });
-                    }
-                    user.email = email;
-                }
-                
-                // Update other fields
-                if (firstName !== undefined) user.firstName = firstName;
-                if (lastName !== undefined) user.lastName = lastName;
-                // Always update name if provided, even if empty (will be handled below)
-                if (name !== undefined) {
-                    if (name.trim()) {
-                        user.name = name.trim();
-                    } else {
-                        // If name is empty, use firstName + lastName or fallback
-                        if (user.firstName && user.lastName) {
-                            user.name = `${user.firstName} ${user.lastName}`.trim();
-                        } else if (user.username) {
-                            user.name = user.username;
-                        } else {
-                            user.name = 'User'; // Fallback
-                        }
-                    }
-                }
-                // Update phone only if provided and valid (or empty string to clear it)
-                if (phone !== undefined) {
-                    if (phone === '' || !phone) {
-                        user.phone = '';
-                    } else {
-                        // Validate phone format before setting
-                        const phoneRegex = /^(\+966|966|0)?[5-9][0-9]{8}$/;
-                        if (phoneRegex.test(phone)) {
-                            user.phone = phone;
-                        } else {
-                            console.warn('Invalid phone format, skipping update:', phone);
-                        }
-                    }
-                }
-                
-                // Update address fields
-                if (district !== undefined) user.district = district || '';
-                if (city !== undefined) user.city = city || '';
-                
-                // Update national address only if provided and valid (or empty string to clear it)
-                if (nationalAddress !== undefined) {
-                    if (nationalAddress === '' || !nationalAddress) {
-                        user.nationalAddress = '';
-                    } else {
-                        // Validate national address format before setting
-                        const nationalAddressRegex = /^[A-Z]{4}[0-9]{4}$/;
-                        if (nationalAddressRegex.test(nationalAddress.toUpperCase())) {
-                            user.nationalAddress = nationalAddress.toUpperCase();
-                        } else {
-                            console.warn('Invalid national address format, skipping update:', nationalAddress);
-                        }
-                    }
-                }
-                
-                // Ensure name field is not empty (final check)
-                if (!user.name || user.name.trim() === '') {
-                    // Use provided name, firstName + lastName, or fallback to username
-                    if (name && name.trim()) {
-                        user.name = name.trim();
-                    } else if (user.firstName && user.lastName) {
-                        user.name = `${user.firstName} ${user.lastName}`.trim();
-                    } else if (user.username) {
-                        user.name = user.username;
-                    } else {
-                        user.name = 'User'; // Fallback
-                    }
-                }
-                
-                await user.save();
-                
-                // Verify the save by re-fetching the user
-                const savedUser = await User.findById(userId);
-                console.log('User updated successfully:', {
-                    _id: savedUser._id,
-                    name: savedUser.name,
-                    phone: savedUser.phone,
-                    district: savedUser.district,
-                    city: savedUser.city,
-                    nationalAddress: savedUser.nationalAddress
-                });
-                
-                // Verify critical fields were saved
-                if (district !== undefined && savedUser.district !== district) {
-                    console.warn('⚠️ District mismatch after save:', { expected: district, actual: savedUser.district });
-                }
-                if (city !== undefined && savedUser.city !== city) {
-                    console.warn('⚠️ City mismatch after save:', { expected: city, actual: savedUser.city });
-                }
-                if (nationalAddress !== undefined && savedUser.nationalAddress !== nationalAddress) {
-                    console.warn('⚠️ National address mismatch after save:', { expected: nationalAddress, actual: savedUser.nationalAddress });
-                }
-                
-                return res.status(200).json({
-                    success: true,
-                    message: 'Profile updated successfully',
-                    user: {
-                        _id: user._id,
-                        username: user.username,
-                        email: user.email,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        name: user.name,
-                        phone: user.phone,
-                        district: user.district,
-                        city: user.city,
-                        nationalAddress: user.nationalAddress,
-                        avatar: user.avatar,
-                        isAdmin: user.isAdmin,
-                        status: user.status,
-                        createdAt: user.createdAt,
-                        lastLogin: user.lastLogin
-                    }
-                });
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
             }
+            
+            // Check if username or email is being changed and if it's already taken
+            if (username && username !== user.username) {
+                const existingUser = await User.findOne({ 
+                    username, 
+                    _id: { $ne: userId } 
+                });
+                if (existingUser) {
+                    return res.status(400).json({ 
+                        error: 'Username is already taken' 
+                    });
+                }
+            }
+            
+            if (email && email !== user.email) {
+                const existingUser = await User.findOne({ 
+                    email, 
+                    _id: { $ne: userId } 
+                });
+                if (existingUser) {
+                    return res.status(400).json({ 
+                        error: 'Email is already taken' 
+                    });
+                }
+            }
+            
+            // Build update object - only include fields we want to update
+            const updateFields = {};
+            
+            if (username !== undefined && username !== user.username) {
+                updateFields.username = username;
+            }
+            if (email !== undefined && email !== user.email) {
+                updateFields.email = email;
+            }
+            if (firstName !== undefined) updateFields.firstName = firstName;
+            if (lastName !== undefined) updateFields.lastName = lastName;
+            
+            // Handle name field
+            let finalName = name;
+            if (name !== undefined) {
+                if (name.trim()) {
+                    finalName = name.trim();
+                } else {
+                    // If name is empty, use firstName + lastName or fallback
+                    const fName = firstName !== undefined ? firstName : user.firstName;
+                    const lName = lastName !== undefined ? lastName : user.lastName;
+                    if (fName && lName) {
+                        finalName = `${fName} ${lName}`.trim();
+                    } else if (user.username) {
+                        finalName = user.username;
+                    } else {
+                        finalName = 'User'; // Fallback
+                    }
+                }
+            } else {
+                finalName = user.name || user.username || 'User';
+            }
+            updateFields.name = finalName;
+            
+            // Update phone only if provided and valid (or empty string to clear it)
+            if (phone !== undefined) {
+                if (phone === '' || !phone) {
+                    updateFields.phone = '';
+                } else {
+                    // Validate phone format before setting
+                    const phoneRegex = /^(\+966|966|0)?[5-9][0-9]{8}$/;
+                    if (phoneRegex.test(phone)) {
+                        updateFields.phone = phone;
+                    } else {
+                        console.warn('Invalid phone format, skipping update:', phone);
+                    }
+                }
+            }
+            
+            // Update address fields
+            if (district !== undefined) updateFields.district = district || '';
+            if (city !== undefined) updateFields.city = city || '';
+            
+            // Update national address only if provided and valid (or empty string to clear it)
+            if (nationalAddress !== undefined) {
+                if (nationalAddress === '' || !nationalAddress) {
+                    updateFields.nationalAddress = '';
+                } else {
+                    // Validate national address format before setting
+                    const nationalAddressRegex = /^[A-Z]{4}[0-9]{4}$/;
+                    if (nationalAddressRegex.test(nationalAddress.toUpperCase())) {
+                        updateFields.nationalAddress = nationalAddress.toUpperCase();
+                    } else {
+                        console.warn('Invalid national address format, skipping update:', nationalAddress);
+                    }
+                }
+            }
+            
+            // Use findByIdAndUpdate to avoid pre-save hooks (like password validation)
+            // findByIdAndUpdate doesn't trigger pre-save hooks, so password validation won't run
+            // We can use runValidators: true for field-level validations (phone, nationalAddress format)
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { $set: updateFields },
+                { new: true, runValidators: true } // Field validations will run, but pre-save hooks won't
+            );
+                
+            if (!updatedUser) {
+                return res.status(404).json({ error: 'User not found after update' });
+            }
+            
+            console.log('User updated successfully:', {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                phone: updatedUser.phone,
+                district: updatedUser.district,
+                city: updatedUser.city,
+                nationalAddress: updatedUser.nationalAddress
+            });
+            
+            // Verify critical fields were saved
+            if (district !== undefined && updatedUser.district !== (district || '')) {
+                console.warn('⚠️ District mismatch after save:', { expected: district, actual: updatedUser.district });
+            }
+            if (city !== undefined && updatedUser.city !== (city || '')) {
+                console.warn('⚠️ City mismatch after save:', { expected: city, actual: updatedUser.city });
+            }
+            if (nationalAddress !== undefined && updatedUser.nationalAddress !== (nationalAddress ? nationalAddress.toUpperCase() : '')) {
+                console.warn('⚠️ National address mismatch after save:', { expected: nationalAddress, actual: updatedUser.nationalAddress });
+            }
+            
+            return res.status(200).json({
+                success: true,
+                message: 'Profile updated successfully',
+                user: {
+                    _id: updatedUser._id,
+                    username: updatedUser.username,
+                    email: updatedUser.email,
+                    firstName: updatedUser.firstName,
+                    lastName: updatedUser.lastName,
+                    name: updatedUser.name,
+                    phone: updatedUser.phone,
+                    district: updatedUser.district,
+                    city: updatedUser.city,
+                    nationalAddress: updatedUser.nationalAddress,
+                    avatar: updatedUser.avatar,
+                    isAdmin: updatedUser.isAdmin,
+                    status: updatedUser.status,
+                    createdAt: updatedUser.createdAt,
+                    lastLogin: updatedUser.lastLogin
+                }
+            });
         } catch (mongoError) {
             console.error("MongoDB error during profile update:", mongoError);
             console.error("Error stack:", mongoError.stack);
