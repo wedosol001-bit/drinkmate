@@ -301,6 +301,13 @@ export default function AccountDashboard() {
       const result = await response.json()
 
       if (!response.ok) {
+        // Handle 401 specifically
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.')
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        }
         throw new Error(result.error || 'Failed to save profile')
       }
 
@@ -370,12 +377,14 @@ export default function AccountDashboard() {
       // Basic validation
       if (!profile.district.trim() || !profile.city.trim()) {
         toast.error(t('account.toasts.addressValidation'))
+        setIsSavingAddress(false)
         return
       }
 
       // Validate national address format if provided
       if (profile.nationalAddress && !/^[A-Z]{4}[0-9]{4}$/.test(profile.nationalAddress)) {
         toast.error(t('account.toasts.nationalAddressInvalid'))
+        setIsSavingAddress(false)
         return
       }
 
@@ -383,6 +392,7 @@ export default function AccountDashboard() {
       const token = getAuthToken()
       if (!token) {
         toast.error(t('account.toasts.loginFirst'))
+        setIsSavingAddress(false)
         return
       }
 
@@ -397,7 +407,8 @@ export default function AccountDashboard() {
       console.log('Sending address update request:', requestBody)
       console.log('Token:', token ? 'Present' : 'Missing')
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
+      // Use Next.js API route instead of direct backend call
+      const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -409,14 +420,37 @@ export default function AccountDashboard() {
       const result = await response.json()
 
       if (!response.ok) {
+        // Handle 401 specifically
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.')
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        }
         throw new Error(result.error || 'Failed to save address')
       }
 
       // Update the profile state with the saved data
-      if (result.user) {
+      // The API route returns result.data (see /api/user/profile/route.ts)
+      if (result.success && result.data) {
         setProfile(prev => ({
           ...prev,
-          name: result.user.name || result.user.firstName + ' ' + result.user.lastName || prev.name,
+          name: result.data.name || prev.name,
+          phone: result.data.phone || prev.phone,
+          district: result.data.district || prev.district,
+          city: result.data.city || prev.city,
+          nationalAddress: result.data.nationalAddress || prev.nationalAddress
+        }))
+        
+        // Refresh user data to show updated information
+        console.log("Calling refreshUser for address save...")
+        await refreshUser()
+        console.log("refreshUser completed for address save")
+      } else if (result.user) {
+        // Fallback for direct backend response structure
+        setProfile(prev => ({
+          ...prev,
+          name: result.user.name || (result.user.firstName && result.user.lastName ? `${result.user.firstName} ${result.user.lastName}` : prev.name),
           phone: result.user.phone || prev.phone,
           district: result.user.district || prev.district,
           city: result.user.city || prev.city,
@@ -451,19 +485,16 @@ export default function AccountDashboard() {
       // Basic validation
       if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordAllRequired'))
-        setIsChangingPassword(false)
         return
       }
 
       if (passwordData.newPassword !== passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordMismatch'))
-        setIsChangingPassword(false)
         return
       }
 
       if (passwordData.newPassword.length < 8) {
         toast.error(t('account.toasts.passwordTooShort'))
-        setIsChangingPassword(false)
         return
       }
 
@@ -471,7 +502,6 @@ export default function AccountDashboard() {
       const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
       if (!token) {
         toast.error(t('account.toasts.passwordNotAuthenticated'))
-        setIsChangingPassword(false)
         return
       }
 
@@ -503,7 +533,18 @@ export default function AccountDashboard() {
       if (!response.ok) {
         const errorMessage = result?.error || `Failed to change password (${response.status})`
         console.error('🔐 Password Change: Error response:', errorMessage)
-        throw new Error(errorMessage)
+        
+        // Handle 401 specifically
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.')
+          // Optionally redirect to login
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        } else {
+          toast.error(errorMessage)
+        }
+        return
       }
 
       // Success
@@ -518,9 +559,11 @@ export default function AccountDashboard() {
       })
       setIsChangingPassword(false)
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error changing password:', error)
-      toast.error(t('account.toasts.passwordChangeError'))
+      const errorMessage = error?.message || t('account.toasts.passwordChangeError')
+      toast.error(errorMessage)
+    } finally {
       setIsChangingPassword(false)
     }
   }

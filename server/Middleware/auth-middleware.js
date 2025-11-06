@@ -39,7 +39,26 @@ const verifyToken = (token) => {
     throw new Error('JWT_SECRET too weak');
   }
   
-  return jwt.verify(token, jwtSecret);
+  // Try to verify with issuer/audience first (how tokens are created)
+  try {
+    return jwt.verify(token, jwtSecret, {
+      issuer: 'drinkmate-api',
+      audience: 'drinkmate-client'
+    });
+  } catch (audienceError) {
+    // If issuer/audience verification fails, try without for backward compatibility
+    try {
+      return jwt.verify(token, jwtSecret);
+    } catch (basicError) {
+      // If both fail, throw the original error with more details
+      console.error('JWT verification failed:', {
+        audienceError: audienceError.message,
+        basicError: basicError.message,
+        tokenPreview: token?.substring(0, 20) + '...'
+      });
+      throw audienceError;
+    }
+  }
 };
 
 const authenticateToken = async (req, res, next) => {
@@ -64,11 +83,12 @@ const authenticateToken = async (req, res, next) => {
       });
     }
     
-    // Check token expiration
+    // Check token expiration (allow 5 minute grace period for clock skew)
     const now = Math.floor(Date.now() / 1000);
-    if (decoded.exp < now) {
+    const gracePeriod = 300; // 5 minutes
+    if (decoded.exp < (now - gracePeriod)) {
       return res.status(401).json({ 
-        error: 'Token has expired',
+        error: 'Token has expired. Please log in again.',
         code: 'TOKEN_EXPIRED'
       });
     }

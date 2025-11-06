@@ -278,8 +278,17 @@ const verifyToken = async (req, res) => {
         const token = authHeader.split(' ')[1];
         
         try {
-            // Verify the token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // Verify the token - try with issuer/audience first, then without
+            let decoded;
+            try {
+                decoded = jwt.verify(token, process.env.JWT_SECRET, {
+                    issuer: 'drinkmate-api',
+                    audience: 'drinkmate-client'
+                });
+            } catch (audienceError) {
+                // Fallback to basic verification for backward compatibility
+                decoded = jwt.verify(token, process.env.JWT_SECRET);
+            }
             
             // If token is for a demo user (starts with 'demo')
             if (decoded.id.toString().startsWith('demo')) {

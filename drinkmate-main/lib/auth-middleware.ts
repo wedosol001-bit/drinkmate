@@ -66,19 +66,19 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
       let decoded: JWTPayload
       
       try {
-        // Try to verify token - first without audience/issuer for backward compatibility
+        // Try to verify token - first with issuer/audience (how tokens are created)
         try {
-          decoded = jwt.verify(token, jwtSecret) as JWTPayload
-        } catch (basicError) {
-          // If basic verification fails, try with audience validation for new tokens
+          decoded = jwt.verify(token, jwtSecret, {
+            issuer: SECURITY_CONFIG.JWT.issuer,
+            audience: SECURITY_CONFIG.JWT.audience
+          }) as JWTPayload
+        } catch (audienceError) {
+          // If issuer/audience verification fails, try without for backward compatibility
           try {
-            decoded = jwt.verify(token, jwtSecret, {
-              issuer: SECURITY_CONFIG.JWT.issuer,
-              audience: SECURITY_CONFIG.JWT.audience
-            }) as JWTPayload
-          } catch (audienceError) {
+            decoded = jwt.verify(token, jwtSecret) as JWTPayload
+          } catch (basicError) {
             // If both fail, throw the original error
-            throw basicError
+            throw audienceError
           }
         }
       } catch (jwtError) {
@@ -220,23 +220,28 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
         let decoded: JWTPayload
         
         try {
-          // Try to verify token - first without audience/issuer for backward compatibility
+          // Try to verify token - first with issuer/audience (how tokens are created)
           try {
-            decoded = jwt.verify(token, jwtSecret) as JWTPayload
-          } catch (basicError) {
-            // If basic verification fails, try with audience validation for new tokens
+            decoded = jwt.verify(token, jwtSecret, {
+              issuer: SECURITY_CONFIG.JWT.issuer,
+              audience: SECURITY_CONFIG.JWT.audience
+            }) as JWTPayload
+          } catch (audienceError) {
+            // If issuer/audience verification fails, try without for backward compatibility
             try {
-              decoded = jwt.verify(token, jwtSecret, {
-                issuer: SECURITY_CONFIG.JWT.issuer,
-                audience: SECURITY_CONFIG.JWT.audience
-              }) as JWTPayload
-            } catch (audienceError) {
+              decoded = jwt.verify(token, jwtSecret) as JWTPayload
+            } catch (basicError) {
               // If both fail, throw the original error
-              throw basicError
+              throw audienceError
             }
           }
-        } catch (jwtError) {
-          console.error('JWT verification error:', jwtError)
+        } catch (jwtError: any) {
+          console.error('JWT verification error:', {
+            message: jwtError?.message,
+            name: jwtError?.name,
+            tokenPreview: token?.substring(0, 20) + '...',
+            secretLength: jwtSecret?.length
+          })
           
           // For development, try with a fallback JWT secret if the main one fails
           if (process.env.NODE_ENV === 'development') {
@@ -291,12 +296,13 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
           )
         }
 
-        // Check token expiration
+        // Check token expiration (allow 5 minute grace period for clock skew)
         const now = Math.floor(Date.now() / 1000)
-        if (decoded.exp < now) {
+        const gracePeriod = 300 // 5 minutes
+        if (decoded.exp < (now - gracePeriod)) {
           return NextResponse.json(
             { 
-              error: 'Token has expired',
+              error: 'Token has expired. Please log in again.',
               code: 'TOKEN_EXPIRED'
             },
             { status: 401 }
