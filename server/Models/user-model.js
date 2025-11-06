@@ -43,7 +43,13 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
     trim: true,
-    match: [/^(\+966|966|0)?[5-9][0-9]{8}$/, 'Please enter a valid Saudi phone number (e.g., 0507551812)']
+    validate: {
+      validator: function(v) {
+        // Allow empty string or valid Saudi phone number
+        return !v || /^(\+966|966|0)?[5-9][0-9]{8}$/.test(v);
+      },
+      message: 'Please enter a valid Saudi phone number (e.g., 0507551812)'
+    }
   },
   
   // Address Information
@@ -63,7 +69,14 @@ const userSchema = new mongoose.Schema({
   nationalAddress: {
     type: String,
     trim: true,
-    match: [/^[A-Z]{4}[0-9]{4}$/, 'National Address must be 4 letters followed by 4 numbers (e.g., JESA3591)']
+    uppercase: true,
+    validate: {
+      validator: function(v) {
+        // Allow empty string or valid national address format
+        return !v || /^[A-Z]{4}[0-9]{4}$/.test(v);
+      },
+      message: 'National Address must be 4 letters followed by 4 numbers (e.g., JESA3591)'
+    }
   },
   
   // Account Status

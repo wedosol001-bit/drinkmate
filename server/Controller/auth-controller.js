@@ -686,10 +686,39 @@ const updateUserProfile = async (req, res) => {
                         }
                     }
                 }
-                if (phone !== undefined) user.phone = phone;
-                if (district !== undefined) user.district = district;
-                if (city !== undefined) user.city = city;
-                if (nationalAddress !== undefined) user.nationalAddress = nationalAddress;
+                // Update phone only if provided and valid (or empty string to clear it)
+                if (phone !== undefined) {
+                    if (phone === '' || !phone) {
+                        user.phone = '';
+                    } else {
+                        // Validate phone format before setting
+                        const phoneRegex = /^(\+966|966|0)?[5-9][0-9]{8}$/;
+                        if (phoneRegex.test(phone)) {
+                            user.phone = phone;
+                        } else {
+                            console.warn('Invalid phone format, skipping update:', phone);
+                        }
+                    }
+                }
+                
+                // Update address fields
+                if (district !== undefined) user.district = district || '';
+                if (city !== undefined) user.city = city || '';
+                
+                // Update national address only if provided and valid (or empty string to clear it)
+                if (nationalAddress !== undefined) {
+                    if (nationalAddress === '' || !nationalAddress) {
+                        user.nationalAddress = '';
+                    } else {
+                        // Validate national address format before setting
+                        const nationalAddressRegex = /^[A-Z]{4}[0-9]{4}$/;
+                        if (nationalAddressRegex.test(nationalAddress.toUpperCase())) {
+                            user.nationalAddress = nationalAddress.toUpperCase();
+                        } else {
+                            console.warn('Invalid national address format, skipping update:', nationalAddress);
+                        }
+                    }
+                }
                 
                 // Ensure name field is not empty (final check)
                 if (!user.name || user.name.trim() === '') {
@@ -753,6 +782,15 @@ const updateUserProfile = async (req, res) => {
             }
         } catch (mongoError) {
             console.error("MongoDB error during profile update:", mongoError);
+            console.error("Error stack:", mongoError.stack);
+            // Check if it's a validation error
+            if (mongoError.name === 'ValidationError') {
+                const errors = Object.values(mongoError.errors).map((err: any) => err.message);
+                return res.status(400).json({
+                    error: 'Validation error: ' + errors.join(', '),
+                    details: process.env.NODE_ENV === 'development' ? mongoError.message : undefined
+                });
+            }
             // Return error response instead of fallback
             return res.status(500).json({
                 error: 'Database error: Failed to save profile. Please try again.',
