@@ -16,6 +16,8 @@ interface JWTPayload {
   isAdmin?: boolean
   iat: number
   exp: number
+  iss?: string // issuer
+  aud?: string | string[] // audience
 }
 
 // Helper type for handlers with params
@@ -75,7 +77,7 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
         } catch (audienceError) {
           // If issuer/audience verification fails, try without for backward compatibility
           try {
-            decoded = jwt.verify(token, jwtSecret) as JWTPayload
+          decoded = jwt.verify(token, jwtSecret) as JWTPayload
           } catch (basicError) {
             // If both fail, throw the original error
             throw audienceError
@@ -229,7 +231,7 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
           } catch (audienceError) {
             // If issuer/audience verification fails, try without for backward compatibility
             try {
-              decoded = jwt.verify(token, jwtSecret) as JWTPayload
+            decoded = jwt.verify(token, jwtSecret) as JWTPayload
             } catch (basicError) {
               // If both fail, throw the original error
               throw audienceError
@@ -277,8 +279,8 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
           } else {
             // In production, provide more helpful error message
             const errorDetails: any = {
-              error: 'Invalid or expired token',
-              code: 'INVALID_TOKEN'
+                error: 'Invalid or expired token',
+                code: 'INVALID_TOKEN'
             }
             
             // Try to decode token to provide more info (without verification)
