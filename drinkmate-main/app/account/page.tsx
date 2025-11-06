@@ -240,12 +240,32 @@ export default function AccountDashboard() {
           console.error('📦 Failed to fetch orders:', {
             status: ordersResponse.status,
             statusText: ordersResponse.statusText,
-            error: errorData
+            error: errorData,
+            errorCode: errorData?.code,
+            errorMessage: errorData?.error,
+            errorDetails: errorData?.details
           })
           
-          // If 401, log warning but don't show error to user (they're already logged in)
+          // If 401, log detailed warning
           if (ordersResponse.status === 401) {
-            console.warn('📦 Authentication failed for orders - token may be expired or invalid')
+            console.warn('📦 Authentication failed for orders:', {
+              code: errorData?.code,
+              message: errorData?.error,
+              details: errorData?.details,
+              tokenInfo: errorData?.details ? {
+                hasId: errorData.details.tokenHasId,
+                expired: errorData.details.tokenExpired,
+                issuer: errorData.details.tokenIssuer,
+                audience: errorData.details.tokenAudience
+              } : 'No details available'
+            })
+            
+            // If it's a JWT_SECRET mismatch, show helpful message
+            if (errorData?.code === 'INVALID_TOKEN' && errorData?.details) {
+              console.error('🔴 JWT_SECRET MISMATCH DETECTED!')
+              console.error('The frontend and backend JWT_SECRET values do not match.')
+              console.error('Please check Railway environment variables for both services.')
+            }
           }
           
           setOrders([])

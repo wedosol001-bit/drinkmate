@@ -206,13 +206,32 @@ export default function OrdersPage() {
           console.error('📦 Failed to fetch orders:', {
             status: response.status,
             statusText: response.statusText,
-            error: errorData
+            error: errorData,
+            errorCode: errorData?.code,
+            errorMessage: errorData?.error,
+            errorDetails: errorData?.details
           })
           
-          // If 401, the user might need to re-authenticate
+          // If 401, log detailed warning
           if (response.status === 401) {
-            console.warn('📦 Authentication failed - user may need to log in again')
-            // Don't clear orders immediately, but show empty state
+            console.warn('📦 Authentication failed:', {
+              code: errorData?.code,
+              message: errorData?.error,
+              details: errorData?.details,
+              tokenInfo: errorData?.details ? {
+                hasId: errorData.details.tokenHasId,
+                expired: errorData.details.tokenExpired,
+                issuer: errorData.details.tokenIssuer,
+                audience: errorData.details.tokenAudience
+              } : 'No details available'
+            })
+            
+            // If it's a JWT_SECRET mismatch, show helpful message
+            if (errorData?.code === 'INVALID_TOKEN' && errorData?.details) {
+              console.error('🔴 JWT_SECRET MISMATCH DETECTED!')
+              console.error('The frontend and backend JWT_SECRET values do not match.')
+              console.error('Please check Railway environment variables for both services.')
+            }
           }
           
           setOrders([])
