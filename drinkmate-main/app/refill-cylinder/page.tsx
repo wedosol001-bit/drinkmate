@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import { ChevronLeft, ChevronRight, Plus, Minus, ChevronDown, Star, ShoppingCart, Info, Truck, Shield, RotateCcw, CheckCircle, ArrowRight, Gift } from "lucide-react"
 import PageLayout from "@/components/layout/PageLayout"
 import { useTranslation } from "@/lib/contexts/translation-context"
@@ -68,6 +69,8 @@ export default function CO2() {
   const [showBlocks, setShowBlocks] = useState(false)
   const [cylinderType, setCylinderType] = useState("") // "drinkmate" or "non-drinkmate"
   const [nonDrinkmateBrand, setNonDrinkmateBrand] = useState("")
+  const [threadType, setThreadType] = useState<"standard-threaded" | "quick-connect" | "">("") // Thread type for non-drinkmate
+  const [customBrandName, setCustomBrandName] = useState("") // Custom brand name for standard threaded
 
   // Slideshow navigation - reverse for RTL
   const nextRefillSlide = () => {
@@ -168,6 +171,36 @@ export default function CO2() {
 
   // Get selected cylinder data
   const getCylinderData = (cylinderId: string) => {
+    // Handle Quick connect
+    if (cylinderId === "quick-connect") {
+      return {
+        id: "quick-connect",
+        name: "Quick connect",
+        price: 65,
+        originalPrice: 75,
+        discount: 13,
+        description: "Quick connect CO2 cylinder refill",
+        brand: "Quick connect",
+        type: "refill",
+        capacity: "60L"
+      }
+    }
+
+    // Handle custom brand name for standard threaded
+    if (cylinderId === "custom-brand" && customBrandName.trim()) {
+      return {
+        id: "custom-brand",
+        name: customBrandName.trim(),
+        price: 65,
+        originalPrice: 75,
+        discount: 13,
+        description: `${customBrandName.trim()} CO2 cylinder refill`,
+        brand: customBrandName.trim(),
+        type: "refill",
+        capacity: "60L"
+      }
+    }
+
     // Hardcoded cylinder data for known brands
     const cylinderDataMap: { [key: string]: any } = {
       "drinkmate": {
@@ -313,7 +346,9 @@ export default function CO2() {
           "ultima-cosa": 1007,
           "bubble-bro": 1008,
           "yoco-cosa": 1009,
-          "other-brand": 1010
+          "other-brand": 1010,
+          "quick-connect": 1011,
+          "custom-brand": 1012
         }
         return idMap[cylinderId] || 9999
       }
@@ -340,18 +375,46 @@ export default function CO2() {
   const handleDrinkmateClick = () => {
     setCylinderType("drinkmate")
     setSelectedCylinder("drinkmate")
+    setThreadType("")
+    setCustomBrandName("")
+    setNonDrinkmateBrand("")
     setShowBlocks(true)
   }
 
   const handleNonDrinkmateClick = () => {
     setCylinderType("non-drinkmate")
-    setShowBlocks(false) // Don't show blocks until brand is selected
+    setThreadType("")
+    setCustomBrandName("")
+    setNonDrinkmateBrand("")
+    setSelectedCylinder("")
+    setShowBlocks(false) // Don't show blocks until thread type is selected
   }
 
-  const handleNonDrinkmateBrandChange = (brand: string) => {
-    setNonDrinkmateBrand(brand)
-    setSelectedCylinder(brand)
-    setShowBlocks(true) // Show blocks after brand selection
+  const handleThreadTypeChange = (type: "standard-threaded" | "quick-connect") => {
+    setThreadType(type)
+    if (type === "quick-connect") {
+      setSelectedCylinder("quick-connect")
+      setCustomBrandName("")
+      setNonDrinkmateBrand("")
+      setShowBlocks(true)
+    } else {
+      // Standard threaded - reset and wait for brand input
+      setSelectedCylinder("")
+      setCustomBrandName("")
+      setNonDrinkmateBrand("")
+      setShowBlocks(false)
+    }
+  }
+
+  const handleCustomBrandChange = (brandName: string) => {
+    setCustomBrandName(brandName)
+    if (brandName.trim()) {
+      setSelectedCylinder("custom-brand")
+      setShowBlocks(true)
+    } else {
+      setSelectedCylinder("")
+      setShowBlocks(false)
+    }
   }
 
   if (loading) {
@@ -623,49 +686,72 @@ export default function CO2() {
               <div className="flex space-x-4">
                 <Button
                   onClick={handleDrinkmateClick}
-                  className="flex-1 h-32 bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105"
+                  className={`flex-1 h-32 font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105 ${
+                    cylinderType === "drinkmate"
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-900 border-2 border-gray-300 hover:border-gray-400"
+                  }`}
                 >
                   {t('refill.choose.drinkmate')}
                 </Button>
                 <Button
                   onClick={handleNonDrinkmateClick}
-                  className="flex-1 h-32 bg-[#a8f387] hover:bg-[#9ae374] text-black font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105"
+                  className={`flex-1 h-32 font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105 ${
+                    cylinderType === "non-drinkmate"
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-900 border-2 border-gray-300 hover:border-gray-400"
+                  }`}
                 >
                   {t('refill.choose.nonDrinkmate')}
                 </Button>
-                            </div>
+              </div>
 
-              {/* Non-Drinkmate Standard Threaded Option */}
+              {/* Non-Drinkmate Thread Type Options */}
               {cylinderType === "non-drinkmate" && (
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="standard-threaded"
-                      name="thread-type"
-                      value="standard-threaded"
-                      checked={true}
-                      readOnly
-                      className="w-4 h-4 text-[#a8f387]"
-                    />
-                    <label htmlFor="standard-threaded" className="text-lg font-semibold text-gray-900">{t('refill.choose.standardThreaded')}</label>
-                          </div>
-
-                  {/* Brand Dropdown */}
-                  <Select value={nonDrinkmateBrand} onValueChange={handleNonDrinkmateBrandChange}>
-                    <SelectTrigger className="w-full h-12 border-2 border-[#a8f387] rounded-xl">
-                      <SelectValue placeholder={t('refill.choose.brandPlaceholder')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="errva">Errva</SelectItem>
-                      <SelectItem value="fawwar">Fawwar</SelectItem>
-                      <SelectItem value="phillips">Phillips</SelectItem>
-                      <SelectItem value="ultima-cosa">Ultima Cosa</SelectItem>
-                      <SelectItem value="bubble-bro">Bubble Bro</SelectItem>
-                      <SelectItem value="yoco-cosa">Yoco Cosa</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  {/* Thread Type Selection */}
+                  <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="standard-threaded"
+                        name="thread-type"
+                        value="standard-threaded"
+                        checked={threadType === "standard-threaded"}
+                        onChange={() => handleThreadTypeChange("standard-threaded")}
+                        className="w-4 h-4 text-blue-500"
+                      />
+                      <label htmlFor="standard-threaded" className="text-lg font-semibold text-gray-900 cursor-pointer">{t('refill.choose.standardThreaded')}</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="quick-connect"
+                        name="thread-type"
+                        value="quick-connect"
+                        checked={threadType === "quick-connect"}
+                        onChange={() => handleThreadTypeChange("quick-connect")}
+                        className="w-4 h-4 text-blue-500"
+                      />
+                      <label htmlFor="quick-connect" className="text-lg font-semibold text-gray-900 cursor-pointer">Quick connect</label>
+                    </div>
                   </div>
+
+                  {/* Brand Input for Standard Threaded */}
+                  {threadType === "standard-threaded" && (
+                    <div className="space-y-2">
+                      <label htmlFor="custom-brand" className="text-sm font-medium text-gray-700">Brand Name</label>
+                      <Input
+                        id="custom-brand"
+                        type="text"
+                        value={customBrandName}
+                        onChange={(e) => handleCustomBrandChange(e.target.value)}
+                        placeholder="Enter your brand name"
+                        className="w-full h-12 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                      />
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* Hidden Blocks - Show when button is clicked */}

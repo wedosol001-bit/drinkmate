@@ -28,10 +28,13 @@ export function getProductUrl(product: any): string {
   
   // Handle bundles (but NOT variant products)
   // Variant products should never be treated as bundles
+  const subcategoryStr = typeof product.subcategory === 'string' ? product.subcategory.toLowerCase() : ''
+  const nameStr = typeof product.name === 'string' ? product.name.toLowerCase() : ''
+  const titleStr = typeof product.title === 'string' ? product.title.toLowerCase() : ''
   const isBundle = !product.hasVariants && (
-    product.subcategory?.toLowerCase().includes('bundle') || 
-    product.name?.toLowerCase().includes('bundle') ||
-    product.title?.toLowerCase().includes('bundle')
+    subcategoryStr.includes('bundle') || 
+    nameStr.includes('bundle') ||
+    titleStr.includes('bundle')
   );
   
   if (isBundle) {

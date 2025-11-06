@@ -152,6 +152,13 @@ const initializeDatabase = async () => {
         description: 'Premium starter packages',
         category: createdCategories[3]._id,
         isActive: true
+      },
+      {
+        name: 'Diamond',
+        slug: 'diamond',
+        description: 'Diamond-level premium packages',
+        category: createdCategories[3]._id,
+        isActive: true
       }
     ];
     

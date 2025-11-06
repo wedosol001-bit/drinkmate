@@ -686,8 +686,20 @@ function ShopPageContent() {
       }
     }
 
-    // Calculate counts for all products (before any filtering)
-    products.forEach(product => {
+    // Calculate counts for products, scoped to current category when selected
+    const productsForCounting = products.filter(product => {
+      if (!filters.category || filters.category === '') return true
+      const category = (product as any)?.category
+      if (typeof category === 'object' && category) {
+        return category.slug === filters.category || category._id === filters.category || category.name?.toLowerCase() === filters.category.toLowerCase()
+      }
+      if (typeof category === 'string') {
+        return category === filters.category || category.toLowerCase() === filters.category.toLowerCase()
+      }
+      return false
+    })
+
+    productsForCounting.forEach(product => {
       // Category counts
       const category = (product as any)?.category
       const categoryId = typeof category === 'object' ? category?._id : category
@@ -789,7 +801,7 @@ function ShopPageContent() {
     })
 
     return counts
-  }, [products, subcategoryMap])
+  }, [products, subcategoryMap, filters.category])
 
   // Event handlers
   const handleFiltersChange = useCallback((newFilters: any) => {
@@ -1258,7 +1270,8 @@ function ShopPageContent() {
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
             {/* Enhanced Desktop Filters Sidebar */}
             <div className="hidden lg:block w-80 flex-shrink-0 -ml-8">
-              <div className="sticky top-24 space-y-6">
+              <div className="sticky top-24 h-[calc(100vh-6rem)] flex flex-col">
+                <div className="overflow-y-auto overflow-x-hidden pr-2 space-y-6 flex-1">
                 {/* Quick Stats Card */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 ml-2">
                   <h3 className="font-bold text-lg text-gray-900 mb-4 text-left">{t("shop.filters.quickStats")}</h3>
@@ -1295,6 +1308,7 @@ function ShopPageContent() {
                   filterCounts={filterCounts}
                   isRTL={isRTL}
                 />
+                </div>
               </div>
             </div>
 

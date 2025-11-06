@@ -379,6 +379,13 @@ router.post('/create-default-categories', authMiddleware, adminMiddleware, async
               description: 'Premium starter packages',
               category: category._id,
               isActive: true
+            },
+            {
+              name: 'Diamond',
+              slug: 'diamond',
+              description: 'Diamond-level premium packages',
+              category: category._id,
+              isActive: true
             }
           );
           break;

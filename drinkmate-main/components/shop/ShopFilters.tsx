@@ -354,11 +354,53 @@ export default function ShopFilters({
               {productCount}
             </Badge>
           </div>
-          {categories.map((category) => {
-            const count = filterCounts?.categories[category.slug] || 0
-            const isExpanded = expandedCategories.has(category.slug)
-            const hasSubcategories = category.subcategories && category.subcategories.length > 0
-            const categorySubcategories = category.subcategories || []
+          {(() => {
+            // Filter and order categories: Soda Maker, Flavours, Accessories (hide Kits)
+            const categoryOrder = ['sodamakers', 'flavors', 'accessories']
+            const filteredCategories = categories
+              .filter(cat => {
+                const slug = cat.slug.toLowerCase()
+                const name = cat.name.toLowerCase()
+                // Hide Kits category
+                return !slug.includes('kit') && !name.includes('kit')
+              })
+              .sort((a, b) => {
+                const aSlug = a.slug.toLowerCase()
+                const bSlug = b.slug.toLowerCase()
+                const aIndex = categoryOrder.findIndex(order => aSlug.includes(order) || aSlug === order)
+                const bIndex = categoryOrder.findIndex(order => bSlug.includes(order) || bSlug === order)
+                if (aIndex === -1 && bIndex === -1) return 0
+                if (aIndex === -1) return 1
+                if (bIndex === -1) return -1
+                return aIndex - bIndex
+              })
+
+            return filteredCategories.map((category) => {
+              const count = filterCounts?.categories[category.slug] || 0
+              const isExpanded = expandedCategories.has(category.slug)
+              // Filter subcategories: Remove Artic Series from Soda Maker, Remove Classic Flavors and Mocktail Flavors from Flavors
+              let categorySubcategories = category.subcategories || []
+              const categorySlug = category.slug.toLowerCase()
+              const categoryName = category.name.toLowerCase()
+              
+              if (categorySlug.includes('soda') || categoryName.includes('soda')) {
+                // Remove Artic Series from Soda Maker
+                categorySubcategories = categorySubcategories.filter((sub: any) => {
+                  const subName = (sub.name || '').toLowerCase()
+                  const subSlug = (sub.slug || '').toLowerCase()
+                  return !subName.includes('artic') && !subSlug.includes('artic')
+                })
+              } else if (categorySlug.includes('flavor') || categoryName.includes('flavor')) {
+                // Remove Classic Flavors and Mocktail Flavors from Flavors
+                categorySubcategories = categorySubcategories.filter((sub: any) => {
+                  const subName = (sub.name || '').toLowerCase()
+                  const subSlug = (sub.slug || '').toLowerCase()
+                  return !subName.includes('classic') && !subSlug.includes('classic') &&
+                         !subName.includes('mocktail') && !subSlug.includes('mocktail')
+                })
+              }
+              
+              const hasSubcategories = categorySubcategories.length > 0
             
             return (
               <div key={category._id} className="space-y-1">
@@ -465,7 +507,8 @@ export default function ShopFilters({
                 )}
               </div>
             )
-          })}
+            })
+          })()}
         </div>
       </FilterSection>
 
