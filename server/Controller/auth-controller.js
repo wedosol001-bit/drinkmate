@@ -662,13 +662,27 @@ const updateUserProfile = async (req, res) => {
                 // Update other fields
                 if (firstName !== undefined) user.firstName = firstName;
                 if (lastName !== undefined) user.lastName = lastName;
-                if (name !== undefined && name.trim()) user.name = name;
+                // Always update name if provided, even if empty (will be handled below)
+                if (name !== undefined) {
+                    if (name.trim()) {
+                        user.name = name.trim();
+                    } else {
+                        // If name is empty, use firstName + lastName or fallback
+                        if (user.firstName && user.lastName) {
+                            user.name = `${user.firstName} ${user.lastName}`.trim();
+                        } else if (user.username) {
+                            user.name = user.username;
+                        } else {
+                            user.name = 'User'; // Fallback
+                        }
+                    }
+                }
                 if (phone !== undefined) user.phone = phone;
                 if (district !== undefined) user.district = district;
                 if (city !== undefined) user.city = city;
                 if (nationalAddress !== undefined) user.nationalAddress = nationalAddress;
                 
-                // Ensure name field is not empty
+                // Ensure name field is not empty (final check)
                 if (!user.name || user.name.trim() === '') {
                     // Use provided name, firstName + lastName, or fallback to username
                     if (name && name.trim()) {

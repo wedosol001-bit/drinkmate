@@ -208,6 +208,13 @@ export default function OrdersPage() {
             statusText: response.statusText,
             error: errorData
           })
+          
+          // If 401, the user might need to re-authenticate
+          if (response.status === 401) {
+            console.warn('📦 Authentication failed - user may need to log in again')
+            // Don't clear orders immediately, but show empty state
+          }
+          
           setOrders([])
         }
       } catch (error) {

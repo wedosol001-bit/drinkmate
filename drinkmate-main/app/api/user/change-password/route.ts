@@ -66,7 +66,11 @@ async function changePassword(req: AuthenticatedRequest) {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
+        const errorData = await response.json().catch(() => ({ error: 'Failed to change password' }))
+        console.error('Change password backend error:', {
+          status: response.status,
+          error: errorData
+        })
         return NextResponse.json(
           { error: errorData.error || 'Failed to change password' },
           { status: response.status }

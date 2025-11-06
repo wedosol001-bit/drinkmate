@@ -66,16 +66,20 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
       let decoded: JWTPayload
       
       try {
-        // First try with audience validation for new tokens
+        // Try to verify token - first without audience/issuer for backward compatibility
         try {
-          decoded = jwt.verify(token, jwtSecret, {
-            issuer: SECURITY_CONFIG.JWT.issuer,
-            audience: SECURITY_CONFIG.JWT.audience
-          }) as JWTPayload
-        } catch (audienceError) {
-          // If audience validation fails, try without it for backward compatibility
-          console.log('Audience validation failed, trying without audience for backward compatibility')
           decoded = jwt.verify(token, jwtSecret) as JWTPayload
+        } catch (basicError) {
+          // If basic verification fails, try with audience validation for new tokens
+          try {
+            decoded = jwt.verify(token, jwtSecret, {
+              issuer: SECURITY_CONFIG.JWT.issuer,
+              audience: SECURITY_CONFIG.JWT.audience
+            }) as JWTPayload
+          } catch (audienceError) {
+            // If both fail, throw the original error
+            throw basicError
+          }
         }
       } catch (jwtError) {
         console.error('JWT verification error:', jwtError)
@@ -216,16 +220,20 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
         let decoded: JWTPayload
         
         try {
-          // First try with audience validation for new tokens
+          // Try to verify token - first without audience/issuer for backward compatibility
           try {
-            decoded = jwt.verify(token, jwtSecret, {
-              issuer: SECURITY_CONFIG.JWT.issuer,
-              audience: SECURITY_CONFIG.JWT.audience
-            }) as JWTPayload
-          } catch (audienceError) {
-            // If audience validation fails, try without it for backward compatibility
-            console.log('Audience validation failed, trying without audience for backward compatibility')
             decoded = jwt.verify(token, jwtSecret) as JWTPayload
+          } catch (basicError) {
+            // If basic verification fails, try with audience validation for new tokens
+            try {
+              decoded = jwt.verify(token, jwtSecret, {
+                issuer: SECURITY_CONFIG.JWT.issuer,
+                audience: SECURITY_CONFIG.JWT.audience
+              }) as JWTPayload
+            } catch (audienceError) {
+              // If both fail, throw the original error
+              throw basicError
+            }
           }
         } catch (jwtError) {
           console.error('JWT verification error:', jwtError)

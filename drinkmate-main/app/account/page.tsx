@@ -144,18 +144,7 @@ export default function AccountDashboard() {
         nationalAddress: (user as any)?.nationalAddress || prev.nationalAddress
       }))
     }
-    // Reset the flag after a short delay
-    let timer: NodeJS.Timeout | null = null
-    if (justSavedProfile.current) {
-      timer = setTimeout(() => {
-        justSavedProfile.current = false
-      }, 1000)
-    }
-    return () => {
-      if (timer) {
-        clearTimeout(timer)
-      }
-    }
+    // Note: justSavedProfile flag is now reset in handleProfileSave after refreshUser completes
   }, [user])
 
   useEffect(() => {
@@ -253,6 +242,12 @@ export default function AccountDashboard() {
             statusText: ordersResponse.statusText,
             error: errorData
           })
+          
+          // If 401, log warning but don't show error to user (they're already logged in)
+          if (ordersResponse.status === 401) {
+            console.warn('📦 Authentication failed for orders - token may be expired or invalid')
+          }
+          
           setOrders([])
         }
       } catch (err) {
@@ -315,30 +310,46 @@ export default function AccountDashboard() {
       // Update the profile state with the saved data from API response
       // The API route returns result.data (see /api/user/profile/route.ts)
       if (result.success && result.data) {
+        const updatedProfile = {
+          name: result.data.name || profile.name,
+          phone: result.data.phone || profile.phone,
+          district: result.data.district || profile.district,
+          city: result.data.city || profile.city,
+          nationalAddress: result.data.nationalAddress || profile.nationalAddress
+        }
         setProfile(prev => ({
           ...prev,
-          name: result.data.name || prev.name,
-          phone: result.data.phone || prev.phone,
-          district: result.data.district || prev.district,
-          city: result.data.city || prev.city,
-          nationalAddress: result.data.nationalAddress || prev.nationalAddress
+          ...updatedProfile
         }))
         
         // Refresh user data to show updated information
         await refreshUser()
+        
+        // Reset flag after a delay to allow refreshUser to complete
+        setTimeout(() => {
+          justSavedProfile.current = false
+        }, 2000)
       } else if (result.user) {
         // Fallback for direct backend response structure
+        const updatedProfile = {
+          name: result.user.name || (result.user.firstName && result.user.lastName ? `${result.user.firstName} ${result.user.lastName}` : profile.name),
+          phone: result.user.phone || profile.phone,
+          district: result.user.district || profile.district,
+          city: result.user.city || profile.city,
+          nationalAddress: result.user.nationalAddress || profile.nationalAddress
+        }
         setProfile(prev => ({
           ...prev,
-          name: result.user.name || result.user.firstName + ' ' + result.user.lastName || prev.name,
-          phone: result.user.phone || prev.phone,
-          district: result.user.district || prev.district,
-          city: result.user.city || prev.city,
-          nationalAddress: result.user.nationalAddress || prev.nationalAddress
+          ...updatedProfile
         }))
         
         // Refresh user data to show updated information
         await refreshUser()
+        
+        // Reset flag after a delay to allow refreshUser to complete
+        setTimeout(() => {
+          justSavedProfile.current = false
+        }, 2000)
       }
 
       setIsEditingProfile(false)
@@ -479,11 +490,20 @@ export default function AccountDashboard() {
       })
 
       console.log('🔐 Password Change: Response status:', response.status)
-      const result = await response.json()
-      console.log('🔐 Password Change: Response data:', JSON.stringify(result, null, 2))
+      
+      let result
+      try {
+        result = await response.json()
+        console.log('🔐 Password Change: Response data:', JSON.stringify(result, null, 2))
+      } catch (jsonError) {
+        console.error('🔐 Password Change: Failed to parse response:', jsonError)
+        throw new Error('Invalid response from server')
+      }
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to change password')
+        const errorMessage = result?.error || `Failed to change password (${response.status})`
+        console.error('🔐 Password Change: Error response:', errorMessage)
+        throw new Error(errorMessage)
       }
 
       // Success
@@ -1012,8 +1032,7 @@ export default function AccountDashboard() {
                         </Button>
                       </div>
                     </div>
-                  )))}
-                  {orders.length > 0 && (
+                  ))}
                   <Button 
                     variant="outline" 
                     className="w-full h-12 text-lg font-semibold hover:bg-orange-50 hover:border-orange-200"
@@ -1022,7 +1041,6 @@ export default function AccountDashboard() {
                     <TrendingUp className="h-5 w-5 mr-2" />
                     {t('account.orders.viewAll')}
                   </Button>
-                  )}
                 </div>
               </CardContent>
             </Card>
