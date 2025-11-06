@@ -318,16 +318,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const data = await authAPI.verifyToken();
+      // Use getProfile instead of verifyToken to get fresh data from database
+      const data = await authAPI.getProfile();
       
-      if (data && data.user) {
-        
+      // Handle both response structures: { user: {...} } and { success: true, user: {...} }
+      const userData = data?.user || (data?.success && data?.user ? data.user : null);
+      
+      if (userData) {
         setAuthState(prev => ({
           ...prev,
-          user: data.user,
+          user: {
+            _id: userData._id || userData.id,
+            username: userData.username || userData.name || '',
+            name: userData.name || userData.username || '',
+            email: userData.email || '',
+            phone: userData.phone || '',
+            avatar: userData.avatar,
+            isAdmin: userData.isAdmin || false,
+            role: userData.role,
+            createdAt: userData.createdAt,
+            lastLogin: userData.lastLogin,
+            // Include address fields
+            district: userData.district,
+            city: userData.city,
+            nationalAddress: userData.nationalAddress,
+          },
         }));
       }
     } catch (error: any) {
+      // If getProfile fails, fallback to verifyToken
+      try {
+        const data = await authAPI.verifyToken();
+        if (data && data.user) {
+          setAuthState(prev => ({
+            ...prev,
+            user: data.user,
+          }));
+        }
+      } catch (fallbackError: any) {
+        // Silently fail if both fail
+      }
     }
   };
 

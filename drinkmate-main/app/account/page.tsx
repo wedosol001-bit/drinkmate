@@ -310,10 +310,14 @@ export default function AccountDashboard() {
     }
 
     if (isAuthenticated && user) {
-    fetchAccountData()
+      // Refresh user data to ensure we have the latest from database
+      refreshUser().then(() => {
+        fetchAccountData()
+      })
     } else {
       setLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user])
 
   const handleProfileSave = async () => {
@@ -381,7 +385,8 @@ export default function AccountDashboard() {
           ...updatedProfile
         }))
         
-        // Refresh user data to show updated information
+        // Wait a moment for database write to complete, then refresh user data
+        await new Promise(resolve => setTimeout(resolve, 300))
         await refreshUser()
         
         // Reset flag after refreshUser completes and a short delay
@@ -504,7 +509,8 @@ export default function AccountDashboard() {
           nationalAddress: result.data.nationalAddress || prev.nationalAddress
         }))
         
-        // Refresh user data to show updated information
+        // Wait a moment for database write to complete, then refresh user data
+        await new Promise(resolve => setTimeout(resolve, 300))
         console.log("Calling refreshUser for address save...")
         await refreshUser()
         console.log("refreshUser completed for address save")
@@ -524,7 +530,8 @@ export default function AccountDashboard() {
           nationalAddress: result.user.nationalAddress || prev.nationalAddress
         }))
         
-        // Refresh user data to show updated information
+        // Wait a moment for database write to complete, then refresh user data
+        await new Promise(resolve => setTimeout(resolve, 300))
         console.log("Calling refreshUser for address save...")
         await refreshUser()
         console.log("refreshUser completed for address save")
@@ -534,7 +541,8 @@ export default function AccountDashboard() {
           justSavedProfile.current = false
         }, 1000)
       } else {
-        // If no data in response, just refresh user and reset flag
+        // If no data in response, wait a moment then refresh user and reset flag
+        await new Promise(resolve => setTimeout(resolve, 300))
         await refreshUser()
         setTimeout(() => {
           justSavedProfile.current = false
