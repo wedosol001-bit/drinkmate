@@ -263,10 +263,16 @@ userSchema.pre('save', function(next) {
     return next();
   }
 
-  // Validate password against policy
+  // Skip validation if password is already hashed (starts with $2a$, $2b$, or $2y$)
+  // This happens when password is loaded from DB and not actually being changed
+  if (this.password && (this.password.startsWith('$2a$') || this.password.startsWith('$2b$') || this.password.startsWith('$2y$'))) {
+    return next();
+  }
+
+  // Validate password against policy (only for new/plain text passwords)
   const validation = validatePassword(this.password);
   if (!validation.isValid) {
-    const error = new Error('Password does not meet security requirements');
+    const error = new Error('Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character');
     error.errors = validation.errors;
     error.warnings = validation.warnings;
     return next(error);

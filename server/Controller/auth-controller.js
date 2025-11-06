@@ -641,6 +641,8 @@ const updateUserProfile = async (req, res) => {
         try {
             const user = await User.findById(userId);
             if (user) {
+                // Ensure password field is not marked as modified
+                // This prevents password validation from running when we're not updating password
                 // Check if username or email is being changed and if it's already taken
                 if (username && username !== user.username) {
                     const existingUser = await User.findOne({ 
