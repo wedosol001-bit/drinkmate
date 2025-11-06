@@ -785,7 +785,7 @@ const updateUserProfile = async (req, res) => {
             console.error("Error stack:", mongoError.stack);
             // Check if it's a validation error
             if (mongoError.name === 'ValidationError') {
-                const errors = Object.values(mongoError.errors).map((err: any) => err.message);
+                const errors = Object.values(mongoError.errors).map((err) => err.message);
                 return res.status(400).json({
                     error: 'Validation error: ' + errors.join(', '),
                     details: process.env.NODE_ENV === 'development' ? mongoError.message : undefined
