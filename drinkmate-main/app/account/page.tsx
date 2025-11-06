@@ -331,8 +331,6 @@ export default function AccountDashboard() {
     }
 
     loadInitialData()
-    // Only run when isAuthenticated changes from false to true
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated])
 
   const handleProfileSave = async () => {

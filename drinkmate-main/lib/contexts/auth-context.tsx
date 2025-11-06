@@ -16,6 +16,9 @@ interface User {
   role?: string;
   createdAt?: string;
   lastLogin?: string;
+  district?: string;
+  city?: string;
+  nationalAddress?: string;
 }
 
 interface AuthState {
