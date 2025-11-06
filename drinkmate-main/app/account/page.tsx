@@ -116,6 +116,14 @@ export default function AccountDashboard() {
   // Orders state
   const [orders, setOrders] = useState<Order[]>([])
   
+  // Debug orders state changes
+  useEffect(() => {
+    console.log('📦 Orders state updated, count:', orders.length)
+    if (orders.length > 0) {
+      console.log('📦 Sample order:', orders[0])
+    }
+  }, [orders])
+  
 
   // Update profile when user data changes
   // Skip update if we just saved the profile (to prevent overwriting user's edits)
@@ -163,14 +171,18 @@ export default function AccountDashboard() {
         }
 
         // Fetch real orders from API - limit to 7 for account page
+        console.log('🔍 Fetching orders from /api/user/orders?limit=7')
         const ordersResponse = await fetch('/api/user/orders?limit=7', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         })
 
+        console.log('📦 Orders response status:', ordersResponse.status, ordersResponse.statusText)
+
         if (ordersResponse.ok) {
           const ordersData = await ordersResponse.json()
+          console.log('📦 Full orders response:', JSON.stringify(ordersData, null, 2))
           
           // Handle different response structures:
           // 1. { success: true, orders: [...] } - direct from backend
@@ -181,21 +193,35 @@ export default function AccountDashboard() {
           
           if (Array.isArray(ordersData)) {
             // Direct array response
+            console.log('📦 Response is direct array, length:', ordersData.length)
             rawOrders = ordersData
           } else if (ordersData?.success) {
+            console.log('📦 Response has success flag')
             // Success response - check for orders in different locations
             if (Array.isArray(ordersData.orders)) {
+              console.log('📦 Found orders array in ordersData.orders, length:', ordersData.orders.length)
               rawOrders = ordersData.orders
             } else if (ordersData.data) {
               if (Array.isArray(ordersData.data)) {
+                console.log('📦 Found orders array in ordersData.data, length:', ordersData.data.length)
                 rawOrders = ordersData.data
               } else if (Array.isArray(ordersData.data.orders)) {
+                console.log('📦 Found orders array in ordersData.data.orders, length:', ordersData.data.orders.length)
                 rawOrders = ordersData.data.orders
+              } else {
+                console.log('📦 ordersData.data exists but is not an array:', typeof ordersData.data, ordersData.data)
               }
+            } else {
+              console.log('📦 No orders or data field found in response. Keys:', Object.keys(ordersData))
             }
+          } else {
+            console.log('📦 Response structure unexpected:', typeof ordersData, ordersData)
           }
           
+          console.log('📦 Raw orders extracted, count:', rawOrders.length)
+          
           if (rawOrders.length > 0) {
+            console.log('📦 Sample order:', rawOrders[0])
             // Transform API data to match our Order interface
             const transformedOrders: Order[] = rawOrders.map((order: any) => ({
               id: order._id || order.id,
@@ -211,14 +237,22 @@ export default function AccountDashboard() {
               })) || []
             })) || []
             
+            console.log('📦 Transformed orders count:', transformedOrders.length)
+            console.log('📦 Setting orders state:', transformedOrders)
             setOrders(transformedOrders)
           } else {
             // If no orders found, set empty array
+            console.warn('📦 No orders found in response')
             setOrders([])
           }
         } else {
           // If API fails, fall back to empty array
-          console.warn('Failed to fetch orders, using empty array')
+          const errorData = await ordersResponse.json().catch(() => ({}))
+          console.error('📦 Failed to fetch orders:', {
+            status: ordersResponse.status,
+            statusText: ordersResponse.statusText,
+            error: errorData
+          })
           setOrders([])
         }
       } catch (err) {
@@ -401,6 +435,8 @@ export default function AccountDashboard() {
     try {
       setIsChangingPassword(true)
       
+      console.log('🔐 Password Change: Starting...')
+      
       // Basic validation
       if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordAllRequired'))
@@ -429,6 +465,7 @@ export default function AccountDashboard() {
       }
 
       // Call API to change password
+      console.log('🔐 Password Change: Sending request to /api/user/change-password')
       const response = await fetch('/api/user/change-password', {
         method: 'POST',
         headers: {
@@ -441,13 +478,16 @@ export default function AccountDashboard() {
         })
       })
 
+      console.log('🔐 Password Change: Response status:', response.status)
       const result = await response.json()
+      console.log('🔐 Password Change: Response data:', JSON.stringify(result, null, 2))
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to change password')
       }
 
       // Success
+      console.log('🔐 Password Change: Success!')
       toast.success(t('account.toasts.passwordChanged'))
 
       // Reset form
@@ -923,7 +963,13 @@ export default function AccountDashboard() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  {orders.map((order) => (
+                  {orders.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-600">{t('account.orders.noOrders') || 'No orders found'}</p>
+                    </div>
+                  ) : (
+                    orders.map((order) => (
                     <div key={order.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-white">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
@@ -966,7 +1012,8 @@ export default function AccountDashboard() {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                  )))}
+                  {orders.length > 0 && (
                   <Button 
                     variant="outline" 
                     className="w-full h-12 text-lg font-semibold hover:bg-orange-50 hover:border-orange-200"
@@ -975,6 +1022,7 @@ export default function AccountDashboard() {
                     <TrendingUp className="h-5 w-5 mr-2" />
                     {t('account.orders.viewAll')}
                   </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

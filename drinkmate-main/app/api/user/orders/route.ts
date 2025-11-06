@@ -37,11 +37,20 @@ async function getUserOrders(req: AuthenticatedRequest) {
     const status = searchParams.get('status') || ''
 
     // Call backend API
+    const backendUrl = `/checkout/orders?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}`
+    console.log('🔍 API Route: Calling backend:', backendUrl)
     const response = await makeAuthenticatedRequest(
-      `/checkout/orders?page=${page}&limit=${limit}${status ? `&status=${status}` : ''}`,
+      backendUrl,
       { method: 'GET' },
       authToken
     )
+
+    console.log('🔍 API Route: Backend response status:', response.status)
+    
+    // Clone the response to read it for logging without consuming the body
+    const clonedResponse = response.clone()
+    const backendData = await clonedResponse.json().catch(() => ({}))
+    console.log('🔍 API Route: Backend response data:', JSON.stringify(backendData, null, 2))
 
     return await handleBackendResponse(response)
 
