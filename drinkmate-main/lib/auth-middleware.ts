@@ -50,20 +50,28 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
       const token = authHeader.replace('Bearer ', '')
       
       // Verify JWT token
+      // SECURITY: JWT_SECRET is REQUIRED for production security
+      // It's safe to have it here because:
+      // 1. Next.js API routes run server-side only (not in browser)
+      // 2. process.env variables (without NEXT_PUBLIC_) are never exposed to client
+      // 3. We need it to verify tokens before rate limiting and logging
       const jwtSecret = process.env.JWT_SECRET
       if (!jwtSecret) {
-        console.error('JWT_SECRET not found in environment variables')
+        console.error('❌ SECURITY ERROR: JWT_SECRET not found in environment variables')
+        console.error('⚠️  JWT_SECRET is REQUIRED for secure token verification')
+        console.error('⚠️  Without it, rate limiting and logging are vulnerable to fake tokens')
         return NextResponse.json(
           { 
             error: 'JWT secret not configured',
-            code: 'JWT_SECRET_MISSING'
+            code: 'JWT_SECRET_MISSING',
+            message: 'Server configuration error. Please contact support.'
           },
           { status: 500 }
         )
       }
       
       if (process.env.NODE_ENV === 'development') {
-        console.log('JWT_SECRET found:', jwtSecret.substring(0, 10) + '...')
+        console.log('✅ JWT_SECRET found:', jwtSecret.substring(0, 10) + '...')
       }
       let decoded: JWTPayload
       
@@ -204,20 +212,28 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
         const token = authHeader.replace('Bearer ', '')
         
         // Verify JWT token
+        // SECURITY: JWT_SECRET is REQUIRED for production security
+        // It's safe to have it here because:
+        // 1. Next.js API routes run server-side only (not in browser)
+        // 2. process.env variables (without NEXT_PUBLIC_) are never exposed to client
+        // 3. We need it to verify tokens before rate limiting and logging
         const jwtSecret = process.env.JWT_SECRET
         if (!jwtSecret) {
-          console.error('JWT_SECRET not found in environment variables')
+          console.error('❌ SECURITY ERROR: JWT_SECRET not found in environment variables')
+          console.error('⚠️  JWT_SECRET is REQUIRED for secure token verification')
+          console.error('⚠️  Without it, rate limiting and logging are vulnerable to fake tokens')
           return NextResponse.json(
             { 
               error: 'JWT secret not configured',
-              code: 'JWT_SECRET_MISSING'
+              code: 'JWT_SECRET_MISSING',
+              message: 'Server configuration error. Please contact support.'
             },
             { status: 500 }
           )
         }
         
         if (process.env.NODE_ENV === 'development') {
-          console.log('JWT_SECRET found:', jwtSecret.substring(0, 10) + '...')
+          console.log('✅ JWT_SECRET found:', jwtSecret.substring(0, 10) + '...')
         }
         let decoded: JWTPayload
         

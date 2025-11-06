@@ -28,7 +28,6 @@ import {
   Truck,
   Lock,
   Shield,
-  Star,
   TrendingUp,
   ShoppingBag
 } from 'lucide-react'
@@ -79,7 +78,8 @@ export default function AccountDashboard() {
   const [isEditingAddress, setIsEditingAddress] = useState(false)
   const [isSavingAddress, setIsSavingAddress] = useState(false)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [isChangingPasswordLoading, setIsChangingPasswordLoading] = useState(false)
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -115,6 +115,7 @@ export default function AccountDashboard() {
 
   // Orders state
   const [orders, setOrders] = useState<Order[]>([])
+  const [totalOrdersCount, setTotalOrdersCount] = useState<number>(0)
   
   // Debug orders state changes
   useEffect(() => {
@@ -172,6 +173,37 @@ export default function AccountDashboard() {
         if (ordersResponse.ok) {
           const ordersData = await ordersResponse.json()
           console.log('📦 Full orders response:', JSON.stringify(ordersData, null, 2))
+          
+          // Try to extract total count from pagination or response
+          if (ordersData?.pagination?.totalOrders) {
+            setTotalOrdersCount(ordersData.pagination.totalOrders)
+          } else if (ordersData?.totalOrders) {
+            setTotalOrdersCount(ordersData.totalOrders)
+          } else if (ordersData?.total) {
+            setTotalOrdersCount(ordersData.total)
+          } else {
+            // If total count not available, fetch all orders to count them
+            console.log('🔍 Total count not in response, fetching all orders to count')
+            const allOrdersResponse = await fetch('/api/user/orders?limit=1000', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
+            if (allOrdersResponse.ok) {
+              const allOrdersData = await allOrdersResponse.json()
+              let allOrders: any[] = []
+              if (Array.isArray(allOrdersData)) {
+                allOrders = allOrdersData
+              } else if (Array.isArray(allOrdersData?.orders)) {
+                allOrders = allOrdersData.orders
+              } else if (Array.isArray(allOrdersData?.data)) {
+                allOrders = allOrdersData.data
+              } else if (Array.isArray(allOrdersData?.data?.orders)) {
+                allOrders = allOrdersData.data.orders
+              }
+              setTotalOrdersCount(allOrders.length)
+            }
+          }
           
           // Handle different response structures:
           // 1. { success: true, orders: [...] } - direct from backend
@@ -352,10 +384,11 @@ export default function AccountDashboard() {
         // Refresh user data to show updated information
         await refreshUser()
         
-        // Reset flag after a delay to allow refreshUser to complete
+        // Reset flag after refreshUser completes and a short delay
+        // This ensures the useEffect doesn't overwrite our saved data
         setTimeout(() => {
           justSavedProfile.current = false
-        }, 2000)
+        }, 1000)
       } else if (result.user) {
         // Fallback for direct backend response structure
         const updatedProfile = {
@@ -373,10 +406,16 @@ export default function AccountDashboard() {
         // Refresh user data to show updated information
         await refreshUser()
         
-        // Reset flag after a delay to allow refreshUser to complete
+        // Reset flag after refreshUser completes and a short delay
         setTimeout(() => {
           justSavedProfile.current = false
-        }, 2000)
+        }, 1000)
+      } else {
+        // If no data in response, just refresh user and reset flag
+        await refreshUser()
+        setTimeout(() => {
+          justSavedProfile.current = false
+        }, 1000)
       }
 
       setIsEditingProfile(false)
@@ -450,6 +489,9 @@ export default function AccountDashboard() {
         throw new Error(result.error || 'Failed to save address')
       }
 
+      // Set flag to prevent useEffect from overwriting our updates
+      justSavedProfile.current = true
+      
       // Update the profile state with the saved data
       // The API route returns result.data (see /api/user/profile/route.ts)
       if (result.success && result.data) {
@@ -466,6 +508,11 @@ export default function AccountDashboard() {
         console.log("Calling refreshUser for address save...")
         await refreshUser()
         console.log("refreshUser completed for address save")
+        
+        // Reset flag after refreshUser completes
+        setTimeout(() => {
+          justSavedProfile.current = false
+        }, 1000)
       } else if (result.user) {
         // Fallback for direct backend response structure
         setProfile(prev => ({
@@ -481,6 +528,17 @@ export default function AccountDashboard() {
         console.log("Calling refreshUser for address save...")
         await refreshUser()
         console.log("refreshUser completed for address save")
+        
+        // Reset flag after refreshUser completes
+        setTimeout(() => {
+          justSavedProfile.current = false
+        }, 1000)
+      } else {
+        // If no data in response, just refresh user and reset flag
+        await refreshUser()
+        setTimeout(() => {
+          justSavedProfile.current = false
+        }, 1000)
       }
       
       setIsEditingAddress(false)
@@ -498,23 +556,26 @@ export default function AccountDashboard() {
 
   const handlePasswordChange = async () => {
     try {
-      setIsChangingPassword(true)
+      setIsChangingPasswordLoading(true)
       
       console.log('🔐 Password Change: Starting...')
       
       // Basic validation
       if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordAllRequired'))
+        setIsChangingPasswordLoading(false)
         return
       }
 
       if (passwordData.newPassword !== passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordMismatch'))
+        setIsChangingPasswordLoading(false)
         return
       }
 
       if (passwordData.newPassword.length < 8) {
         toast.error(t('account.toasts.passwordTooShort'))
+        setIsChangingPasswordLoading(false)
         return
       }
 
@@ -522,6 +583,7 @@ export default function AccountDashboard() {
       const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
       if (!token) {
         toast.error(t('account.toasts.passwordNotAuthenticated'))
+        setIsChangingPasswordLoading(false)
         return
       }
 
@@ -544,7 +606,7 @@ export default function AccountDashboard() {
       let result
       try {
         result = await response.json()
-        console.log('🔐 Password Change: Response data:', JSON.stringify(result, null, 2))
+      console.log('🔐 Password Change: Response data:', JSON.stringify(result, null, 2))
       } catch (jsonError) {
         console.error('🔐 Password Change: Failed to parse response:', jsonError)
         throw new Error('Invalid response from server')
@@ -564,6 +626,7 @@ export default function AccountDashboard() {
         } else {
           toast.error(errorMessage)
         }
+        setIsChangingPasswordLoading(false)
         return
       }
 
@@ -571,20 +634,20 @@ export default function AccountDashboard() {
       console.log('🔐 Password Change: Success!')
       toast.success(t('account.toasts.passwordChanged'))
 
-      // Reset form
+      // Reset form and close it
       setPasswordData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       })
-      setIsChangingPassword(false)
+      setShowPasswordForm(false)
+      setIsChangingPasswordLoading(false)
 
     } catch (error: any) {
       console.error('Error changing password:', error)
       const errorMessage = error?.message || t('account.toasts.passwordChangeError')
       toast.error(errorMessage)
-    } finally {
-      setIsChangingPassword(false)
+      setIsChangingPasswordLoading(false)
     }
   }
 
@@ -665,15 +728,8 @@ export default function AccountDashboard() {
               </div>
               <div className="hidden md:flex items-center space-x-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold">{orders.length}</div>
+                  <div className="text-3xl font-bold">{totalOrdersCount || orders.length}</div>
                   <div className="text-blue-100 text-sm">{t('account.stats.orders')}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold">4.8</div>
-                  <div className="text-blue-100 text-sm flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-current" />
-                    {t('account.stats.rating')}
-                  </div>
                 </div>
               </div>
             </div>
@@ -916,7 +972,7 @@ export default function AccountDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                {isChangingPassword ? (
+                {showPasswordForm ? (
                   <div className="space-y-6">
                     <div>
                       <Label htmlFor="currentPassword" className="text-sm font-semibold text-gray-700">
@@ -929,11 +985,13 @@ export default function AccountDashboard() {
                           value={passwordData.currentPassword}
                           onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
                           className="pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                          disabled={isChangingPasswordLoading}
                         />
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('current')}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          disabled={isChangingPasswordLoading}
                         >
                           {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -950,11 +1008,13 @@ export default function AccountDashboard() {
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
                           className="pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                          disabled={isChangingPasswordLoading}
                         />
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('new')}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          disabled={isChangingPasswordLoading}
                         >
                           {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -971,11 +1031,13 @@ export default function AccountDashboard() {
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                           className="pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                          disabled={isChangingPasswordLoading}
                         />
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('confirm')}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          disabled={isChangingPasswordLoading}
                         >
                           {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -984,20 +1046,27 @@ export default function AccountDashboard() {
                     <div className="flex gap-3">
                       <Button 
                         onClick={handlePasswordChange} 
-                        disabled={isChangingPassword}
+                        disabled={isChangingPasswordLoading}
                         className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50"
                       >
-                        {isChangingPassword ? (
+                        {isChangingPasswordLoading ? (
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                         ) : (
                           <Shield className="h-4 w-4 mr-2" />
                         )}
-                        {isChangingPassword ? t('account.password.changing') || 'Changing...' : t('account.password.change')}
+                        {isChangingPasswordLoading ? t('account.password.changing') || 'Changing...' : t('account.password.change')}
                       </Button>
                       <Button 
                         variant="outline"
-                        onClick={() => setIsChangingPassword(false)}
-                        disabled={isChangingPassword}
+                        onClick={() => {
+                          setShowPasswordForm(false)
+                          setPasswordData({
+                            currentPassword: '',
+                            newPassword: '',
+                            confirmPassword: ''
+                          })
+                        }}
+                        disabled={isChangingPasswordLoading}
                         className="px-6"
                       >
                         <X className="h-4 w-4 mr-2" />
@@ -1016,7 +1085,7 @@ export default function AccountDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setIsChangingPassword(true)}
+                        onClick={() => setShowPasswordForm(true)}
                         className="hover:bg-purple-50"
                       >
                         <Lock className="h-4 w-4 mr-2" />
@@ -1054,48 +1123,48 @@ export default function AccountDashboard() {
                   ) : (
                     <>
                       {orders.map((order) => (
-                        <div key={order.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-white">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <span className="font-bold text-lg text-gray-900">#{order.number}</span>
-                              <Badge className={cn("px-3 py-1", getStatusColor(order.status))}>
-                                <span className="flex items-center gap-2">
-                                  {getStatusIcon(order.status)}
-                                  {order.status}
-                                </span>
-                              </Badge>
-                            </div>
-                            <div className="text-right">
-                              <div className="font-bold text-xl text-gray-900">
-                                <SaudiRiyal amount={order.total} size="lg" />
-                              </div>
-                              <p className="text-sm text-gray-500">{order.itemsCount} {t('account.orders.itemsSuffix')}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-600 mb-4">
-                            <Calendar className="h-4 w-4 mr-2" />
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="text-sm text-gray-700">
-                              {order.items.map((item, index) => (
-                                <span key={index}>
-                                  {item.name} (x{item.quantity})
-                                  {index < order.items.length - 1 && ', '}
-                                </span>
-                              ))}
-                            </div>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleViewOrder(order.id)}
-                              className="hover:bg-orange-50 hover:border-orange-200"
-                            >
-                              <Eye className="h-4 w-4 mr-2" />
-                              {t('account.orders.view')}
-                            </Button>
-                          </div>
+                    <div key={order.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 bg-white">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <span className="font-bold text-lg text-gray-900">#{order.number}</span>
+                          <Badge className={cn("px-3 py-1", getStatusColor(order.status))}>
+                            <span className="flex items-center gap-2">
+                              {getStatusIcon(order.status)}
+                              {order.status}
+                            </span>
+                          </Badge>
                         </div>
+                        <div className="text-right">
+                          <div className="font-bold text-xl text-gray-900">
+                            <SaudiRiyal amount={order.total} size="lg" />
+                          </div>
+                          <p className="text-sm text-gray-500">{order.itemsCount} {t('account.orders.itemsSuffix')}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600 mb-4">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-700">
+                          {order.items.map((item, index) => (
+                            <span key={index}>
+                              {item.name} (x{item.quantity})
+                              {index < order.items.length - 1 && ', '}
+                            </span>
+                          ))}
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleViewOrder(order.id)}
+                          className="hover:bg-orange-50 hover:border-orange-200"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          {t('account.orders.view')}
+                        </Button>
+                      </div>
+                    </div>
                       ))}
                     </>
                   )}
