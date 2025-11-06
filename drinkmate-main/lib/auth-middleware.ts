@@ -275,13 +275,36 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
               }
             }
           } else {
-            return NextResponse.json(
-              { 
-                error: 'Invalid or expired token',
-                code: 'INVALID_TOKEN'
-              },
-              { status: 401 }
-            )
+            // In production, provide more helpful error message
+            const errorDetails: any = {
+              error: 'Invalid or expired token',
+              code: 'INVALID_TOKEN'
+            }
+            
+            // Try to decode token to provide more info (without verification)
+            try {
+              const decodedUnverified = jwt.decode(token) as JWTPayload
+              if (decodedUnverified) {
+                errorDetails.details = {
+                  tokenHasId: !!decodedUnverified.id,
+                  tokenExpired: decodedUnverified.exp ? decodedUnverified.exp < Math.floor(Date.now() / 1000) : 'unknown',
+                  tokenIssuer: decodedUnverified.iss || 'none',
+                  tokenAudience: decodedUnverified.aud || 'none'
+                }
+                console.error('🔍 Token decode info (unverified):', errorDetails.details)
+              }
+            } catch (decodeError) {
+              console.error('🔍 Could not decode token:', decodeError)
+            }
+            
+            console.error('🔍 JWT verification failed in production:', {
+              errorMessage: jwtError?.message,
+              errorName: jwtError?.name,
+              secretConfigured: !!jwtSecret,
+              secretLength: jwtSecret?.length
+            })
+            
+            return NextResponse.json(errorDetails, { status: 401 })
           }
         }
 
@@ -327,6 +350,12 @@ export function withAuth(handler: HandlerWithoutParams | HandlerWithParams) {
           email: decoded.email || '',
           isAdmin: decoded.isAdmin || false
         }
+
+        console.log('✅ Auth middleware: Token verified successfully', {
+          userId: decoded.id,
+          hasEmail: !!decoded.email,
+          isAdmin: decoded.isAdmin
+        })
 
         // Call the original handler without params
         return await (handler as HandlerWithoutParams)(authenticatedReq)

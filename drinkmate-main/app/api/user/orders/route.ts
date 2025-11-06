@@ -14,11 +14,17 @@ async function getUserOrders(req: AuthenticatedRequest) {
   try {
     const userId = req.user?.id
     if (!userId) {
+      console.error('🔍 getUserOrders: No user ID in request', {
+        hasUser: !!req.user,
+        userKeys: req.user ? Object.keys(req.user) : []
+      })
       return NextResponse.json(
         { error: 'User not authenticated' },
         { status: 401 }
       )
     }
+    
+    console.log('🔍 getUserOrders: User authenticated', { userId })
 
     // Check rate limiting
     if (!checkRateLimit(`orders_${userId}`, 30, 60000)) {
