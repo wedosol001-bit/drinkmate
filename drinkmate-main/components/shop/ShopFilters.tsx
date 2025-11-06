@@ -74,6 +74,17 @@ const ratingOptions = [
   { value: 1, label: '1+ Stars', icon: <Star className="w-4 h-4 fill-current" /> }
 ]
 
+// Helper function to normalize subcategory names
+const normalizeSubcategoryName = (name: string | undefined): string => {
+  if (!name) return ''
+  const nameLower = name.toLowerCase()
+  // Convert "Luxe Series" or "luxe-series" to "LUX"
+  if (nameLower.includes('luxe') || nameLower === 'lux-series' || nameLower === 'luxe-series') {
+    return 'LUX'
+  }
+  return name
+}
+
 export default function ShopFilters({
   filters,
   onFiltersChange,
@@ -486,7 +497,7 @@ export default function ShopFilters({
                               htmlFor={`subcategory-${subcategorySlug}`} 
                               className="text-sm font-normal cursor-pointer text-gray-700"
                             >
-                              {subcategory.name || subcategorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                              {normalizeSubcategoryName(subcategory.name) || subcategorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                             </Label>
                           </div>
                           <Badge 

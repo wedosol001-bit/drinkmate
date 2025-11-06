@@ -135,10 +135,42 @@ export default function OrdersPage() {
 
         if (response.ok) {
           const data = await response.json()
-          // Support both shapes: { success, data: { orders } } and { success, orders }
-          const payload = data?.data || data
-          if (data?.success && (payload?.orders || Array.isArray(payload))) {
-            const rawOrders = Array.isArray(payload) ? payload : (payload.orders || [])
+          console.log('📦 Orders API Response:', {
+            success: data?.success,
+            hasData: !!data?.data,
+            hasOrders: !!data?.orders,
+            ordersCount: data?.orders?.length || 0,
+            count: data?.count,
+            totalOrders: data?.totalOrders,
+            fullKeys: Object.keys(data || {})
+          })
+          
+          // Handle different response structures:
+          // 1. { success: true, orders: [...] } - direct from backend
+          // 2. { success: true, data: { orders: [...] } } - wrapped response
+          // 3. { success: true, data: [...] } - array in data
+          // 4. [...] - direct array
+          let rawOrders: any[] = []
+          
+          if (Array.isArray(data)) {
+            // Direct array response
+            rawOrders = data
+          } else if (data?.success) {
+            // Success response - check for orders in different locations
+            if (Array.isArray(data.orders)) {
+              rawOrders = data.orders
+            } else if (data.data) {
+              if (Array.isArray(data.data)) {
+                rawOrders = data.data
+              } else if (Array.isArray(data.data.orders)) {
+                rawOrders = data.data.orders
+              }
+            }
+          }
+          
+          console.log('📦 Raw orders extracted:', rawOrders.length)
+          
+          if (rawOrders.length > 0) {
             // Transform API data to match our Order interface
             const transformedOrders: Order[] = rawOrders.map((order: any) => ({
               id: order._id || order.id,
@@ -156,12 +188,26 @@ export default function OrdersPage() {
               estimatedDelivery: order.estimatedDeliveryDate || order.estimated_delivery_date || null
             })) || []
             
+            console.log('📦 Transformed orders count:', transformedOrders.length)
             setOrders(transformedOrders)
           } else {
+            console.warn('📦 No orders found - Response structure:', {
+              success: data?.success,
+              hasOrders: !!data?.orders,
+              hasData: !!data?.data,
+              isDataArray: Array.isArray(data?.data),
+              isOrdersArray: Array.isArray(data?.orders),
+              dataType: typeof data
+            })
             setOrders([])
           }
         } else {
-          console.error('Failed to fetch orders:', response.status, response.statusText)
+          const errorData = await response.json().catch(() => ({}))
+          console.error('📦 Failed to fetch orders:', {
+            status: response.status,
+            statusText: response.statusText,
+            error: errorData
+          })
           setOrders([])
         }
       } catch (error) {

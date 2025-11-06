@@ -195,13 +195,24 @@ export default function SodamakersPage() {
         return (imgs.find((img: any) => img.isPrimary)?.url) || first.url || "/images/02 - Soda Makers/Artic-Black-Machine---Front.png"
       }
 
+      // Helper function to normalize subcategory name
+      const normalizeSubcategoryName = (name: string | null | undefined): string | null => {
+        if (!name) return null
+        const nameLower = name.toLowerCase()
+        // Convert "Luxe Series" or "luxe-series" to "LUX"
+        if (nameLower.includes('luxe') || nameLower === 'lux-series' || nameLower === 'luxe-series') {
+          return 'LUX'
+        }
+        return name
+      }
+
       // Helper function to get subcategory name from product
       const getSubcategoryName = (product: any): string | null => {
         const subcategory = product.subcategory;
         
-        // If subcategory is an object (populated by backend), get the name directly
+        // If subcategory is an object (populated by backend), get the name directly and normalize it
         if (typeof subcategory === 'object' && subcategory !== null) {
-          return subcategory.name || null;
+          return normalizeSubcategoryName(subcategory.name) || null;
         }
         
         // If subcategory is a string (ObjectId or slug), try to match known subcategory IDs/slugs
@@ -210,7 +221,7 @@ export default function SodamakersPage() {
           
           // Known subcategory IDs from admin panel:
           // - Artic Series: 68c0583c2fc1cff30bf5c110 (slug: artic-series)
-          // - Lux Series: 68c0583c2fc1cff30bf5c111 (slug: lux-series)
+          // - LUX: 68c0583c2fc1cff30bf5c111 (slug: lux-series)
           // - Omni Series: 68c0583c2fc1cff30bf5c112 (slug: omni-series)
           
           // Check for Artic Series
@@ -220,12 +231,12 @@ export default function SodamakersPage() {
             return 'Artic Series';
           }
           
-          // Check for Lux Series
+          // Check for LUX
           if (subcategoryLower === '68c0583c2fc1cff30bf5c111' || 
               subcategoryLower === 'lux-series' || 
               subcategoryLower === 'luxe-series' || 
               subcategoryLower.includes('lux')) {
-            return 'Lux Series';
+            return 'LUX';
           }
           
           // Check for Omni Series
@@ -334,8 +345,8 @@ export default function SodamakersPage() {
         productsBySubcategory[subcategoryName].push(product)
       })
       
-      // Create sections for each subcategory (order: Omni Series, Lux Series, Artic Series, then others)
-      const subcategoryOrder = ['Omni Series', 'Lux Series', 'Artic Series']
+      // Create sections for each subcategory (order: Omni Series, LUX, Artic Series, then others)
+      const subcategoryOrder = ['Omni Series', 'LUX', 'Artic Series']
       const orderedSubcategories = [
         ...subcategoryOrder.filter(name => productsBySubcategory[name]),
         ...Object.keys(productsBySubcategory).filter(name => !subcategoryOrder.includes(name))

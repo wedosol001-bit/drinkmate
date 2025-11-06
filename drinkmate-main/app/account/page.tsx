@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useAuth, getAuthToken } from '@/lib/contexts/auth-context'
@@ -78,12 +78,16 @@ export default function AccountDashboard() {
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [isEditingAddress, setIsEditingAddress] = useState(false)
   const [isSavingAddress, setIsSavingAddress] = useState(false)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
     confirm: false
   })
+  
+  // Ref to prevent useEffect from overwriting profile after save
+  const justSavedProfile = useRef(false)
   
   // Profile state
   const [profile, setProfile] = useState<UserProfile>({
@@ -114,8 +118,9 @@ export default function AccountDashboard() {
   
 
   // Update profile when user data changes
+  // Skip update if we just saved the profile (to prevent overwriting user's edits)
   useEffect(() => {
-    if (user) {
+    if (user && !justSavedProfile.current) {
       console.log("User data changed, updating profile:", user)
       console.log("User name field:", user.name)
       console.log("User username field:", user.username)
@@ -130,6 +135,13 @@ export default function AccountDashboard() {
         country: 'Saudi Arabia',
         nationalAddress: (user as any)?.nationalAddress || prev.nationalAddress
       }))
+    }
+    // Reset the flag after a short delay
+    if (justSavedProfile.current) {
+      const timer = setTimeout(() => {
+        justSavedProfile.current = false
+      }, 1000)
+      return () => clearTimeout(timer)
     }
   }, [user])
 
@@ -154,10 +166,31 @@ export default function AccountDashboard() {
 
         if (ordersResponse.ok) {
           const ordersData = await ordersResponse.json()
-          // Support both shapes: { success, data: { orders } } and { success, orders }
-          const payload = ordersData?.data || ordersData
-          if (ordersData?.success && (payload?.orders || Array.isArray(payload))) {
-            const rawOrders = Array.isArray(payload) ? payload : (payload.orders || [])
+          
+          // Handle different response structures:
+          // 1. { success: true, orders: [...] } - direct from backend
+          // 2. { success: true, data: { orders: [...] } } - wrapped response
+          // 3. { success: true, data: [...] } - array in data
+          // 4. [...] - direct array
+          let rawOrders: any[] = []
+          
+          if (Array.isArray(ordersData)) {
+            // Direct array response
+            rawOrders = ordersData
+          } else if (ordersData?.success) {
+            // Success response - check for orders in different locations
+            if (Array.isArray(ordersData.orders)) {
+              rawOrders = ordersData.orders
+            } else if (ordersData.data) {
+              if (Array.isArray(ordersData.data)) {
+                rawOrders = ordersData.data
+              } else if (Array.isArray(ordersData.data.orders)) {
+                rawOrders = ordersData.data.orders
+              }
+            }
+          }
+          
+          if (rawOrders.length > 0) {
             // Transform API data to match our Order interface
             const transformedOrders: Order[] = rawOrders.map((order: any) => ({
               id: order._id || order.id,
@@ -199,20 +232,24 @@ export default function AccountDashboard() {
 
   const handleProfileSave = async () => {
     try {
+      setIsSavingProfile(true)
+      
       // Basic validation
       if (!profile.name.trim()) {
         toast.error(t('account.toasts.nameRequired'))
+        setIsSavingProfile(false)
         return
       }
 
-      // Make API call to save the profile
+      // Make API call to save the profile using Next.js API route
       const token = getAuthToken()
       if (!token) {
         toast.error(t('account.toasts.loginFirst'))
+        setIsSavingProfile(false)
         return
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
+      const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -233,8 +270,25 @@ export default function AccountDashboard() {
         throw new Error(result.error || 'Failed to save profile')
       }
 
-      // Update the profile state with the saved data
-      if (result.user) {
+      // Set flag to prevent useEffect from overwriting our updates
+      justSavedProfile.current = true
+      
+      // Update the profile state with the saved data from API response
+      // The API route returns result.data (see /api/user/profile/route.ts)
+      if (result.success && result.data) {
+        setProfile(prev => ({
+          ...prev,
+          name: result.data.name || prev.name,
+          phone: result.data.phone || prev.phone,
+          district: result.data.district || prev.district,
+          city: result.data.city || prev.city,
+          nationalAddress: result.data.nationalAddress || prev.nationalAddress
+        }))
+        
+        // Refresh user data to show updated information
+        await refreshUser()
+      } else if (result.user) {
+        // Fallback for direct backend response structure
         setProfile(prev => ({
           ...prev,
           name: result.user.name || result.user.firstName + ' ' + result.user.lastName || prev.name,
@@ -254,6 +308,8 @@ export default function AccountDashboard() {
     } catch (error) {
       console.error('Error saving profile:', error)
       toast.error(t('account.toasts.profileSaveError'))
+    } finally {
+      setIsSavingProfile(false)
     }
   }
 
@@ -338,19 +394,24 @@ export default function AccountDashboard() {
 
   const handlePasswordChange = async () => {
     try {
+      setIsChangingPassword(true)
+      
       // Basic validation
       if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordAllRequired'))
+        setIsChangingPassword(false)
         return
       }
 
       if (passwordData.newPassword !== passwordData.confirmPassword) {
         toast.error(t('account.toasts.passwordMismatch'))
+        setIsChangingPassword(false)
         return
       }
 
       if (passwordData.newPassword.length < 8) {
         toast.error(t('account.toasts.passwordTooShort'))
+        setIsChangingPassword(false)
         return
       }
 
@@ -358,6 +419,7 @@ export default function AccountDashboard() {
       const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
       if (!token) {
         toast.error(t('account.toasts.passwordNotAuthenticated'))
+        setIsChangingPassword(false)
         return
       }
 
@@ -384,16 +446,17 @@ export default function AccountDashboard() {
       toast.success(t('account.toasts.passwordChanged'))
 
       // Reset form
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    })
-    setIsChangingPassword(false)
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      })
+      setIsChangingPassword(false)
 
     } catch (error) {
       console.error('Error changing password:', error)
       toast.error(t('account.toasts.passwordChangeError'))
+      setIsChangingPassword(false)
     }
   }
 
@@ -540,13 +603,22 @@ export default function AccountDashboard() {
                       <p className="text-xs text-gray-500 mt-1">{t('account.profile.emailUnchangeable')}</p>
                     </div>
                     <div className="flex gap-3">
-                      <Button onClick={handleProfileSave} className="flex-1 bg-blue-600 hover:bg-blue-700">
-                        <Save className="h-4 w-4 mr-2" />
-                        {t('account.profile.save')}
+                      <Button 
+                        onClick={handleProfileSave} 
+                        disabled={isSavingProfile}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {isSavingProfile ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Save className="h-4 w-4 mr-2" />
+                        )}
+                        {isSavingProfile ? t('account.profile.saving') || 'Saving...' : t('account.profile.save')}
                       </Button>
                       <Button 
                         variant="outline" 
                         onClick={() => setIsEditingProfile(false)}
+                        disabled={isSavingProfile}
                         className="px-6"
                       >
                         <X className="h-4 w-4 mr-2" />
@@ -782,13 +854,22 @@ export default function AccountDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-3">
-                      <Button onClick={handlePasswordChange} className="flex-1 bg-purple-600 hover:bg-purple-700">
-                        <Shield className="h-4 w-4 mr-2" />
-                        {t('account.password.change')}
+                      <Button 
+                        onClick={handlePasswordChange} 
+                        disabled={isChangingPassword}
+                        className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50"
+                      >
+                        {isChangingPassword ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Shield className="h-4 w-4 mr-2" />
+                        )}
+                        {isChangingPassword ? t('account.password.changing') || 'Changing...' : t('account.password.change')}
                       </Button>
                       <Button 
-                        variant="outline" 
+                        variant="outline"
                         onClick={() => setIsChangingPassword(false)}
+                        disabled={isChangingPassword}
                         className="px-6"
                       >
                         <X className="h-4 w-4 mr-2" />
