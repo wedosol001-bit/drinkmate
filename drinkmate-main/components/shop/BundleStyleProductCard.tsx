@@ -362,18 +362,6 @@ export default function BundleStyleProductCard({
           </p>
         )}
 
-        {/* Premium Features */}
-        <div className="flex items-center gap-4 mb-3 text-xs text-gray-500 flex-wrap">
-          <div className="flex items-center gap-1 whitespace-nowrap">
-            <Shield className="w-3 h-3 flex-shrink-0" />
-            <span>{isRTL ? 'الضمان' : 'Warranty'}</span>
-          </div>
-          <div className="flex items-center gap-1 whitespace-nowrap">
-            <Zap className="w-3 h-3 flex-shrink-0" />
-            <span>{isRTL ? 'توصيل سريع' : 'Fast Delivery'}</span>
-          </div>
-        </div>
-
                     {/* Pricing and Add Button */}
                     <div className="mt-auto pt-2">
                       {/* Price Section */}

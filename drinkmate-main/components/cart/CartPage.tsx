@@ -98,7 +98,7 @@ export default function CartPage() {
         
         <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left column */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-9 space-y-6">
           <section className="bg-white rounded-soft shadow-card">
             {items.length === 0 ? (
               <motion.div
@@ -144,7 +144,7 @@ export default function CartPage() {
         </div>
 
         {/* Right column (summary) */}
-        <aside className="lg:col-span-4">
+        <aside className="lg:col-span-3">
           <div ref={summaryRef} key={`summary-${updateTrigger}`}>
             <Summary totals={totals} />
           </div>
