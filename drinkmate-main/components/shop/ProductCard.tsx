@@ -176,7 +176,6 @@ export default function ProductCard({
       className={cn(
         "bg-white rounded-3xl overflow-hidden flex flex-col border border-gray-100",
         "hover:border-gray-200 transform hover:-translate-y-1 transition-all duration-300",
-        "h-full",
         className
       )}
       onMouseEnter={() => setIsHovered(true)}

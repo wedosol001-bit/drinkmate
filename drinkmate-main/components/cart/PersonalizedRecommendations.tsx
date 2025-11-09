@@ -204,7 +204,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
               key={product._id}
               dir={isRTL ? "rtl" : "ltr"}
               product={product}
-              buttonClassName="px-3 sm:px-4 py-1.5 sm:py-2 h-9 sm:h-10 text-[10px] sm:text-xs min-w-[100px] sm:min-w-[110px]"
+              buttonClassName="px-2 sm:px-3 py-1 sm:py-1.5 h-7 sm:h-8 text-[9px] sm:text-[10px] min-w-[80px] sm:min-w-[90px]"
               onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                 const cartItem = {
                   id: productId,
@@ -247,6 +247,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
                 <BundleStyleProductCard
                   dir={isRTL ? "rtl" : "ltr"}
                   product={product}
+                  buttonClassName="px-2 sm:px-3 py-1 sm:py-1.5 h-7 sm:h-8 text-[9px] sm:text-[10px] min-w-[80px] sm:min-w-[90px]"
                   onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                     const cartItem = {
                       id: productId,
