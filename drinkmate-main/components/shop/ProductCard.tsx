@@ -249,7 +249,7 @@ export default function ProductCard({
           {!!percentOff && (
             <div className="absolute top-3 right-3">
               <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
-                {percentOff}% OFF
+                {percentOff}% {isRTL ? 'خصم' : 'OFF'}
               </span>
             </div>
           )}
@@ -321,7 +321,7 @@ export default function ProductCard({
                   <Price value={comparePrice} size="sm" />
                 </span>
                 <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
-                  {percentOff}% OFF
+                  {percentOff}% {isRTL ? 'خصم' : 'OFF'}
                 </span>
               </>
             )}

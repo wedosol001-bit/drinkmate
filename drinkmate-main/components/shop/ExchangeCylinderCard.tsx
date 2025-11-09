@@ -303,7 +303,7 @@ export default function ExchangeCylinderCard({
                 </span>
                 {percentOff > 0 && (
                   <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
-                    {percentOff}% OFF
+                    {percentOff}% {isRTL ? 'خصم' : 'OFF'}
                   </span>
                 )}
               </>

@@ -364,21 +364,19 @@ export default function BundleStyleProductCard({
 
                     {/* Pricing and Add Button */}
                     <div className="pt-1">
-                      {/* Price Section */}
-                      <div className="flex items-center gap-3 mb-4 flex-wrap">
-                        {!hasVariants && product.compareAtPrice && (
-                          <>
+                      {/* Discount Badge - Above Price */}
+                      {!hasVariants && isSale && percentOff > 0 && (
+                        <div className="flex items-center gap-2 mb-2">
+                          {product.compareAtPrice && (
                             <span className="text-gray-400 text-sm line-through font-medium whitespace-nowrap">
                               <SaudiRiyal amount={product.compareAtPrice} size="sm" />
                             </span>
-                            {percentOff > 0 && (
-                              <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
-                                {percentOff}% OFF
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
+                          )}
+                          <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+                            {percentOff}% {isRTL ? 'خصم' : 'OFF'}
+                          </span>
+                        </div>
+                      )}
 
           {/* Current Price and Add Button */}
           <div className="flex items-center justify-between gap-3">

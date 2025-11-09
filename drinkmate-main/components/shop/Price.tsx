@@ -3,6 +3,7 @@
 import React from 'react'
 import SaudiRiyalSymbol from '@/components/ui/SaudiRiyalSymbol'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface PriceProps {
   value: number
@@ -85,6 +86,7 @@ export function PriceWithBadge({
   className = "",
   size = 'md'
 }: PriceProps) {
+  const { isRTL } = useTranslation()
   const onSale = compareAt && compareAt > value
   const savingsPercent = onSale ? Math.round(((compareAt! - value) / compareAt!) * 100) : 0
 
@@ -100,7 +102,7 @@ export function PriceWithBadge({
       {onSale && (
         <div className="absolute -top-1 -right-1">
           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-            {savingsPercent}% OFF
+            {savingsPercent}% {isRTL ? 'خصم' : 'OFF'}
           </span>
         </div>
       )}
