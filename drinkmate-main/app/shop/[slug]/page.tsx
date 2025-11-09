@@ -2169,15 +2169,22 @@ export default function ShopProductDetail() {
                         const displayImage = getProductImageUrl(product, '/placeholder-product.jpg')
                         
                         const isBundle = payload.isBundle || (product as any).isBundle || false
-                        const uniqueCartItemId = `${payload.productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                        // Use stable productId as cart item ID so same products combine in cart
+                        const cartItemId = payload.productId
+                        
+                        // Get category names in both languages
+                        const categoryName = getCategoryName(product.category, false)
+                        const categoryNameAr = getCategoryName(product.category, true)
                         
                         const cartItem = {
-                          id: uniqueCartItemId,
+                          id: cartItemId,
                           name: product.title || product.name || '',
+                          nameAr: (product as any)?.nameAr || undefined,
                           price: product.price,
                           quantity: payload.qty,
                           image: displayImage,
-                          category: getCategoryName(product.category),
+                          category: categoryName,
+                          categoryAr: categoryNameAr,
                           productId: isBundle ? undefined : payload.productId,
                           bundleId: isBundle ? payload.productId : undefined,
                           productType: isBundle ? 'bundle' as const : 'product' as const,

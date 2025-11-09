@@ -25,12 +25,28 @@ export function getCategoryName(category: string | { _id?: string; name?: string
   }
 
   if (typeof category === 'string') {
-    // If it's a string, try to find translation
+    // Check if it's an ObjectId (24 hex characters)
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(category);
+    
+    if (isObjectId) {
+      // Try to find translation by ObjectId
+      const translation = categoryTranslations[category]
+      if (translation) {
+        return isRTL ? translation.ar : translation.en
+      }
+      // If ObjectId not in map, return a generic fallback instead of showing the ID
+      return isRTL ? 'منتج' : 'Product';
+    }
+    
+    // If it's a string slug/name, try to find translation
     const translation = categoryTranslations[category.toLowerCase()] || categoryTranslations[category]
     if (translation) {
       return isRTL ? translation.ar : translation.en
     }
-    return category;
+    
+    // If it's a readable string (not ObjectId), return it as-is
+    // Otherwise return fallback
+    return isObjectId ? (isRTL ? 'منتج' : 'Product') : category;
   }
 
   // If category object has nameAr and we want Arabic, use it

@@ -152,7 +152,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
     return (
       <section className={`bg-white rounded-soft shadow-card p-5 ${className}`}>
         <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText(isRTL ? 'recommendations.titleAr' : 'recommendations.titleEn')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse bg-white rounded-3xl overflow-hidden border border-gray-100 min-h-[500px] sm:min-h-[540px] lg:min-h-[580px]">
               <div className="bg-gray-200 h-[220px] sm:h-[260px] lg:h-[280px]"></div>
@@ -191,8 +191,8 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
         </div>
       )}
 
-      {/* Desktop grid - matching shop page layout */}
-      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+      {/* Desktop grid - adjusted for narrower container (3 cols instead of 4) */}
+      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {filteredItems.slice(0, settings.recommendations.maxCount).map((item) => {
           const product = convertToProduct(item)
           const productImage = getProductImageUrl(item as any, '/placeholder.svg')

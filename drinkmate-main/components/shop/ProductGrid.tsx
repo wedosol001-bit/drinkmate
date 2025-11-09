@@ -184,8 +184,9 @@ export default function ProductGrid({
     console.log('Display image (processed):', displayImage)
     
     const isBundle = payload.isBundle || (product as any).isBundle || false
-    // Create a unique cart item ID by combining product ID with timestamp and random string
-    const uniqueCartItemId = `${payload.productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    // Use stable productId as cart item ID so same products combine in cart
+    // For products with variants, they navigate to detail page, so this only applies to products without variants
+    const cartItemId = payload.productId
     
     // Get original product to access nameAr
     const originalProduct = originalProductsMap.get(payload.productId)
@@ -193,7 +194,7 @@ export default function ProductGrid({
     const categoryNameAr = getCategoryName(product.category, true)
     
     const cartItem = {
-      id: uniqueCartItemId,
+      id: cartItemId,
       name: product.name || product.title || '',
       nameAr: (product as any)?.nameAr || (originalProduct as any)?.nameAr,
       price: product.price,

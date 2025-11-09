@@ -488,8 +488,8 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
               onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                 const foundProduct = products.find(p => p._id === productId)
                 if (foundProduct) {
-                  // Create unique cart item ID like main shop
-                  const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                  // Use stable productId as cart item ID so same products combine in cart
+                  const cartItemId = productId
                   
                   // Use getProductImageUrl utility for consistent image processing
                   const displayImage = getProductImageUrl(foundProduct, '/placeholder.svg')
@@ -499,7 +499,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
                   const categoryNameAr = getCategoryName(foundProduct.category || 'co2-cylinder', true)
                   
                   const cartItem = {
-                    id: uniqueCartItemId,
+                    id: cartItemId,
                     name: foundProduct.name,
                     nameAr: foundProduct.nameAr,
                     price: foundProduct.price,

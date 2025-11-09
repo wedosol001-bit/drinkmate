@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ProductCardProps, Product } from "@/lib/types"
+import { useTranslation } from "@/lib/contexts/translation-context"
 
 // Define Variant interface locally since it was removed
 interface Variant {
@@ -48,11 +49,15 @@ export default function BundleStyleProductCard({
   isInComparison?: boolean
 }) {
   const router = useRouter()
+  const { isRTL: isRTLFromContext, t } = useTranslation()
   const hasVariants = (product.variants?.length ?? 0) > 0
   const [isHovered, setIsHovered] = useState(false)
   const [imageLoadError, setImageLoadError] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
+  
+  // Use dir prop if provided, otherwise use context
+  const isRTL = dir === "rtl" || isRTLFromContext
 
   // Get display name - use Arabic if RTL and nameAr exists, otherwise use title
   // Priority: nameAr (if RTL) > title > name
@@ -332,38 +337,28 @@ export default function BundleStyleProductCard({
             })}
           </div>
           <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
-            ({product.reviewCount || 0} Reviews)
+            ({product.reviewCount || 0} {isRTL ? 'مراجعات' : 'Reviews'})
           </span>
           <div className="flex items-center gap-1 text-xs text-cyan-600 font-semibold whitespace-nowrap">
             <Zap className="w-3 h-3" />
-            Premium
+            {isRTL ? 'مميز' : 'Premium'}
           </div>
         </div>
 
         {/* Description/Tagline */}
-        <p 
-          className="text-sm text-gray-600 mb-4 leading-relaxed"
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
-          }}
-        >
-          {product.description || "Premium product bundle with exceptional quality"}
-        </p>
-
-        {/* Premium Features */}
-        <div className="flex items-center gap-4 mb-3 text-xs text-gray-500 flex-wrap">
-          <div className="flex items-center gap-1 whitespace-nowrap">
-            <Shield className="w-3 h-3 flex-shrink-0" />
-            <span>Warranty</span>
-          </div>
-          <div className="flex items-center gap-1 whitespace-nowrap">
-            <Zap className="w-3 h-3 flex-shrink-0" />
-            <span>Fast Delivery</span>
-          </div>
-        </div>
+        {product.description && (
+          <p 
+            className="text-sm text-gray-600 mb-4 leading-relaxed"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}
+          >
+            {product.description}
+          </p>
+        )}
 
                     {/* Pricing and Add Button */}
                     <div className="mt-auto pt-2">

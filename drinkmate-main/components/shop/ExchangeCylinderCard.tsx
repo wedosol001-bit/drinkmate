@@ -68,6 +68,8 @@ export default function ExchangeCylinderCard({
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [imageLoadError, setImageLoadError] = useState(false)
   const { isRTL } = useTranslation()
+  // Use dir prop if provided, otherwise use context
+  const finalIsRTL = dir === "rtl" || isRTL
 
   const getBestImage = () => {
     if (imageLoadError) return "/placeholder.svg"
@@ -255,7 +257,7 @@ export default function ExchangeCylinderCard({
             })}
           </div>
           <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
-            ({product.reviewCount || 0} Reviews)
+            ({product.reviewCount || 0} {finalIsRTL ? 'مراجعات' : 'Reviews'})
           </span>
           <div className="flex items-center gap-1 text-xs text-cyan-600 font-semibold whitespace-nowrap">
             <Zap className="w-3 h-3" />

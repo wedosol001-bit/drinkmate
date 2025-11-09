@@ -411,8 +411,8 @@ export default function FlavorPage() {
           nameAr: (product as any)?.nameAr || undefined,
         }}
         onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
-          // Create unique cart item ID like main shop
-          const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          // Use stable productId as cart item ID so same products combine in cart
+          const cartItemId = productId
           
           // Use getProductImageUrl utility for consistent image processing
           const displayImage = getProductImageUrl(product, '/placeholder.svg')
@@ -422,9 +422,9 @@ export default function FlavorPage() {
           const categoryNameAr = getCategoryName(product.category, true)
           
           const cartItem = {
-            id: uniqueCartItemId,
-            name: product.name,
-            nameAr: (product as any)?.nameAr,
+            id: cartItemId,
+            name: product.name || '',
+            nameAr: (product as any)?.nameAr || undefined,
             price: product.price,
             quantity: qty,
             image: displayImage, // Use processed image URL
@@ -528,21 +528,24 @@ export default function FlavorPage() {
                               nameAr: (bundle as any)?.nameAr || undefined,
                             }}
                             onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
-                              // Create unique cart item ID like main shop
-                              const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                              // Use stable productId as cart item ID so same products combine in cart
+                              const cartItemId = productId
                               
                               // Use getProductImageUrl utility for consistent image processing
                               const displayImage = getProductImageUrl(bundle, '/placeholder.svg')
                               
-                              // Use Arabic name for cart if RTL
-                              const bundleCartName = (isRTL && (bundle as any)?.nameAr) ? (bundle as any).nameAr : bundle.name
+                              // Store both name and nameAr so cart can display correct language
+                              const categoryName = getCategoryName(bundle.category || 'flavor-bundles', false)
+                              const categoryNameAr = getCategoryName(bundle.category || 'flavor-bundles', true)
                               const cartItem = {
-                                id: uniqueCartItemId,
-                                name: bundleCartName, // Use Arabic name if RTL
+                                id: cartItemId,
+                                name: bundle.name || '',
+                                nameAr: (bundle as any)?.nameAr || undefined,
                                 price: bundle.price,
                                 quantity: qty,
                                 image: displayImage, // Use processed image URL
-                                category: "flavors",
+                                category: categoryName,
+                                categoryAr: categoryNameAr,
                                 bundleId: productId,
                                 productId: undefined, // Bundles don't have productId
                                 productType: 'bundle' as const,

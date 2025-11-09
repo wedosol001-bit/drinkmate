@@ -40,7 +40,7 @@ export default function ProductCard({
   isInWishlist?: boolean
   isInComparison?: boolean
 }) {
-  const { t } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const hasVariants = (product.variants?.length ?? 0) > 0
 
   // Default selected variant: first in-stock, otherwise first available
@@ -307,7 +307,7 @@ export default function ProductCard({
               })}
             </div>
             {product.reviewCount && (
-              <span className="text-sm text-gray-600">({product.reviewCount} Reviews)</span>
+              <span className="text-sm text-gray-600">({product.reviewCount} {isRTL ? 'مراجعات' : 'Reviews'})</span>
             )}
           </div>
         )}
