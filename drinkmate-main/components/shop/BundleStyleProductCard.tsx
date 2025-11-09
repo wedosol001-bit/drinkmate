@@ -320,7 +320,7 @@ export default function BundleStyleProductCard({
         </Link>
 
         {/* Rating and Reviews */}
-        <div className="flex items-center gap-3 mb-2 flex-wrap">
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => {
               const rating = typeof product.rating === 'number' ? product.rating : 
@@ -350,7 +350,7 @@ export default function BundleStyleProductCard({
         {/* Description/Tagline */}
         {product.description && (
           <p 
-            className="text-sm text-gray-600 mb-2 leading-relaxed"
+            className="text-sm text-gray-600 mb-3 leading-relaxed"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -362,8 +362,11 @@ export default function BundleStyleProductCard({
           </p>
         )}
 
+        {/* Spacer to distribute gaps */}
+        <div className="flex-1 min-h-[20px]"></div>
+
                     {/* Pricing and Add Button - Fixed position with distributed spacing */}
-                    <div className="mt-auto pt-3">
+                    <div className="pt-2">
                       {/* Price Section */}
                       <div className="flex items-center gap-3 mb-4 flex-wrap">
                         {!hasVariants && product.compareAtPrice && (
