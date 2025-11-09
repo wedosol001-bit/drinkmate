@@ -479,8 +479,9 @@ export default function CO2ProductDetail() {
     setIsInCart(true)
 
     // Get category names in both languages
-    const categoryName = getCategoryName(product.category || 'co2-cylinders', false)
-    const categoryNameAr = getCategoryName(product.category || 'co2-cylinders', true)
+    // CO2 cylinders always belong to the co2-cylinders category
+    const categoryName = getCategoryName('co2-cylinders', false)
+    const categoryNameAr = getCategoryName('co2-cylinders', true)
 
     // Add item to cart context - store both name and nameAr
     addItem({
