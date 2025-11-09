@@ -414,17 +414,18 @@ export default function FlavorPage() {
           const displayImage = getProductImageUrl(product, '/placeholder.svg')
           
           // Use getCategoryName utility for consistent category handling
-          const categoryName = getCategoryName(product.category)
+          const categoryName = getCategoryName(product.category, false)
+          const categoryNameAr = getCategoryName(product.category, true)
           
-          // Use Arabic name for cart if RTL
-          const cartItemName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
           const cartItem = {
             id: uniqueCartItemId,
-            name: cartItemName, // Use Arabic name if RTL
+            name: product.name,
+            nameAr: (product as any)?.nameAr,
             price: product.price,
             quantity: qty,
             image: displayImage, // Use processed image URL
             category: categoryName,
+            categoryAr: categoryNameAr,
             productId: productId,
             productType: 'product' as const
           }

@@ -500,16 +500,21 @@ export default function ShopProductDetail() {
     const displayPrice = localizedProduct ? getProductDisplayPrice(localizedProduct) : { price: product.price, isRange: false };
     const currentPrice = currentVariant ? currentVariant.price : displayPrice.price;
     const currentName = currentVariant ? `${product.name} - ${currentVariant.name}` : product.name;
+    const currentNameAr = (product as any)?.nameAr ? (currentVariant ? `${(product as any).nameAr} - ${currentVariant.name}` : (product as any).nameAr) : undefined;
     const currentImage = localizedProduct ? getProductDisplayImage(localizedProduct, currentVariant) : product.image;
+    const categoryName = getCategoryName(product.category, false)
+    const categoryNameAr = getCategoryName(product.category, true)
 
     // Add item to cart context with all required fields
     addItem({
       id: product._id || product.id || productSlug,
       name: currentName,
+      nameAr: currentNameAr,
       price: currentPrice,
       image: currentImage,
       quantity: quantity,
-      category: 'shop-product',
+      category: categoryName,
+      categoryAr: categoryNameAr,
       color: selectedColor,
       size: selectedSize,
       productId: String(product._id || product.id || productSlug),

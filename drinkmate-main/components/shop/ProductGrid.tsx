@@ -92,7 +92,8 @@ export default function ProductGrid({
     const convertedProduct = {
       _id: productId,
       id: productId,
-      name: productTitle,
+      name: product.name || product.title || 'product',
+      nameAr: (product as any)?.nameAr || (product as any)?.titleAr,
       slug: productSlug,
       title: productTitle,
       image: primaryImage,
@@ -134,6 +135,16 @@ export default function ProductGrid({
   // Convert all products once for consistent data
   const convertedProducts = useMemo(() => {
     return products.map(product => convertProduct(product))
+  }, [products, isRTL])
+  
+  // Keep reference to original products to access nameAr
+  const originalProductsMap = useMemo(() => {
+    const map = new Map()
+    products.forEach(p => {
+      const id = p._id || p.id
+      if (id) map.set(id, p)
+    })
+    return map
   }, [products])
 
   // Loading state
@@ -176,13 +187,20 @@ export default function ProductGrid({
     // Create a unique cart item ID by combining product ID with timestamp and random string
     const uniqueCartItemId = `${payload.productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     
+    // Get original product to access nameAr
+    const originalProduct = originalProductsMap.get(payload.productId)
+    const categoryName = getCategoryName(product.category, false)
+    const categoryNameAr = getCategoryName(product.category, true)
+    
     const cartItem = {
       id: uniqueCartItemId,
-      name: product.title || product.name || '',
+      name: product.name || product.title || '',
+      nameAr: (product as any)?.nameAr || (originalProduct as any)?.nameAr,
       price: product.price,
       quantity: payload.qty,
       image: displayImage, // Use the processed image URL
-      category: getCategoryName(product.category),
+      category: categoryName,
+      categoryAr: categoryNameAr,
       productId: isBundle ? undefined : payload.productId, // Include product ID for regular products
       bundleId: isBundle ? payload.productId : undefined, // Include bundle ID for bundles
       productType: isBundle ? 'bundle' as const : 'product' as const,

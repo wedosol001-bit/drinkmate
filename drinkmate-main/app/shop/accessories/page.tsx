@@ -383,14 +383,17 @@ export default function AccessoriesPage() {
   const renderProductCard = (product: Product) => {
     const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
       // Convert payload to proper cart item format
-      const productDisplayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
+      const categoryName = getCategoryName(product.category, false)
+      const categoryNameAr = getCategoryName(product.category, true)
       const cartItem = {
         id: payload.productId,
-        name: productDisplayName, // Use Arabic name if RTL
+        name: product.name,
+        nameAr: (product as any)?.nameAr,
         price: product.price,
         quantity: payload.qty,
         image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
-        category: typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product',
+        category: categoryName,
+        categoryAr: categoryNameAr,
         productId: payload.isBundle ? undefined : payload.productId,
         bundleId: payload.isBundle ? payload.productId : undefined,
         productType: payload.isBundle ? 'bundle' as const : 'product' as const,

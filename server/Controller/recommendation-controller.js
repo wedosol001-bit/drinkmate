@@ -95,7 +95,7 @@ async function getBestSellingProducts(limit) {
         stock: { $gt: 0 },
         bestSeller: true
     })
-    .select('name slug price originalPrice images averageRating reviewCount category shortDescription')
+    .select('name nameAr slug price originalPrice images averageRating reviewCount category shortDescription isBestSeller isFeatured inStock stock brand badges')
     .populate('category', 'name slug')
     .sort({ reviewCount: -1, averageRating: -1 })
     .limit(limit)
@@ -107,7 +107,7 @@ async function getBestSellingProducts(limit) {
             status: 'active',
             stock: { $gt: 0 }
         })
-        .select('name slug price originalPrice images averageRating reviewCount category shortDescription')
+        .select('name nameAr slug price originalPrice images averageRating reviewCount category shortDescription isBestSeller isFeatured inStock stock brand badges')
         .populate('category', 'name slug')
         .sort({ reviewCount: -1, averageRating: -1, createdAt: -1 })
         .limit(limit)
@@ -136,7 +136,7 @@ async function getProductsByCategories(categories, limit) {
             { 'category.slug': { $in: categories } }
         ]
     })
-    .select('name slug price originalPrice images averageRating reviewCount category shortDescription')
+    .select('name nameAr slug price originalPrice images averageRating reviewCount category shortDescription isBestSeller isFeatured inStock stock brand badges')
     .populate('category', 'name slug')
     .sort({ reviewCount: -1, averageRating: -1 })
     .limit(limit)

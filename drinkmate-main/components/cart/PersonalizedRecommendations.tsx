@@ -152,11 +152,11 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
     return (
       <section className={`bg-white rounded-soft shadow-card p-5 ${className}`}>
         <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText(isRTL ? 'recommendations.titleAr' : 'recommendations.titleEn')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="animate-pulse bg-white rounded-3xl overflow-hidden border border-gray-100 min-h-[500px]">
-              <div className="bg-gray-200 h-[280px]"></div>
-              <div className="p-4 space-y-3">
+            <div key={i} className="animate-pulse bg-white rounded-3xl overflow-hidden border border-gray-100 min-h-[500px] sm:min-h-[540px] lg:min-h-[580px]">
+              <div className="bg-gray-200 h-[220px] sm:h-[260px] lg:h-[280px]"></div>
+              <div className="p-4 sm:p-6 space-y-3">
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                 <div className="h-8 bg-gray-200 rounded"></div>
@@ -191,8 +191,8 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
         </div>
       )}
 
-      {/* Desktop grid */}
-      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {/* Desktop grid - matching shop page layout */}
+      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
         {filteredItems.slice(0, settings.recommendations.maxCount).map((item) => {
           const product = convertToProduct(item)
           const productImage = getProductImageUrl(item as any, '/placeholder.svg')
