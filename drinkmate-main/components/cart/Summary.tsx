@@ -47,8 +47,8 @@ export default function Summary({ totals }: SummaryProps) {
   }
 
   return (
-    <div className="bg-white rounded-soft shadow-card p-5 sticky top-24">
-      <div className="space-y-3">
+    <div className="bg-white rounded-soft shadow-card p-4 sm:p-5 sticky top-24">
+      <div className="space-y-2.5 sm:space-y-3">
         <Row label={getText(isRTL ? 'general.subtotalAr' : 'general.subtotalEn')} value={<Currency amount={totals.subtotal} />} />
         <Row label={getText(isRTL ? 'general.shippingAr' : 'general.shippingEn')} value={totals.shippingLabel} />
         {totals.discount > 0 && (
@@ -60,27 +60,27 @@ export default function Summary({ totals }: SummaryProps) {
         {totals.tax > 0 && <Row label={getText(isRTL ? 'general.taxAr' : 'general.taxEn')} value={<Currency amount={totals.tax} />} />}
       </div>
 
-      <div className="mt-4 border-t border-ink-200 pt-4 flex items-center justify-between">
-        <span className="text-lg font-semibold text-ink-900">{getText(isRTL ? 'general.totalAr' : 'general.totalEn')}</span>
-        <span className="text-2xl font-bold text-ink-900">
+      <div className="mt-3 sm:mt-4 border-t border-ink-200 pt-3 sm:pt-4 flex items-center justify-between gap-2">
+        <span className="text-base sm:text-lg font-semibold text-ink-900 flex-shrink-0">{getText(isRTL ? 'general.totalAr' : 'general.totalEn')}</span>
+        <span className="text-xl sm:text-2xl font-bold text-ink-900 flex-shrink-0">
           <Currency amount={totals.total} size="lg" />
         </span>
       </div>
 
       {/* Coupon */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-3 sm:mt-4 space-y-2">
         <div className="flex gap-2">
           <input
             placeholder={getText(isRTL ? 'general.couponPlaceholderAr' : 'general.couponPlaceholderEn')}
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="flex-1 h-11 rounded-md border border-ink-200 focus:ring-2 focus:ring-brand/30 focus:border-brand px-3"
+            className="flex-1 h-10 sm:h-11 rounded-md border border-ink-200 focus:ring-2 focus:ring-brand/30 focus:border-brand px-2 sm:px-3 text-sm"
             disabled={isApplying}
           />
           <button
             disabled={!code.trim() || isApplying}
             onClick={handleApplyCoupon}
-            className="h-11 px-4 rounded-md bg-ink-900 text-white disabled:opacity-50"
+            className="h-10 sm:h-11 px-3 sm:px-4 rounded-md bg-ink-900 text-white disabled:opacity-50 text-xs sm:text-sm whitespace-nowrap"
           >
             {isApplying ? '...' : getText(isRTL ? 'general.applyCouponAr' : 'general.applyCouponEn')}
           </button>
@@ -90,21 +90,21 @@ export default function Summary({ totals }: SummaryProps) {
 
       <button 
         onClick={() => router.push('/checkout')}
-        className="mt-4 w-full h-12 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors"
+        className="mt-3 sm:mt-4 w-full h-11 sm:h-12 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors text-sm sm:text-base"
       >
         {getText(isRTL ? 'general.secureCheckoutAr' : 'general.secureCheckoutEn')}
       </button>
 
-      <p className="mt-2 text-xs text-ink-500">{t('cart.taxesNote')}</p>
+      <p className="mt-2 text-xs text-ink-500 leading-relaxed">{t('cart.taxesNote')}</p>
     </div>
   )
 }
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-ink-700">{label}</span>
-      <span className="text-ink-900">{value}</span>
+    <div className="flex items-center justify-between gap-2 min-w-0">
+      <span className="text-sm sm:text-base text-ink-700 truncate min-w-0">{label}</span>
+      <span className="text-sm sm:text-base text-ink-900 font-medium whitespace-nowrap flex-shrink-0">{value}</span>
     </div>
   )
 }
