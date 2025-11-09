@@ -191,8 +191,8 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
         </div>
       )}
 
-      {/* Desktop grid - 4 columns for wider container */}
-      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+      {/* Desktop grid - 3 columns for wider cards */}
+      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {filteredItems.slice(0, settings.recommendations.maxCount).map((item) => {
           const product = convertToProduct(item)
           const productImage = getProductImageUrl(item as any, '/placeholder.svg')

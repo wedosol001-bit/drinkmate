@@ -286,7 +286,7 @@ export default function ProductCard({
 
         {/* Rating & Reviews */}
         {product.rating && (
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-2">
             <div className="flex items-center gap-1">
               {Array.from({ length: 5 }).map((_, i) => {
                 const ratingValue = typeof product.rating === 'number' 
