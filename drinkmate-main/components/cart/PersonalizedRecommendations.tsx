@@ -204,6 +204,7 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
               key={product._id}
               dir={isRTL ? "rtl" : "ltr"}
               product={product}
+              buttonClassName="px-3 sm:px-4 py-1.5 sm:py-2 h-9 sm:h-10 text-[10px] sm:text-xs min-w-[100px] sm:min-w-[110px]"
               onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
                 const cartItem = {
                   id: productId,

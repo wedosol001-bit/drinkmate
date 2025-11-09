@@ -41,12 +41,14 @@ export default function BundleStyleProductCard({
   onProductView,
   isInWishlist = false,
   isInComparison = false,
+  buttonClassName,
 }: ProductCardProps & {
   onAddToWishlist?: (product: Product) => void
   onAddToComparison?: (product: Product) => void
   onProductView?: (product: Product) => void
   isInWishlist?: boolean
   isInComparison?: boolean
+  buttonClassName?: string
 }) {
   const router = useRouter()
   const { isRTL: isRTLFromContext, t } = useTranslation()
@@ -360,6 +362,18 @@ export default function BundleStyleProductCard({
           </p>
         )}
 
+        {/* Premium Features */}
+        <div className="flex items-center gap-4 mb-3 text-xs text-gray-500 flex-wrap">
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <Shield className="w-3 h-3 flex-shrink-0" />
+            <span>{isRTL ? 'الضمان' : 'Warranty'}</span>
+          </div>
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <Zap className="w-3 h-3 flex-shrink-0" />
+            <span>{isRTL ? 'توصيل سريع' : 'Fast Delivery'}</span>
+          </div>
+        </div>
+
                     {/* Pricing and Add Button */}
                     <div className="mt-auto pt-2">
                       {/* Price Section */}
@@ -410,20 +424,21 @@ export default function BundleStyleProductCard({
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none",
                 "flex items-center gap-1.5 shadow-lg border border-cyan-300/20",
                 "relative overflow-hidden whitespace-nowrap min-w-[120px] sm:min-w-[130px] flex-shrink-0",
-                "cursor-pointer"
+                "cursor-pointer",
+                buttonClassName
               )}
             >
               {hasVariants ? (
-                <span>View Options</span>
+                <span>{isRTL ? 'عرض الخيارات' : 'View Options'}</span>
               ) : isAddingToCart ? (
                 <div className="flex items-center gap-1.5">
                   <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Adding...</span>
+                  <span>{isRTL ? 'جاري الإضافة...' : 'Adding...'}</span>
                 </div>
               ) : (
                 <>
                   <ShoppingCart className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>Add to Cart</span>
+                  <span>{isRTL ? 'أضف إلى السلة' : 'Add to Cart'}</span>
                 </>
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
