@@ -351,14 +351,18 @@ export default function FlavorPage() {
   function renderProductCard(product: Product) {
     const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
       // Convert payload to proper cart item format
-      const productDisplayName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
+      // Store both name and nameAr so cart can display correct language
+      const categoryName = typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product'
+      const categoryNameAr = getCategoryName(product.category, true)
       const cartItem = {
         id: payload.productId,
-        name: productDisplayName, // Use Arabic name if RTL
+        name: product.name || product.title || '',
+        nameAr: (product as any)?.nameAr || undefined,
         price: product.price,
         quantity: payload.qty,
         image: product.image || (typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url || '/placeholder.svg'),
-        category: typeof product.category === 'string' ? product.category : (product.category as any)?.name || 'Product',
+        category: categoryName,
+        categoryAr: categoryNameAr,
         productId: payload.isBundle ? undefined : payload.productId,
         bundleId: payload.isBundle ? payload.productId : undefined,
         productType: payload.isBundle ? 'bundle' as const : 'product' as const,

@@ -38,11 +38,15 @@ export default function WishlistSidebar({ className = "" }: WishlistSidebarProps
   const handleAddToCart = (item: any) => {
     addItem({
       id: item.product._id,
-      name: item.product.name,
+      name: item.product.name || item.product.title || '',
+      nameAr: item.product.nameAr || undefined,
       price: item.product.price,
       quantity: 1,
-      image: item.product.images[0] || "/placeholder.svg",
-      category: item.product.category?.name,
+      image: item.product.images?.[0] || "/placeholder.svg",
+      category: item.product.category?.name || item.product.category,
+      categoryAr: item.product.category?.nameAr || undefined,
+      productId: item.product._id,
+      productType: 'product' as const
     })
   }
 

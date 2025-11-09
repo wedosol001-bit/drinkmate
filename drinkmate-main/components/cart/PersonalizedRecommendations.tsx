@@ -224,7 +224,6 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
               }}
               onAddToWishlist={() => {}}
               onAddToComparison={() => {}}
-              className="h-full"
             />
           )
         })}
@@ -267,7 +266,6 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
                   }}
                   onAddToWishlist={() => {}}
                   onAddToComparison={() => {}}
-                  className="h-full"
                 />
               </div>
             )

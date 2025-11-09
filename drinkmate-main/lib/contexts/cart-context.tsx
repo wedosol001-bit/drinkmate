@@ -83,10 +83,15 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       
       if (existingItem) {
         console.log('Cart reducer - updating existing item')
-        // Update quantity if item already exists
+        // Update quantity if item already exists, also preserve/update nameAr if provided
         const updatedItems = state.items.map(item =>
           item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + action.payload.quantity }
+            ? { 
+                ...item, 
+                quantity: item.quantity + action.payload.quantity,
+                nameAr: action.payload.nameAr !== undefined ? action.payload.nameAr : item.nameAr,
+                categoryAr: action.payload.categoryAr !== undefined ? action.payload.categoryAr : item.categoryAr
+              }
             : item
         )
         const newTotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
