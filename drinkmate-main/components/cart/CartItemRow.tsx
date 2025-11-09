@@ -8,15 +8,7 @@ import { useState } from 'react'
 import { getImageUrl } from '@/lib/utils/image-utils'
 import { getCategoryName } from '@/lib/utils/category-utils'
 import { useTranslation } from '@/lib/contexts/translation-context'
-
-interface CartItem {
-  id: string | number
-  name: string
-  price: number
-  quantity: number
-  image: string
-  category?: string
-}
+import { CartItem } from '@/lib/contexts/cart-context'
 
 interface CartItemRowProps {
   item: CartItem
@@ -26,7 +18,12 @@ export default function CartItemRow({ item }: CartItemRowProps) {
   const { updateQuantity, removeItem, saveForLater } = useCart()
   const { getText } = useCartSettings()
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const { t } = useTranslation()
+  const { t, isRTL } = useTranslation()
+  
+  // Get display name - use Arabic if RTL and nameAr exists
+  const displayName = (isRTL && item.nameAr) ? item.nameAr : item.name
+  // Get display category - use Arabic if RTL and categoryAr exists
+  const displayCategory = (isRTL && item.categoryAr) ? item.categoryAr : getCategoryName(item.category, isRTL)
 
   const onDecrement = () => {
     if (item.quantity === 1) setConfirmDelete(true)
@@ -58,10 +55,10 @@ export default function CartItemRow({ item }: CartItemRowProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <h3 className="text-ink-900 font-medium truncate">{item.name}</h3>
+            <h3 className="text-ink-900 font-medium truncate">{displayName}</h3>
             <p className="text-sm text-ink-600 mt-0.5">{t('cart.price')}: <Currency amount={item.price} /></p>
             {item.category && (
-              <p className="text-xs text-ink-500 mt-0.5">{getCategoryName(item.category)}</p>
+              <p className="text-xs text-ink-500 mt-0.5">{displayCategory}</p>
             )}
           </div>
 

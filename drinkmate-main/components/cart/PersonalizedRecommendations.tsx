@@ -1,27 +1,38 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { Currency } from '@/utils/currency'
 import { useCart } from '@/hooks/use-cart'
 import { useCartSettings } from '@/lib/contexts/cart-settings-context'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
+import BundleStyleProductCard from '@/components/shop/BundleStyleProductCard'
+import { Product } from '@/lib/types'
+import { getProductImageUrl } from '@/lib/utils/image-utils'
+import { getCategoryName } from '@/lib/utils/category-utils'
 
 interface RecommendationItem {
   _id: string
   name: string
+  nameAr?: string
   slug: string
   price: number
   originalPrice?: number
-  images: string[]
+  images: string[] | Array<{ url: string; alt?: string }>
   averageRating?: number
   reviewCount?: number
   category?: {
+    _id?: string
     name: string
     slug: string
-  }
+  } | string
   shortDescription?: string
+  description?: string
+  isBestSeller?: boolean
+  isFeatured?: boolean
+  inStock?: boolean
+  stock?: number
+  brand?: string
+  badges?: string[]
 }
 
 interface PersonalizedRecommendationsProps {
@@ -37,6 +48,44 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [strategy, setStrategy] = useState<string>('')
+
+  // Convert RecommendationItem to Product type for BundleStyleProductCard
+  const convertToProduct = (item: RecommendationItem): Product => {
+    const productImage = getProductImageUrl(item as any, '/placeholder.svg')
+    const categoryName = getCategoryName(item.category || 'product')
+    
+    return {
+      _id: item._id,
+      id: item._id,
+      slug: item.slug,
+      name: item.name,
+      nameAr: item.nameAr,
+      title: item.name,
+      price: item.price,
+      originalPrice: item.originalPrice,
+      compareAtPrice: item.originalPrice,
+      image: productImage,
+      images: Array.isArray(item.images) ? item.images : [],
+      description: item.description || item.shortDescription || '',
+      averageRating: item.averageRating || 0,
+      reviewCount: item.reviewCount || 0,
+      rating: item.averageRating || 0,
+      reviews: item.reviewCount || 0,
+      inStock: item.inStock !== false,
+      stock: item.stock,
+      isBestSeller: item.isBestSeller || false,
+      isFeatured: item.isFeatured || false,
+      badges: item.badges || (item.isBestSeller ? ['BESTSELLER'] : item.isFeatured ? ['FEATURED'] : undefined),
+      brand: item.brand,
+      category: typeof item.category === 'object' && item.category !== null
+        ? {
+            _id: item.category._id || item._id,
+            name: item.category.name,
+            slug: item.category.slug
+          }
+        : categoryName
+    }
+  }
   
   useEffect(() => {
     fetchRecommendations()
@@ -103,13 +152,15 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
     return (
       <section className={`bg-white rounded-soft shadow-card p-5 ${className}`}>
         <h2 className="text-lg font-semibold text-ink-900 mb-4">{getText(isRTL ? 'recommendations.titleAr' : 'recommendations.titleEn')}</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-md aspect-[4/5] mb-3"></div>
-              <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3 mb-3"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse bg-white rounded-3xl overflow-hidden border border-gray-100 min-h-[500px]">
+              <div className="bg-gray-200 h-[280px]"></div>
+              <div className="p-4 space-y-3">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-8 bg-gray-200 rounded"></div>
+              </div>
             </div>
           ))}
         </div>
@@ -141,136 +192,89 @@ export default function PersonalizedRecommendations({ className = "" }: Personal
       )}
 
       {/* Desktop grid */}
-      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredItems.slice(0, settings.recommendations.maxCount).map((product, index) => (
-          <div 
-            key={product._id}
-            className="transform scale-80 hover:scale-85 transition-all duration-300 ease-out"
-            style={{ 
-              animationDelay: `${index * 100}ms`,
-              animation: 'fadeInUp 0.6s ease-out forwards'
-            }}
-          >
-            <ProductCard 
-              product={product} 
-              onAdd={() => addItem({
-                id: product._id,
-                name: product.name,
-                price: product.price,
-                quantity: 1,
-                image: product.images?.[0] || "/placeholder.svg",
-              })} 
+      <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {filteredItems.slice(0, settings.recommendations.maxCount).map((item) => {
+          const product = convertToProduct(item)
+          const productImage = getProductImageUrl(item as any, '/placeholder.svg')
+          const categoryName = getCategoryName(item.category || 'product', false)
+          const categoryNameAr = getCategoryName(item.category || 'product', true)
+          
+          return (
+            <BundleStyleProductCard
+              key={product._id}
+              dir={isRTL ? "rtl" : "ltr"}
+              product={product}
+              onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+                const cartItem = {
+                  id: productId,
+                  name: item.name,
+                  nameAr: item.nameAr,
+                  price: item.price,
+                  quantity: qty,
+                  image: productImage,
+                  category: categoryName,
+                  categoryAr: categoryNameAr,
+                  productId: productId,
+                  productType: 'product' as const
+                }
+                addItem(cartItem)
+              }}
+              onProductView={(product) => {
+                // Navigation is handled by the Link in BundleStyleProductCard
+              }}
+              onAddToWishlist={() => {}}
+              onAddToComparison={() => {}}
+              className="h-full"
             />
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Mobile carousel */}
       <div className="sm:hidden overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none]">
-        <div className="flex gap-3 pr-3 snap-x snap-mandatory">
-          {filteredItems.slice(0, settings.recommendations.maxCount).map((product, index) => (
-            <div 
-              className="snap-start min-w-[72%] transform scale-80 hover:scale-85 transition-all duration-300 ease-out" 
-              key={product._id}
-              style={{ 
-                animationDelay: `${index * 100}ms`,
-                animation: 'fadeInUp 0.6s ease-out forwards'
-              }}
-            >
-              <ProductCard 
-                product={product} 
-                onAdd={() => addItem({
-                  id: product._id,
-                  name: product.name,
-                  price: product.price,
-                  quantity: 1,
-                  image: product.images?.[0] || "/placeholder.svg",
-                })} 
-              />
-            </div>
-          ))}
+        <div className="flex gap-4 pr-4 snap-x snap-mandatory">
+          {filteredItems.slice(0, settings.recommendations.maxCount).map((item) => {
+            const product = convertToProduct(item)
+            const productImage = getProductImageUrl(item as any, '/placeholder.svg')
+            const categoryName = getCategoryName(item.category || 'product', false)
+            const categoryNameAr = getCategoryName(item.category || 'product', true)
+            
+            return (
+              <div 
+                key={product._id}
+                className="snap-start min-w-[280px] flex-shrink-0"
+              >
+                <BundleStyleProductCard
+                  dir={isRTL ? "rtl" : "ltr"}
+                  product={product}
+                  onAddToCart={({ productId, qty }: { productId: string; qty: number }) => {
+                    const cartItem = {
+                      id: productId,
+                      name: item.name,
+                      nameAr: item.nameAr,
+                      price: item.price,
+                      quantity: qty,
+                      image: productImage,
+                      category: categoryName,
+                      categoryAr: categoryNameAr,
+                      productId: productId,
+                      productType: 'product' as const
+                    }
+                    addItem(cartItem)
+                  }}
+                  onProductView={(product) => {
+                    // Navigation is handled by the Link in BundleStyleProductCard
+                  }}
+                  onAddToWishlist={() => {}}
+                  onAddToComparison={() => {}}
+                  className="h-full"
+                />
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
   )
 }
 
-function ProductCard({ product, onAdd }: { product: RecommendationItem; onAdd: () => void }) {
-  const hasDiscount = product.originalPrice && product.originalPrice > product.price
-  
-  return (
-    <div className="rounded-soft border border-ink-200 hover:border-brand/60 transition-all duration-300 p-3 h-full flex flex-col group hover:shadow-lg">
-      <div className="relative overflow-hidden rounded-md">
-        {(() => {
-          const image = product.images?.[0];
-          const imageUrl = typeof image === 'string' ? image : (image as any)?.url || '';
-          const validImageUrl = imageUrl && imageUrl.trim() !== '' ? imageUrl : "/placeholder.svg";
-          
-          return (
-            <Image 
-              src={validImageUrl} 
-              alt={product.name} 
-              width={320} 
-              height={320} 
-              className="rounded-md object-cover object-top aspect-[4/5] transition-transform duration-500 hover:scale-150 cursor-zoom-in" 
-            />
-          );
-        })()}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        
-        {/* Discount badge */}
-        {hasDiscount && (
-          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-            Sale
-          </div>
-        )}
-      </div>
-      
-      <div className="mt-3 flex-1">
-        <div className="text-ink-900 font-medium line-clamp-2 text-sm group-hover:text-brand transition-colors duration-200">
-          {product.name}
-        </div>
-        
-        {/* Category */}
-        {product.category && (
-          <div className="text-xs text-gray-500 mt-1">
-            {product.category.name}
-          </div>
-        )}
-        
-        {/* Rating */}
-        {product.averageRating && product.reviewCount && (
-          <div className="flex items-center mt-1">
-            <div className="flex text-yellow-400">
-              {[...Array(5)].map((_, i) => (
-                <span key={i} className={i < Math.floor(product.averageRating!) ? 'text-yellow-400' : 'text-gray-300'}>
-                  ★
-                </span>
-              ))}
-            </div>
-            <span className="text-xs text-gray-500 ml-1">
-              ({product.reviewCount})
-            </span>
-          </div>
-        )}
-        
-        {/* Price */}
-        <div className="mt-2 flex items-center gap-2">
-          <Currency amount={product.price} />
-          {hasDiscount && (
-            <span className="text-sm text-gray-500 line-through">
-              <Currency amount={product.originalPrice!} />
-            </span>
-          )}
-        </div>
-      </div>
-      
-      <button 
-        className="mt-3 h-11 rounded-md text-white font-medium transition-all duration-300 transform bg-brand hover:bg-brand-dark hover:scale-105 active:scale-95"
-        onClick={onAdd}
-      >
-        Add to Cart
-      </button>
-    </div>
-  )
-}

@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useCartSettings } from '@/lib/contexts/cart-settings-context'
 import { getImageUrl } from '@/lib/utils/image-utils'
 import { useAuth } from '@/lib/contexts/auth-context'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface CartPopupProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ export default function CartPopup({ isOpen, onClose }: CartPopupProps) {
   const { items, totalPrice, totalItems, updateQuantity, removeItem } = useCart()
   const { getText, settings } = useCartSettings()
   const { isAuthenticated } = useAuth()
+  const { isRTL } = useTranslation()
   const router = useRouter()
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
 
@@ -157,7 +159,7 @@ export default function CartPopup({ isOpen, onClose }: CartPopupProps) {
                         {/* Product Details */}
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-xs sm:text-sm text-gray-900 truncate">
-                            {item.name}
+                            {(isRTL && item.nameAr) ? item.nameAr : item.name}
                           </h4>
                           <div className="flex items-center justify-between mt-1">
                             <span className="text-xs sm:text-sm font-semibold text-[#12d6fa]">

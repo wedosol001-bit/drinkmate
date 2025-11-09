@@ -88,21 +88,22 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
   const [error, setError] = useState<string | null>(null)
 
   const handleAddToCart = useCallback((cylinder: CO2Cylinder, qty: number = 1) => {
-    const cylinderDisplayName = (isRTL && cylinder.nameAr) ? cylinder.nameAr : cylinder.name
     const cartItem = {
       id: cylinder._id,
-      name: cylinderDisplayName,
+      name: cylinder.name,
+      nameAr: cylinder.nameAr,
       price: cylinder.price,
       quantity: qty,
       image: cylinder.image || '/placeholder.svg',
       category: 'co2-cylinder',
+      categoryAr: 'أسطوانات ثاني أكسيد الكربون',
       productId: cylinder._id,
       productType: 'cylinder' as const,
       sku: cylinder.slug
     }
     
     addItem(cartItem)
-  }, [addItem, isRTL])
+  }, [addItem])
 
   const fetchCylinders = useCallback(async () => {
     let catalogProducts: Product[] = [];
@@ -490,21 +491,22 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
                   // Create unique cart item ID like main shop
                   const uniqueCartItemId = `${productId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
                   
-                  const productDisplayName = (isRTL && foundProduct.nameAr) ? foundProduct.nameAr : foundProduct.name
-                  
                   // Use getProductImageUrl utility for consistent image processing
                   const displayImage = getProductImageUrl(foundProduct, '/placeholder.svg')
                   
                   // Use getCategoryName utility for consistent category handling
-                  const categoryName = getCategoryName(foundProduct.category || 'co2-cylinder')
+                  const categoryName = getCategoryName(foundProduct.category || 'co2-cylinder', false)
+                  const categoryNameAr = getCategoryName(foundProduct.category || 'co2-cylinder', true)
                   
                   const cartItem = {
                     id: uniqueCartItemId,
-                    name: productDisplayName,
+                    name: foundProduct.name,
+                    nameAr: foundProduct.nameAr,
                     price: foundProduct.price,
                     quantity: qty,
                     image: displayImage, // Use processed image URL
                     category: categoryName,
+                    categoryAr: categoryNameAr,
                     productId: productId,
                     productType: 'product' as const
                   }

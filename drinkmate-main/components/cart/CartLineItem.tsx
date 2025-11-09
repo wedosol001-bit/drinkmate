@@ -9,16 +9,11 @@ import QuantityControl from "./QuantityControl"
 import { toast } from "sonner"
 import { getImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
+import { useTranslation } from "@/lib/contexts/translation-context"
+import { CartItem } from "@/lib/contexts/cart-context"
 
 interface CartLineItemProps {
-  item: {
-    id: string | number
-    name: string
-    price: number
-    quantity: number
-    image: string
-    category?: string
-  }
+  item: CartItem
   onQuantityChange: (id: string | number, quantity: number) => void
   onRemove: (id: string | number) => void
   onSaveForLater: (item: any) => void
@@ -32,8 +27,14 @@ export default function CartLineItem({
   onSaveForLater,
   className = ""
 }: CartLineItemProps) {
+  const { isRTL } = useTranslation()
   const [isRemoving, setIsRemoving] = useState(false)
   const [isHighlighting, setIsHighlighting] = useState(false)
+  
+  // Get display name - use Arabic if RTL and nameAr exists
+  const displayName = (isRTL && item.nameAr) ? item.nameAr : item.name
+  // Get display category - use Arabic if RTL and categoryAr exists
+  const displayCategory = (isRTL && item.categoryAr) ? item.categoryAr : getCategoryName(item.category, isRTL)
 
   const handleRemove = () => {
     setIsRemoving(true)
@@ -80,10 +81,10 @@ export default function CartLineItem({
       {/* Product Info */}
       <div className="min-w-0">
         <h3 className="font-semibold leading-tight text-black text-sm md:text-base truncate">
-          {item.name}
+          {displayName}
         </h3>
         <div className="text-sm text-black/60 mt-1">
-          {item.category && `${getCategoryName(item.category)} • `}
+          {item.category && `${displayCategory} • `}
           Unit price: <span className="flex items-center gap-1">
             {fmt(item.price, 'SAR')} <SaudiRiyalSymbol size="xs" />
           </span>

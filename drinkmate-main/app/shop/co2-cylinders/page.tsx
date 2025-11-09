@@ -2,6 +2,8 @@
 import { CylindersShopSection } from "@/components/sections/CylindersShopSection"
 import PageLayout from "@/components/layout/PageLayout"
 import Image from "next/image"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import { useTranslation } from "@/lib/contexts/translation-context"
 
 const faqCards = [
@@ -117,14 +119,21 @@ export default function CO2() {
       {/* Exchange Cylinders Section */}
       <section className="py-12 sm:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
-          <CylindersShopSection type="exchange" />
-        </div>
-      </section>
-
-      {/* Refill Cylinders Section */}
-      <section className="py-12 sm:py-16 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4">
-          <CylindersShopSection type="refill" />
+          <div className="text-center space-y-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black font-montserrat mb-3 sm:mb-4 tracking-tight">
+              {isRTL ? 'أسطوانات الاستبدال' : 'Exchange Cylinders'}
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 font-noto-sans max-w-2xl mx-auto">
+              {isRTL ? 'خدمة استبدال الأسطوانات بسرعة وسهولة' : 'Quick and easy cylinder exchange service'}
+            </p>
+            <div className="pt-6">
+              <Link href="/refill-cylinder">
+                <Button className="bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold px-8 sm:px-12 py-4 sm:py-5 text-lg sm:text-xl rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105">
+                  {isRTL ? 'اذهب إلى صفحة إعادة التعبئة' : 'Go to Refill Page'}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     

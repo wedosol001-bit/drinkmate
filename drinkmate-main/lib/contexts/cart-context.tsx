@@ -7,10 +7,12 @@ import { cartAPI } from '@/lib/api/services'
 export interface CartItem {
   id: string | number
   name: string
+  nameAr?: string  // Arabic product name
   price: number
   quantity: number
   image: string
   category?: string
+  categoryAr?: string  // Arabic category name
   color?: string
   size?: string
   sku?: string

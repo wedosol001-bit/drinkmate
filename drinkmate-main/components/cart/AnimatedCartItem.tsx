@@ -10,6 +10,7 @@ import { cn, isValidImageUrl } from '@/lib/utils'
 import { Currency } from '@/utils/currency'
 import { getImageUrl } from '@/lib/utils/image-utils'
 import { getCategoryName } from '@/lib/utils/category-utils'
+import { useTranslation } from '@/lib/contexts/translation-context'
 
 interface AnimatedCartItemProps {
   item: CartItem
@@ -26,9 +27,15 @@ export default function AnimatedCartItem({
   onMoveToWishlist,
   className
 }: AnimatedCartItemProps) {
+  const { isRTL } = useTranslation()
   const [isRemoving, setIsRemoving] = useState(false)
   const [quantity, setQuantity] = useState(item.quantity)
   const [isUpdating, setIsUpdating] = useState(false)
+  
+  // Get display name - use Arabic if RTL and nameAr exists
+  const displayName = (isRTL && item.nameAr) ? item.nameAr : item.name
+  // Get display category - use Arabic if RTL and categoryAr exists
+  const displayCategory = (isRTL && item.categoryAr) ? item.categoryAr : getCategoryName(item.category, isRTL)
 
   // Sync quantity with prop changes
   useEffect(() => {
@@ -153,9 +160,9 @@ export default function AnimatedCartItem({
             {/* Product Info */}
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-                {item.name}
+                {displayName}
               </h3>
-              <p className="text-sm text-gray-500 capitalize">{getCategoryName(item.category)}</p>
+              <p className="text-sm text-gray-500 capitalize">{displayCategory}</p>
               
               {/* Price */}
               <motion.div
