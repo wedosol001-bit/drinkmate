@@ -66,7 +66,7 @@ import { useRouter } from "next/navigation"
 import { co2API } from "@/lib/api"
 import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
 import { getProductImageUrl, getImageUrl } from "@/lib/utils/image-utils"
-import { getCategoryName } from "@/lib/utils/product-url"
+import { getCategoryName } from "@/lib/utils/category-utils"
 import { getLocalizedProductData } from "@/lib/utils/product-localization"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import styles from "./styles.module.css"
@@ -478,15 +478,21 @@ export default function CO2ProductDetail() {
     setCartAnimation(true)
     setIsInCart(true)
 
-    // Add item to cart context
-    const productDisplayName = (language === 'AR' && product.nameAr) ? product.nameAr : product.name
+    // Get category names in both languages
+    const categoryName = getCategoryName(product.category || 'co2-cylinders', false)
+    const categoryNameAr = getCategoryName(product.category || 'co2-cylinders', true)
+
+    // Add item to cart context - store both name and nameAr
     addItem({
       id: product._id || product.id || productSlug,
-      name: productDisplayName,
+      name: product.name || '',
+      nameAr: product.nameAr || undefined,
       price: product.price,
       image: product.image || product.images?.[0] || '/placeholder.svg',
       quantity: quantity,
-      category: 'co2-cylinder',
+      category: categoryName,
+      categoryAr: categoryNameAr,
+      productId: String(product._id || product.id || productSlug),
       productType: 'cylinder' as const,
       sku: product.sku
     })

@@ -423,13 +423,19 @@ export default function SodamakersPage() {
 
 
   function handleAddToCart(product: Product | Bundle) {
+    const categoryName = getCategoryName(product.category, false)
+    const categoryNameAr = getCategoryName(product.category, true)
     addItem({
       id: product._id,
-      name: product.name,
+      name: product.name || '',
+      nameAr: (product as any)?.nameAr || undefined,
       price: product.price,
       quantity: 1,
       image: product.image,
-      category: product.category,
+      category: categoryName,
+      categoryAr: categoryNameAr,
+      productId: product._id,
+      productType: 'product' as const
     })
   }
 
@@ -540,17 +546,19 @@ export default function SodamakersPage() {
           const displayImage = getProductImageUrl(productData, '/placeholder.svg')
           
           // Use getCategoryName utility for consistent category handling
-          const categoryName = getCategoryName(product.category)
+          const categoryName = getCategoryName(product.category, false)
+          const categoryNameAr = getCategoryName(product.category, true)
           
-          // Use Arabic name for cart if RTL
-          const cartItemName = (isRTL && (product as any)?.nameAr) ? (product as any).nameAr : product.name
+          // Store both name and nameAr so cart can display correct language
           const cartItem = {
             id: uniqueCartItemId,
-            name: cartItemName, // Use Arabic name if RTL
+            name: product.name || '',
+            nameAr: (product as any)?.nameAr || undefined,
             price: product.price,
             quantity: qty,
             image: displayImage, // Use processed image URL
             category: categoryName,
+            categoryAr: categoryNameAr,
             productId: productId,
             productType: 'product' as const
           }

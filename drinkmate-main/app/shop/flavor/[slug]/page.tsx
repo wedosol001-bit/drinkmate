@@ -13,7 +13,7 @@ import { useTranslation } from "@/lib/contexts/translation-context"
 import { getLocalizedProductData } from "@/lib/utils/product-localization"
 import BundleStyleProductCard from "@/components/shop/BundleStyleProductCard"
 import { getProductImageUrl, getImageUrl } from "@/lib/utils/image-utils"
-import { getCategoryName } from "@/lib/utils/product-url"
+import { getCategoryName } from "@/lib/utils/category-utils"
 import styles from './styles.module.css'
 import { Button } from "@/components/ui/button"
 import {
@@ -476,17 +476,23 @@ export default function FlavorDetailPage() {
     setCartAnimation(true)
     setIsInCart(true)
 
+    // Get category names in both languages
+    const categoryName = getCategoryName(product.category, false)
+    const categoryNameAr = getCategoryName(product.category, true)
+
     // Add item to cart context
     addItem({
       id: product._id || product.id || productSlug,
-      name: product.name,
+      name: product.name || '',
+      nameAr: (product as any)?.nameAr || undefined,
       price: product.salePrice || product.price,
       image: product.image || (() => {
         const img = product.images?.[0]
         return typeof img === 'string' ? img : img?.url || '/placeholder.svg'
       })(),
       quantity: quantity,
-      category: 'flavors',
+      category: categoryName,
+      categoryAr: categoryNameAr,
       color: selectedColor,
       size: selectedSize,
       productId: String(product._id || product.id || productSlug),

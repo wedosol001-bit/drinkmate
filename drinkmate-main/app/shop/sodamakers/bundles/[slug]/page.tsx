@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/contexts/cart-context"
+import { getCategoryName } from "@/lib/utils/category-utils"
 import PageLayout from "@/components/layout/PageLayout"
 import { Star, Loader2, Check, Heart, Share2, Plus, Minus, Truck, Shield, Zap, Award, Users, Package, Settings, Filter, X, ChevronLeft, ChevronRight, Maximize2, Bell, Clock, CheckCircle, AlertCircle, Info, Sparkles, TrendingUp, MessageCircle, Play, Eye, ArrowLeft, ThumbsUp, ChevronDown, ChevronUp, Copy, Facebook, Twitter, ShoppingCart, Leaf, Recycle } from "lucide-react"
 import { shopAPI, invalidateCache } from "@/lib/api"
@@ -356,14 +357,22 @@ export default function BundleDetailPage() {
     
     setCartAnimation(true)
     
+    // Get category names in both languages
+    const categoryName = getCategoryName(bundle.category || 'bundles', false)
+    const categoryNameAr = getCategoryName(bundle.category || 'bundles', true)
+    
     // Add the bundle as a single item
     addItem({
       id: bundle._id,
-      name: bundle.name,
+      name: bundle.name || '',
+      nameAr: (bundle as any)?.nameAr || undefined,
       price: bundle.price,
       quantity: quantity,
-      image: bundle.images[0],
-      category: "bundle",
+      image: bundle.images?.[0] || '/placeholder.svg',
+      category: categoryName,
+      categoryAr: categoryNameAr,
+      bundleId: String(bundle._id),
+      productType: 'bundle' as const,
       isBundle: true
     })
     

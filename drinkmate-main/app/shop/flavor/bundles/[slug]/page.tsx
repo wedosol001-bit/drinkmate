@@ -10,6 +10,7 @@ import { Suspense } from "react"
 import { shopAPI, invalidateCache } from "@/lib/api"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useTranslation } from "@/lib/contexts/translation-context"
+import { getCategoryName } from "@/lib/utils/category-utils"
 import { YouTubeVideo, isYouTubeUrl, getYouTubeVideoId } from "@/components/ui/youtube-video"
 import YouTubeThumbnail from "@/components/ui/YouTubeThumbnail"
 import { Button } from "@/components/ui/button"
@@ -366,17 +367,23 @@ export default function BundleDetailPage() {
     setCartAnimation(true)
     setIsInCart(true)
 
+    // Get category names in both languages
+    const categoryName = getCategoryName(product.category || 'flavor-bundles', false)
+    const categoryNameAr = getCategoryName(product.category || 'flavor-bundles', true)
+
     // Add item to cart context
     addItem({
       id: product._id || product.id || productSlug,
-      name: product.name,
+      name: product.name || '',
+      nameAr: (product as any)?.nameAr || undefined,
       price: product.salePrice || product.price,
       image: product.image || (() => {
         const img = product.images?.[0]
         return typeof img === 'string' ? img : img?.url || '/placeholder.svg'
       })(),
       quantity: quantity,
-      category: 'bundles',
+      category: categoryName,
+      categoryAr: categoryNameAr,
       bundleId: String(product._id || product.id || productSlug),
       productType: 'bundle' as const,
       sku: product.sku

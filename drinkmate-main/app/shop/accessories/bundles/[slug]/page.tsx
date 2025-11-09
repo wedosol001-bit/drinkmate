@@ -61,6 +61,7 @@ import { YouTubeVideo, isYouTubeUrl, getYouTubeVideoId } from "@/components/ui/y
 import PageLayout from "@/components/layout/PageLayout"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { useCart } from "@/lib/contexts/cart-context"
+import { getCategoryName } from "@/lib/utils/category-utils"
 import { useRouter } from "next/navigation"
 import { shopAPI } from "@/lib/api"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
@@ -505,14 +506,22 @@ export default function AccessoriesBundleDetail() {
     setCartAnimation(true)
     setIsInCart(true)
 
+    // Get category names in both languages
+    const categoryName = getCategoryName(product.category || 'accessory-bundles', false)
+    const categoryNameAr = getCategoryName(product.category || 'accessory-bundles', true)
+
     // Add item to cart context
     addItem({
       id: product._id || product.id || productSlug,
-      name: product.name,
+      name: product.name || '',
+      nameAr: (product as any)?.nameAr || undefined,
       price: product.price,
       image: product.image || product.images?.[0] || '/placeholder.svg',
       quantity: quantity,
-      category: 'accessories'
+      category: categoryName,
+      categoryAr: categoryNameAr,
+      bundleId: String(product._id || product.id || productSlug),
+      productType: 'bundle' as const
     })
 
     // Show success feedback
@@ -2180,13 +2189,17 @@ export default function AccessoriesBundleDetail() {
                               className="opacity-0 group-hover:opacity-100 transition-opacity border-[#12d6fa] text-[#12d6fa] hover:bg-[#12d6fa] hover:text-white bg-transparent"
                               onClick={(e) => {
                                 e.preventDefault()
+                                const categoryName = getCategoryName(relatedProduct.category || 'accessory-bundles', false)
+                                const categoryNameAr = getCategoryName(relatedProduct.category || 'accessory-bundles', true)
                                 const cartItem = {
                                   id: relatedProduct.id || relatedProduct._id,
-                                  name: relatedProduct.name,
+                                  name: relatedProduct.name || '',
+                                  nameAr: (relatedProduct as any)?.nameAr || undefined,
                                   price: relatedProduct.price,
                                   quantity: 1,
                                   image: relatedProduct.image || "/placeholder.svg",
-                                  category: "bundle",
+                                  category: categoryName,
+                                  categoryAr: categoryNameAr,
                                   productType: 'bundle' as const,
                                   bundleId: relatedProduct.id || relatedProduct._id
                                 }
