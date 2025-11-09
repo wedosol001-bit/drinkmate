@@ -279,7 +279,7 @@ export default function ProductCard({
       </Link>
 
       {/* Content Section */}
-      <div className="p-6 flex flex-col flex-1">
+      <div className="p-6 flex flex-col">
         <Link href={getProductUrl(product)}>
           <h3 className="text-xl mb-3 hover:text-brand-600 transition-colors leading-tight cursor-pointer">{product.title}</h3>
         </Link>
