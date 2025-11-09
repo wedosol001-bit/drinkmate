@@ -38,7 +38,7 @@ export default function WishlistSidebar({ className = "" }: WishlistSidebarProps
   const handleAddToCart = (item: any) => {
     addItem({
       id: item.product._id,
-      name: item.product.name || item.product.title || '',
+      name: item.product.name || '',
       nameAr: item.product.nameAr || undefined,
       price: item.product.price,
       quantity: 1,

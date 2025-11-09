@@ -53,7 +53,7 @@ export default function ProductCard({
   const handleAddToCart = () => {
     const cartItem = {
       id: product._id,
-      name: product.name || product.title || '',
+      name: product.name || '',
       nameAr: (product as any)?.nameAr || undefined,
       price: (product as any).salePrice || product.price,
       image: typeof product.images?.[0] === 'string' ? product.images[0] : 

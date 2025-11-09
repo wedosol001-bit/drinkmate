@@ -356,7 +356,7 @@ export default function FlavorPage() {
       const categoryNameAr = getCategoryName(product.category, true)
       const cartItem = {
         id: payload.productId,
-        name: product.name || product.title || '',
+        name: product.name || '',
         nameAr: (product as any)?.nameAr || undefined,
         price: product.price,
         quantity: payload.qty,

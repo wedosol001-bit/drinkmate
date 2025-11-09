@@ -455,7 +455,7 @@ export default function AccessoriesPage() {
           // Store both name and nameAr so cart can display correct language
           const cartItem = {
             id: uniqueCartItemId,
-            name: product.name || product.title || '',
+            name: product.name || '',
             nameAr: (product as any)?.nameAr || undefined,
             price: product.price,
             quantity: qty,
