@@ -320,7 +320,7 @@ export default function BundleStyleProductCard({
         </Link>
 
         {/* Rating and Reviews */}
-        <div className="flex items-center gap-3 mb-1 flex-wrap">
+        <div className="flex items-center gap-3 mb-2 flex-wrap">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => {
               const rating = typeof product.rating === 'number' ? product.rating : 
@@ -350,7 +350,7 @@ export default function BundleStyleProductCard({
         {/* Description/Tagline */}
         {product.description && (
           <p 
-            className="text-sm text-gray-600 mb-3 leading-relaxed"
+            className="text-sm text-gray-600 mb-2 leading-relaxed"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -362,21 +362,23 @@ export default function BundleStyleProductCard({
           </p>
         )}
 
-                    {/* Pricing and Add Button */}
-                    <div className="pt-1">
-                      {/* Discount Badge - Above Price */}
-                      {!hasVariants && isSale && percentOff > 0 && (
-                        <div className="flex items-center gap-2 mb-2">
-                          {product.compareAtPrice && (
+                    {/* Pricing and Add Button - Fixed position with distributed spacing */}
+                    <div className="mt-auto pt-3">
+                      {/* Price Section */}
+                      <div className="flex items-center gap-3 mb-4 flex-wrap">
+                        {!hasVariants && product.compareAtPrice && (
+                          <>
                             <span className="text-gray-400 text-sm line-through font-medium whitespace-nowrap">
                               <SaudiRiyal amount={product.compareAtPrice} size="sm" />
                             </span>
-                          )}
-                          <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
-                            {percentOff}% {isRTL ? 'خصم' : 'OFF'}
-                          </span>
-                        </div>
-                      )}
+                            {percentOff > 0 && (
+                              <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+                                {percentOff}% {isRTL ? 'خصم' : 'OFF'}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
 
           {/* Current Price and Add Button */}
           <div className="flex items-center justify-between gap-3">
