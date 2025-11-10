@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { Order, Invoice } from '@/types/account'
-import { orderAPI } from '@/lib/api'
+import { orderAPI, apiCache } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -310,6 +310,14 @@ export default function OrderDetailPage() {
     try {
       setLoading(true)
       const orderId = params.id as string
+
+      // Clear cache before fetching to ensure fresh data
+      if (typeof window !== 'undefined') {
+        const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+          key.includes('orders') && key.includes(orderId)
+        );
+        cacheKeys.forEach(key => apiCache.delete(key));
+      }
 
       // Try to fetch order by ID (could be MongoDB _id or orderNumber)
       // The backend getOrder function uses findById, so it expects MongoDB ObjectId

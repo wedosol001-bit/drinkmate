@@ -161,30 +161,85 @@ class AdminOrderController {
 
       // If status is delivered, set delivered date and shipping status
       if (status === 'delivered') {
-        updateOps.$set['shipping.deliveredAt'] = new Date();
-        updateOps.$set['shipping.status'] = 'delivered';
-        // Ensure shipping object exists
+        // Initialize shipping object if it doesn't exist
         if (!order.shipping) {
-          updateOps.$set['shipping'] = {};
+          updateOps.$set['shipping'] = {
+            status: 'delivered',
+            deliveredAt: new Date()
+          };
+        } else {
+          updateOps.$set['shipping.deliveredAt'] = new Date();
+          updateOps.$set['shipping.status'] = 'delivered';
         }
       } else if (status === 'shipped') {
-        // If shipped, set shipped date if not already set
-        if (!order.shipping?.shippedAt) {
-          updateOps.$set['shipping.shippedAt'] = new Date();
-        }
-        updateOps.$set['shipping.status'] = 'shipped';
-        // Ensure shipping object exists
+        // Initialize shipping object if it doesn't exist
         if (!order.shipping) {
-          updateOps.$set['shipping'] = {};
+          updateOps.$set['shipping'] = {
+            status: 'shipped',
+            shippedAt: new Date()
+          };
+        } else {
+          // If shipped, set shipped date if not already set
+          if (!order.shipping.shippedAt) {
+            updateOps.$set['shipping.shippedAt'] = new Date();
+          }
+          updateOps.$set['shipping.status'] = 'shipped';
         }
       }
 
-      // Update order using findByIdAndUpdate
-      const updatedOrder = await Order.findByIdAndUpdate(
-        id,
-        updateOps,
-        { new: true, runValidators: false }
-      ).populate('user', 'firstName lastName email phone username');
+      // Log the update operation for debugging
+      console.log('🔄 Updating order status:', {
+        orderId: id,
+        currentStatus: order.status,
+        newStatus: status,
+        updateOps: JSON.stringify(updateOps, null, 2)
+      });
+
+      // Use a more reliable update method - update directly on the document
+      // This ensures the update actually happens
+      order.status = status;
+      order.updatedAt = new Date();
+      
+      // Add timeline entry
+      if (!order.timeline) {
+        order.timeline = [];
+      }
+      order.timeline.push({
+        status: String(status),
+        description: notes ? `Status changed: ${notes}` : `Order status updated to ${status}`,
+        timestamp: new Date(),
+        updatedBy: 'admin'
+      });
+
+      // Handle shipping status updates
+      if (status === 'delivered') {
+        if (!order.shipping) {
+          order.shipping = {};
+        }
+        order.shipping.deliveredAt = new Date();
+        order.shipping.status = 'delivered';
+      } else if (status === 'shipped') {
+        if (!order.shipping) {
+          order.shipping = {};
+        }
+        if (!order.shipping.shippedAt) {
+          order.shipping.shippedAt = new Date();
+        }
+        order.shipping.status = 'shipped';
+      }
+
+      // Save the order (bypass validation to avoid enum issues)
+      await order.save({ validateBeforeSave: false });
+
+      console.log('✅ Order status updated successfully:', {
+        orderId: id,
+        newStatus: order.status,
+        updatedAt: order.updatedAt
+      });
+
+      // Re-fetch the order with populated fields to ensure we have the latest data
+      const updatedOrder = await Order.findById(id)
+        .populate('user', 'firstName lastName email phone username');
 
       if (!updatedOrder) {
         return res.status(404).json(createErrorResponse(
@@ -192,6 +247,24 @@ class AdminOrderController {
           'Order with the specified ID does not exist'
         ));
       }
+
+      // Verify the status was actually updated
+      if (updatedOrder.status !== status) {
+        console.error('❌ Status update verification failed!', {
+          expected: status,
+          actual: updatedOrder.status,
+          orderId: id
+        });
+        return res.status(500).json(createErrorResponse(
+          'Status update failed',
+          'The order status was not updated correctly. Please try again.'
+        ));
+      }
+
+      console.log('✅ Status update verified:', {
+        orderId: id,
+        status: updatedOrder.status
+      });
 
       res.json({
         success: true,

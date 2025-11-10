@@ -17,7 +17,9 @@ export async function PUT(
     }
 
     // Make request to backend - admin router is mounted at /admin
-    const backendUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/admin/orders/${id}/status`
+    // Use /api/admin to match the frontend API pattern, or /admin directly
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+    const backendUrl = `${baseUrl}/admin/orders/${id}/status`
     
     const response = await fetch(backendUrl, {
       method: 'PUT',
@@ -28,7 +30,19 @@ export async function PUT(
       body: JSON.stringify({ status })
     })
 
-    const data = await response.json()
+    let data
+    try {
+      data = await response.json()
+    } catch (jsonError) {
+      // If response is not JSON, return error
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: `Invalid response from backend (status: ${response.status})`
+        },
+        { status: response.status }
+      )
+    }
     
     if (!response.ok) {
       // Backend returns error in data.error or data.message

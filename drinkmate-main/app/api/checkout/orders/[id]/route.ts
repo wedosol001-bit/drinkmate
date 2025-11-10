@@ -19,12 +19,14 @@ export const GET = withErrorHandler(async (
   }
 
   // Make request to backend
-  const backendUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/checkout/orders/${id}`
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+  const backendUrl = `${baseUrl}/checkout/orders/${id}`
   
   const response = await fetch(backendUrl, {
     headers: {
       'Authorization': request.headers.get('Authorization') || '',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
     }
   })
 

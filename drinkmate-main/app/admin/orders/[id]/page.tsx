@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { useAuth } from "@/lib/contexts/auth-context"
 import { useAdminTranslation } from "@/lib/use-admin-translation"
-import { adminAPI } from "@/lib/api"
+import { adminAPI, apiCache } from "@/lib/api"
 import AdminLayout from "@/components/layout/AdminLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -235,10 +235,28 @@ export default function OrderDetailsPage() {
       
       toast.success(`Order status updated to ${newStatus} successfully`)
       
+      // Immediately update local state for instant UI feedback
+      if (order) {
+        setOrder({
+          ...order,
+          status: newStatus as any,
+          updatedAt: new Date().toISOString()
+        })
+      }
+      
       // Force refresh after a short delay to ensure backend has processed the update
+      // Use a longer delay to ensure the database write has completed
+      // Also clear any API cache for this order
+      if (typeof window !== 'undefined') {
+        const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+          key.includes('orders') && key.includes(orderId)
+        );
+        cacheKeys.forEach(key => apiCache.delete(key));
+      }
+      
       setTimeout(() => {
-        fetchOrderDetails() // Refresh the order data
-      }, 500)
+        fetchOrderDetails() // Refresh the order data from server
+      }, 1000)
       
       // Also refresh the orders list if we're coming from there
       // This ensures the status badge updates in the orders list page

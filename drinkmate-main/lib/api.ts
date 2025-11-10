@@ -884,9 +884,11 @@ export const orderAPI = {
     return response.data;
   },
   
-  // Get single order
+  // Get single order - use Next.js API route for cache control
   getOrder: async (id: string) => {
-    const response = await api.get(`/checkout/orders/${id}`);
+    const response = await api.get(`/api/checkout/orders/${id}`, {
+      params: { _t: Date.now() } // Cache busting
+    });
     return response.data;
   },
   
@@ -1439,7 +1441,10 @@ export const adminAPI = {
 
   getOrder: async (id: string) => {
     try {
-      const response = await api.get(`/admin/orders/${id}`);
+      // Use Next.js API route to ensure fresh data and proper caching control
+      const response = await api.get(`/api/admin/orders/${id}`, {
+        params: { _t: Date.now() } // Cache busting
+      });
       return response.data;
     } catch (error: any) {
       return {
@@ -1452,7 +1457,8 @@ export const adminAPI = {
 
   updateOrderStatus: async (id: string, status: string) => {
     try {
-      const response = await api.put(`/admin/orders/${id}/status`, { status });
+      // Use Next.js API route for proper error handling and consistency
+      const response = await api.put(`/api/checkout/admin/orders/${id}/status`, { status });
       return response.data;
     } catch (error: any) {
       return {
