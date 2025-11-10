@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useCart } from '@/hooks/use-cart'
 import { Order, Invoice } from '@/types/account'
+import { orderAPI } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,7 +27,8 @@ import {
   Loader2,
   TrendingUp,
   Eye,
-  X
+  X,
+  CreditCard
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -57,125 +59,298 @@ export default function OrderDetailPage() {
   const { t, language, isRTL } = useTranslation()
   const { addItem, totalItems } = useCart()
   const [order, setOrder] = useState<Order | null>(null)
+  const [backendOrder, setBackendOrder] = useState<any>(null) // Store full backend order for additional data
   const [loading, setLoading] = useState(true)
   const [isReordering, setIsReordering] = useState(false)
+  const [paymentStatus, setPaymentStatus] = useState<string>('pending')
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Mock data - replace with actual API call
-  const mockOrder: Order = {
-    id: params.id as string,
-    number: 'DM-2024-001',
-    createdAt: '2024-01-15T10:30:00Z',
-    status: 'delivered',
-    total: 299.99,
-    itemsCount: 3,
-    trackingNumber: 'TRK123456789',
-    estimatedDelivery: '2024-01-18T00:00:00Z',
-    items: [
-      {
-        name: 'DrinkMate OmniFizz - Arctic Blue',
-        quantity: 1,
-        price: 199.99
-      },
-      {
-        name: 'CO₂ Cylinder',
-        quantity: 2,
-        price: 50.00
-      }
-    ],
-    lineItems: [
-      {
-        id: '1',
-        productId: 'prod-1',
-        productName: 'DrinkMate OmniFizz - Arctic Blue',
-        variant: 'Arctic Blue',
-        quantity: 1,
-        price: 199.99,
-        image: '/images/starter-kit-blue.jpg'
-      },
-      {
-        id: '2',
-        productId: 'prod-2',
-        productName: 'CO₂ Cylinder',
-        quantity: 2,
-        price: 25.99,
-        image: '/images/co2-cylinder.jpg'
-      }
-    ],
-    shipments: [
-      {
-        id: '1',
-        trackingNumber: 'TRK123456789',
-        carrier: 'Aramex',
-        status: 'delivered',
-        estimatedDelivery: '2024-01-18T00:00:00Z',
-        actualDelivery: '2024-01-17T14:30:00Z'
-      }
-    ],
-    invoices: [
-      {
-        id: '1',
-        number: 'INV-2024-001',
-        url: '/invoices/inv-2024-001.pdf',
-        createdAt: '2024-01-15T10:30:00Z'
-      }
-    ]
-  }
+  // Transform backend order to frontend Order type
+  const transformBackendOrder = (backendOrder: any): Order => {
+    // Map line items from backend items
+    const lineItems = backendOrder.items?.map((item: any, index: number) => ({
+      id: item._id || item.id || String(index),
+      productId: item.product?._id || item.product || item.productId || '',
+      productName: item.name || 'Unknown Product',
+      variant: item.color || item.variant || undefined,
+      quantity: item.quantity || 1,
+      price: item.price || 0,
+      image: item.image || '/images/placeholder-product.jpg'
+    })) || []
 
-  // Mock tracking checkpoints
-  const mockCheckpoints: TrackingCheckpoint[] = [
-    {
-      ts: '2024-01-17T14:30:00Z',
-      status: 'DELIVERED',
-      city: 'Riyadh',
-      message: 'Package delivered successfully',
-      location: '123 King Fahd Road, Al Olaya, Riyadh'
-    },
-    {
-      ts: '2024-01-17T10:15:00Z',
-      status: 'OUT_FOR_DELIVERY',
-      city: 'Riyadh',
-      message: 'Package out for delivery',
-      location: 'Riyadh Distribution Center'
-    },
-    {
-      ts: '2024-01-16T21:35:00Z',
-      status: 'IN_TRANSIT',
-      city: 'Riyadh Hub',
-      message: 'Arrived at sorting center',
-      location: 'Riyadh Hub'
-    },
-    {
-      ts: '2024-01-16T15:20:00Z',
-      status: 'SHIPPED',
-      city: 'Jeddah',
-      message: 'Package dispatched from origin',
-      location: 'Jeddah Warehouse'
-    },
-    {
-      ts: '2024-01-15T14:30:00Z',
-      status: 'PROCESSING',
-      city: 'Jeddah',
-      message: 'Order received and being prepared',
-      location: 'Jeddah Processing Center'
+    // Map shipments from backend shipping data
+    const shipments = []
+    if (backendOrder.shipping?.aramexWaybillNumber || backendOrder.trackingNumber) {
+      shipments.push({
+        id: '1',
+        trackingNumber: backendOrder.shipping?.aramexWaybillNumber || backendOrder.trackingNumber,
+        carrier: backendOrder.shipping?.method || 'Aramex',
+        status: mapShippingStatus(backendOrder.shipping?.status || backendOrder.status),
+        estimatedDelivery: backendOrder.shipping?.estimatedDelivery 
+          ? new Date(backendOrder.shipping.estimatedDelivery).toISOString()
+          : backendOrder.estimatedDeliveryDate 
+          ? new Date(backendOrder.estimatedDeliveryDate).toISOString()
+          : undefined,
+        actualDelivery: backendOrder.shipping?.deliveredAt
+          ? new Date(backendOrder.shipping.deliveredAt).toISOString()
+          : undefined
+      })
     }
-  ]
 
-  const mockCarrier: Carrier = {
-    name: 'Aramex',
-    code: 'aramex',
-    trackingNumber: 'TRK123456789',
-    trackingUrl: 'https://www.aramex.com/track/TRK123456789'
+    // Map invoices (if available)
+    const invoices: Invoice[] = []
+    if (backendOrder.orderNumber) {
+      invoices.push({
+        id: backendOrder._id || backendOrder.id,
+        number: `INV-${backendOrder.orderNumber}`,
+        url: `/api/invoices/${backendOrder._id || backendOrder.id}`,
+        createdAt: backendOrder.createdAt || new Date().toISOString()
+      })
+    }
+
+    return {
+      id: backendOrder._id || backendOrder.id,
+      number: backendOrder.orderNumber || backendOrder.order_number || backendOrder.id || 'N/A',
+      createdAt: backendOrder.createdAt || new Date().toISOString(),
+      status: mapOrderStatus(backendOrder.status || 'pending'),
+      total: typeof backendOrder.total === 'number' ? backendOrder.total : (backendOrder.totalAmount || 0),
+      itemsCount: backendOrder.items?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0,
+      items: backendOrder.items?.map((item: any) => ({
+        name: item.name || 'Unknown Item',
+        quantity: item.quantity || 1,
+        price: item.price || 0
+      })) || [],
+      trackingNumber: backendOrder.shipping?.aramexWaybillNumber || backendOrder.trackingNumber || null,
+      estimatedDelivery: backendOrder.shipping?.estimatedDelivery 
+        ? new Date(backendOrder.shipping.estimatedDelivery).toISOString()
+        : backendOrder.estimatedDeliveryDate 
+        ? new Date(backendOrder.estimatedDeliveryDate).toISOString()
+        : null,
+      lineItems,
+      shipments,
+      invoices
+    }
   }
 
-  useEffect(() => {
-    const fetchOrder = async () => {
+  // Map backend status to frontend OrderStatus
+  const mapOrderStatus = (status: string): Order['status'] => {
+    const statusMap: Record<string, Order['status']> = {
+      'pending': 'processing',
+      'confirmed': 'processing',
+      'processing': 'processing',
+      'shipped': 'shipped',
+      'delivered': 'delivered',
+      'cancelled': 'cancelled',
+      'returned': 'returned'
+    }
+    return statusMap[status.toLowerCase()] || 'processing'
+  }
+
+  // Map shipping status
+  const mapShippingStatus = (status: string): 'pending' | 'in_transit' | 'delivered' => {
+    const statusMap: Record<string, 'pending' | 'in_transit' | 'delivered'> = {
+      'pending': 'pending',
+      'shipped': 'in_transit',
+      'in_transit': 'in_transit',
+      'delivered': 'delivered',
+      'exception': 'pending'
+    }
+    return statusMap[status?.toLowerCase() || 'pending'] || 'pending'
+  }
+
+  // Build tracking checkpoints from backend data
+  const buildTrackingCheckpoints = (backendOrder: any): TrackingCheckpoint[] => {
+    const checkpoints: TrackingCheckpoint[] = []
+
+    // Add timeline entries if available (from order timeline)
+    if (backendOrder.timeline && Array.isArray(backendOrder.timeline) && backendOrder.timeline.length > 0) {
+      backendOrder.timeline.forEach((entry: any) => {
+        checkpoints.push({
+          ts: entry.timestamp || new Date().toISOString(),
+          status: entry.status?.toUpperCase() || 'PROCESSING',
+          message: entry.description || `Order ${entry.status}`,
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      })
+    }
+
+    // Add shipping tracking history if available (from Aramex or other carriers)
+    if (backendOrder.shipping?.trackingHistory && Array.isArray(backendOrder.shipping.trackingHistory) && backendOrder.shipping.trackingHistory.length > 0) {
+      backendOrder.shipping.trackingHistory.forEach((track: any) => {
+        checkpoints.push({
+          ts: track.updateDateTime || new Date().toISOString(),
+          status: track.updateCode?.toUpperCase() || 'IN_TRANSIT',
+          city: track.updateLocation || '',
+          message: track.updateDescription || track.comments || 'Package update',
+          location: track.updateLocation || ''
+        })
+      })
+    }
+
+    // If no checkpoints from tracking data, create basic ones from order status
+    // This ensures the timeline always shows something, even without tracking integration
+    if (checkpoints.length === 0) {
+      const orderDate = backendOrder.createdAt ? new Date(backendOrder.createdAt) : new Date()
+      const status = backendOrder.status?.toLowerCase() || 'pending'
+      
+      // Always show order placed
+      checkpoints.push({
+        ts: orderDate.toISOString(),
+        status: 'PROCESSING',
+        message: language === 'AR' ? 'تم استلام الطلب' : 'Order received and being prepared',
+        location: backendOrder.shippingAddress?.city || backendOrder.shippingAddress?.district || ''
+      })
+
+      // Show confirmed status if order is past pending
+      if (['confirmed', 'processing', 'shipped', 'delivered'].includes(status)) {
+        const confirmedDate = new Date(orderDate)
+        confirmedDate.setHours(confirmedDate.getHours() + 2) // Assume confirmed 2 hours after order
+        checkpoints.push({
+          ts: confirmedDate.toISOString(),
+          status: 'PROCESSING',
+          message: language === 'AR' ? 'تم تأكيد الطلب' : 'Order confirmed',
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      }
+
+      // Show processing/packed if order is processing or shipped
+      if (['processing', 'shipped', 'delivered'].includes(status)) {
+        const processingDate = backendOrder.shipping?.shippedAt 
+          ? new Date(backendOrder.shipping.shippedAt)
+          : new Date(orderDate.getTime() + 24 * 60 * 60 * 1000) // 1 day after order
+        checkpoints.push({
+          ts: processingDate.toISOString(),
+          status: 'PROCESSING',
+          message: language === 'AR' ? 'جاري تجهيز الطلب' : 'Order being prepared',
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      }
+
+      // Show shipped if order is shipped or delivered
+      if (['shipped', 'delivered'].includes(status)) {
+        const shippedDate = backendOrder.shipping?.shippedAt 
+          ? new Date(backendOrder.shipping.shippedAt)
+          : backendOrder.updatedAt 
+          ? new Date(backendOrder.updatedAt)
+          : new Date(orderDate.getTime() + 2 * 24 * 60 * 60 * 1000) // 2 days after order
+        checkpoints.push({
+          ts: shippedDate.toISOString(),
+          status: 'SHIPPED',
+          message: language === 'AR' ? 'تم شحن الطلب' : 'Package dispatched',
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      }
+
+      // Show in transit if shipped
+      if (status === 'shipped') {
+        const transitDate = backendOrder.shipping?.shippedAt 
+          ? new Date(new Date(backendOrder.shipping.shippedAt).getTime() + 12 * 60 * 60 * 1000)
+          : new Date(orderDate.getTime() + 3 * 24 * 60 * 60 * 1000)
+        checkpoints.push({
+          ts: transitDate.toISOString(),
+          status: 'IN_TRANSIT',
+          message: language === 'AR' ? 'الطلب في الطريق' : 'Package in transit',
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      }
+
+      // Show delivered if order is delivered
+      if (status === 'delivered') {
+        const deliveredDate = backendOrder.shipping?.deliveredAt 
+          ? new Date(backendOrder.shipping.deliveredAt)
+          : backendOrder.updatedAt 
+          ? new Date(backendOrder.updatedAt)
+          : new Date(orderDate.getTime() + 5 * 24 * 60 * 60 * 1000) // 5 days after order
+        checkpoints.push({
+          ts: deliveredDate.toISOString(),
+          status: 'DELIVERED',
+          message: language === 'AR' ? 'تم تسليم الطلب بنجاح' : 'Package delivered successfully',
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      }
+    }
+
+    // Sort by timestamp (newest first)
+    return checkpoints.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime())
+  }
+
+  // Get carrier information from backend order
+  const getCarrierInfo = (backendOrder: any): Carrier => {
+    const waybillNumber = backendOrder.shipping?.aramexWaybillNumber || backendOrder.trackingNumber
+    const carrierName = backendOrder.shipping?.method || 'Aramex'
+    
+    return {
+      name: carrierName,
+      code: carrierName.toLowerCase().replace(/\s+/g, '_'),
+      trackingNumber: waybillNumber || '',
+      trackingUrl: backendOrder.shipping?.trackingUrl || 
+        (waybillNumber ? `https://www.aramex.com/track/${waybillNumber}` : ''),
+      logo: undefined
+    }
+  }
+
+  // Fetch order from API
+  const fetchOrder = async () => {
+    try {
       setLoading(true)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setOrder(mockOrder)
+      const orderId = params.id as string
+
+      // Try to fetch order by ID (could be MongoDB _id or orderNumber)
+      // The backend getOrder function uses findById, so it expects MongoDB ObjectId
+      // If the ID format doesn't match ObjectId, we'll get an error and handle it
+      const response = await orderAPI.getOrder(orderId)
+
+      if (response.success && response.order) {
+        const transformedOrder = transformBackendOrder(response.order)
+        setOrder(transformedOrder)
+        setBackendOrder(response.order)
+        setPaymentStatus(response.order.paymentDetails?.paymentStatus || response.order.paymentStatus || 'pending')
+      } else if (response.success && response.data) {
+        // Handle case where order is in data property
+        const transformedOrder = transformBackendOrder(response.data)
+        setOrder(transformedOrder)
+        setBackendOrder(response.data)
+        setPaymentStatus(response.data.paymentDetails?.paymentStatus || response.data.paymentStatus || 'pending')
+      } else {
+        toast.error(
+          language === 'AR' 
+            ? 'لم يتم العثور على الطلب' 
+            : 'Order not found'
+        )
+        router.push('/account/orders')
+      }
+    } catch (error: any) {
+      console.error('Error fetching order:', error)
+      toast.error(
+        language === 'AR' 
+          ? 'حدث خطأ أثناء تحميل تفاصيل الطلب' 
+          : 'Failed to load order details'
+      )
+      
+      // If order not found, redirect to orders list
+      if (error?.response?.status === 404 || error?.message?.includes('not found')) {
+        router.push('/account/orders')
+      }
+    } finally {
       setLoading(false)
     }
+  }
 
+  // Set up polling for real-time updates (every 30 seconds)
+  useEffect(() => {
     fetchOrder()
+
+    // Poll for updates every 30 seconds
+    pollingIntervalRef.current = setInterval(() => {
+      fetchOrder()
+    }, 30000)
+
+    // Cleanup on unmount
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+      }
+    }
   }, [params.id])
 
   const getStatusLabel = (status: string) => {
@@ -550,7 +725,12 @@ export default function OrderDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <ProgressBar status={order.status.toUpperCase()} checkpoints={mockCheckpoints} />
+            {backendOrder && (
+              <ProgressBar 
+                status={order.status.toUpperCase()} 
+                checkpoints={buildTrackingCheckpoints(backendOrder)} 
+              />
+            )}
           </CardContent>
         </Card>
 
@@ -615,66 +795,94 @@ export default function OrderDetailPage() {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   {/* Carrier Information */}
-                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                          <Truck className="w-6 h-6 text-blue-600" />
+                  {backendOrder && (() => {
+                    const carrier = getCarrierInfo(backendOrder)
+                    return (
+                      <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-4">
+                            <div className="p-3 bg-blue-100 rounded-lg">
+                              <Truck className="w-6 h-6 text-blue-600" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-lg text-gray-900">
+                                {carrier.name}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {language === 'AR' ? 'شركة الشحن' : 'Shipping Carrier'}
+                              </p>
+                            </div>
+                          </div>
+                          {carrier.trackingUrl && (
+                            <Button
+                              variant="outline"
+                              onClick={() => window.open(carrier.trackingUrl, '_blank')}
+                              className="hover:bg-blue-50 hover:border-blue-200"
+                            >
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              {language === 'AR' ? 'تتبع' : 'Track'}
+                            </Button>
+                          )}
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-lg text-gray-900">
-                            {mockCarrier.name}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {language === 'AR' ? 'شركة الشحن' : 'Shipping Carrier'}
-                          </p>
+                        
+                        <div className="space-y-3">
+                          {carrier.trackingNumber ? (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-700">
+                                  {language === 'AR' ? 'رقم التتبع:' : 'Tracking Number:'}
+                                </span>
+                                <div className="flex items-center gap-2">
+                                  <code className="bg-white px-3 py-1 rounded-lg text-sm font-mono border">
+                                    {carrier.trackingNumber}
+                                  </code>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => copyToClipboard(carrier.trackingNumber)}
+                                    className="hover:bg-blue-100"
+                                  >
+                                    <Copy className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                              {backendOrder.updatedAt && (
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-medium text-gray-700">
+                                    {language === 'AR' ? 'آخر تحديث:' : 'Last Updated:'}
+                                  </span>
+                                  <span className="text-sm text-gray-600">
+                                    {formatLastUpdated(backendOrder.updatedAt)}
+                                  </span>
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="bg-white/60 rounded-lg p-4 border border-blue-200">
+                              <div className="flex items-center gap-3">
+                                <Clock className="w-5 h-5 text-blue-600" />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {language === 'AR' ? 'رقم التتبع غير متاح بعد' : 'Tracking number not available yet'}
+                                  </p>
+                                  <p className="text-xs text-gray-600 mt-1">
+                                    {language === 'AR' 
+                                      ? 'سيتم إضافة رقم التتبع تلقائياً عند شحن الطلب'
+                                      : 'Tracking number will be added automatically when order is shipped'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(mockCarrier.trackingUrl, '_blank')}
-                        className="hover:bg-blue-50 hover:border-blue-200"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        {language === 'AR' ? 'تتبع' : 'Track'}
-                      </Button>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700">
-                          {language === 'AR' ? 'رقم التتبع:' : 'Tracking Number:'}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <code className="bg-white px-3 py-1 rounded-lg text-sm font-mono border">
-                            {mockCarrier.trackingNumber}
-                          </code>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => copyToClipboard(mockCarrier.trackingNumber)}
-                            className="hover:bg-blue-100"
-                          >
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      {order.trackingNumber && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">
-                            {language === 'AR' ? 'آخر تحديث:' : 'Last Updated:'}
-                          </span>
-                          <span className="text-sm text-gray-600">
-                            {formatLastUpdated(order.createdAt)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                    )
+                  })()}
 
-                  {/* Timeline */}
-                  <Timeline checkpoints={mockCheckpoints} />
+                  {/* Timeline - Always show, even without tracking integration */}
+                  {backendOrder && (
+                    <Timeline checkpoints={buildTrackingCheckpoints(backendOrder)} />
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -694,26 +902,88 @@ export default function OrderDetailPage() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">
-                      {language === 'AR' ? 'المجموع الفرعي:' : 'Subtotal:'}
-                    </span>
-                    <Price value={order.total} size="sm" />
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">
-                      {language === 'AR' ? 'الشحن:' : 'Shipping:'}
-                    </span>
-                    <span className="text-sm text-green-600 font-medium">
-                      {language === 'AR' ? 'مجاني' : 'Free'}
-                    </span>
-                  </div>
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between font-bold text-lg">
-                      <span>{language === 'AR' ? 'المجموع:' : 'Total:'}</span>
-                      <Price value={order.total} size="lg" />
-                    </div>
-                  </div>
+                  {backendOrder && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {language === 'AR' ? 'المجموع الفرعي:' : 'Subtotal:'}
+                        </span>
+                        <Price value={backendOrder.subtotal || 0} size="sm" />
+                      </div>
+                      {backendOrder.discount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            {language === 'AR' ? 'الخصم:' : 'Discount:'}
+                          </span>
+                          <span className="text-sm text-green-600 font-medium">
+                            -<Price value={backendOrder.discount} size="sm" />
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          {language === 'AR' ? 'الشحن:' : 'Shipping:'}
+                        </span>
+                        <span className={cn(
+                          "text-sm font-medium",
+                          (backendOrder.shippingCost || 0) === 0 ? "text-green-600" : "text-gray-900"
+                        )}>
+                          {(backendOrder.shippingCost || 0) === 0 
+                            ? (language === 'AR' ? 'مجاني' : 'Free')
+                            : <Price value={backendOrder.shippingCost || 0} size="sm" />
+                          }
+                        </span>
+                      </div>
+                      {backendOrder.tax > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            {language === 'AR' ? 'الضريبة:' : 'Tax:'}
+                          </span>
+                          <Price value={backendOrder.tax || 0} size="sm" />
+                        </div>
+                      )}
+                      <div className="border-t pt-4">
+                        <div className="flex justify-between font-bold text-lg">
+                          <span>{language === 'AR' ? 'المجموع:' : 'Total:'}</span>
+                          <Price value={order.total} size="lg" />
+                        </div>
+                      </div>
+                      {/* Payment Status */}
+                      <div className="border-t pt-4 mt-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">
+                            {language === 'AR' ? 'حالة الدفع:' : 'Payment Status:'}
+                          </span>
+                          <Badge 
+                            variant={paymentStatus === 'paid' ? 'default' : paymentStatus === 'pending' ? 'secondary' : 'destructive'}
+                            className="text-xs"
+                          >
+                            <CreditCard className="w-3 h-3 mr-1" />
+                            {paymentStatus === 'paid' 
+                              ? (language === 'AR' ? 'مدفوع' : 'Paid')
+                              : paymentStatus === 'pending'
+                              ? (language === 'AR' ? 'معلق' : 'Pending')
+                              : paymentStatus === 'failed'
+                              ? (language === 'AR' ? 'فشل' : 'Failed')
+                              : paymentStatus === 'refunded'
+                              ? (language === 'AR' ? 'مسترد' : 'Refunded')
+                              : (language === 'AR' ? 'غير مدفوع' : 'Unpaid')
+                            }
+                          </Badge>
+                        </div>
+                        {backendOrder.paymentMethod && (
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-gray-500">
+                              {language === 'AR' ? 'طريقة الدفع:' : 'Payment Method:'}
+                            </span>
+                            <span className="text-xs text-gray-700 capitalize">
+                              {backendOrder.paymentMethod.replace('_', ' ')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
