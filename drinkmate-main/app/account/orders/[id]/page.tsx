@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslation } from '@/lib/contexts/translation-context'
-import { useCart } from '@/hooks/use-cart'
 import { Order, Invoice } from '@/types/account'
 import { orderAPI } from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -15,7 +14,6 @@ import {
   Truck, 
   FileText, 
   RotateCcw, 
-  ShoppingCart, 
   Download,
   CheckCircle,
   Clock,
@@ -57,11 +55,9 @@ export default function OrderDetailPage() {
   const params = useParams()
   const router = useRouter()
   const { t, language, isRTL } = useTranslation()
-  const { addItem, totalItems } = useCart()
   const [order, setOrder] = useState<Order | null>(null)
   const [backendOrder, setBackendOrder] = useState<any>(null) // Store full backend order for additional data
   const [loading, setLoading] = useState(true)
-  const [isReordering, setIsReordering] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<string>('pending')
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -133,15 +129,18 @@ export default function OrderDetailPage() {
   }
 
   // Map backend status to frontend OrderStatus
+  // Note: Frontend OrderStatus type only supports: processing, shipped, delivered, cancelled, returned
+  // Backend supports: pending, confirmed, processing, shipped, delivered, cancelled, returned, refunded
   const mapOrderStatus = (status: string): Order['status'] => {
     const statusMap: Record<string, Order['status']> = {
-      'pending': 'processing',
-      'confirmed': 'processing',
+      'pending': 'processing',      // Map pending to processing for display
+      'confirmed': 'processing',    // Map confirmed to processing for display
       'processing': 'processing',
       'shipped': 'shipped',
       'delivered': 'delivered',
       'cancelled': 'cancelled',
-      'returned': 'returned'
+      'returned': 'returned',
+      'refunded': 'cancelled'       // Map refunded to cancelled for display (similar visual state)
     }
     return statusMap[status.toLowerCase()] || 'processing'
   }
@@ -196,13 +195,13 @@ export default function OrderDetailPage() {
       // Always show order placed
       checkpoints.push({
         ts: orderDate.toISOString(),
-        status: 'PROCESSING',
+      status: 'PROCESSING',
         message: language === 'AR' ? 'تم استلام الطلب' : 'Order received and being prepared',
         location: backendOrder.shippingAddress?.city || backendOrder.shippingAddress?.district || ''
       })
 
       // Show confirmed status if order is past pending
-      if (['confirmed', 'processing', 'shipped', 'delivered'].includes(status)) {
+      if (['confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'].includes(status)) {
         const confirmedDate = new Date(orderDate)
         confirmedDate.setHours(confirmedDate.getHours() + 2) // Assume confirmed 2 hours after order
         checkpoints.push({
@@ -241,15 +240,17 @@ export default function OrderDetailPage() {
         })
       }
 
-      // Show in transit if shipped
+      // Show OUT_FOR_DELIVERY if shipped (this is the current status when shipped)
       if (status === 'shipped') {
-        const transitDate = backendOrder.shipping?.shippedAt 
+        const outForDeliveryDate = backendOrder.shipping?.shippedAt 
           ? new Date(new Date(backendOrder.shipping.shippedAt).getTime() + 12 * 60 * 60 * 1000)
+          : backendOrder.updatedAt 
+          ? new Date(backendOrder.updatedAt)
           : new Date(orderDate.getTime() + 3 * 24 * 60 * 60 * 1000)
         checkpoints.push({
-          ts: transitDate.toISOString(),
-          status: 'IN_TRANSIT',
-          message: language === 'AR' ? 'الطلب في الطريق' : 'Package in transit',
+          ts: outForDeliveryDate.toISOString(),
+          status: 'OUT_FOR_DELIVERY',
+          message: language === 'AR' ? 'الطلب جاهز للتسليم' : 'Package out for delivery',
           location: backendOrder.shippingAddress?.city || ''
         })
       }
@@ -265,6 +266,21 @@ export default function OrderDetailPage() {
           ts: deliveredDate.toISOString(),
           status: 'DELIVERED',
           message: language === 'AR' ? 'تم تسليم الطلب بنجاح' : 'Package delivered successfully',
+          location: backendOrder.shippingAddress?.city || ''
+        })
+      }
+
+      // Show cancelled/refunded status if applicable
+      if (['cancelled', 'refunded'].includes(status)) {
+        const cancelledDate = backendOrder.updatedAt 
+          ? new Date(backendOrder.updatedAt)
+          : new Date(orderDate.getTime() + 1 * 24 * 60 * 60 * 1000)
+        checkpoints.push({
+          ts: cancelledDate.toISOString(),
+          status: status === 'refunded' ? 'CANCELLED' : 'CANCELLED',
+          message: status === 'refunded' 
+            ? (language === 'AR' ? 'تم استرداد الطلب' : 'Order refunded')
+            : (language === 'AR' ? 'تم إلغاء الطلب' : 'Order cancelled'),
           location: backendOrder.shippingAddress?.city || ''
         })
       }
@@ -290,7 +306,7 @@ export default function OrderDetailPage() {
   }
 
   // Fetch order from API
-  const fetchOrder = async () => {
+    const fetchOrder = async () => {
     try {
       setLoading(true)
       const orderId = params.id as string
@@ -334,7 +350,7 @@ export default function OrderDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+    }
 
   // Set up polling for real-time updates (every 30 seconds)
   useEffect(() => {
@@ -355,35 +371,44 @@ export default function OrderDetailPage() {
 
   const getStatusLabel = (status: string) => {
     const statusMap = {
+      pending: { en: 'Pending', ar: 'معلق' },
+      confirmed: { en: 'Confirmed', ar: 'مؤكد' },
       processing: { en: 'Processing', ar: 'قيد المعالجة' },
       shipped: { en: 'Shipped', ar: 'تم الشحن' },
       delivered: { en: 'Delivered', ar: 'تم التسليم' },
       cancelled: { en: 'Cancelled', ar: 'ملغي' },
-      returned: { en: 'Returned', ar: 'مرتجع' }
+      returned: { en: 'Returned', ar: 'مرتجع' },
+      refunded: { en: 'Refunded', ar: 'مسترد' }
     }
-    return statusMap[status as keyof typeof statusMap] || { en: status, ar: status }
+    return statusMap[status.toLowerCase() as keyof typeof statusMap] || { en: status, ar: status }
   }
 
   const getStatusColor = (status: string) => {
     const colorMap = {
+      pending: 'bg-gray-100 text-gray-800 border-gray-200',
+      confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
       processing: 'bg-amber-100 text-amber-800 border-amber-200',
       shipped: 'bg-blue-100 text-blue-800 border-blue-200',
       delivered: 'bg-green-100 text-green-800 border-green-200',
       cancelled: 'bg-gray-100 text-gray-800 border-gray-200',
-      returned: 'bg-red-100 text-red-800 border-red-200'
+      returned: 'bg-red-100 text-red-800 border-red-200',
+      refunded: 'bg-purple-100 text-purple-800 border-purple-200'
     }
-    return colorMap[status as keyof typeof colorMap] || 'bg-gray-100 text-gray-800 border-gray-200'
+    return colorMap[status.toLowerCase() as keyof typeof colorMap] || 'bg-gray-100 text-gray-800 border-gray-200'
   }
 
   const getStatusIcon = (status: string) => {
     const iconMap = {
+      pending: <Clock className="h-4 w-4" />,
+      confirmed: <CheckCircle className="h-4 w-4" />,
       processing: <RefreshCw className="h-4 w-4" />,
       shipped: <Truck className="h-4 w-4" />,
       delivered: <CheckCircle className="h-4 w-4" />,
       cancelled: <X className="h-4 w-4" />,
-      returned: <RefreshCw className="h-4 w-4" />
+      returned: <RotateCcw className="h-4 w-4" />,
+      refunded: <RotateCcw className="h-4 w-4" />
     }
-    return iconMap[status as keyof typeof iconMap] || <Clock className="h-4 w-4" />
+    return iconMap[status.toLowerCase() as keyof typeof iconMap] || <Clock className="h-4 w-4" />
   }
 
   const getShipmentStatusLabel = (status: string) => {
@@ -434,75 +459,84 @@ export default function OrderDetailPage() {
     })
   }
 
-  const handleReorder = async () => {
-    if (!order?.lineItems) return
-    
-    setIsReordering(true)
-    try {
-      // Add each item from the order to the cart
-      for (const item of order.lineItems) {
-        const cartItem = {
-          id: item.productId,
-          name: item.productName,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image,
-          category: 'reorder',
-          color: item.variant || ''
-        }
-        addItem(cartItem)
-      }
-      
-      // Show success message
-      toast.success(
-        language === 'AR' 
-          ? `تم إضافة ${order.lineItems.length} عنصر إلى السلة` 
-          : `Added ${order.lineItems.length} items to cart`,
-        {
-          description: language === 'AR' 
-            ? 'يمكنك الآن المتابعة إلى السلة لإتمام الطلب' 
-            : 'You can now proceed to cart to complete your order'
-        }
-      )
-      
-      // Optional: Navigate to cart after a short delay
-      setTimeout(() => {
-        router.push('/cart')
-      }, 2000)
-      
-    } catch (error) {
-      toast.error(
-        language === 'AR' 
-          ? 'حدث خطأ أثناء إعادة الطلب' 
-          : 'Error occurred while reordering'
-      )
-    } finally {
-      setIsReordering(false)
-    }
-  }
+  // Removed handleReorder function - reorder button has been removed
 
   const handleReturn = () => {
     // Redirect to contact page for returns
     router.push('/contact?subject=return&order=' + order?.number)
   }
 
-  const handleContactSupport = () => {
-    // Redirect to contact page for support
-    router.push('/contact?subject=support&order=' + order?.number)
-  }
+  // Removed handleContactSupport - now using Link component directly
 
   const handleDownloadInvoice = async (invoice: Invoice) => {
     try {
-      // Create a mock PDF blob for demonstration
-      // In a real app, this would fetch the actual invoice from the server
-      const mockPdfContent = `Invoice ${invoice.number}\nOrder: ${order?.number}\nDate: ${invoice.createdAt}\nAmount: ${order?.total} SAR`
-      const blob = new Blob([mockPdfContent], { type: 'application/pdf' })
+      // Try to fetch invoice from API endpoint if URL is provided
+      if (invoice.url && invoice.url.startsWith('/api/')) {
+        try {
+          const token = localStorage.getItem('auth-token') || sessionStorage.getItem('auth-token')
+          const response = await fetch(invoice.url, {
+            headers: {
+              'Authorization': token ? `Bearer ${token}` : '',
+            }
+          })
+
+          if (response.ok) {
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `${invoice.number}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+            
+            toast.success(
+        language === 'AR' 
+                ? `تم تحميل الفاتورة ${invoice.number}` 
+                : `Downloaded invoice ${invoice.number}`
+            )
+            return
+          }
+        } catch (apiError) {
+          console.error('Error fetching invoice from API:', apiError)
+        }
+      }
+
+      // Fallback: Generate a proper invoice text file
+      const invoiceContent = `
+INVOICE
+${invoice.number}
+
+Order Number: ${order?.number || 'N/A'}
+Date: ${new Date(invoice.createdAt).toLocaleDateString()}
+Amount: ${order?.total || 0} SAR
+
+Order Details:
+${order?.lineItems?.map(item => `- ${item.productName} x${item.quantity} = ${item.price * item.quantity} SAR`).join('\n') || 'No items'}
+
+Subtotal: ${backendOrder?.subtotal || 0} SAR
+Shipping: ${backendOrder?.shippingCost || 0} SAR
+Tax: ${backendOrder?.tax || 0} SAR
+Total: ${order?.total || 0} SAR
+
+Payment Method: ${backendOrder?.paymentMethod || 'N/A'}
+Payment Status: ${paymentStatus}
+
+Shipping Address:
+${backendOrder?.shippingAddress?.fullName || ''}
+${backendOrder?.shippingAddress?.nationalAddress || ''}
+${backendOrder?.shippingAddress?.city || ''}, ${backendOrder?.shippingAddress?.country || 'Saudi Arabia'}
+
+Thank you for your order!
+      `.trim()
+
+      // Create a proper text file (can be opened by PDF readers or text editors)
+      const blob = new Blob([invoiceContent], { type: 'text/plain;charset=utf-8' })
       const url = window.URL.createObjectURL(blob)
-      
-      // Create a temporary link and trigger download
       const link = document.createElement('a')
       link.href = url
-      link.download = `${invoice.number}.pdf`
+      link.download = `${invoice.number}.txt`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -514,6 +548,7 @@ export default function OrderDetailPage() {
           : `Downloaded invoice ${invoice.number}`
       )
     } catch (error) {
+      console.error('Error downloading invoice:', error)
       toast.error(
         language === 'AR' 
           ? 'حدث خطأ أثناء تحميل الفاتورة' 
@@ -533,7 +568,21 @@ export default function OrderDetailPage() {
       { key: 'DELIVERED', label: 'Delivered', icon: CheckCircle }
     ]
 
-    const currentStepIndex = statusSteps.findIndex(step => step.key === status)
+    // Map order status to checkpoint status for progress bar
+    // When order status is "shipped", show "OUT_FOR_DELIVERY" as current step
+    let currentStatus = status
+    if (status === 'SHIPPED' || status === 'shipped') {
+      // Check if we have OUT_FOR_DELIVERY checkpoint, if so use that
+      const hasOutForDelivery = checkpoints.some(cp => cp.status === 'OUT_FOR_DELIVERY')
+      if (hasOutForDelivery) {
+        currentStatus = 'OUT_FOR_DELIVERY'
+      } else {
+        // If no OUT_FOR_DELIVERY checkpoint yet, use SHIPPED
+        currentStatus = 'SHIPPED'
+      }
+    }
+
+    const currentStepIndex = statusSteps.findIndex(step => step.key === currentStatus)
     const progress = currentStepIndex >= 0 ? ((currentStepIndex + 1) / statusSteps.length) * 100 : 0
 
     return (
@@ -704,11 +753,12 @@ export default function OrderDetailPage() {
             </div>
             <Badge className={cn(
               "px-4 py-2 text-sm font-medium border",
-              getStatusColor(order.status)
+              getStatusColor(backendOrder?.status || order.status)
             )}>
               <span className="flex items-center gap-2">
-                {getStatusIcon(order.status)}
-                {getStatusLabel(order.status)[language.toLowerCase() as 'en' | 'ar']}
+                {getStatusIcon(backendOrder?.status || order.status)}
+                {/* Display the actual backend status label, not the mapped one */}
+                {getStatusLabel(backendOrder?.status || order.status)[language.toLowerCase() as 'en' | 'ar']}
               </span>
             </Badge>
           </div>
@@ -725,12 +775,24 @@ export default function OrderDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            {backendOrder && (
-              <ProgressBar 
-                status={order.status.toUpperCase()} 
-                checkpoints={buildTrackingCheckpoints(backendOrder)} 
-              />
-            )}
+            {backendOrder && (() => {
+              const checkpoints = buildTrackingCheckpoints(backendOrder)
+              // Determine the current status for progress bar
+              // If order is shipped and we have OUT_FOR_DELIVERY checkpoint, use that
+              let progressStatus = order.status.toUpperCase()
+              if (order.status === 'shipped') {
+                const hasOutForDelivery = checkpoints.some(cp => cp.status === 'OUT_FOR_DELIVERY')
+                if (hasOutForDelivery) {
+                  progressStatus = 'OUT_FOR_DELIVERY'
+                }
+              }
+              return (
+                <ProgressBar 
+                  status={progressStatus} 
+                  checkpoints={checkpoints} 
+                />
+              )
+            })()}
           </CardContent>
         </Card>
 
@@ -798,64 +860,64 @@ export default function OrderDetailPage() {
                   {backendOrder && (() => {
                     const carrier = getCarrierInfo(backendOrder)
                     return (
-                      <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 rounded-lg">
-                              <Truck className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-lg text-gray-900">
-                                {carrier.name}
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                {language === 'AR' ? 'شركة الشحن' : 'Shipping Carrier'}
-                              </p>
-                            </div>
-                          </div>
-                          {carrier.trackingUrl && (
-                            <Button
-                              variant="outline"
-                              onClick={() => window.open(carrier.trackingUrl, '_blank')}
-                              className="hover:bg-blue-50 hover:border-blue-200"
-                            >
-                              <ExternalLink className="w-4 h-4 mr-2" />
-                              {language === 'AR' ? 'تتبع' : 'Track'}
-                            </Button>
-                          )}
+                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-100 rounded-lg">
+                          <Truck className="w-6 h-6 text-blue-600" />
                         </div>
-                        
-                        <div className="space-y-3">
+                        <div>
+                          <h3 className="font-semibold text-lg text-gray-900">
+                                {carrier.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {language === 'AR' ? 'شركة الشحن' : 'Shipping Carrier'}
+                          </p>
+                        </div>
+                      </div>
+                          {carrier.trackingUrl && (
+                      <Button
+                        variant="outline"
+                              onClick={() => window.open(carrier.trackingUrl, '_blank')}
+                        className="hover:bg-blue-50 hover:border-blue-200"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        {language === 'AR' ? 'تتبع' : 'Track'}
+                      </Button>
+                          )}
+                    </div>
+                    
+                    <div className="space-y-3">
                           {carrier.trackingNumber ? (
                             <>
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-700">
-                                  {language === 'AR' ? 'رقم التتبع:' : 'Tracking Number:'}
-                                </span>
-                                <div className="flex items-center gap-2">
-                                  <code className="bg-white px-3 py-1 rounded-lg text-sm font-mono border">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">
+                          {language === 'AR' ? 'رقم التتبع:' : 'Tracking Number:'}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <code className="bg-white px-3 py-1 rounded-lg text-sm font-mono border">
                                     {carrier.trackingNumber}
-                                  </code>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
+                          </code>
+                          <Button
+                            size="sm"
+                            variant="ghost"
                                     onClick={() => copyToClipboard(carrier.trackingNumber)}
-                                    className="hover:bg-blue-100"
-                                  >
-                                    <Copy className="w-4 h-4" />
-                                  </Button>
-                                </div>
-                              </div>
+                            className="hover:bg-blue-100"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
                               {backendOrder.updatedAt && (
-                                <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium text-gray-700">
-                                    {language === 'AR' ? 'آخر تحديث:' : 'Last Updated:'}
-                                  </span>
-                                  <span className="text-sm text-gray-600">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700">
+                            {language === 'AR' ? 'آخر تحديث:' : 'Last Updated:'}
+                          </span>
+                          <span className="text-sm text-gray-600">
                                     {formatLastUpdated(backendOrder.updatedAt)}
-                                  </span>
-                                </div>
-                              )}
+                          </span>
+                        </div>
+                      )}
                             </>
                           ) : (
                             <div className="bg-white/60 rounded-lg p-4 border border-blue-200">
@@ -870,8 +932,8 @@ export default function OrderDetailPage() {
                                       ? 'سيتم إضافة رقم التتبع تلقائياً عند شحن الطلب'
                                       : 'Tracking number will be added automatically when order is shipped'}
                                   </p>
-                                </div>
-                              </div>
+                    </div>
+                  </div>
                             </div>
                           )}
                         </div>
@@ -904,21 +966,21 @@ export default function OrderDetailPage() {
                 <div className="space-y-4">
                   {backendOrder && (
                     <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          {language === 'AR' ? 'المجموع الفرعي:' : 'Subtotal:'}
-                        </span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">
+                      {language === 'AR' ? 'المجموع الفرعي:' : 'Subtotal:'}
+                    </span>
                         <Price value={backendOrder.subtotal || 0} size="sm" />
-                      </div>
+                  </div>
                       {backendOrder.discount > 0 && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">
                             {language === 'AR' ? 'الخصم:' : 'Discount:'}
-                          </span>
-                          <span className="text-sm text-green-600 font-medium">
+                    </span>
+                    <span className="text-sm text-green-600 font-medium">
                             -<Price value={backendOrder.discount} size="sm" />
-                          </span>
-                        </div>
+                    </span>
+                  </div>
                       )}
                       <div className="flex justify-between">
                         <span className="text-gray-600">
@@ -942,12 +1004,12 @@ export default function OrderDetailPage() {
                           <Price value={backendOrder.tax || 0} size="sm" />
                         </div>
                       )}
-                      <div className="border-t pt-4">
-                        <div className="flex justify-between font-bold text-lg">
-                          <span>{language === 'AR' ? 'المجموع:' : 'Total:'}</span>
-                          <Price value={order.total} size="lg" />
-                        </div>
-                      </div>
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>{language === 'AR' ? 'المجموع:' : 'Total:'}</span>
+                      <Price value={order.total} size="lg" />
+                    </div>
+                  </div>
                       {/* Payment Status */}
                       <div className="border-t pt-4 mt-4">
                         <div className="flex items-center justify-between">
@@ -993,36 +1055,13 @@ export default function OrderDetailPage() {
               <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
                 <CardTitle className="flex items-center gap-3 text-xl">
                   <div className="p-2 bg-indigo-100 rounded-lg">
-                    <RefreshCw className="h-6 w-6 text-indigo-600" />
+                    <MessageCircle className="h-6 w-6 text-indigo-600" />
                   </div>
                   {language === 'AR' ? 'الإجراءات' : 'Actions'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-3">
-                  <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700 relative"
-                    onClick={handleReorder}
-                    disabled={isReordering}
-                  >
-                    {isReordering ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <div className="relative">
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        {totalItems > 0 && (
-                          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                            {totalItems > 99 ? '99+' : totalItems}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    {isReordering 
-                      ? (language === 'AR' ? 'جاري الإضافة...' : 'Adding to cart...')
-                      : (language === 'AR' ? 'إعادة الطلب' : 'Reorder')
-                    }
-                  </Button>
-                  
                   {order.status === 'delivered' && (
                     <Button 
                       className="w-full" 
@@ -1034,14 +1073,15 @@ export default function OrderDetailPage() {
                     </Button>
                   )}
 
+                  <Link href={`/contact?subject=support&order=${order?.number || ''}`}>
                   <Button 
                     className="w-full" 
                     variant="outline"
-                    onClick={handleContactSupport}
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
                     {language === 'AR' ? 'اتصل بالدعم' : 'Contact Support'}
                   </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

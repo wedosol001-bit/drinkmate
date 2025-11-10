@@ -143,20 +143,46 @@ class AdminOrderController {
         ));
       }
 
-      // Simply update status using findByIdAndUpdate (simpler, avoids pre-save hook issues)
+      // Prepare update operations
+      const updateOps = {
+        $set: {
+          status: status,
+          updatedAt: new Date()
+        },
+        $push: {
+          timeline: {
+            status: String(status),
+            description: notes ? `Status changed: ${notes}` : `Order status updated to ${status}`,
+            timestamp: new Date(),
+            updatedBy: 'admin'
+          }
+        }
+      };
+
+      // If status is delivered, set delivered date and shipping status
+      if (status === 'delivered') {
+        updateOps.$set['shipping.deliveredAt'] = new Date();
+        updateOps.$set['shipping.status'] = 'delivered';
+        // Ensure shipping object exists
+        if (!order.shipping) {
+          updateOps.$set['shipping'] = {};
+        }
+      } else if (status === 'shipped') {
+        // If shipped, set shipped date if not already set
+        if (!order.shipping?.shippedAt) {
+          updateOps.$set['shipping.shippedAt'] = new Date();
+        }
+        updateOps.$set['shipping.status'] = 'shipped';
+        // Ensure shipping object exists
+        if (!order.shipping) {
+          updateOps.$set['shipping'] = {};
+        }
+      }
+
+      // Update order using findByIdAndUpdate
       const updatedOrder = await Order.findByIdAndUpdate(
         id,
-        { 
-          $set: { status: status },
-          $push: {
-            timeline: {
-              status: String(status),
-              description: notes ? `Status changed: ${notes}` : `Order status updated to ${status}`,
-              timestamp: new Date(),
-              updatedBy: 'admin'
-            }
-          }
-        },
+        updateOps,
         { new: true, runValidators: false }
       ).populate('user', 'firstName lastName email phone username');
 

@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -37,7 +38,10 @@ import {
   AlertCircle,
   Edit,
   Save,
-  X
+  X,
+  RefreshCw,
+  RotateCcw,
+  Loader2
 } from "lucide-react"
 import { format } from "date-fns"
 import { toast } from "sonner"
@@ -229,8 +233,15 @@ export default function OrderDetailsPage() {
         throw new Error(errorMessage)
       }
       
-      toast.success('Order status updated successfully')
-      fetchOrderDetails() // Refresh the order data
+      toast.success(`Order status updated to ${newStatus} successfully`)
+      
+      // Force refresh after a short delay to ensure backend has processed the update
+      setTimeout(() => {
+        fetchOrderDetails() // Refresh the order data
+      }, 500)
+      
+      // Also refresh the orders list if we're coming from there
+      // This ensures the status badge updates in the orders list page
     } catch (error) {
       console.error('Error updating order status:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to update order status')
@@ -795,45 +806,77 @@ export default function OrderDetailsPage() {
             {/* Order Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Order Actions</CardTitle>
+                <CardTitle>Order Status</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <Button
-                  onClick={() => updateOrderStatus('processing')}
-                  disabled={updating || order.status === 'processing'}
-                  className="w-full justify-start"
-                  variant="outline"
-                >
-                  <Clock className="w-4 h-4 mr-2" />
-                  Mark as Processing
-                </Button>
-                <Button
-                  onClick={() => updateOrderStatus('shipped')}
-                  disabled={updating || order.status === 'shipped'}
-                  className="w-full justify-start"
-                  variant="outline"
-                >
-                  <Truck className="w-4 h-4 mr-2" />
-                  Mark as Shipped
-                </Button>
-                <Button
-                  onClick={() => updateOrderStatus('delivered')}
-                  disabled={updating || order.status === 'delivered'}
-                  className="w-full justify-start"
-                  variant="outline"
-                >
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Mark as Delivered
-                </Button>
-                <Button
-                  onClick={() => updateOrderStatus('cancelled')}
-                  disabled={updating || order.status === 'cancelled'}
-                  className="w-full justify-start"
-                  variant="outline"
-                >
-                  <XCircle className="w-4 h-4 mr-2" />
-                  Cancel Order
-                </Button>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-500 mb-2 block">
+                    Update Order Status
+                  </Label>
+                  <Select
+                    value={order.status}
+                    onValueChange={(value) => {
+                      if (value !== order.status) {
+                        updateOrderStatus(value)
+                      }
+                    }}
+                    disabled={updating}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          Pending
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="confirmed">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4" />
+                          Confirmed
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="processing">
+                        <div className="flex items-center gap-2">
+                          <RefreshCw className="w-4 h-4" />
+                          Processing
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="shipped">
+                        <div className="flex items-center gap-2">
+                          <Truck className="w-4 h-4" />
+                          Shipped
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="delivered">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4" />
+                          Delivered
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="cancelled">
+                        <div className="flex items-center gap-2">
+                          <XCircle className="w-4 h-4" />
+                          Cancelled
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="refunded">
+                        <div className="flex items-center gap-2">
+                          <RotateCcw className="w-4 h-4" />
+                          Refunded
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {updating && (
+                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Updating status...
+                    </p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
