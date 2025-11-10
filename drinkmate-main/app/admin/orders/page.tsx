@@ -450,6 +450,22 @@ export default function OrdersPage() {
     try {
       if (!editingOrder) return
 
+      // Update order status via API
+      const statusResponse = await adminAPI.updateOrderStatus(editingOrder._id, orderForm.status)
+      
+      if (!statusResponse.success) {
+        toast.error(statusResponse.message || 'Failed to update order status')
+        return
+      }
+
+      // Clear cache for this order
+      if (typeof window !== 'undefined') {
+        const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+          key.includes('orders') && key.includes(editingOrder._id)
+        );
+        cacheKeys.forEach(key => apiCache.delete(key));
+      }
+
       const updatedOrder: Order = {
         ...editingOrder,
         customerName: orderForm.customerName,
@@ -471,10 +487,28 @@ export default function OrdersPage() {
         notes: orderForm.notes,
       }
 
-      setOrders((prev) => prev.map((o) => (o._id === editingOrder._id ? updatedOrder : o)))
+      // Update local state with the order from API response if available
+      if (statusResponse.order) {
+        const apiOrder = statusResponse.order as any
+        setOrders((prev) => prev.map((o) => 
+          o._id === editingOrder._id ? {
+            ...updatedOrder,
+            status: apiOrder.status || orderForm.status,
+            updatedAt: apiOrder.updatedAt || new Date().toISOString()
+          } : o
+        ))
+      } else {
+        setOrders((prev) => prev.map((o) => (o._id === editingOrder._id ? updatedOrder : o)))
+      }
+
+      // Refresh orders list after a short delay to ensure backend has processed
+      setTimeout(() => {
+        fetchOrders()
+      }, 500)
+
       setShowEditOrder(false)
       setEditingOrder(null)
-      toast.success(`Order ${updatedOrder.orderNumber} updated successfully`)
+      toast.success(`Order ${updatedOrder.orderNumber} status updated to ${orderForm.status}`)
     } catch (error) {
       toast.error("Failed to update order")
     }
@@ -537,19 +571,26 @@ export default function OrdersPage() {
       // Set loading state for this specific order action
       setActionLoading(prev => ({...prev, [`process-${order._id}`]: true}));
       
-      const { orderAPI } = await import('@/lib/api');
-      const response = await orderAPI.updateOrderStatus(order._id, { 
-        status: 'processing', 
-        shippingStatus: 'processing' 
-      });
+      const response = await adminAPI.updateOrderStatus(order._id, 'processing');
       
       if (response.success) {
+        // Clear cache
+        if (typeof window !== 'undefined') {
+          const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+            key.includes('orders') && key.includes(order._id)
+          );
+          cacheKeys.forEach(key => apiCache.delete(key));
+        }
+        
         setOrders((prev) =>
           prev.map((o) =>
             o._id === order._id ? { ...o, status: "processing" as const, shippingStatus: "processing" as const } : o,
           ),
         )
         toast.success(`Order ${order.orderNumber} is being processed`)
+        
+        // Refresh orders list
+        setTimeout(() => fetchOrders(), 500)
       } else {
         toast.error(response.message || 'Failed to process order')
       }
@@ -567,15 +608,17 @@ export default function OrdersPage() {
       // Set loading state for this specific order action
       setActionLoading(prev => ({...prev, [`ship-${order._id}`]: true}));
       
-      const trackingNumber = `ARX${Math.random().toString().substr(2, 9)}`
-      const { orderAPI } = await import('@/lib/api');
-      const response = await orderAPI.updateOrderStatus(order._id, { 
-        status: 'shipped', 
-        shippingStatus: 'shipped', 
-        trackingNumber 
-      });
+      const response = await adminAPI.updateOrderStatus(order._id, 'shipped');
       
       if (response.success) {
+        // Clear cache
+        if (typeof window !== 'undefined') {
+          const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+            key.includes('orders') && key.includes(order._id)
+          );
+          cacheKeys.forEach(key => apiCache.delete(key));
+        }
+        
         setOrders((prev) =>
           prev.map((o) =>
             o._id === order._id
@@ -583,12 +626,14 @@ export default function OrdersPage() {
                   ...o,
                   status: "shipped" as const,
                   shippingStatus: "shipped" as const,
-                  trackingNumber,
                 }
               : o,
           ),
         )
-        toast.success(`Order ${order.orderNumber} has been shipped. Tracking: ${trackingNumber}`)
+        toast.success(`Order ${order.orderNumber} has been shipped`)
+        
+        // Refresh orders list
+        setTimeout(() => fetchOrders(), 500)
       } else {
         toast.error(response.message || 'Failed to ship order')
       }
@@ -603,25 +648,38 @@ export default function OrdersPage() {
 
   const handleDeliverOrder = async (order: Order) => {
     try {
-      const { orderAPI } = await import('@/lib/api');
-      const response = await orderAPI.updateOrderStatus(order._id, { 
-        status: 'delivered', 
-        shippingStatus: 'delivered' 
-      });
+      // Set loading state for this specific order action
+      setActionLoading(prev => ({...prev, [`deliver-${order._id}`]: true}));
+      
+      const response = await adminAPI.updateOrderStatus(order._id, 'delivered');
       
       if (response.success) {
+        // Clear cache
+        if (typeof window !== 'undefined') {
+          const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+            key.includes('orders') && key.includes(order._id)
+          );
+          cacheKeys.forEach(key => apiCache.delete(key));
+        }
+        
         setOrders((prev) =>
           prev.map((o) =>
             o._id === order._id ? { ...o, status: "delivered" as const, shippingStatus: "delivered" as const } : o,
           ),
         )
         toast.success(`Order ${order.orderNumber} has been delivered`)
+        
+        // Refresh orders list
+        setTimeout(() => fetchOrders(), 500)
       } else {
-        throw new Error('Failed to mark as delivered')
+        toast.error(response.message || 'Failed to mark as delivered')
       }
     } catch (error) {
       console.error('Error delivering order:', error)
       toast.error("Failed to mark as delivered")
+    } finally {
+      // Clear loading state
+      setActionLoading(prev => ({...prev, [`deliver-${order._id}`]: false}));
     }
   }
 
@@ -629,20 +687,34 @@ export default function OrdersPage() {
     if (!confirm(`Are you sure you want to cancel order ${order.orderNumber}?`)) return
 
     try {
-      const { orderAPI } = await import('@/lib/api');
-      const response = await orderAPI.updateOrderStatus(order._id, { 
-        status: 'cancelled'
-      });
+      // Set loading state for this specific order action
+      setActionLoading(prev => ({...prev, [`cancel-${order._id}`]: true}));
+      
+      const response = await adminAPI.updateOrderStatus(order._id, 'cancelled');
       
       if (response.success) {
+        // Clear cache
+        if (typeof window !== 'undefined') {
+          const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+            key.includes('orders') && key.includes(order._id)
+          );
+          cacheKeys.forEach(key => apiCache.delete(key));
+        }
+        
         setOrders((prev) => prev.map((o) => (o._id === order._id ? { ...o, status: "cancelled" as const } : o)))
         toast.success(`Order ${order.orderNumber} has been cancelled`)
+        
+        // Refresh orders list
+        setTimeout(() => fetchOrders(), 500)
       } else {
-        throw new Error('Failed to cancel order')
+        toast.error(response.message || 'Failed to cancel order')
       }
     } catch (error) {
       console.error('Error cancelling order:', error)
       toast.error("Failed to cancel order")
+    } finally {
+      // Clear loading state
+      setActionLoading(prev => ({...prev, [`cancel-${order._id}`]: false}));
     }
   }
 
@@ -699,19 +771,37 @@ export default function OrdersPage() {
   const handleBulkProcess = async () => {
     try {
       setProcessingOrders(true)
-      const { orderAPI } = await import('@/lib/api');
       const promises = selectedRows.map(id => 
-        orderAPI.updateOrderStatus(id, { status: 'processing' })
+        adminAPI.updateOrderStatus(id, 'processing')
       );
       
-      await Promise.all(promises);
+      const results = await Promise.all(promises);
+      const failed = results.filter(r => !r.success);
+      
+      if (failed.length > 0) {
+        toast.error(`${failed.length} orders failed to process`)
+      }
+      
+      // Clear cache for all selected orders
+      if (typeof window !== 'undefined') {
+        selectedRows.forEach(id => {
+          const cacheKeys = Array.from(apiCache.keys()).filter(key => 
+            key.includes('orders') && key.includes(id)
+          );
+          cacheKeys.forEach(key => apiCache.delete(key));
+        });
+      }
       
       setOrders((prev) =>
         prev.map((o) =>
           selectedRows.includes(o._id) ? { ...o, status: "processing" as const, shippingStatus: "processing" as const } : o,
         ),
       )
-      toast.success(`${selectedRows.length} orders are being processed`)
+      toast.success(`${selectedRows.length - failed.length} orders are being processed`)
+      
+      // Refresh orders list
+      setTimeout(() => fetchOrders(), 500)
+      
       setSelectedItems([])
       setSelectedRows([])
     } catch (error) {
