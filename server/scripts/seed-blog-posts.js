@@ -5,7 +5,7 @@ const User = require('../Models/user-model');
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://test1234:IhpDHsYWshrvtLQc@cluster0.y205sfi.mongodb.net/drinkmate?retryWrites=true&w=majority&appName=Cluster0';
+    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://wedosol001_db_user:loWTVujexgrdnaOZ@cluster0.k5rmfrm.mongodb.net/drinkmate?retryWrites=true&w=majority&appName=Cluster0';
     await mongoose.connect(mongoUri);
     console.log('MongoDB connected');
   } catch (error) {

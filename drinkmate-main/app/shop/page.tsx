@@ -1077,7 +1077,7 @@ function ShopPageContent() {
             },
             {
               id: 2,
-              src: "/images/banner/flavors3-banner.jpg",
+              src: "/images/banner/flavors3-banner-theresult.jpg",
               alt: "Premium Flavors Collection",
             },
           ]}

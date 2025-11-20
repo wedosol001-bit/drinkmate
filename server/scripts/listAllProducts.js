@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Product = require('../Models/product-model');
 const Bundle = require('../Models/bundle-model');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://test1234:IhpDHsYWshrvtLQc@cluster0.y205sfi.mongodb.net/drinkmate?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://wedosol001_db_user:loWTVujexgrdnaOZ@cluster0.k5rmfrm.mongodb.net/drinkmate?retryWrites=true&w=majority&appName=Cluster0';
 
 async function listAllProducts() {
   try {
