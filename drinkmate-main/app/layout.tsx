@@ -68,7 +68,7 @@ export const viewport = {
 export const metadata: Metadata = {
   title: "DrinkMate - Premium Soda Makers & Flavors | Create Carbonated Drinks at Home",
   description: "Discover premium DrinkMate soda makers, natural Italian flavors, and CO2 cylinders. Create delicious carbonated beverages at home with our innovative carbonation technology. Free shipping available!",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'),
   robots: {
     index: true,
     follow: true,
@@ -222,7 +222,7 @@ export default function RootLayout({
             '@type': 'SearchAction',
             'target': {
               '@type': 'EntryPoint',
-              'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app'}/search?q={search_term_string}`
+              'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/search?q={search_term_string}`
             },
             'query-input': 'required name=search_term_string'
           }
@@ -243,7 +243,7 @@ export default function RootLayout({
             '@type': 'SearchAction',
             'target': {
               '@type': 'EntryPoint',
-              'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app'}/search?q={search_term_string}`
+              'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/search?q={search_term_string}`
             },
             'query-input': 'required name=search_term_string'
           }

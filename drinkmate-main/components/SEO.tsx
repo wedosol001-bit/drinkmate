@@ -33,7 +33,7 @@ export default function SEO({
   structuredData,
 }: SEOProps) {
   const router = useRouter();
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
   
   // Construct the canonical URL
   const fullCanonicalUrl = canonicalUrl 

@@ -1,4 +1,4 @@
-// Payment Service for DrinkMate - Urways & Tap Payment Integration
+// Payment Service for DrinkMate - Tap Payment Integration
 
 export interface PaymentRequest {
   amount: number
@@ -19,40 +19,6 @@ export interface PaymentResponse {
 }
 
 class PaymentService {
-  // Urways Payment Integration - Now calls frontend API route (no auth required)
-  async processUrwaysPayment(request: PaymentRequest): Promise<PaymentResponse> {
-    try {
-      // Use the frontend API route which handles Urways directly
-      const response = await fetch('/api/payments/urways', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(request)
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        return {
-          success: true,
-          transactionId: data.transactionId,
-          paymentUrl: data.paymentUrl
-        }
-      } else {
-        return {
-          success: false,
-          error: data.message || 'Payment initiation failed'
-        }
-      }
-    } catch (error) {
-      console.error('Urways payment error:', error)
-      return {
-        success: false,
-        error: 'Payment service unavailable'
-      }
-    }
-  }
 
   // Tap Payment Integration
   async processTapPayment(request: PaymentRequest): Promise<PaymentResponse> {
@@ -115,9 +81,7 @@ class PaymentService {
   // Verify Payment Status
   async verifyPayment(paymentMethod: string, transactionId: string): Promise<PaymentResponse> {
     try {
-      if (paymentMethod === 'urways') {
-        return await this.verifyUrwaysPayment(transactionId)
-      } else if (paymentMethod === 'tap') {
+      if (paymentMethod === 'tap') {
         return await this.verifyTapPayment(transactionId)
       } else {
         return {
@@ -127,30 +91,6 @@ class PaymentService {
       }
     } catch (error) {
       console.error('Payment verification error:', error)
-      return {
-        success: false,
-        error: 'Verification failed'
-      }
-    }
-  }
-
-  private async verifyUrwaysPayment(transactionId: string): Promise<PaymentResponse> {
-    try {
-      // Use the frontend API route for verification
-      const response = await fetch(`/api/payments/urways?transactionId=${transactionId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-
-      const data = await response.json()
-      return {
-        success: data.success && data.isPaid,
-        transactionId: data.transactionId || transactionId
-      }
-    } catch (error) {
-      console.error('Urways verification error:', error)
       return {
         success: false,
         error: 'Verification failed'

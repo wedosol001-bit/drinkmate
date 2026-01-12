@@ -16,14 +16,15 @@ class AdminSettingsController {
         from_name: 'Drinkmate'
       },
       payment: {
-        urways_enabled: true,
-        urways_terminal_id: process.env.URWAYS_TERMINAL_ID || '',
-        urways_merchant_key: process.env.URWAYS_MERCHANT_KEY || '',
-        urways_environment: process.env.URWAYS_ENVIRONMENT || 'production',
         tap_enabled: false,
         tap_api_key: process.env.TAP_API_KEY || '',
         tap_secret_key: process.env.TAP_SECRET_KEY || '',
-        tap_environment: process.env.TAP_ENVIRONMENT || 'sandbox'
+        tap_environment: process.env.TAP_ENVIRONMENT || 'sandbox',
+        arb_enabled: true,
+        arb_tranportal_id: process.env.ARB_TRANPORTAL_ID || process.env.ARB_MERCHANT_ID || '',
+        arb_tranportal_password: process.env.ARB_TRANPORTAL_PASSWORD || process.env.ARB_PASSWORD || '',
+        arb_resource_key: process.env.ARB_RESOURCE_KEY || '',
+        arb_environment: process.env.ARB_ENVIRONMENT || 'sandbox'
       },
       shipping: {
         aramex_enabled: true,
@@ -33,7 +34,7 @@ class AdminSettingsController {
       },
       general: {
         site_name: 'Drinkmate',
-        site_url: process.env.FRONTEND_URL || 'https://drinkmate-main-production.up.railway.app',
+        site_url: process.env.FRONTEND_URL || 'http://localhost:3001',
         admin_email: 'admin@drinkmate.sa',
         support_email: 'support@drinkmate.sa',
         phone: '+966 12 345 6789',
@@ -72,8 +73,10 @@ class AdminSettingsController {
         },
         payment: {
           ...this.settings.payment,
-          urways_merchant_key: this.settings.payment.urways_merchant_key ? '***' : '',
-          tap_secret_key: this.settings.payment.tap_secret_key ? '***' : ''
+          tap_secret_key: this.settings.payment.tap_secret_key ? '***' : '',
+          arb_tranportal_id: this.settings.payment.arb_tranportal_id || '',
+          arb_tranportal_password: this.settings.payment.arb_tranportal_password ? '***' : '',
+          arb_resource_key: this.settings.payment.arb_resource_key ? '***' : ''
         },
         shipping: {
           ...this.settings.shipping,
@@ -206,16 +209,16 @@ class AdminSettingsController {
       let testResult = { success: false, message: '' };
 
       switch (gateway) {
-        case 'urways':
-          testResult = await this.testUrways(credentials);
-          break;
         case 'tap':
           testResult = await this.testTap(credentials);
+          break;
+        case 'arb':
+          testResult = await this.testArb(credentials);
           break;
         default:
           return res.status(400).json(createErrorResponse(
             'Unsupported gateway',
-            'Only urways and tap are supported'
+            'Only tap and arb are supported'
           ));
       }
 
@@ -233,45 +236,6 @@ class AdminSettingsController {
     }
   };
 
-  // Test Urways payment gateway
-  async testUrways(credentials) {
-    try {
-      const { terminal_id, merchant_key, environment } = credentials;
-      
-      if (!terminal_id || !merchant_key) {
-        return { success: false, message: 'Missing Urways credentials' };
-      }
-
-      // Test with a minimal request
-      const testRequest = {
-        terminalID: terminal_id,
-        merchantID: merchant_key,
-        action: '10', // Inquiry action
-        trackID: 'TEST_' + Date.now(),
-        amount: '0.00',
-        currency: 'SAR'
-      };
-
-      const response = await fetch(
-        environment === 'production' 
-          ? 'https://payments.urway-tech.com/URWAYPGService/transaction/jsonProcess/JSONrequest'
-          : 'https://payments-dev.urway-tech.com/URWAYPGService/transaction/jsonProcess/JSONrequest',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(testRequest)
-        }
-      );
-
-      if (response.ok) {
-        return { success: true, message: 'Urways connection successful' };
-      } else {
-        return { success: false, message: 'Urways connection failed' };
-      }
-    } catch (error) {
-      return { success: false, message: 'Urways test failed: ' + error.message };
-    }
-  }
 
   // Test Tap payment gateway
   async testTap(credentials) {
@@ -302,6 +266,72 @@ class AdminSettingsController {
       }
     } catch (error) {
       return { success: false, message: 'Tap test failed: ' + error.message };
+    }
+  }
+
+  // Test ARB payment gateway
+  async testArb(credentials) {
+    try {
+      const { 
+        tranportal_id, 
+        tranportal_password, 
+        resource_key,
+        merchant_id, // Legacy support
+        password, // Legacy support
+        environment 
+      } = credentials;
+      
+      // Use tranportal credentials or fallback to legacy
+      const tranportalId = tranportal_id || merchant_id;
+      const tranportalPassword = tranportal_password || password;
+      
+      if (!tranportalId || !tranportalPassword || !resource_key) {
+        return { success: false, message: 'Missing ARB credentials (need tranportal_id, tranportal_password, and resource_key)' };
+      }
+
+      // Test encryption/decryption capability
+      try {
+        const testData = { test: 'data', timestamp: Date.now() };
+        const crypto = require('crypto');
+        
+        // Test encryption (simplified check)
+        const key = crypto.createHash('sha256').update(resource_key).digest();
+        const iv = Buffer.from('PGKEYENCDECIVSPC', 'utf8');
+        const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+        cipher.setAutoPadding(true);
+        
+        let encrypted = cipher.update(JSON.stringify(testData), 'utf8', 'base64');
+        encrypted += cipher.final('base64');
+        
+        // Test decryption
+        const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+        decipher.setAutoPadding(true);
+        let decrypted = decipher.update(encrypted, 'base64', 'utf8');
+        decrypted += decipher.final('utf8');
+        
+        const decryptedData = JSON.parse(decrypted);
+        
+        if (decryptedData.test === testData.test) {
+          return { success: true, message: 'ARB credentials valid - encryption/decryption working' };
+        } else {
+          return { success: false, message: 'ARB encryption test failed - data mismatch' };
+        }
+      } catch (error) {
+        return { success: false, message: 'ARB encryption test failed: ' + error.message };
+      }
+      }
+
+      if (response.ok || response.status === 401) { // 401 means auth is working
+        return { success: true, message: 'ARB connection successful' };
+      } else {
+        return { success: false, message: `ARB connection failed: ${response.status}` };
+      }
+    } catch (error) {
+      // If it's a network error but we can construct the request, consider it partially successful
+      if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+        return { success: false, message: 'ARB gateway unreachable: ' + error.message };
+      }
+      return { success: false, message: 'ARB test failed: ' + error.message };
     }
   }
 

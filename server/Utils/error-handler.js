@@ -150,7 +150,7 @@ function logError(error, context = '') {
 
   // In production, you might want to send to external logging service
   if (process.env.NODE_ENV === 'production') {
-    // TODO: Send to external logging service (e.g., Sentry, LogRocket, etc.)
+    // Note: External logging service integration (e.g., Sentry, LogRocket) can be added here
   }
 }
 

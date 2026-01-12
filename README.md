@@ -58,35 +58,38 @@ A modern, full-stack e-commerce platform for premium soda makers, CO2 cylinders,
 
 ## 📁 Project Structure
 
+For detailed project structure, see [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
+
 ```
-drinkmates/
+DRINKMATE-new/
 ├── drinkmate-main/          # Next.js Frontend
 │   ├── app/                # App Router pages
-│   │   ├── admin/          # Admin dashboard
-│   │   ├── api/            # API routes
-│   │   ├── shop/           # Product pages
-│   │   ├── account/        # User account pages
-│   │   └── layout.tsx      # Root layout
-│   ├── components/         # Reusable components
-│   │   ├── ui/            # UI components
-│   │   ├── chat/          # Chat components
-│   │   ├── cart/          # Cart components
-│   │   └── layout/        # Layout components
+│   ├── components/         # React components
 │   ├── lib/               # Utilities and contexts
-│   │   ├── contexts/      # React contexts
-│   │   ├── api/           # API utilities
-│   │   └── utils/         # Helper functions
 │   └── public/            # Static assets
 │
 ├── server/                 # Node.js Backend
 │   ├── Controller/        # Route controllers
-│   ├── Models/           # Database models
-│   ├── Router/           # Express routes
-│   ├── Middleware/       # Custom middleware
-│   ├── Services/         # Business logic
-│   └── Utils/            # Server utilities
+│   ├── Models/            # Database models
+│   ├── Router/            # Express routes
+│   ├── Middleware/        # Custom middleware
+│   ├── Services/          # Business logic
+│   ├── Utils/             # Server utilities
+│   ├── tests/             # Test files
+│   │   ├── arb/          # ARB payment tests
+│   │   ├── integration/  # Integration tests
+│   │   └── unit/         # Unit tests
+│   └── config/            # Configuration templates
 │
-└── README.md             # This file
+├── docs/                   # Documentation
+│   ├── integrations/      # Integration guides
+│   └── deployment/        # Deployment guides
+│
+├── assets/                 # Project assets
+│   ├── docs/              # PDFs and documents
+│   └── integrations/      # Integration samples
+│
+└── deployment/             # Deployment scripts
 ```
 
 ## 🛠️ Installation & Setup

@@ -161,8 +161,15 @@ exports.createGuestOrder = async (req, res) => {
         await order.save();
         
         // Process payment based on payment method
-        if (paymentMethod === 'urways') {
-            // For Urways, we'll create the order first and process payment separately
+        if (paymentMethod === 'arb') {
+            // For ARB, we'll create the order first and process payment separately
+            order.paymentDetails = {
+                paymentStatus: 'pending',
+                paymentDate: new Date()
+            };
+            order.status = 'pending';
+        } else if (paymentMethod === 'arb') {
+            // For ARB, we'll create the order first and process payment separately
             order.paymentDetails = {
                 paymentStatus: 'pending',
                 paymentDate: new Date()
@@ -378,8 +385,16 @@ exports.createOrder = async (req, res) => {
         await order.save();
         
         // Process payment based on payment method
-        if (paymentMethod === 'urways') {
-            // For Urways, we'll create the order first and process payment separately
+        if (paymentMethod === 'arb') {
+            // For ARB, we'll create the order first and process payment separately
+            // The frontend will handle the payment flow
+            order.paymentDetails = {
+                paymentStatus: 'pending',
+                paymentDate: new Date()
+            };
+            order.status = 'pending';
+        } else if (paymentMethod === 'arb') {
+            // For ARB, we'll create the order first and process payment separately
             // The frontend will handle the payment flow
             order.paymentDetails = {
                 paymentStatus: 'pending',

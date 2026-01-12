@@ -237,8 +237,9 @@ class AdminDashboardController {
       }
 
       // Check payment configuration
-      if ((process.env.URWAYS_TERMINAL_ID && process.env.URWAYS_MERCHANT_KEY) ||
-          (process.env.TAP_API_KEY && process.env.TAP_SECRET_KEY)) {
+      if (
+          (process.env.TAP_API_KEY && process.env.TAP_SECRET_KEY) ||
+          (process.env.ARB_TRANPORTAL_ID && process.env.ARB_TRANPORTAL_PASSWORD && process.env.ARB_RESOURCE_KEY)) {
         health.payments.configured = true;
         health.payments.status = 'healthy';
       }

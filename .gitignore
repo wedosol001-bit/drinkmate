@@ -1,69 +1,95 @@
-# Node.js
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-node_modules/
-.DS_Store
-*.log
-# ignore any env-like files by default
-
-# BUT keep these three tracked
-
-
-.next/
-dist/
+# Production
 build/
+dist/
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+server/.env
+drinkmate-main/.env.local
+drinkmate-main/.env.railway
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+desktop.ini
 
 # Logs
 logs/
 *.log
-pids/
-*.pid
-*.seed
-*.pid.lock
-# node_modules
-node_modules/
-drinkmate-main/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-# build files
-drinkmate-main/build/
-dist/
-# OS
-.DS_Store
-Thumbs.db
-#I
-# Build output
-dist/
-build/
+# Temporary files
+tmp/
+temp/
+*.tmp
 
-# React
-*.env.local
-*.env.development.local
-*.env.test.local
-*.env.production.local
-
-# VSCode
-.vscode/
-# environment variables
-
-
-
-# node_modules
-node_modules/
-server/node_modules/
-# MongoDB dump
-dump/
-
-# Coverage reports
-coverage/
-
-# IDEs
-.idea/
-*.sw?
-
-# Optional: if using Parcel, Next.js, or other tools
-.cache/
+# Build outputs
+*.tsbuildinfo
 .next/
 out/
+build/
+dist/
+
+# Cloudinary downloads
+cloudinary-downloads/
+
+# Uploads
+public/uploads/
+uploads/
+
+# Test files (keep structure, ignore results)
+*.test.js.snap
+test-results/
+playwright-report/
+
+# Package manager locks (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Deployment
+.vercel
+.netlify
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Misc
+*.pem
+*.key
+*.cert

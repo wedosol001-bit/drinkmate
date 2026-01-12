@@ -440,11 +440,11 @@ export default function CheckoutPage() {
 
   // Payment provider configuration (would come from admin panel)
   const paymentProviders = {
-    card: {
-      name: "Credit/Debit Card",
-      description: "Pay securely by credit or debit card through URWAYS payment gateway.",
-      logo: "/images/payment-logos/urways-payment.png",
-      gateway: "urways"
+    arb: {
+      name: "Credit/Debit (Al Rajhi)",
+      description: "Pay securely by credit or debit card through Al Rajhi Bank payment gateway.",
+      logo: "/images/payment-logos/arb-payment.png",
+      gateway: "arb"
     },
     tabby: {
       name: "tabby",
@@ -655,21 +655,27 @@ export default function CheckoutPage() {
       const selectedGateway = paymentProviders[selectedPaymentMethod as keyof typeof paymentProviders].gateway
 
       let paymentResponse: any
-      if (selectedGateway === "urways") {
-        // Call frontend API for URWAYS (temporary solution)
-        console.log('🚀 Sending URWAYS payment request to frontend API:', paymentRequest)
-        paymentResponse = await fetch('/api/payments/urways', {
+      if (selectedGateway === "arb") {
+        // Call backend API for ARB (Al Rajhi Bank)
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+        const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null
+        const apiEndpoint = token 
+          ? `${backendUrl}/api/payments/arb/create`
+          : `${backendUrl}/api/payments/arb/create/guest`
+        
+        paymentResponse = await fetch(apiEndpoint, {
           method: 'POST',
           headers: { 
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
           },
           body: JSON.stringify(paymentRequest)
         })
         
-        console.log('🚀 URWAYS payment response status:', paymentResponse.status, paymentResponse.statusText)
+        console.log('🚀 ARB payment response status:', paymentResponse.status, paymentResponse.statusText)
       } else if (selectedGateway === "tabby") {
         // Call backend API for Tabby
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
         paymentResponse = await fetch(`${backendUrl}/payments/tabby`, {
           method: 'POST',
           headers: { 
@@ -680,7 +686,7 @@ export default function CheckoutPage() {
         })
       } else if (selectedGateway === "tap") {
         // Call backend API for Tap
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
         paymentResponse = await fetch(`${backendUrl}/payments/tap`, {
           method: 'POST',
           headers: { 
@@ -712,7 +718,6 @@ export default function CheckoutPage() {
         window.location.href = paymentUrl
       } else {
         console.error('🚀 Payment failed:', paymentData || {})
-        console.error('🚀 URWAYS Response Details:', paymentData?.response)
         console.error('🚀 Response Code:', paymentData?.responseCode)
         console.error('🚀 Backend Error Data:', paymentData?.data)
         const errorMessage = paymentData?.message || paymentData?.error || paymentData?.data?.message || "Payment initiation failed"
@@ -1218,6 +1223,51 @@ export default function CheckoutPage() {
                   <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-600">
                       {paymentProviders.card.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* ARB Payment Option */}
+                <div
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ${
+                    selectedPaymentMethod === "arb"
+                      ? "border-[#12d6fa] bg-[#12d6fa]/5"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                  onClick={() => setSelectedPaymentMethod("arb")}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          name="payment"
+                          value="arb"
+                          checked={selectedPaymentMethod === "arb"}
+                          onChange={() => setSelectedPaymentMethod("arb")}
+                          className="w-4 h-4 text-[#12d6fa] border-gray-300 focus:ring-[#12d6fa]"
+                          aria-label="Al Rajhi Bank payment method"
+                        />
+                        <span className="text-lg font-semibold text-gray-900">{paymentProviders.arb.name}</span>
+                      </div>
+                      <div className="flex items-center">
+                        {paymentProviders.arb.logo ? (
+                          <Image
+                            src={paymentProviders.arb.logo}
+                            alt="Al Rajhi Bank Payment"
+                            width={80}
+                            height={40}
+                            className="object-contain"
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-500 px-2">Al Rajhi Bank</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-600">
+                      {paymentProviders.arb.description}
                     </p>
                   </div>
                 </div>

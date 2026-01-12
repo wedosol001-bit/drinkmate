@@ -9,21 +9,15 @@ import { checkAdminRateLimit } from './api/protected-api';
 export { getAuthToken };
 
 // Base API URL - should be set in environment variables
-// For local development, use localhost:3000 where the backend server is running
+// Priority: NEXT_PUBLIC_API_URL > NEXT_PUBLIC_BACKEND_URL > localhost fallback
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 
-  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3000' 
-    : 'https://drinkmate-production.up.railway.app');
+                process.env.NEXT_PUBLIC_BACKEND_URL ||
+                (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                  ? 'http://localhost:3000' 
+                  : '');
 
-// Force local development URL when running locally
-const isLocalDev = typeof window !== 'undefined' && 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
-  (window.location.port === '3002' || window.location.port === '3001' || window.location.port === '3000');
-
-// For production, use the environment variable or fallback to production URL
-const FINAL_API_URL = process.env.NODE_ENV === 'production' 
-  ? (process.env.NEXT_PUBLIC_API_URL || 'https://drinkmate-production.up.railway.app')
-  : (isLocalDev ? 'http://localhost:3000' : API_URL);
+// Use the configured API URL
+const FINAL_API_URL = API_URL || 'http://localhost:3000';
 
 
 // Cache configuration - Reduced for better synchronization

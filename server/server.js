@@ -435,7 +435,7 @@ app.use((req, res) => {
   });
 });
 
-// Start server on the provided PORT (Railway sets this) or default to 3000 for local
+// Start server on the provided PORT or default to 3000 for local
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 
   // Create HTTP server with timeout configuration
@@ -450,7 +450,7 @@ const PORT = parseInt(process.env.PORT, 10) || 3000;
   const io = new Server(server, {
     cors: {
       origin: [
-        process.env.FRONTEND_URL || "https://drinkmate-main-production.up.railway.app",
+        process.env.FRONTEND_URL || "http://localhost:3001",
         "http://localhost:3002",
         "http://localhost:8080",
         "http://127.0.0.1:3001",

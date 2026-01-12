@@ -4,7 +4,7 @@
 // Prefer local API during development even if NEXT_PUBLIC_API_URL is set
 const isProdEnv = (process.env.NODE_ENV === 'production')
 const resolvedBaseUrl = isProdEnv
-  ? (process.env.NEXT_PUBLIC_API_URL || 'https://drinkmate-production.up.railway.app')
+  ? (process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000')
   : 'http://localhost:3000'
 
 export const API_CONFIG = {
@@ -78,8 +78,8 @@ export const PAYMENT_STATUS = {
 
 // Payment Methods
 export const PAYMENT_METHODS = {
-  URWAYS: 'urways',
   TAP: 'tap',
+  ARB: 'arb',
   CASH_ON_DELIVERY: 'cod',
 } as const
 
@@ -247,8 +247,8 @@ export const API_ENDPOINTS = {
   TRACK_ORDER: '/api/orders/track',
   
   // Payments
-  PAYMENTS_URWAYS: '/api/payments/urways',
   PAYMENTS_TAP: '/api/payments/tap',
+  PAYMENTS_ARB: '/api/payments/arb',
   PAYMENT_VERIFY: '/api/payments/verify',
   
   // Reviews

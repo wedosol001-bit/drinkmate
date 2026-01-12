@@ -412,12 +412,6 @@ export interface AppConfig {
     enableGuestCheckout: boolean
   }
   payment: {
-    urways: {
-      apiKey: string
-      secretKey: string
-      merchantId: string
-      environment: 'sandbox' | 'production'
-    }
     tap: {
       apiKey: string
       secretKey: string

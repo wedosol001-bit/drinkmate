@@ -14,7 +14,7 @@ const securityHeaders = helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://www.youtube.com", "https://www.googletagmanager.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'", "https://api.cloudinary.com", "https://www.youtube.com", "wss:", "ws:", "https://drinkmate-main-production.up.railway.app", "https://drinkmate-production.up.railway.app"],
+      connectSrc: ["'self'", "https://api.cloudinary.com", "https://www.youtube.com", "wss:", "ws:", process.env.FRONTEND_URL || "http://localhost:3001"],
       mediaSrc: ["'self'", "https://www.youtube.com"],
       objectSrc: ["'none'"],
       frameSrc: ["'self'", "https://www.youtube.com"],
@@ -137,7 +137,7 @@ const securityLogger = (req, res, next) => {
             console.warn(`🚨 SECURITY ALERT: Suspicious pattern detected in ${req.method} ${req.path} at ${currentPath}: ${value}`);
             // Log to security monitoring service in production
             if (process.env.SECURITY_LOGGING === 'true') {
-              // TODO: Send to security monitoring service
+              // Note: Send to security monitoring service (e.g., SIEM, CloudWatch) can be integrated here
             }
           }
         }
@@ -169,7 +169,7 @@ const secureCORS = (req, res, next) => {
   const allowedOrigins = [
     process.env.FRONTEND_URL,
     process.env.CORS_ORIGIN,
-    'https://drinkmate-main-production.up.railway.app', // Frontend domain
+    process.env.FRONTEND_URL || 'http://localhost:3001', // Frontend domain
     'http://localhost:3001', // Development frontend
     'http://localhost:3002', // Development frontend (Next.js default)
     'http://localhost:3000' // Alternative development port

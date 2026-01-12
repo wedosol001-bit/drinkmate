@@ -125,7 +125,7 @@ export default function SettingsPage() {
       creditCard: true,
       applePay: true,
       cashOnDelivery: true,
-      gatewayProvider: "urways",
+      gatewayProvider: "arb",
       gatewayMode: "live",
       apiKey: "",
       guestCheckout: true,
@@ -768,7 +768,7 @@ export default function SettingsPage() {
                         <SelectValue placeholder="Select provider" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="urways">Urways</SelectItem>
+                        <SelectItem value="arb">Al Rajhi Bank (ARB)</SelectItem>
                         <SelectItem value="tap">Tap Payment</SelectItem>
                         <SelectItem value="stripe">Stripe</SelectItem>
                         <SelectItem value="paypal">PayPal</SelectItem>

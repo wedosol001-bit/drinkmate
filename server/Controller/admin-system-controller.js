@@ -156,21 +156,26 @@ class AdminSystemController {
 
   // Check payments health
   async checkPaymentsHealth() {
-    const urwaysConfigured = !!(process.env.URWAYS_TERMINAL_ID && 
-                               process.env.URWAYS_MERCHANT_KEY);
     
     const tapConfigured = !!(process.env.TAP_API_KEY && 
                             process.env.TAP_SECRET_KEY);
 
+    // Check for Tranportal credentials and Resource Key
+    const arbConfigured = !!(
+      (process.env.ARB_TRANPORTAL_ID || process.env.ARB_MERCHANT_ID) &&
+      (process.env.ARB_TRANPORTAL_PASSWORD || process.env.ARB_PASSWORD) &&
+      process.env.ARB_RESOURCE_KEY
+    );
+
     return {
-      status: (urwaysConfigured || tapConfigured) ? 'healthy' : 'warning',
-      urways: {
-        configured: urwaysConfigured,
-        environment: process.env.URWAYS_ENVIRONMENT || 'production'
-      },
+      status: (tapConfigured || arbConfigured) ? 'healthy' : 'warning',
       tap: {
         configured: tapConfigured,
         environment: process.env.TAP_ENVIRONMENT || 'sandbox'
+      },
+      arb: {
+        configured: arbConfigured,
+        environment: process.env.ARB_ENVIRONMENT || 'sandbox'
       }
     };
   }

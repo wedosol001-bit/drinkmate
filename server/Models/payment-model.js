@@ -49,7 +49,7 @@ const paymentSchema = new mongoose.Schema({
   method: {
     type: String,
     required: true,
-    enum: ['urways', 'tap', 'cash', 'bank_transfer']
+    enum: ['tap', 'arb', 'cash', 'bank_transfer']
   },
   
   // Payment Status
@@ -64,7 +64,7 @@ const paymentSchema = new mongoose.Schema({
     name: {
       type: String,
       required: true,
-      enum: ['urways', 'tap', 'cash', 'bank_transfer']
+      enum: ['tap', 'arb', 'cash', 'bank_transfer']
     },
     transactionId: String,
     referenceId: String,
@@ -72,7 +72,16 @@ const paymentSchema = new mongoose.Schema({
     paymentUrl: String,
     callbackUrl: String,
     returnUrl: String,
-    cancelUrl: String
+    cancelUrl: String,
+    // ARB-specific fields
+    arbPaymentId: String, // ARB payment ID
+    arbTransId: String, // ARB transaction ID
+    arbTrackId: String, // ARB track ID (merchant reference)
+    arbRef: String, // ARB RRN (Reference Number)
+    arbAuthCode: String, // ARB authorization code
+    arbCardType: String, // Visa, MasterCard, Mada
+    arbActionCode: String, // 1=Purchase, 2=Credit, 3=Void Purchase, etc.
+    arbResult: String // CAPTURED, APPROVED, etc.
   },
   
   // Gateway Response

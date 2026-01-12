@@ -203,11 +203,6 @@ export const ordersAPI = {
 
 // Payments API
 export const paymentsAPI = {
-  // Urways payment
-  processUrwaysPayment: async (paymentData: any) => {
-    return apiClient.post(API_ENDPOINTS.PAYMENTS_URWAYS, paymentData)
-  },
-
   // Tap payment
   processTapPayment: async (paymentData: any) => {
     return apiClient.post(API_ENDPOINTS.PAYMENTS_TAP, paymentData)
