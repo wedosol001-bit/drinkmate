@@ -598,12 +598,19 @@ class ArbService {
             };
 
             // Add reference value to appropriate field based on udf5
+            // For ARB inquiry, the reference value should be in the appropriate field
             if (udf5Value === 'PaymentID') {
+                // ARB expects paymentId field for PaymentID inquiries
                 plainTrandata.paymentId = referenceValue;
+                // Also ensure it's in the correct format (numeric string)
+                if (typeof referenceValue === 'string' && !/^\d+$/.test(referenceValue)) {
+                    throw new Error('PaymentID must be numeric');
+                }
             } else if (udf5Value === 'TRANID') {
                 plainTrandata.transId = referenceValue;
             } else if (udf5Value === 'TrackID') {
-                // trackId already set above
+                // trackId already set above, but ensure it matches referenceValue
+                plainTrandata.trackId = referenceValue;
             }
 
             // Encrypt trandata
