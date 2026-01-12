@@ -202,9 +202,23 @@ const handleCallback = async (req, res) => {
             console.log('🔍 Performing server-to-server status verification...');
             
             try {
+              // Only perform inquiry if we have a valid paymentId or transId
+              if (!paymentId && !transId) {
+                console.warn('⚠️ Skipping inquiry - no paymentId or transId available');
+                throw new Error('Cannot verify payment - missing paymentId and transId');
+              }
+
+              console.log('🔍 Inquiry parameters:', {
+                paymentId: paymentId || 'N/A',
+                transId: transId || 'N/A',
+                trackId: orderId,
+                amount: order.total.toFixed(2),
+                referenceType: paymentId ? 'PaymentID' : (transId ? 'TRANID' : 'TrackID')
+              });
+
               const verificationResult = await arbService.inquiryPayment({
-                paymentId: paymentId,
-                transId: transId,
+                paymentId: paymentId ? String(paymentId).trim() : null,
+                transId: transId ? String(transId).trim() : null,
                 trackId: orderId,
                 amount: order.total.toFixed(2),
                 currencyCode: '682',
