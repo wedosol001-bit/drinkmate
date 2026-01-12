@@ -613,8 +613,26 @@ class ArbService {
                 plainTrandata.trackId = referenceValue;
             }
 
+            // Log plain trandata before encryption (for debugging)
+            console.log('ARB Inquiry Plain Trandata:', {
+                action: plainTrandata.action,
+                udf5: plainTrandata.udf5,
+                hasPaymentId: !!plainTrandata.paymentId,
+                hasTransId: !!plainTrandata.transId,
+                paymentId: plainTrandata.paymentId || 'N/A',
+                transId: plainTrandata.transId || 'N/A',
+                trackId: plainTrandata.trackId,
+                amount: plainTrandata.amt,
+                referenceType: udf5Value
+            });
+
             // Encrypt trandata
             const encryptedTrandata = this.encryptTrandata(plainTrandata);
+
+            // Validate encryption
+            if (!encryptedTrandata || encryptedTrandata.length === 0) {
+                throw new Error('Failed to encrypt inquiry trandata');
+            }
 
             // Prepare API request
             const apiRequest = [{
@@ -627,6 +645,14 @@ class ArbService {
             // Supporting transactions (inquiry, refund, void, capture) use different endpoint
             const supportingEndpoint = process.env.ARB_SUPPORTING_TRANSACTIONS_ENDPOINT || '/pg/payment/tranportal.htm';
             const inquiryEndpointUrl = `${this.apiBaseUrl}${supportingEndpoint}`;
+            
+            console.log('ARB Inquiry Request:', {
+                url: inquiryEndpointUrl,
+                referenceType: udf5Value,
+                referenceValue: referenceValue,
+                hasTrandata: !!encryptedTrandata,
+                trandataLength: encryptedTrandata.length
+            });
             const response = await axios.post(
                 inquiryEndpointUrl,
                 apiRequest,
