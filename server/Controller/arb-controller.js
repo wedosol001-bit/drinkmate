@@ -239,42 +239,36 @@ const handleCallback = async (req, res) => {
                 // If we have valid payment result but no IDs, proceed with callback data
                 console.log('✅ Proceeding with callback payment data (no inquiry needed)');
               } else if (hasValidPaymentResult && hasValidPaymentId) {
-                // We have valid payment result and paymentId - inquiry is optional but recommended
-                // However, skip inquiry if paymentId format is invalid to avoid "Payment id missing" error
-                console.log('✅ Valid payment result from callback, performing inquiry for verification...');
-                
-                console.log('🔍 Inquiry parameters:', {
-                  paymentId: normalizedPaymentId || 'N/A',
-                  transId: transId ? String(transId).trim() : 'N/A',
-                  trackId: orderId,
-                  amount: order.total.toFixed(2),
-                  referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID'),
-                  paymentIdIsNumeric: hasValidPaymentId
+                // We have valid payment result and paymentId - inquiry is optional
+                // SKIP inquiry to avoid "Payment id missing" errors - ARB may not have the paymentId
+                // available for inquiry immediately after payment creation
+                // The callback data is sufficient to verify the payment
+                console.log('✅ Valid payment result from callback - skipping inquiry (callback data is sufficient)');
+                console.log('📋 Payment verification data:', {
+                  paymentId: normalizedPaymentId,
+                  transId: transId || 'N/A',
+                  paymentResult: paymentResult,
+                  amount: order.total.toFixed(2)
                 });
-
-                // Only perform inquiry if paymentId is valid numeric format
-                if (!hasValidPaymentId) {
-                  console.warn('⚠️ Skipping inquiry - paymentId format is invalid (must be numeric)');
-                  console.log('✅ Proceeding with callback payment data (no inquiry needed)');
-                } else {
-                  try {
-                    const verificationResult = await arbService.inquiryPayment({
-                      paymentId: normalizedPaymentId,
-                      transId: hasValidTransId ? String(transId).trim() : null,
-                      trackId: orderId,
-                      amount: order.total.toFixed(2),
-                      currencyCode: '682',
-                      referenceType: 'PaymentID' // Use PaymentID since we have valid paymentId
-                    });
+                console.log('✅ Proceeding with callback payment data (inquiry not needed)');
+              } else if (hasValidPaymentResult && !hasValidPaymentId && hasValidTransId) {
+                // We have valid payment result but no paymentId - try inquiry with transId
+                console.log('✅ Valid payment result from callback, performing inquiry with transId for additional verification...');
+                
+                try {
+                  const verificationResult = await arbService.inquiryPayment({
+                    paymentId: null,
+                    transId: String(transId).trim(),
+                    trackId: orderId,
+                    amount: order.total.toFixed(2),
+                    currencyCode: '682',
+                    referenceType: 'TRANID' // Use TRANID since we have transId
+                  });
                 
                     if (!verificationResult.success) {
                       console.error('❌ Status verification failed:', verificationResult.error);
                       // If inquiry fails but we have valid callback data, proceed anyway
-                      if (hasValidPaymentResult) {
-                        console.warn('⚠️ Inquiry failed but proceeding with valid callback payment data');
-                      } else {
-                        throw new Error(`Status verification failed: ${verificationResult.error}`);
-                      }
+                      console.warn('⚠️ Inquiry failed but proceeding with valid callback payment data');
                     } else {
                       // Verify amount and currency match
                       const verifiedAmount = parseFloat(verificationResult.data?.amt || verificationResult.amount || '0');
@@ -285,11 +279,7 @@ const handleCallback = async (req, res) => {
                           orderAmount: order.total,
                           verifiedAmount: verifiedAmount
                         });
-                        if (hasValidPaymentResult) {
-                          console.warn('⚠️ Amount mismatch in inquiry but proceeding with callback data');
-                        } else {
-                          throw new Error('Payment amount mismatch - verification failed');
-                        }
+                        console.warn('⚠️ Amount mismatch in inquiry but proceeding with callback data');
                       }
                       
                       if (verifiedCurrency !== '682') {
@@ -297,25 +287,16 @@ const handleCallback = async (req, res) => {
                           expected: '682 (SAR)',
                           verified: verifiedCurrency
                         });
-                        if (hasValidPaymentResult) {
-                          console.warn('⚠️ Currency mismatch in inquiry but proceeding with callback data');
-                        } else {
-                          throw new Error('Payment currency mismatch - verification failed');
-                        }
+                        console.warn('⚠️ Currency mismatch in inquiry but proceeding with callback data');
                       }
                       
                       // Verify payment status
                       const verifiedResult = verificationResult.data?.result || verificationResult.result;
                       if (verifiedResult !== 'CAPTURED' && verifiedResult !== 'APPROVED') {
                         console.error('❌ Payment not captured/approved:', verifiedResult);
-                        if (hasValidPaymentResult) {
-                          console.warn('⚠️ Inquiry result mismatch but proceeding with callback data');
-                        } else {
-                          throw new Error(`Payment status invalid: ${verifiedResult}`);
-                        }
+                        console.warn('⚠️ Inquiry result mismatch but proceeding with callback data');
                       } else {
                         console.log('✅ Status verification successful:', {
-                          paymentId: normalizedPaymentId,
                           transId: transId,
                           result: verifiedResult,
                           amount: verifiedAmount
@@ -324,11 +305,63 @@ const handleCallback = async (req, res) => {
                     }
                   } catch (inquiryError) {
                     // If inquiry throws an error but we have valid callback data, proceed anyway
-                    if (hasValidPaymentResult) {
-                      console.warn('⚠️ Inquiry error but proceeding with valid callback payment data:', inquiryError.message);
-                    } else {
-                      throw inquiryError;
+                    console.warn('⚠️ Inquiry error but proceeding with valid callback payment data:', inquiryError.message);
+                  }
+              } else if (!hasValidPaymentResult && (hasValidPaymentId || hasValidTransId)) {
+                // No valid payment result but we have IDs - inquiry is required
+                console.log('⚠️ No valid payment result from callback, performing inquiry to verify payment status...');
+                
+                try {
+                  const verificationResult = await arbService.inquiryPayment({
+                    paymentId: hasValidPaymentId ? normalizedPaymentId : null,
+                    transId: hasValidTransId ? String(transId).trim() : null,
+                    trackId: orderId,
+                    amount: order.total.toFixed(2),
+                    currencyCode: '682',
+                    referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID')
+                  });
+                
+                    if (!verificationResult.success) {
+                      console.error('❌ Status verification failed:', verificationResult.error);
+                      throw new Error(`Status verification failed: ${verificationResult.error}`);
                     }
+                    
+                    // Verify amount and currency match
+                    const verifiedAmount = parseFloat(verificationResult.data?.amt || verificationResult.amount || '0');
+                    const verifiedCurrency = verificationResult.data?.currencyCode || verificationResult.currencyCode || '682';
+                    
+                    if (Math.abs(verifiedAmount - order.total) > 0.01) {
+                      console.error('❌ Amount mismatch:', {
+                        orderAmount: order.total,
+                        verifiedAmount: verifiedAmount
+                      });
+                      throw new Error('Payment amount mismatch - verification failed');
+                    }
+                    
+                    if (verifiedCurrency !== '682') {
+                      console.error('❌ Currency mismatch:', {
+                        expected: '682 (SAR)',
+                        verified: verifiedCurrency
+                      });
+                      throw new Error('Payment currency mismatch - verification failed');
+                    }
+                    
+                    // Verify payment status
+                    const verifiedResult = verificationResult.data?.result || verificationResult.result;
+                    if (verifiedResult !== 'CAPTURED' && verifiedResult !== 'APPROVED') {
+                      console.error('❌ Payment not captured/approved:', verifiedResult);
+                      throw new Error(`Payment status invalid: ${verifiedResult}`);
+                    }
+                    
+                    console.log('✅ Status verification successful:', {
+                      paymentId: normalizedPaymentId || 'N/A',
+                      transId: transId || 'N/A',
+                      result: verifiedResult,
+                      amount: verifiedAmount
+                    });
+                  } catch (inquiryError) {
+                    console.error('❌ Inquiry failed and no valid payment result from callback:', inquiryError.message);
+                    throw inquiryError;
                   }
                 }
               }
