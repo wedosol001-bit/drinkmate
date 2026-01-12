@@ -612,36 +612,42 @@ class ArbService {
 
             // Add reference value to appropriate field based on udf5
             // For ARB inquiry, the reference value should be in the appropriate field
-            // ARB may be case-sensitive, so we'll try both formats
+            // ARB expects exact field names - use capitalized versions as primary
             if (udf5Value === 'PaymentID') {
-                // ARB expects paymentId field for PaymentID inquiries
-                // Try both camelCase and exact case to match ARB's expectations
-                plainTrandata.paymentId = referenceValue;
-                plainTrandata.PaymentID = referenceValue; // Also try capitalized version
+                // ARB expects PaymentID field (capitalized) for PaymentID inquiries
+                // CRITICAL: Use capitalized "PaymentID" as the primary field name
+                plainTrandata.PaymentID = referenceValue;
+                plainTrandata.paymentId = referenceValue; // Also include camelCase as fallback
                 // Also ensure it's in the correct format (numeric string)
                 if (typeof referenceValue === 'string' && !/^\d+$/.test(referenceValue)) {
                     throw new Error('PaymentID must be numeric');
                 }
+                console.log('✅ Added PaymentID to inquiry trandata:', referenceValue);
             } else if (udf5Value === 'TRANID') {
-                plainTrandata.transId = referenceValue;
-                plainTrandata.TRANID = referenceValue; // Also try capitalized version
+                // ARB expects TRANID field (all caps) for TRANID inquiries
+                plainTrandata.TRANID = referenceValue;
+                plainTrandata.transId = referenceValue; // Also include camelCase as fallback
+                console.log('✅ Added TRANID to inquiry trandata:', referenceValue);
             } else if (udf5Value === 'TrackID') {
                 // trackId already set above, but ensure it matches referenceValue
-                plainTrandata.trackId = referenceValue;
-                plainTrandata.TrackID = referenceValue; // Also try capitalized version
+                plainTrandata.TrackID = referenceValue;
+                plainTrandata.trackId = referenceValue; // Also include camelCase as fallback
+                console.log('✅ Added TrackID to inquiry trandata:', referenceValue);
             }
 
             // Log plain trandata before encryption (for debugging)
             console.log('ARB Inquiry Plain Trandata:', {
                 action: plainTrandata.action,
                 udf5: plainTrandata.udf5,
-                hasPaymentId: !!plainTrandata.paymentId,
-                hasTransId: !!plainTrandata.transId,
-                paymentId: plainTrandata.paymentId || 'N/A',
-                transId: plainTrandata.transId || 'N/A',
-                trackId: plainTrandata.trackId,
+                hasPaymentId: !!(plainTrandata.paymentId || plainTrandata.PaymentID),
+                hasTransId: !!(plainTrandata.transId || plainTrandata.TRANID),
+                hasTrackId: !!(plainTrandata.trackId || plainTrandata.TrackID),
+                paymentId: plainTrandata.PaymentID || plainTrandata.paymentId || 'N/A',
+                transId: plainTrandata.TRANID || plainTrandata.transId || 'N/A',
+                trackId: plainTrandata.TrackID || plainTrandata.trackId || 'N/A',
                 amount: plainTrandata.amt,
-                referenceType: udf5Value
+                referenceType: udf5Value,
+                allFields: Object.keys(plainTrandata).join(', ')
             });
 
             // Encrypt trandata
