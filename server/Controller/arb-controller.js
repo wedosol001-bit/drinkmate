@@ -284,9 +284,19 @@ const handleCallback = async (req, res) => {
               
             } catch (verifyError) {
               console.error('❌ Server-to-server verification error:', verifyError);
-              // Log but don't fail - callback data is still valid
-              // In production, you may want to queue for retry or alert
-              console.warn('⚠️ Proceeding with callback data despite verification error');
+              // If we have valid payment result from callback, proceed anyway
+              if (hasValidPaymentResult) {
+                console.warn('⚠️ Inquiry failed but proceeding with valid callback payment data:', {
+                  paymentResult: paymentResult,
+                  error: verifyError.message
+                });
+              } else {
+                // No valid payment result - this is more serious
+                console.error('❌ Inquiry failed and no valid payment result from callback');
+                // Log but don't fail - callback data might still be valid
+                // In production, you may want to queue for retry or alert
+                console.warn('⚠️ Proceeding with callback data despite verification error');
+              }
             }
             
             // Update order payment status
