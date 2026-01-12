@@ -281,7 +281,7 @@ const handleCallback = async (req, res) => {
                 result: verifiedResult,
                 amount: verifiedAmount
               });
-              
+              }
             } catch (verifyError) {
               console.error('❌ Server-to-server verification error:', verifyError);
               // If we have valid payment result from callback, proceed anyway
