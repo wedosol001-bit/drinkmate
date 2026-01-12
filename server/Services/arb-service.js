@@ -59,6 +59,44 @@ class ArbService {
     }
 
     /**
+     * Build ARB payment URL from result string
+     * ARB returns result as: "paymentId:paymentPageUrl"
+     * We must frame it as: "paymentPageUrl?PaymentID=paymentId"
+     * 
+     * @param {string} result - ARB result string in format "paymentId:url"
+     * @param {string} fallbackBase - Fallback base URL if result doesn't contain URL
+     * @returns {Object} { paymentId, paymentUrl }
+     */
+    buildArbPaymentUrl(result, fallbackBase) {
+        const parts = String(result || "").split(":");
+        const paymentId = parts[0];
+        const returnedUrl = parts.slice(1).join(":"); // Keep https:// intact
+
+        if (!paymentId) {
+            throw new Error("ARB result missing paymentId");
+        }
+
+        // If ARB already returned a URL that includes paymentId/PaymentID, use it as-is
+        if (returnedUrl && /[?&](paymentId|PaymentID)=/i.test(returnedUrl)) {
+            console.log('✅ ARB URL already includes paymentId/PaymentID parameter');
+            return { paymentId, paymentUrl: returnedUrl };
+        }
+
+        // If ARB returned paymentpage.htm without querystring, append PaymentID (case-sensitive per ARB docs)
+        const baseUrl = returnedUrl || `${fallbackBase}/pg/paymentpage.htm`;
+        const joiner = baseUrl.includes("?") ? "&" : "?";
+        const paymentUrl = `${baseUrl}${joiner}PaymentID=${paymentId}`;
+        
+        console.log('✅ Framed ARB payment URL:', {
+            baseUrl: baseUrl,
+            paymentId: paymentId,
+            paymentUrl: paymentUrl
+        });
+        
+        return { paymentId, paymentUrl };
+    }
+
+    /**
      * Encrypt trandata using AES-CBC with PKCS5Padding
      * As per ARB specification: AES algorithm with CBC Mode, PKCS5Padding
      * IV: PGKEYENCDECIVSPC
