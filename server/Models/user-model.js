@@ -193,7 +193,8 @@ userSchema.index({ city: 1, status: 1 }); // For location-based queries
 userSchema.index({ phone: 1 }); // For phone number lookups
 userSchema.index({ 'addresses.city': 1 }); // For address-based queries
 userSchema.index({ updatedAt: -1 }); // For user updates
-userSchema.index({ email: 1, status: 1 }); // For email-based queries with status
+// email index removed - unique: true already creates {email: 1} index, and compound index {email: 1, status: 1} can serve email-only queries
+userSchema.index({ email: 1, status: 1 }); // For email-based queries with status (compound index can also serve email-only queries)
 userSchema.index({ username: 1, status: 1 }); // For username-based queries with status
 
 // Pre-save middleware

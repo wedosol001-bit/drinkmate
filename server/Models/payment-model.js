@@ -6,6 +6,7 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+    // unique: true automatically creates an index, so no need for explicit index declaration
   },
   
   // Related Order
@@ -187,7 +188,7 @@ paymentSchema.virtual('isExpired').get(function() {
 });
 
 // Indexes for better performance
-paymentSchema.index({ paymentId: 1 });
+// paymentId index removed - already has unique: true which creates an index
 paymentSchema.index({ order: 1 });
 paymentSchema.index({ customer: 1, createdAt: -1 });
 paymentSchema.index({ status: 1, createdAt: -1 });
