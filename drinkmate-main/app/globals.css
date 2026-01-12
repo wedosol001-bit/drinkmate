@@ -189,6 +189,38 @@
   font-weight: inherit;
 }
 
+/* Checkout page specific fixes - ensure all text is visible */
+.checkout-page,
+.checkout-page * {
+  font-family: var(--font-primary), system-ui, sans-serif !important;
+}
+
+/* Ensure all text in checkout is visible with proper weight and color */
+.checkout-page input,
+.checkout-page label,
+.checkout-page p,
+.checkout-page span,
+.checkout-page div:not([class*="font-bold"]):not([class*="font-semibold"]) {
+  font-weight: 400 !important;
+  color: #111827 !important;
+}
+
+.checkout-page h1,
+.checkout-page h2,
+.checkout-page h3,
+.checkout-page .font-bold,
+.checkout-page .font-semibold,
+.checkout-page [class*="font-bold"],
+.checkout-page [class*="font-semibold"] {
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.checkout-page label {
+  font-weight: 500 !important;
+  color: #374151 !important;
+}
+
 /* Card styling utilities */
 .rounded-soft {
   border-radius: 0.75rem; /* 12px */
