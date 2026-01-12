@@ -1,4 +1,4 @@
-# 🥤 DrinkMates - Premium Soda Making Experience
+# 🥤 DrinkMate - Premium Soda Making Experience
 
 A modern, full-stack e-commerce platform for premium soda makers, CO2 cylinders, Italian flavors, and accessories. Built with Next.js 15, Node.js, and MongoDB.
 
@@ -102,8 +102,8 @@ DRINKMATE-new/
 
 ### **1. Clone Repository**
 ```bash
-git clone https://github.com/muhammadfaizanhassan/drinkmates.git
-cd drinkmates
+git clone https://github.com/muhammadfaizanhassan/drinkmate.git
+cd drinkmate
 ```
 
 ### **2. Frontend Setup**
@@ -244,7 +244,7 @@ npm run dev
 ## 📞 Support
 
 For support and questions:
-- **Email**: support@drinkmates.com
+- **Email**: support@drinkmate.com
 - **Live Chat**: Available on the website
 - **GitHub Issues**: Report bugs and feature requests
 
