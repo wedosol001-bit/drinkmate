@@ -257,55 +257,80 @@ const handleCallback = async (req, res) => {
                   console.warn('⚠️ Skipping inquiry - paymentId format is invalid (must be numeric)');
                   console.log('✅ Proceeding with callback payment data (no inquiry needed)');
                 } else {
-                  const verificationResult = await arbService.inquiryPayment({
-                    paymentId: normalizedPaymentId,
-                    transId: hasValidTransId ? String(transId).trim() : null,
-                    trackId: orderId,
-                    amount: order.total.toFixed(2),
-                    currencyCode: '682',
-                    referenceType: 'PaymentID' // Use PaymentID since we have valid paymentId
-                  });
-              
-              if (!verificationResult.success) {
-                console.error('❌ Status verification failed:', verificationResult.error);
-                // Don't mark as paid if verification fails
-                throw new Error(`Status verification failed: ${verificationResult.error}`);
-              }
-              
-              // Verify amount and currency match
-              const verifiedAmount = parseFloat(verificationResult.data?.amt || verificationResult.amount || '0');
-              const verifiedCurrency = verificationResult.data?.currencyCode || verificationResult.currencyCode || '682';
-              
-              if (Math.abs(verifiedAmount - order.total) > 0.01) {
-                console.error('❌ Amount mismatch:', {
-                  orderAmount: order.total,
-                  verifiedAmount: verifiedAmount
-                });
-                throw new Error('Payment amount mismatch - verification failed');
-              }
-              
-              if (verifiedCurrency !== '682') {
-                console.error('❌ Currency mismatch:', {
-                  expected: '682 (SAR)',
-                  verified: verifiedCurrency
-                });
-                throw new Error('Payment currency mismatch - verification failed');
-              }
-              
-              // Verify payment status
-              const verifiedResult = verificationResult.data?.result || verificationResult.result;
-              if (verifiedResult !== 'CAPTURED' && verifiedResult !== 'APPROVED') {
-                console.error('❌ Payment not captured/approved:', verifiedResult);
-                throw new Error(`Payment status invalid: ${verifiedResult}`);
-              }
-              
-              console.log('✅ Status verification successful:', {
-                paymentId: paymentId,
-                transId: transId,
-                result: verifiedResult,
-                amount: verifiedAmount
-              });
-              }
+                  try {
+                    const verificationResult = await arbService.inquiryPayment({
+                      paymentId: normalizedPaymentId,
+                      transId: hasValidTransId ? String(transId).trim() : null,
+                      trackId: orderId,
+                      amount: order.total.toFixed(2),
+                      currencyCode: '682',
+                      referenceType: 'PaymentID' // Use PaymentID since we have valid paymentId
+                    });
+                
+                    if (!verificationResult.success) {
+                      console.error('❌ Status verification failed:', verificationResult.error);
+                      // If inquiry fails but we have valid callback data, proceed anyway
+                      if (hasValidPaymentResult) {
+                        console.warn('⚠️ Inquiry failed but proceeding with valid callback payment data');
+                      } else {
+                        throw new Error(`Status verification failed: ${verificationResult.error}`);
+                      }
+                    } else {
+                      // Verify amount and currency match
+                      const verifiedAmount = parseFloat(verificationResult.data?.amt || verificationResult.amount || '0');
+                      const verifiedCurrency = verificationResult.data?.currencyCode || verificationResult.currencyCode || '682';
+                      
+                      if (Math.abs(verifiedAmount - order.total) > 0.01) {
+                        console.error('❌ Amount mismatch:', {
+                          orderAmount: order.total,
+                          verifiedAmount: verifiedAmount
+                        });
+                        if (hasValidPaymentResult) {
+                          console.warn('⚠️ Amount mismatch in inquiry but proceeding with callback data');
+                        } else {
+                          throw new Error('Payment amount mismatch - verification failed');
+                        }
+                      }
+                      
+                      if (verifiedCurrency !== '682') {
+                        console.error('❌ Currency mismatch:', {
+                          expected: '682 (SAR)',
+                          verified: verifiedCurrency
+                        });
+                        if (hasValidPaymentResult) {
+                          console.warn('⚠️ Currency mismatch in inquiry but proceeding with callback data');
+                        } else {
+                          throw new Error('Payment currency mismatch - verification failed');
+                        }
+                      }
+                      
+                      // Verify payment status
+                      const verifiedResult = verificationResult.data?.result || verificationResult.result;
+                      if (verifiedResult !== 'CAPTURED' && verifiedResult !== 'APPROVED') {
+                        console.error('❌ Payment not captured/approved:', verifiedResult);
+                        if (hasValidPaymentResult) {
+                          console.warn('⚠️ Inquiry result mismatch but proceeding with callback data');
+                        } else {
+                          throw new Error(`Payment status invalid: ${verifiedResult}`);
+                        }
+                      } else {
+                        console.log('✅ Status verification successful:', {
+                          paymentId: normalizedPaymentId,
+                          transId: transId,
+                          result: verifiedResult,
+                          amount: verifiedAmount
+                        });
+                      }
+                    }
+                  } catch (inquiryError) {
+                    // If inquiry throws an error but we have valid callback data, proceed anyway
+                    if (hasValidPaymentResult) {
+                      console.warn('⚠️ Inquiry error but proceeding with valid callback payment data:', inquiryError.message);
+                    } else {
+                      throw inquiryError;
+                    }
+                  }
+                }
             } catch (verifyError) {
               console.error('❌ Server-to-server verification error:', verifyError);
               // If we have valid payment result from callback, proceed anyway
