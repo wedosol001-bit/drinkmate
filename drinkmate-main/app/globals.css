@@ -140,12 +140,31 @@
     letter-spacing: -0.02em;
   }
 
-  /* Default body weight thin */
-  body { font-weight: 100; }
+  /* Default body weight - use 400 (normal) for better visibility, fallback to 100 if needed */
+  body { 
+    font-weight: 400; 
+    font-family: var(--font-primary), system-ui, sans-serif;
+  }
+  
+  /* Map font-weight utilities to available RH ZAK weights (100 or 700) */
+  /* Since RH ZAK only has 100 (thin) and 700 (bold), map intermediate weights appropriately */
+  .font-thin, .font-light, .font-normal { font-weight: 100; }
+  .font-medium, .font-semibold, .font-bold { font-weight: 700; }
   
   /* Form elements */
   button, input, select, textarea {
     font-family: var(--font-primary), system-ui, sans-serif;
+    font-weight: 400; /* Ensure form elements are visible */
+  }
+  
+  /* Ensure all text elements have visible font weight */
+  p, span, div, label, a {
+    font-weight: 400; /* Default to normal weight for visibility */
+  }
+  
+  /* Headings should use bold weight */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
   }
   
   /* Placeholders and microcopy */

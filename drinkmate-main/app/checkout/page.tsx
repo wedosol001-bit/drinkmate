@@ -779,7 +779,7 @@ export default function CheckoutPage() {
       <Header />
       
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">{t("checkout.title")}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8" style={{ fontFamily: 'var(--font-primary), system-ui, sans-serif', fontWeight: 700 }}>{t("checkout.title")}</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Streamlined Delivery Address Form */}
