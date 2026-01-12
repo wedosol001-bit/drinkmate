@@ -319,7 +319,6 @@ class AdminSettingsController {
       } catch (error) {
         return { success: false, message: 'ARB encryption test failed: ' + error.message };
       }
-      }
 
       if (response.ok || response.status === 401) { // 401 means auth is working
         return { success: true, message: 'ARB connection successful' };
