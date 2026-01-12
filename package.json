@@ -1,4 +1,14 @@
 {
+  "name": "drinkmate",
+  "version": "1.0.0",
+  "description": "DrinkMate - Premium Soda Making Experience",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "cd server && node server.js",
+    "dev": "cd server && nodemon server.js",
+    "build": "cd drinkmate-main && npm run build",
+    "install:all": "cd server && npm install && cd ../drinkmate-main && npm install"
+  },
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.12.2",
