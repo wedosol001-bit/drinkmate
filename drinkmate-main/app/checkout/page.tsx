@@ -440,6 +440,12 @@ export default function CheckoutPage() {
 
   // Payment provider configuration (would come from admin panel)
   const paymentProviders = {
+    card: {
+      name: "Credit/Debit (Al Rajhi)",
+      description: "Pay securely by credit or debit card through Al Rajhi Bank payment gateway.",
+      logo: "/images/payment-logos/arb-payment.png",
+      gateway: "arb"
+    },
     arb: {
       name: "Credit/Debit (Al Rajhi)",
       description: "Pay securely by credit or debit card through Al Rajhi Bank payment gateway.",
