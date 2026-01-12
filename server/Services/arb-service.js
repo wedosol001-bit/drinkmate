@@ -370,14 +370,13 @@ class ArbService {
             if (responseData && responseData.status === '1' && responseData.result) {
                 // ARB returns result in format: "paymentId:paymentPageUrl"
                 // Example: "600202601209616797:https://securepayments.alrajhibank.com.sa/pg/paymentpage.htm"
-                const resultParts = responseData.result.split(':');
-                const paymentId = resultParts[0];
-                const paymentPageUrl = resultParts.slice(1).join(':'); // In case URL contains ':'
+                // OR for 3DS: "7002...:https://securepayments.../pg/TranportalVbv.htm?paymentId=7002...&id=XXXXX"
+                const { paymentId, paymentUrl } = this.buildArbPaymentUrl(
+                    responseData.result,
+                    this.paymentPageBaseUrl
+                );
                 
                 if (paymentId) {
-                    // Use the paymentPageUrl from ARB if provided, otherwise frame it
-                    const paymentUrl = paymentPageUrl || `${this.paymentPageBaseUrl}/pg/paymentpage.htm?PaymentID=${paymentId}`;
-                    
                     return {
                         success: true,
                         paymentId: paymentId,
