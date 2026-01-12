@@ -178,6 +178,7 @@ const handleCallback = async (req, res) => {
       const orderId = result.orderId || result.trackId;
       const paymentId = result.paymentId;
       const transId = result.transactionId;
+      const paymentResult = result.result; // 'CAPTURED' or 'APPROVED'
 
       if (orderId) {
         // Find order by orderId (trackId)
@@ -199,31 +200,47 @@ const handleCallback = async (req, res) => {
           } else {
             // CRITICAL: Always perform server-to-server status verification before fulfilling order
             // This ensures we have the authoritative payment status from ARB
+            // However, if we already have valid payment data from callback (CAPTURED/APPROVED), 
+            // we can skip inquiry to avoid "Payment id missing" errors
             console.log('🔍 Performing server-to-server status verification...');
             
+            // Check if we have valid payment result from callback
+            const hasValidPaymentResult = paymentResult === 'CAPTURED' || paymentResult === 'APPROVED';
+            const hasValidPaymentId = paymentId && String(paymentId).trim().length > 0 && /^\d+$/.test(String(paymentId).trim());
+            const hasValidTransId = transId && String(transId).trim().length > 0;
+            
             try {
-              // Only perform inquiry if we have a valid paymentId or transId
-              if (!paymentId && !transId) {
-                console.warn('⚠️ Skipping inquiry - no paymentId or transId available');
-                throw new Error('Cannot verify payment - missing paymentId and transId');
-              }
+              // Only perform inquiry if:
+              // 1. We have a valid paymentId or transId
+              // 2. AND we don't already have a valid payment result from callback
+              // OR we want to double-check the payment status
+              if (!hasValidPaymentId && !hasValidTransId) {
+                console.warn('⚠️ Skipping inquiry - no valid paymentId or transId available');
+                if (!hasValidPaymentResult) {
+                  throw new Error('Cannot verify payment - missing paymentId, transId, and payment result');
+                }
+                // If we have valid payment result but no IDs, proceed with callback data
+                console.log('✅ Proceeding with callback payment data (no inquiry needed)');
+              } else if (hasValidPaymentResult && hasValidPaymentId) {
+                // We have valid payment result and paymentId - inquiry is optional but recommended
+                console.log('✅ Valid payment result from callback, performing inquiry for verification...');
+                
+                console.log('🔍 Inquiry parameters:', {
+                  paymentId: paymentId ? String(paymentId).trim() : 'N/A',
+                  transId: transId ? String(transId).trim() : 'N/A',
+                  trackId: orderId,
+                  amount: order.total.toFixed(2),
+                  referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID')
+                });
 
-              console.log('🔍 Inquiry parameters:', {
-                paymentId: paymentId || 'N/A',
-                transId: transId || 'N/A',
-                trackId: orderId,
-                amount: order.total.toFixed(2),
-                referenceType: paymentId ? 'PaymentID' : (transId ? 'TRANID' : 'TrackID')
-              });
-
-              const verificationResult = await arbService.inquiryPayment({
-                paymentId: paymentId ? String(paymentId).trim() : null,
-                transId: transId ? String(transId).trim() : null,
-                trackId: orderId,
-                amount: order.total.toFixed(2),
-                currencyCode: '682',
-                referenceType: paymentId ? 'PaymentID' : (transId ? 'TRANID' : 'TrackID')
-              });
+                const verificationResult = await arbService.inquiryPayment({
+                  paymentId: hasValidPaymentId ? String(paymentId).trim() : null,
+                  transId: hasValidTransId ? String(transId).trim() : null,
+                  trackId: orderId,
+                  amount: order.total.toFixed(2),
+                  currencyCode: '682',
+                  referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID')
+                });
               
               if (!verificationResult.success) {
                 console.error('❌ Status verification failed:', verificationResult.error);

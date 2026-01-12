@@ -571,17 +571,30 @@ class ArbService {
             let referenceValue;
             let udf5Value;
             
+            // Validate and normalize reference values
             if (referenceType === 'PaymentID' && paymentId) {
-                referenceValue = paymentId;
+                const normalizedPaymentId = String(paymentId).trim();
+                if (!/^\d+$/.test(normalizedPaymentId)) {
+                    throw new Error(`Invalid PaymentID format: ${normalizedPaymentId} (must be numeric)`);
+                }
+                referenceValue = normalizedPaymentId;
                 udf5Value = 'PaymentID';
             } else if (referenceType === 'TRANID' && transId) {
-                referenceValue = transId;
+                const normalizedTransId = String(transId).trim();
+                if (normalizedTransId.length === 0) {
+                    throw new Error('TRANID cannot be empty');
+                }
+                referenceValue = normalizedTransId;
                 udf5Value = 'TRANID';
             } else if (referenceType === 'TrackID' && trackId) {
-                referenceValue = trackId;
+                const normalizedTrackId = String(trackId).trim();
+                if (normalizedTrackId.length === 0) {
+                    throw new Error('TrackID cannot be empty');
+                }
+                referenceValue = normalizedTrackId;
                 udf5Value = 'TrackID';
             } else {
-                throw new Error('Invalid reference type or missing reference value');
+                throw new Error(`Invalid reference type or missing reference value: referenceType=${referenceType}, paymentId=${paymentId}, transId=${transId}, trackId=${trackId}`);
             }
 
             // Prepare plain trandata for inquiry
