@@ -176,9 +176,24 @@ const handleCallback = async (req, res) => {
     if (result.success) {
       // Idempotency: Check if payment already processed
       const orderId = result.orderId || result.trackId;
-      const paymentId = result.paymentId;
-      const transId = result.transactionId;
+      // Extract paymentId from multiple possible sources
+      let paymentId = result.paymentId || result.PaymentID || result.PaymentId;
+      // If paymentId is in format "paymentId:url", extract just the paymentId
+      if (paymentId && paymentId.includes(':')) {
+        paymentId = paymentId.split(':')[0];
+      }
+      const transId = result.transactionId || result.transId || result.TRANID;
       const paymentResult = result.result; // 'CAPTURED' or 'APPROVED'
+
+      console.log('🔍 Callback data extracted:', {
+        orderId: orderId,
+        paymentId: paymentId || 'N/A',
+        transId: transId || 'N/A',
+        paymentResult: paymentResult || 'N/A',
+        hasPaymentId: !!paymentId,
+        hasTransId: !!transId,
+        hasPaymentResult: !!paymentResult
+      });
 
       if (orderId) {
         // Find order by orderId (trackId)
@@ -206,7 +221,9 @@ const handleCallback = async (req, res) => {
             
             // Check if we have valid payment result from callback
             const hasValidPaymentResult = paymentResult === 'CAPTURED' || paymentResult === 'APPROVED';
-            const hasValidPaymentId = paymentId && String(paymentId).trim().length > 0 && /^\d+$/.test(String(paymentId).trim());
+            // Normalize and validate paymentId
+            const normalizedPaymentId = paymentId ? String(paymentId).trim() : null;
+            const hasValidPaymentId = normalizedPaymentId && normalizedPaymentId.length > 0 && /^\d+$/.test(normalizedPaymentId);
             const hasValidTransId = transId && String(transId).trim().length > 0;
             
             try {
@@ -223,24 +240,31 @@ const handleCallback = async (req, res) => {
                 console.log('✅ Proceeding with callback payment data (no inquiry needed)');
               } else if (hasValidPaymentResult && hasValidPaymentId) {
                 // We have valid payment result and paymentId - inquiry is optional but recommended
+                // However, skip inquiry if paymentId format is invalid to avoid "Payment id missing" error
                 console.log('✅ Valid payment result from callback, performing inquiry for verification...');
                 
                 console.log('🔍 Inquiry parameters:', {
-                  paymentId: paymentId ? String(paymentId).trim() : 'N/A',
+                  paymentId: normalizedPaymentId || 'N/A',
                   transId: transId ? String(transId).trim() : 'N/A',
                   trackId: orderId,
                   amount: order.total.toFixed(2),
-                  referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID')
+                  referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID'),
+                  paymentIdIsNumeric: hasValidPaymentId
                 });
 
-                const verificationResult = await arbService.inquiryPayment({
-                  paymentId: hasValidPaymentId ? String(paymentId).trim() : null,
-                  transId: hasValidTransId ? String(transId).trim() : null,
-                  trackId: orderId,
-                  amount: order.total.toFixed(2),
-                  currencyCode: '682',
-                  referenceType: hasValidPaymentId ? 'PaymentID' : (hasValidTransId ? 'TRANID' : 'TrackID')
-                });
+                // Only perform inquiry if paymentId is valid numeric format
+                if (!hasValidPaymentId) {
+                  console.warn('⚠️ Skipping inquiry - paymentId format is invalid (must be numeric)');
+                  console.log('✅ Proceeding with callback payment data (no inquiry needed)');
+                } else {
+                  const verificationResult = await arbService.inquiryPayment({
+                    paymentId: normalizedPaymentId,
+                    transId: hasValidTransId ? String(transId).trim() : null,
+                    trackId: orderId,
+                    amount: order.total.toFixed(2),
+                    currencyCode: '682',
+                    referenceType: 'PaymentID' // Use PaymentID since we have valid paymentId
+                  });
               
               if (!verificationResult.success) {
                 console.error('❌ Status verification failed:', verificationResult.error);
