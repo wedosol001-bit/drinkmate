@@ -170,10 +170,29 @@ const handleCallback = async (req, res) => {
     // ARB can send data in body (POST notification) or query params (GET redirect)
     const callbackData = req.method === 'GET' ? req.query : req.body;
 
+    // Check for cancellation/error indicators in callback data BEFORE processing
+    const hasError = callbackData.error || callbackData.errorText;
+    const hasErrorStatus = callbackData.status === '2' || callbackData.status === 2; // ARB uses status='2' for failure
+    const isCancelled = hasError || hasErrorStatus;
+
+    console.log('🔍 Callback status check:', {
+      hasError: !!hasError,
+      hasErrorStatus: hasErrorStatus,
+      isCancelled: isCancelled,
+      error: callbackData.error || 'N/A',
+      errorText: callbackData.errorText || 'N/A',
+      status: callbackData.status || 'N/A'
+    });
+
     // Process callback with ARB service
     const result = await arbService.handleCallback(callbackData);
 
-    if (result.success) {
+    // Check if payment was cancelled or failed
+    const paymentResult = result.result; // 'CAPTURED', 'APPROVED', or error status
+    const isPaymentSuccessful = paymentResult === 'CAPTURED' || paymentResult === 'APPROVED';
+    const isPaymentCancelled = isCancelled || (!isPaymentSuccessful && result.success === false);
+
+    if (result.success && isPaymentSuccessful && !isCancelled) {
       // Idempotency: Check if payment already processed
       const orderId = result.orderId || result.trackId;
       // Extract paymentId from multiple possible sources
@@ -482,13 +501,20 @@ const handleCallback = async (req, res) => {
         data: result
       });
     } else {
-      console.log('❌ Payment processing failed:', result.error);
+      console.log('❌ Payment processing failed or cancelled:', {
+        error: result.error,
+        isCancelled: isPaymentCancelled,
+        paymentResult: paymentResult
+      });
       
-      // For GET requests (redirects), redirect to error page
+      // For GET requests (redirects), redirect to cancel/error page
       if (req.method === 'GET') {
-        const orderId = result.orderId || callbackData.trackId || 'unknown';
+        const orderId = result.orderId || callbackData.trackId || callbackData.trackId || 'unknown';
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
-        return res.redirect(`${frontendUrl}/payment/cancel?orderId=${orderId}&error=${encodeURIComponent(result.error || 'Payment failed')}`);
+        const errorMessage = isPaymentCancelled 
+          ? 'Payment was cancelled' 
+          : (result.error || 'Payment failed');
+        return res.redirect(`${frontendUrl}/payment/cancel?orderId=${orderId}&error=${encodeURIComponent(errorMessage)}`);
       }
       
       // For POST requests (notifications), return JSON error

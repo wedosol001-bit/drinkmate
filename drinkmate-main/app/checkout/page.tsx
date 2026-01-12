@@ -649,7 +649,15 @@ export default function CheckoutPage() {
       const paymentRequest = {
         amount: total,
         currency: 'SAR',
-        orderId: orderResponse.orderId || `ORDER-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        orderId: orderResponse.orderId || (() => {
+          // Generate human-friendly order number: DM-YYYYMMDD-XXXX
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(now.getDate()).padStart(2, '0');
+          const random = Math.random().toString(36).substr(2, 4).toUpperCase();
+          return `DM-${year}${month}${day}-${random}`;
+        })(),
         customerEmail: customerEmail,
         customerName: customerName,
         description: `DrinkMate Order - ${state.itemCount} items`,

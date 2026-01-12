@@ -280,14 +280,21 @@ orderSchema.index({ 'shippingAddress.city': 1, createdAt: -1 }); // Location que
 orderSchema.index({ 'shippingAddress.country': 1, createdAt: -1 }); // Country queries
 
 // Pre-save middleware
-orderSchema.pre('save', function(next) {
+orderSchema.pre('save', async function(next) {
   this.updatedAt = Date.now();
   
   // Generate order number if not provided
   if (!this.orderNumber) {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substr(2, 5).toUpperCase();
-    this.orderNumber = `DM${timestamp}${random}`;
+    try {
+      const OrderNumberGenerator = require('../Utils/order-number-generator');
+      this.orderNumber = await OrderNumberGenerator.generateOrderNumber(this.constructor);
+    } catch (error) {
+      console.error('Error generating order number in pre-save:', error);
+      // Fallback to simple format
+      const timestamp = Date.now().toString().slice(-8);
+      const random = Math.random().toString(36).substr(2, 4).toUpperCase();
+      this.orderNumber = `DM-${timestamp}-${random}`;
+    }
   }
   
   next();
