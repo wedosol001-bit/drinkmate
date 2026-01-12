@@ -363,7 +363,6 @@ const handleCallback = async (req, res) => {
                     console.error('❌ Inquiry failed and no valid payment result from callback:', inquiryError.message);
                     throw inquiryError;
                   }
-                }
               }
             } catch (verifyError) {
               console.error('❌ Server-to-server verification error:', verifyError);
