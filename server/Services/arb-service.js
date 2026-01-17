@@ -32,8 +32,15 @@ class ArbService {
         }
 
         // Payment page URL (where customers are redirected)
+        // For production, use the standard payment page URL to avoid certificate popups (which usually happen on securepayments S2S URL)
         // Can be overridden by ARB_PAYMENT_PAGE_URL
-        this.paymentPageBaseUrl = process.env.ARB_PAYMENT_PAGE_URL || this.apiBaseUrl;
+        if (process.env.ARB_PAYMENT_PAGE_URL) {
+            this.paymentPageBaseUrl = process.env.ARB_PAYMENT_PAGE_URL;
+        } else {
+            this.paymentPageBaseUrl = this.environment === 'production'
+                ? 'https://standard.payment.alrajhibank.com.sa'
+                : this.apiBaseUrl; // Fallback to apiBaseUrl (securepayments) for test
+        }
 
         // Token endpoint path (configurable, default from ARB)
         // CRITICAL: Must be set from environment variable
