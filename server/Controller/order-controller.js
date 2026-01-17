@@ -286,7 +286,7 @@ exports.createOrder = async (req, res) => {
                     product: product._id,
                     name: product.name,
                     price: product.price,
-                    quantity: item.quantity,
+                    quantity: Number(item.quantity),
                     color: item.color,
                     image: (product.images && Array.isArray(product.images)) ? (product.images.find(img => img.isPrimary)?.url || product.images[0]?.url) : null,
                     sku: product.sku
@@ -333,7 +333,7 @@ exports.createOrder = async (req, res) => {
                     bundle: bundle._id,
                     name: bundle.name,
                     price: bundle.price,
-                    quantity: item.quantity,
+                    quantity: Number(item.quantity),
                     image: (bundle.images && Array.isArray(bundle.images)) ? (bundle.images.find(img => img.isPrimary)?.url || bundle.images[0]?.url) : null,
                     sku: bundle.sku
                 };
@@ -447,10 +447,21 @@ exports.createOrder = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in createOrder:', error);
+
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({
+                success: false,
+                message: 'Validation Error',
+                error: messages.join(', ')
+            });
+        }
+
         res.status(500).json({
             success: false,
             message: 'Server error',
-            error: error.message
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 };
