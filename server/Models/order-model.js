@@ -308,7 +308,8 @@ orderSchema.methods.addTimelineEntry = function (status, description, updatedBy 
     timestamp: new Date(),
     updatedBy
   });
-  return this.save();
+  // Don't save here - let the caller decide when to save
+  // This prevents parallel save errors when multiple timeline entries are added before saving
 };
 
 // Method to update status

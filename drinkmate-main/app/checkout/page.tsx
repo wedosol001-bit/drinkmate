@@ -623,6 +623,13 @@ export default function CheckoutPage() {
       // Extract created order id/number for fallback navigation if payment fails
       const createdOrder = orderResponse.order || orderResponse.data?.order || orderResponse.data || {}
       const createdOrderId = createdOrder._id || createdOrder.id || createdOrder.orderId || createdOrder.orderNumber
+      
+      console.log('📦 Order created successfully:', {
+        orderId: createdOrder._id,
+        orderNumber: createdOrder.orderNumber,
+        createdOrderId: createdOrderId,
+        orderResponse: orderResponse
+      })
 
       // Validate customer data before payment
       const customerName = (isAuthenticated ? (user?.name || user?.username) : deliveryAddress.fullName) || 'Customer'
@@ -641,24 +648,30 @@ export default function CheckoutPage() {
       }
 
       // Now process payment
+      // Use the actual order ID from the created order (ObjectId or orderNumber)
+      if (!createdOrderId) {
+        console.error('❌ No order ID found in order response:', orderResponse)
+        toast.error("Failed to get order ID. Please try again.")
+        setIsProcessing(false)
+        return
+      }
+
       const paymentRequest = {
         amount: total,
         currency: 'SAR',
-        orderId: orderResponse.orderId || (() => {
-          // Generate human-friendly order number: DM-YYYYMMDD-XXXX
-          const now = new Date();
-          const year = now.getFullYear();
-          const month = String(now.getMonth() + 1).padStart(2, '0');
-          const day = String(now.getDate()).padStart(2, '0');
-          const random = Math.random().toString(36).substr(2, 4).toUpperCase();
-          return `DM-${year}${month}${day}-${random}`;
-        })(),
+        orderId: createdOrderId, // ✅ Use the actual order ID from created order (ObjectId or orderNumber)
         customerEmail: customerEmail,
         customerName: customerName,
         description: `DrinkMate Order - ${state.itemCount} items`,
         returnUrl: `${window.location.origin}/payment/success`,
         cancelUrl: `${window.location.origin}/payment/cancel`
       }
+
+      console.log('📋 Payment request prepared:', {
+        orderId: paymentRequest.orderId,
+        amount: paymentRequest.amount,
+        customerEmail: paymentRequest.customerEmail
+      })
 
       // Get the selected payment gateway
       const selectedGateway = paymentProviders[selectedPaymentMethod as keyof typeof paymentProviders].gateway

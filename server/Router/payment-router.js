@@ -16,6 +16,9 @@ router.post('/arb/create/guest', arbController.createPayment);
 // Verify ARB payment (POST with encrypted trandata)
 router.post('/arb/verify', arbController.verifyPayment);
 
+// Verify payment by orderId/orderNumber (public - for missed callbacks)
+router.post('/arb/verify-order', arbController.verifyPaymentByOrder);
+
 // Get ARB payment details
 router.get('/arb/details/:transactionId', arbController.getPaymentDetails);
 
