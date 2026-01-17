@@ -22,16 +22,16 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 12,
+    minlength: [12, 'Password must be at least 12 characters long'],
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         // Password must be at least 12 characters with at least one uppercase, lowercase, number, and special character
         return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/.test(v);
       },
       message: 'Password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character'
     }
   },
-  
+
   // Personal Information
   name: {
     type: String,
@@ -44,14 +44,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         // Allow empty string or valid Saudi phone number
         return !v || /^(\+966|966|0)?[5-9][0-9]{8}$/.test(v);
       },
       message: 'Please enter a valid Saudi phone number (e.g., 0507551812)'
     }
   },
-  
+
   // Address Information
   district: {
     type: String,
@@ -71,14 +71,14 @@ const userSchema = new mongoose.Schema({
     trim: true,
     uppercase: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         // Allow empty string or valid national address format
         return !v || /^[A-Z]{4}[0-9]{4}$/.test(v);
       },
       message: 'National Address must be 4 letters followed by 4 numbers (e.g., JESA3591)'
     }
   },
-  
+
   // Account Status
   status: {
     type: String,
@@ -93,7 +93,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  
+
   // Role and Permissions
   role: {
     type: String,
@@ -104,7 +104,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  
+
   // Activity Tracking
   lastLogin: {
     type: Date,
@@ -118,7 +118,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  
+
   // Preferences
   preferences: {
     language: {
@@ -145,7 +145,7 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
-  
+
   // Social Login (if implemented later)
   socialLogins: [{
     provider: {
@@ -155,13 +155,13 @@ const userSchema = new mongoose.Schema({
     providerId: String,
     providerEmail: String
   }],
-  
+
   // Security
   passwordResetToken: String,
   passwordResetExpires: Date,
   emailVerificationToken: String,
   emailVerificationExpires: Date,
-  
+
   // Timestamps
   createdAt: {
     type: Date,
@@ -178,7 +178,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Virtual for full name (now just returns the name field)
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual('fullName').get(function () {
   return this.name;
 });
 
@@ -198,7 +198,7 @@ userSchema.index({ email: 1, status: 1 }); // For email-based queries with statu
 userSchema.index({ username: 1, status: 1 }); // For username-based queries with status
 
 // Pre-save middleware
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) {
     this.updatedAt = Date.now();
@@ -218,7 +218,7 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to get public profile (without sensitive data)
-userSchema.methods.getPublicProfile = function() {
+userSchema.methods.getPublicProfile = function () {
   const userObject = this.toObject();
   delete userObject.password;
   delete userObject.passwordResetToken;
@@ -229,27 +229,27 @@ userSchema.methods.getPublicProfile = function() {
 };
 
 // Method to check if user is active
-userSchema.methods.isActive = function() {
+userSchema.methods.isActive = function () {
   return this.status === 'active' && this.emailVerified;
 };
 
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   const bcrypt = require('bcryptjs');
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Method to generate auth token
-userSchema.methods.generateAuthToken = function() {
+userSchema.methods.generateAuthToken = function () {
   const jwt = require('jsonwebtoken');
   return jwt.sign(
-    { 
-      id: this._id, 
+    {
+      id: this._id,
       isAdmin: this.isAdmin,
       role: this.role
     },
     process.env.JWT_SECRET || 'default_dev_secret',
-    { 
+    {
       expiresIn: '2d',
       issuer: 'drinkmate-api',
       audience: 'drinkmate-client'
@@ -258,7 +258,7 @@ userSchema.methods.generateAuthToken = function() {
 };
 
 // Pre-save hook to validate password
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   // Only validate password if it's being modified
   if (!this.isModified('password')) {
     return next();

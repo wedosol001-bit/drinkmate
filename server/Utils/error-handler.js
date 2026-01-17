@@ -67,24 +67,36 @@ const SENSITIVE_PATTERNS = [
   /refresh[_-]?token/i
 ];
 
-/**
- * Sanitize error message to prevent information disclosure
- */
+// Sanitize error message to prevent information disclosure
 function sanitizeErrorMessage(error, isDevelopment = false) {
   if (isDevelopment) {
     return error.message || 'Unknown error';
   }
 
+  // Handle Mongoose Validation Errors specially to provide useful feedback
+  if (error.name === 'ValidationError') {
+    // If it has multiple errors (Mongoose style), join them
+    if (error.errors) {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return messages.join('. ');
+    }
+    return error.message;
+  }
+
   // Check if error message contains sensitive information
   const message = error.message || 'An error occurred';
-  
+
   // If it's a known error type, return safe message
   if (error.type && ERROR_TYPES[error.type]) {
+    // Exception for VALIDATION_ERROR if it was set manually without error.name being ValidationError
+    if (error.type === 'VALIDATION_ERROR') {
+      return error.message;
+    }
     return ERROR_TYPES[error.type].message;
   }
 
   // Check for sensitive patterns
-  const hasSensitiveInfo = SENSITIVE_PATTERNS.some(pattern => 
+  const hasSensitiveInfo = SENSITIVE_PATTERNS.some(pattern =>
     pattern.test(message) || pattern.test(error.stack || '')
   );
 
@@ -139,7 +151,7 @@ function logError(error, context = '') {
   // Log to console with appropriate level
   const logLevel = ERROR_TYPES[error.type]?.logLevel || 'error';
   const logMessage = `[${logLevel.toUpperCase()}] ${context}: ${sanitizedError.message}`;
-  
+
   if (logLevel === 'error') {
     console.error(logMessage, sanitizedError);
   } else if (logLevel === 'warn') {
@@ -159,7 +171,7 @@ function logError(error, context = '') {
  */
 function createErrorResponse(error, req = null) {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  
+
   // Determine error type
   let errorType = 'SERVER_ERROR';
   let statusCode = 500;
