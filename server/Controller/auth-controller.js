@@ -16,21 +16,21 @@ const home = (req, res) => {
 const createAdminUser = async (req, res) => {
     try {
         const { email, password, secret } = req.body;
-        
+
         // Security: Only allow this in production with a secret key
         if (process.env.NODE_ENV !== 'production' || secret !== process.env.ADMIN_SETUP_SECRET) {
             return res.status(403).json({ error: 'Unauthorized' });
         }
-        
+
         // Check if admin user already exists
         const existingAdmin = await User.findOne({ email: email || 'admin@drinkmate.com' });
         if (existingAdmin) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: 'Admin user already exists',
-                email: existingAdmin.email 
+                email: existingAdmin.email
             });
         }
-        
+
         // Create admin user
         const adminUser = new User({
             username: 'admin',
@@ -42,12 +42,12 @@ const createAdminUser = async (req, res) => {
             isActive: true,
             emailVerified: true
         });
-        
+
         const savedUser = await adminUser.save();
-        
+
         // Generate token
         const token = savedUser.generateAuthToken();
-        
+
         return res.status(201).json({
             message: 'Admin user created successfully',
             user: {
@@ -58,7 +58,7 @@ const createAdminUser = async (req, res) => {
             },
             token
         });
-        
+
     } catch (error) {
         logError(error, 'Admin user creation failed');
         const errorResponse = createErrorResponse(error, req);
@@ -71,85 +71,54 @@ const register = async (req, res) => {
     try {
         let { fullName, email, password, username } = req.body;
 
-        try {
-            // Check if user already exists
-            const existingUser = await User.findOne({ email });
-            if (existingUser) {
-                return res.status(400).json({ error: 'User already exists' });
-            }
-
-            // Generate username from fullName (email will be unique identifier) if not provided
-            if (!username) {
-                username = fullName.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
-            }
-            
-            // Split fullName into firstName and lastName
-            const nameParts = fullName.trim().split(' ');
-            const firstName = nameParts[0];
-            const lastName = nameParts.slice(1).join(' ') || 'User';
-            
-            // Create new user with required fields
-            const user = new User({ 
-                username, 
-                email, 
-                password,
-                firstName,
-                lastName
-            });
-            await user.save();
-
-            // Send welcome email
-            try {
-                await sendWelcomeEmail(email, fullName);
-                console.log('✅ Welcome email sent to:', email);
-            } catch (emailError) {
-                console.error('⚠️ Failed to send welcome email, but user was registered:', emailError);
-                // Don't fail the request if email fails
-            }
-
-            // Generate token
-            const token = user.generateAuthToken();
-
-            return res.status(201).json({ 
-                message: 'User registered', 
-                token,
-                user: {
-                    _id: user._id,
-                    username: user.username,
-                    email: user.email,
-                    isAdmin: user.isAdmin,
-                }
-            });
-        } catch (mongoError) {
-            console.error("MongoDB error during registration, using demo registration:", mongoError);
-            
-            // If MongoDB is unavailable, create a demo user
-            const userId = `demo_${Date.now()}`;
-            
-            // Generate a simple token
-            const token = jwt.sign(
-                { id: userId, isAdmin: false },
-                process.env.JWT_SECRET,
-                { 
-                    expiresIn: '2d',
-                    issuer: 'drinkmate-api',
-                    audience: 'drinkmate-client'
-                }
-            );
-            
-            return res.status(201).json({ 
-                message: 'Demo user registered', 
-                token,
-                user: {
-                    _id: userId,
-                    username,
-                    email,
-                    firstName: fullName.split(' ')[0],
-                    lastName: fullName.split(' ').slice(1).join(' ') || 'User',
-                    isAdmin: false,
-                }
-            });
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
         }
+
+        // Generate username from fullName (email will be unique identifier) if not provided
+        if (!username) {
+            username = fullName.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
+        }
+
+        // Split fullName into firstName and lastName
+        const nameParts = fullName.trim().split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(' ') || 'User';
+
+        // Create new user with required fields
+        const user = new User({
+            username,
+            email,
+            password,
+            firstName,
+            lastName
+        });
+        await user.save();
+
+        // Send welcome email
+        try {
+            await sendWelcomeEmail(email, fullName);
+            console.log('✅ Welcome email sent to:', email);
+        } catch (emailError) {
+            console.error('⚠️ Failed to send welcome email, but user was registered:', emailError);
+            // Don't fail the request if email fails
+        }
+
+        // Generate token
+        const token = user.generateAuthToken();
+
+        return res.status(201).json({
+            message: 'User registered',
+            token,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                isAdmin: user.isAdmin,
+            }
+        });
     } catch (err) {
         logError(err, 'User registration failed');
         const errorResponse = createErrorResponse(err, req);
@@ -234,13 +203,13 @@ const login = async (req, res) => {
         // Security: Only allow demo accounts in development mode
         if (process.env.NODE_ENV === 'development' && demoAccounts.length > 0) {
             const demoUser = demoAccounts.find(account => account.email === email && account.password === password);
-            
+
             if (demoUser) {
                 // Generate a simple token
                 const token = jwt.sign(
                     { id: demoUser._id, isAdmin: demoUser.isAdmin },
                     process.env.JWT_SECRET,
-                    { 
+                    {
                         expiresIn: '2d',
                         issuer: 'drinkmate-api',
                         audience: 'drinkmate-client'
@@ -276,9 +245,9 @@ const verifyToken = async (req, res) => {
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ error: 'No token provided' });
         }
-        
+
         const token = authHeader.split(' ')[1];
-        
+
         try {
             // Verify the token - try with issuer/audience first, then without
             let decoded;
@@ -291,7 +260,7 @@ const verifyToken = async (req, res) => {
                 // Fallback to basic verification for backward compatibility
                 decoded = jwt.verify(token, process.env.JWT_SECRET);
             }
-            
+
             // If token is for a demo user (starts with 'demo')
             if (decoded.id.toString().startsWith('demo')) {
                 return res.status(200).json({
@@ -304,14 +273,14 @@ const verifyToken = async (req, res) => {
                     }
                 });
             }
-            
+
             // Try to find user in MongoDB
             try {
                 const user = await User.findById(decoded.id);
                 if (!user) {
                     return res.status(404).json({ error: 'User not found' });
                 }
-                
+
                 return res.status(200).json({
                     user: {
                         _id: user._id,
@@ -327,7 +296,7 @@ const verifyToken = async (req, res) => {
                 });
             } catch (mongoError) {
                 console.error("MongoDB error during token verification, using decoded token data:", mongoError);
-                
+
                 // If MongoDB is unavailable, return basic user info from token
                 return res.status(200).json({
                     user: {
@@ -358,36 +327,36 @@ const logout = (req, res) => {
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        
+
         const user = await User.findOne({ email });
         if (!user) {
             // For security reasons, don't reveal that the email doesn't exist
             return res.status(200).json({ message: 'If a user with that email exists, a password reset link has been sent.' });
         }
-        
+
         // Generate reset token
         const resetToken = user.generatePasswordResetToken();
         await user.save();
-        
+
         // Create reset URL
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3001'}/reset-password/${resetToken}`;
-        
+
         // Send password reset email
         const emailResult = await sendPasswordResetEmail(
-            user.email, 
-            resetUrl, 
+            user.email,
+            resetUrl,
             user.username || user.firstName || 'User'
         );
-        
+
         if (emailResult.success) {
             console.log('✅ Password reset email sent successfully to:', user.email);
-            
+
             // In production, only return success message
             if (process.env.NODE_ENV === 'production') {
                 res.status(200).json({ message: 'Password reset email sent successfully' });
             } else {
                 // In development, return additional info for testing
-                res.status(200).json({ 
+                res.status(200).json({
                     message: 'Password reset email sent successfully',
                     resetUrl,
                     resetToken,
@@ -396,15 +365,15 @@ const forgotPassword = async (req, res) => {
             }
         } else {
             console.error('❌ Failed to send password reset email:', emailResult.error);
-            
+
             // Clear the reset token since email failed
             user.resetPasswordToken = undefined;
             user.resetPasswordExpires = undefined;
             await user.save();
-            
+
             res.status(500).json({ error: 'Failed to send password reset email. Please try again later.' });
         }
-        
+
     } catch (err) {
         console.error('Forgot password error:', err);
         res.status(500).json({ error: 'Server error during password reset request' });
@@ -415,34 +384,34 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         const { token, password } = req.body;
-        
+
         // Hash the token from the URL to compare with stored hash
         const resetPasswordToken = crypto
             .createHash('sha256')
             .update(token)
             .digest('hex');
-            
+
         // Find user with valid token and non-expired reset token
         const user = await User.findOne({
             resetPasswordToken,
             resetPasswordExpires: { $gt: Date.now() }
         });
-        
+
         if (!user) {
             return res.status(400).json({ error: 'Invalid or expired password reset token' });
         }
-        
+
         // Set new password and clear reset token fields
         user.password = password;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
-        
+
         await user.save();
-        
+
         // Send password reset success email
         try {
             await sendPasswordResetSuccessEmail(
-                user.email, 
+                user.email,
                 user.username || user.firstName || 'User'
             );
             console.log('✅ Password reset success email sent to:', user.email);
@@ -450,9 +419,9 @@ const resetPassword = async (req, res) => {
             console.error('⚠️ Failed to send success email, but password was reset:', emailError);
             // Don't fail the request if email fails
         }
-        
+
         res.status(200).json({ message: 'Password has been reset successfully' });
-        
+
     } catch (err) {
         console.error('Reset password error:', err);
         res.status(500).json({ error: 'Server error during password reset' });
@@ -465,7 +434,7 @@ const Contact = require('../Models/contact-model');
 const submitContact = async (req, res) => {
     try {
         console.log('📧 Contact form submission received:', req.body);
-        
+
         const { name, email, message, phone, subject, userId } = req.body;
 
         if (!name || !email || !message) {
@@ -475,16 +444,16 @@ const submitContact = async (req, res) => {
 
         console.log('✅ Creating new contact with data:', { name, email, message, phone, subject, userId });
 
-        const contact = new Contact({ 
-            name, 
-            email, 
-            message, 
-            phone, 
+        const contact = new Contact({
+            name,
+            email,
+            message,
+            phone,
             subject,
             userId,
             status: 'new'
         });
-        
+
         console.log('💾 Saving contact to database...');
         await contact.save();
         console.log('✅ Contact saved successfully with ID:', contact._id);
@@ -492,14 +461,14 @@ const submitContact = async (req, res) => {
         // In a real application, you would send an email notification here
         // to the admin and a confirmation email to the user
 
-        res.status(201).json({ 
+        res.status(201).json({
             success: true,
             message: 'Contact message submitted successfully.',
             contactId: contact._id
         });
     } catch (err) {
         console.error('❌ Error in submitContact:', err);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
             error: 'Internal server error.',
             details: err.message
@@ -511,31 +480,31 @@ const submitContact = async (req, res) => {
 const testEmail = async (req, res) => {
     try {
         const { email, template = 'passwordReset' } = req.body;
-        
+
         if (!email) {
             return res.status(400).json({ error: 'Email is required' });
         }
-        
+
         // Test email templates
         const testData = {
             resetUrl: `${process.env.FRONTEND_URL || 'http://localhost:3001'}/reset-password/test-token`,
             userName: 'Test User'
         };
-        
+
         const emailResult = await sendEmail(email, template, testData);
-        
+
         if (emailResult.success) {
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Test email sent successfully',
-                emailResult 
+                emailResult
             });
         } else {
-            res.status(500).json({ 
+            res.status(500).json({
                 error: 'Failed to send test email',
-                emailResult 
+                emailResult
             });
         }
-        
+
     } catch (err) {
         console.error('Test email error:', err);
         res.status(500).json({ error: 'Server error during test email' });
@@ -549,7 +518,7 @@ const testWelcomeEmail = async (req, res) => {
         if (!email) {
             return res.status(400).json({ error: 'Email is required' });
         }
-        
+
         const emailResult = await sendWelcomeEmail(email, userName);
         if (emailResult.success) {
             res.status(200).json({
@@ -572,7 +541,7 @@ const testWelcomeEmail = async (req, res) => {
 const getUserProfile = async (req, res) => {
     try {
         const userId = req.user._id;
-        
+
         // Try to get user from MongoDB first
         try {
             const user = await User.findById(userId).select('-password -resetPasswordToken -resetPasswordExpires');
@@ -602,7 +571,7 @@ const getUserProfile = async (req, res) => {
         } catch (mongoError) {
             console.error("MongoDB error during profile fetch, using token data:", mongoError);
         }
-        
+
         // Fallback to token data if MongoDB is unavailable
         res.status(200).json({
             success: true,
@@ -636,9 +605,9 @@ const updateUserProfile = async (req, res) => {
     try {
         const userId = req.user._id;
         const { firstName, lastName, name, phone, username, email, district, city, nationalAddress } = req.body;
-        
+
         console.log('Update profile request:', { userId, firstName, lastName, name, phone, username, email, district, city, nationalAddress });
-        
+
         // Try to update user in MongoDB first
         try {
             // First check if user exists
@@ -646,35 +615,35 @@ const updateUserProfile = async (req, res) => {
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
-            
+
             // Check if username or email is being changed and if it's already taken
             if (username && username !== user.username) {
-                const existingUser = await User.findOne({ 
-                    username, 
-                    _id: { $ne: userId } 
+                const existingUser = await User.findOne({
+                    username,
+                    _id: { $ne: userId }
                 });
                 if (existingUser) {
-                    return res.status(400).json({ 
-                        error: 'Username is already taken' 
+                    return res.status(400).json({
+                        error: 'Username is already taken'
                     });
                 }
             }
-            
+
             if (email && email !== user.email) {
-                const existingUser = await User.findOne({ 
-                    email, 
-                    _id: { $ne: userId } 
+                const existingUser = await User.findOne({
+                    email,
+                    _id: { $ne: userId }
                 });
                 if (existingUser) {
-                    return res.status(400).json({ 
-                        error: 'Email is already taken' 
+                    return res.status(400).json({
+                        error: 'Email is already taken'
                     });
                 }
             }
-            
+
             // Build update object - only include fields we want to update
             const updateFields = {};
-            
+
             if (username !== undefined && username !== user.username) {
                 updateFields.username = username;
             }
@@ -683,7 +652,7 @@ const updateUserProfile = async (req, res) => {
             }
             if (firstName !== undefined) updateFields.firstName = firstName;
             if (lastName !== undefined) updateFields.lastName = lastName;
-            
+
             // Handle name field
             let finalName = name;
             if (name !== undefined) {
@@ -705,7 +674,7 @@ const updateUserProfile = async (req, res) => {
                 finalName = user.name || user.username || 'User';
             }
             updateFields.name = finalName;
-            
+
             // Update phone only if provided and valid (or empty string to clear it)
             if (phone !== undefined) {
                 if (phone === '' || !phone) {
@@ -720,11 +689,11 @@ const updateUserProfile = async (req, res) => {
                     }
                 }
             }
-            
+
             // Update address fields
             if (district !== undefined) updateFields.district = district || '';
             if (city !== undefined) updateFields.city = city || '';
-            
+
             // Update national address only if provided and valid (or empty string to clear it)
             if (nationalAddress !== undefined) {
                 if (nationalAddress === '' || !nationalAddress) {
@@ -739,7 +708,7 @@ const updateUserProfile = async (req, res) => {
                     }
                 }
             }
-            
+
             // Use findByIdAndUpdate to avoid pre-save hooks (like password validation)
             // findByIdAndUpdate doesn't trigger pre-save hooks, so password validation won't run
             // We can use runValidators: true for field-level validations (phone, nationalAddress format)
@@ -748,11 +717,11 @@ const updateUserProfile = async (req, res) => {
                 { $set: updateFields },
                 { new: true, runValidators: true } // Field validations will run, but pre-save hooks won't
             );
-                
+
             if (!updatedUser) {
                 return res.status(404).json({ error: 'User not found after update' });
             }
-            
+
             console.log('User updated successfully:', {
                 _id: updatedUser._id,
                 name: updatedUser.name,
@@ -761,7 +730,7 @@ const updateUserProfile = async (req, res) => {
                 city: updatedUser.city,
                 nationalAddress: updatedUser.nationalAddress
             });
-            
+
             // Verify critical fields were saved
             if (district !== undefined && updatedUser.district !== (district || '')) {
                 console.warn('⚠️ District mismatch after save:', { expected: district, actual: updatedUser.district });
@@ -772,7 +741,7 @@ const updateUserProfile = async (req, res) => {
             if (nationalAddress !== undefined && updatedUser.nationalAddress !== (nationalAddress ? nationalAddress.toUpperCase() : '')) {
                 console.warn('⚠️ National address mismatch after save:', { expected: nationalAddress, actual: updatedUser.nationalAddress });
             }
-            
+
             return res.status(200).json({
                 success: true,
                 message: 'Profile updated successfully',
@@ -811,7 +780,7 @@ const updateUserProfile = async (req, res) => {
                 details: process.env.NODE_ENV === 'development' ? mongoError.message : undefined
             });
         }
-        
+
         // If user not found, return error
         return res.status(404).json({
             error: 'User not found'
@@ -827,19 +796,19 @@ const changePassword = async (req, res) => {
     try {
         const userId = req.user._id;
         const { currentPassword, newPassword } = req.body;
-        
+
         if (!currentPassword || !newPassword) {
-            return res.status(400).json({ 
-                error: 'Current password and new password are required' 
+            return res.status(400).json({
+                error: 'Current password and new password are required'
             });
         }
-        
+
         if (newPassword.length < 6) {
-            return res.status(400).json({ 
-                error: 'New password must be at least 6 characters long' 
+            return res.status(400).json({
+                error: 'New password must be at least 6 characters long'
             });
         }
-        
+
         // Try to change password in MongoDB first
         try {
             const user = await User.findById(userId);
@@ -847,15 +816,15 @@ const changePassword = async (req, res) => {
                 // Verify current password
                 const isMatch = await user.comparePassword(currentPassword);
                 if (!isMatch) {
-                    return res.status(400).json({ 
-                        error: 'Current password is incorrect' 
+                    return res.status(400).json({
+                        error: 'Current password is incorrect'
                     });
                 }
-                
+
                 // Update password
                 user.password = newPassword;
                 await user.save();
-                
+
                 return res.status(200).json({
                     success: true,
                     message: 'Password changed successfully'
@@ -864,7 +833,7 @@ const changePassword = async (req, res) => {
         } catch (mongoError) {
             console.error("MongoDB error during password change:", mongoError);
         }
-        
+
         // Fallback response if MongoDB is unavailable
         res.status(200).json({
             success: true,
@@ -880,14 +849,14 @@ const changePassword = async (req, res) => {
 const uploadAvatar = async (req, res) => {
     try {
         const userId = req.user._id;
-        
+
         if (!req.file) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                error: 'No image file provided' 
+                error: 'No image file provided'
             });
         }
-        
+
         // Try to update user avatar in MongoDB first
         try {
             const user = await User.findById(userId);
@@ -902,11 +871,11 @@ const uploadAvatar = async (req, res) => {
                         // Continue with upload even if deletion fails
                     }
                 }
-                
+
                 // Update user avatar with new Cloudinary URL
                 user.avatar = req.file.path;
                 await user.save();
-                
+
                 return res.status(200).json({
                     success: true,
                     message: 'Avatar uploaded successfully',
@@ -916,7 +885,7 @@ const uploadAvatar = async (req, res) => {
         } catch (mongoError) {
             console.error("MongoDB error during avatar upload:", mongoError);
         }
-        
+
         // Fallback response if MongoDB is unavailable
         res.status(200).json({
             success: true,
@@ -925,9 +894,9 @@ const uploadAvatar = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            error: 'Server error during avatar upload' 
+            error: 'Server error during avatar upload'
         });
     }
 };
@@ -936,38 +905,38 @@ const uploadAvatar = async (req, res) => {
 const promoteToAdmin = async (req, res) => {
     try {
         const { email } = req.body;
-        
+
         // Only allow in development mode
         if (process.env.NODE_ENV === 'production') {
-            return res.status(403).json({ 
+            return res.status(403).json({
                 success: false,
-                message: 'This endpoint is only available in development mode' 
+                message: 'This endpoint is only available in development mode'
             });
         }
-        
+
         if (!email) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                message: 'Email is required' 
+                message: 'Email is required'
             });
         }
-        
+
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: 'User not found' 
+                message: 'User not found'
             });
         }
-        
+
         // Update user role to admin
         user.role = 'admin';
         user.isAdmin = true;
         await user.save();
-        
+
         // Generate new token with updated role
         const token = user.generateAuthToken();
-        
+
         return res.status(200).json({
             success: true,
             message: 'User promoted to admin successfully',
@@ -980,7 +949,7 @@ const promoteToAdmin = async (req, res) => {
                 isAdmin: user.isAdmin
             }
         });
-        
+
     } catch (error) {
         logError(error, 'Promote to admin failed');
         return res.status(500).json({
