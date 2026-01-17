@@ -14,39 +14,37 @@ class OrderNumberGenerator {
    */
   static async generateOrderNumber(OrderModel) {
     try {
+      const Sequence = require('../Models/sequence-model');
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const day = String(now.getDate()).padStart(2, '0');
-      
+
       // Create date prefix (YYYYMMDD)
       const datePrefix = `${year}${month}${day}`;
-      
-      // Get the count of orders created today
-      const startOfDay = new Date(year, now.getMonth(), now.getDate());
-      const endOfDay = new Date(year, now.getMonth(), now.getDate() + 1);
-      
-      // Count existing orders for today with this format
-      const todayOrdersCount = await OrderModel.countDocuments({
-        orderNumber: { $regex: `^DM-${datePrefix}-` },
-        createdAt: {
-          $gte: startOfDay,
-          $lt: endOfDay
-        }
-      });
-      
+      const sequenceId = `order_number_${datePrefix}`;
+
+      // Atomically get and increment the sequence number
+      // upsert: true creates the document if it doesn't exist
+      // new: true returns the updated document
+      const sequenceDoc = await Sequence.findByIdAndUpdate(
+        sequenceId,
+        { $inc: { sequence_value: 1 } },
+        { new: true, upsert: true }
+      );
+
       // Generate sequential number (padded to 4 digits)
-      const sequenceNumber = String(todayOrdersCount + 1).padStart(4, '0');
-      
+      const sequenceNumber = String(sequenceDoc.sequence_value).padStart(4, '0');
+
       // Format: DM-YYYYMMDD-XXXX
       const orderNumber = `DM-${datePrefix}-${sequenceNumber}`;
-      
+
       return orderNumber;
     } catch (error) {
       console.error('Error generating order number:', error);
-      // Fallback to timestamp-based ID
+      // Fallback to timestamp-based ID with high randomness to prevent collision
       const timestamp = Date.now().toString().slice(-8);
-      const random = Math.random().toString(36).substr(2, 4).toUpperCase();
+      const random = Math.random().toString(36).substr(2, 6).toUpperCase();
       return `DM-${timestamp}-${random}`;
     }
   }
@@ -64,7 +62,7 @@ class OrderNumberGenerator {
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const random = Math.random().toString(36).substr(2, 4).toUpperCase();
-    
+
     // Format: DM-YYYYMMDD-XXXX
     return `DM-${year}${month}${day}-${random}`;
   }
