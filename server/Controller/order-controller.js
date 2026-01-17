@@ -239,9 +239,25 @@ exports.createOrder = async (req, res) => {
         let discount = 0;
         const processedItems = [];
 
+        // Safe User Access
+        const userId = req.user ? req.user._id : null;
+        if (!userId) {
+            console.warn('Warning: createOrder called without authenticated user.');
+        }
+
         // Process each item in the order
         for (const item of items) {
             let itemData = null;
+
+            // Validate Quantity
+            const quantity = Number(item.quantity);
+            if (isNaN(quantity) || quantity <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid quantity for item: ${item.name || 'Unknown'}`
+                });
+            }
+
 
             // Check if product or bundle exists and is in stock
             if (item.product) {
@@ -274,11 +290,11 @@ exports.createOrder = async (req, res) => {
                 }
 
                 // Update stock
-                product.stock -= item.quantity;
+                product.stock -= quantity;
                 await product.save();
 
                 // Calculate item total
-                const itemTotal = product.price * item.quantity;
+                const itemTotal = product.price * quantity;
                 subtotal += itemTotal;
 
                 // Add to processed items
@@ -286,7 +302,7 @@ exports.createOrder = async (req, res) => {
                     product: product._id,
                     name: product.name,
                     price: product.price,
-                    quantity: Number(item.quantity),
+                    quantity: quantity,
                     color: item.color,
                     image: (product.images && Array.isArray(product.images)) ? (product.images.find(img => img.isPrimary)?.url || product.images[0]?.url) : null,
                     sku: product.sku
@@ -321,11 +337,11 @@ exports.createOrder = async (req, res) => {
                 }
 
                 // Update stock
-                bundle.stock -= item.quantity;
+                bundle.stock -= quantity;
                 await bundle.save();
 
                 // Calculate item total
-                const itemTotal = bundle.price * item.quantity;
+                const itemTotal = bundle.price * quantity;
                 subtotal += itemTotal;
 
                 // Add to processed items
@@ -333,7 +349,7 @@ exports.createOrder = async (req, res) => {
                     bundle: bundle._id,
                     name: bundle.name,
                     price: bundle.price,
-                    quantity: Number(item.quantity),
+                    quantity: quantity,
                     image: (bundle.images && Array.isArray(bundle.images)) ? (bundle.images.find(img => img.isPrimary)?.url || bundle.images[0]?.url) : null,
                     sku: bundle.sku
                 };
@@ -394,7 +410,7 @@ exports.createOrder = async (req, res) => {
 
         // Create the order
         const order = new Order({
-            user: req.user._id,
+            user: userId, // Safe access
             items: processedItems,
             shippingAddress,
             billingAddress: billingAddress || { sameAsShipping: true },
@@ -454,6 +470,14 @@ exports.createOrder = async (req, res) => {
                 success: false,
                 message: 'Validation Error',
                 error: messages.join(', ')
+            });
+        }
+
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid Data Format',
+                error: `Invalid value for ${error.path}: ${error.value}`
             });
         }
 
