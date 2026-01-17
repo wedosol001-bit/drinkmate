@@ -24,20 +24,20 @@ import { NavigationLoader } from "@/components/ui/NavigationLoader"
 if (typeof window !== 'undefined') {
   // Run before any React hydration
   suppressHydrationWarnings()
-  
+
   // Also run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', suppressHydrationWarnings)
   } else {
     suppressHydrationWarnings()
   }
-  
+
   // Development mode: Additional React.StrictMode suppression
   if (process.env.NODE_ENV === 'development') {
     const originalConsoleError = console.error;
     console.error = (...args) => {
       const message = args.join(' ').toLowerCase();
-      
+
       // Suppress all hydration-related errors in development
       if (
         message.includes('hydration') ||
@@ -48,7 +48,7 @@ if (typeof window !== 'undefined') {
       ) {
         return; // Completely suppress
       }
-      
+
       originalConsoleError(...args);
     };
   }
@@ -118,7 +118,7 @@ export const metadata: Metadata = {
     site: '@drinkmate',
   },
   keywords: [
-    'soda maker', 'carbonated drinks', 'CO2 cylinders', 'drink flavors', 
+    'soda maker', 'carbonated drinks', 'CO2 cylinders', 'drink flavors',
     'homemade soda', 'sparkling water', 'DrinkMate', 'beverage maker',
     'carbonation', 'home carbonation', 'soda stream alternative', 'flavored sparkling water',
     'Italian flavors', 'premium beverages', 'carbonated water maker', 'sparkling water maker',
@@ -160,8 +160,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html 
-      lang="en" 
+    <html
+      lang="en"
       dir="ltr"
       suppressHydrationWarning
       className={[
@@ -174,83 +174,87 @@ export default function RootLayout({
     >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        
+
         {/* Preconnect to important domains for performance */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
-        
+
         {/* Security-related meta tags */}
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
-        <meta httpEquiv="Content-Security-Policy" content={process.env.NODE_ENV === 'development' 
-          ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000 https://api.cloudinary.com https://www.youtube.com https://drinkmate.sa wss://drinkmate.sa ws://localhost:* wss://localhost:*; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com; object-src 'self' data:; base-uri 'self'; form-action 'self';"
-          : "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://drinkmate-production.up.railway.app https://drinkmate-main-production.up.railway.app wss://drinkmate-main-production.up.railway.app https://api.cloudinary.com https://www.youtube.com wss: ws:; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com; object-src 'self' data:; base-uri 'self'; form-action 'self';"
+        <meta httpEquiv="Content-Security-Policy" content={process.env.NODE_ENV === 'development'
+          ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000 https://api.cloudinary.com https://www.youtube.com https://drinkmate.sa https://api.drinkmate.sa wss://drinkmate.sa wss://api.drinkmate.sa ws://localhost:* wss://localhost:* *.railway.app drinkmate-production.up.railway.app; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com https://www.google.com https://maps.google.com; object-src 'self' data:; base-uri 'self'; form-action 'self';"
+          : `default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'} ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'} wss://${process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, '') || 'localhost:3001'} https://api.cloudinary.com https://www.youtube.com https://api.drinkmate.sa wss://api.drinkmate.sa wss: ws: *.railway.app drinkmate-production.up.railway.app; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com https://www.google.com https://maps.google.com; object-src 'self' data:; base-uri 'self'; form-action 'self';`
         } />
-        
+
         {/* Schema.org structured data for rich results */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          'name': 'DrinkMate',
-          'url': process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app',
-          'logo': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app'}/logo.png`,
-          'description': 'Premium soda makers, natural Italian flavors, and CO2 cylinders for creating delicious carbonated beverages at home.',
-          'foundingDate': '2020',
-          'sameAs': [
-            'https://facebook.com/drinkmate',
-            'https://twitter.com/drinkmate',
-            'https://instagram.com/drinkmate',
-            'https://youtube.com/drinkmate'
-          ],
-          'contactPoint': {
-            '@type': 'ContactPoint',
-            'telephone': '+1-555-555-5555',
-            'contactType': 'customer service',
-            'availableLanguage': ['English', 'Arabic'],
-            'areaServed': 'US',
-            'hoursAvailable': {
-              '@type': 'OpeningHoursSpecification',
-              'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-              'opens': '09:00',
-              'closes': '17:00'
-            }
-          },
-          'address': {
-            '@type': 'PostalAddress',
-            'addressCountry': 'US'
-          },
-          'potentialAction': {
-            '@type': 'SearchAction',
-            'target': {
-              '@type': 'EntryPoint',
-              'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/search?q={search_term_string}`
-            },
-            'query-input': 'required name=search_term_string'
-          }
-        }) }} />
-        
-        {/* Website structured data */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          'name': 'DrinkMate',
-          'url': process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app',
-          'description': 'Premium soda makers and carbonation solutions for home use',
-          'publisher': {
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
             '@type': 'Organization',
-            'name': 'DrinkMate'
-          },
-          'potentialAction': {
-            '@type': 'SearchAction',
-            'target': {
-              '@type': 'EntryPoint',
-              'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/search?q={search_term_string}`
+            'name': 'DrinkMate',
+            'url': process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app',
+            'logo': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app'}/logo.png`,
+            'description': 'Premium soda makers, natural Italian flavors, and CO2 cylinders for creating delicious carbonated beverages at home.',
+            'foundingDate': '2020',
+            'sameAs': [
+              'https://facebook.com/drinkmate',
+              'https://twitter.com/drinkmate',
+              'https://instagram.com/drinkmate',
+              'https://youtube.com/drinkmate'
+            ],
+            'contactPoint': {
+              '@type': 'ContactPoint',
+              'telephone': '+1-555-555-5555',
+              'contactType': 'customer service',
+              'availableLanguage': ['English', 'Arabic'],
+              'areaServed': 'US',
+              'hoursAvailable': {
+                '@type': 'OpeningHoursSpecification',
+                'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                'opens': '09:00',
+                'closes': '17:00'
+              }
             },
-            'query-input': 'required name=search_term_string'
-          }
-        }) }} />
-        
+            'address': {
+              '@type': 'PostalAddress',
+              'addressCountry': 'US'
+            },
+            'potentialAction': {
+              '@type': 'SearchAction',
+              'target': {
+                '@type': 'EntryPoint',
+                'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/search?q={search_term_string}`
+              },
+              'query-input': 'required name=search_term_string'
+            }
+          })
+        }} />
+
+        {/* Website structured data */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            'name': 'DrinkMate',
+            'url': process.env.NEXT_PUBLIC_SITE_URL || 'https://drinkmate-main-production.up.railway.app',
+            'description': 'Premium soda makers and carbonation solutions for home use',
+            'publisher': {
+              '@type': 'Organization',
+              'name': 'DrinkMate'
+            },
+            'potentialAction': {
+              '@type': 'SearchAction',
+              'target': {
+                '@type': 'EntryPoint',
+                'urlTemplate': `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/search?q={search_term_string}`
+              },
+              'query-input': 'required name=search_term_string'
+            }
+          })
+        }} />
+
         {/* Enhanced hydration fix script - loads before React hydration */}
-        <script 
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
