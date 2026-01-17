@@ -27,18 +27,18 @@ class ArbService {
             this.apiBaseUrl = process.env.ARB_BASE_URL;
         } else {
             this.apiBaseUrl = this.environment === 'production'
-                ? process.env.ARB_API_URL || 'https://securepayments.alrajhibank.com.sa'
+                ? process.env.ARB_API_URL || 'https://digitalpayments.alrajhibank.com.sa'
                 : process.env.ARB_SANDBOX_URL || process.env.ARB_CERTIFICATION_URL || 'https://securepayments.alrajhibank.com.sa';
         }
 
         // Payment page URL (where customers are redirected)
-        // For production, use the standard payment page URL to avoid certificate popups (which usually happen on securepayments S2S URL)
+        // For production, use digitalpayments (same as API usually in Prod)
         // Can be overridden by ARB_PAYMENT_PAGE_URL
         if (process.env.ARB_PAYMENT_PAGE_URL) {
             this.paymentPageBaseUrl = process.env.ARB_PAYMENT_PAGE_URL;
         } else {
             this.paymentPageBaseUrl = this.environment === 'production'
-                ? 'https://standard.payment.alrajhibank.com.sa'
+                ? 'https://digitalpayments.alrajhibank.com.sa'
                 : this.apiBaseUrl; // Fallback to apiBaseUrl (securepayments) for test
         }
 
