@@ -3,12 +3,13 @@ const Product = require('../Models/product-model');
 const Bundle = require('../Models/bundle-model');
 const Coupon = require('../Models/coupon-model');
 const User = require('../Models/user-model');
+const mongoose = require('mongoose');
 
 // Create a new guest order (no authentication required)
 exports.createGuestOrder = async (req, res) => {
     try {
         const { items, shippingAddress, billingAddress, paymentMethod, couponCode, packingInstructions, isGift, giftMessage, guestEmail, guestName } = req.body;
-        
+
         // Validate required fields
         if (!items || items.length === 0 || !shippingAddress || !paymentMethod) {
             return res.status(400).json({
@@ -24,20 +25,28 @@ exports.createGuestOrder = async (req, res) => {
                 message: 'Guest email and name are required'
             });
         }
-        
+
         // Calculate order totals
         let subtotal = 0;
         let discount = 0;
         const processedItems = [];
-        
+
         // Process each item in the order
         for (const item of items) {
             let itemData = null;
-            
+
             // Check if product or bundle exists and is in stock
             if (item.product) {
+                // Validate Product ID
+                if (!mongoose.Types.ObjectId.isValid(item.product)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Invalid Product ID: ${item.product}`
+                    });
+                }
+
                 const product = await Product.findById(item.product);
-                
+
                 if (!product) {
                     console.error(`Product validation failed: Product with ID ${item.product} not found in database`);
                     return res.status(404).json({
@@ -47,22 +56,22 @@ exports.createGuestOrder = async (req, res) => {
                         productId: item.product
                     });
                 }
-                
+
                 if (product.stock < item.quantity) {
                     return res.status(400).json({
                         success: false,
                         message: `Not enough stock for product: ${product.name}`
                     });
                 }
-                
+
                 // Update stock
                 product.stock -= item.quantity;
                 await product.save();
-                
+
                 // Calculate item total
                 const itemTotal = product.price * item.quantity;
                 subtotal += itemTotal;
-                
+
                 // Add to processed items
                 itemData = {
                     product: product._id,
@@ -75,7 +84,7 @@ exports.createGuestOrder = async (req, res) => {
                 };
             } else if (item.bundle) {
                 const bundle = await Bundle.findById(item.bundle);
-                
+
                 if (!bundle) {
                     return res.status(404).json({
                         success: false,
@@ -84,11 +93,11 @@ exports.createGuestOrder = async (req, res) => {
                         bundleId: item.bundle
                     });
                 }
-                
+
                 // Calculate item total
                 const itemTotal = bundle.price * item.quantity;
                 subtotal += itemTotal;
-                
+
                 // Add to processed items
                 itemData = {
                     bundle: bundle._id,
@@ -100,23 +109,23 @@ exports.createGuestOrder = async (req, res) => {
                     sku: bundle.sku
                 };
             }
-            
+
             processedItems.push(itemData);
         }
-        
+
         // Apply coupon if provided (simplified for guest orders)
         let couponData = null;
         if (couponCode) {
             const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
-            
+
             if (coupon) {
                 // Calculate discount (simplified validation for guests)
                 discount = coupon.calculateDiscount(subtotal);
-                
+
                 // Update coupon usage
                 coupon.usageCount += 1;
                 await coupon.save();
-                
+
                 couponData = {
                     code: coupon.code,
                     discountAmount: discount,
@@ -124,17 +133,17 @@ exports.createGuestOrder = async (req, res) => {
                 };
             }
         }
-        
+
         // Calculate shipping cost (simplified example)
         const shippingCost = subtotal > 500 ? 0 : 50;
-        
+
         // Calculate tax (simplified example - 15% VAT)
         const taxRate = 0.15;
         const tax = (subtotal - discount) * taxRate;
-        
+
         // Calculate total
         const total = subtotal - discount + shippingCost + tax;
-        
+
         // Create the guest order
         const order = new Order({
             user: null, // No user for guest orders
@@ -157,9 +166,9 @@ exports.createGuestOrder = async (req, res) => {
             giftMessage,
             isGuestOrder: true
         });
-        
+
         await order.save();
-        
+
         // Process payment based on payment method
         if (paymentMethod === 'arb') {
             // For ARB, we'll create the order first and process payment separately
@@ -191,9 +200,9 @@ exports.createGuestOrder = async (req, res) => {
             };
             order.status = 'processing';
         }
-        
+
         await order.save();
-        
+
         res.status(201).json({
             success: true,
             message: 'Guest order created successfully',
@@ -213,7 +222,7 @@ exports.createGuestOrder = async (req, res) => {
 exports.createOrder = async (req, res) => {
     try {
         const { items, shippingAddress, billingAddress, paymentMethod, couponCode, packingInstructions, isGift, giftMessage } = req.body;
-        
+
         // Validate required fields
         if (!items || items.length === 0 || !shippingAddress || !paymentMethod) {
             return res.status(400).json({
@@ -221,20 +230,20 @@ exports.createOrder = async (req, res) => {
                 message: 'Missing required fields'
             });
         }
-        
+
         // Calculate order totals
         let subtotal = 0;
         let discount = 0;
         const processedItems = [];
-        
+
         // Process each item in the order
         for (const item of items) {
             let itemData = null;
-            
+
             // Check if product or bundle exists and is in stock
             if (item.product) {
                 const product = await Product.findById(item.product);
-                
+
                 if (!product) {
                     console.error(`Product validation failed: Product with ID ${item.product} not found in database`);
                     console.error(`Available products in database:`, await Product.find({}, '_id name').limit(5));
@@ -245,22 +254,22 @@ exports.createOrder = async (req, res) => {
                         productId: item.product
                     });
                 }
-                
+
                 if (product.stock < item.quantity) {
                     return res.status(400).json({
                         success: false,
                         message: `Not enough stock for product: ${product.name}`
                     });
                 }
-                
+
                 // Update stock
                 product.stock -= item.quantity;
                 await product.save();
-                
+
                 // Calculate item total
                 const itemTotal = product.price * item.quantity;
                 subtotal += itemTotal;
-                
+
                 // Add to processed items
                 itemData = {
                     product: product._id,
@@ -273,7 +282,7 @@ exports.createOrder = async (req, res) => {
                 };
             } else if (item.bundle) {
                 const bundle = await Bundle.findById(item.bundle);
-                
+
                 if (!bundle) {
                     console.error(`Bundle validation failed: Bundle with ID ${item.bundle} not found in database`);
                     console.error(`Available bundles in database:`, await Bundle.find({}, '_id name').limit(5));
@@ -284,22 +293,22 @@ exports.createOrder = async (req, res) => {
                         bundleId: item.bundle
                     });
                 }
-                
+
                 if (bundle.stock < item.quantity) {
                     return res.status(400).json({
                         success: false,
                         message: `Not enough stock for bundle: ${bundle.name}`
                     });
                 }
-                
+
                 // Update stock
                 bundle.stock -= item.quantity;
                 await bundle.save();
-                
+
                 // Calculate item total
                 const itemTotal = bundle.price * item.quantity;
                 subtotal += itemTotal;
-                
+
                 // Add to processed items
                 itemData = {
                     bundle: bundle._id,
@@ -315,22 +324,22 @@ exports.createOrder = async (req, res) => {
                     message: 'Each item must have either product or bundle ID'
                 });
             }
-            
+
             processedItems.push(itemData);
         }
-        
+
         // Apply coupon if provided
         let couponData = null;
         if (couponCode) {
             const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
-            
+
             if (!coupon) {
                 return res.status(404).json({
                     success: false,
                     message: 'Invalid or expired coupon code'
                 });
             }
-            
+
             // Validate coupon
             const validationResult = coupon.isValid(req.user, subtotal);
             if (!validationResult.valid) {
@@ -339,31 +348,31 @@ exports.createOrder = async (req, res) => {
                     message: validationResult.message
                 });
             }
-            
+
             // Calculate discount
             discount = coupon.calculateDiscount(subtotal);
-            
+
             // Update coupon usage
             coupon.usageCount += 1;
             await coupon.save();
-            
+
             couponData = {
                 code: coupon.code,
                 discountAmount: discount,
                 couponId: coupon._id
             };
         }
-        
+
         // Calculate shipping cost (simplified example)
         const shippingCost = subtotal > 500 ? 0 : 50;
-        
+
         // Calculate tax (simplified example - 15% VAT)
         const taxRate = 0.15;
         const tax = (subtotal - discount) * taxRate;
-        
+
         // Calculate total
         const total = subtotal - discount + shippingCost + tax;
-        
+
         // Create the order
         const order = new Order({
             user: req.user._id,
@@ -381,9 +390,9 @@ exports.createOrder = async (req, res) => {
             isGift,
             giftMessage
         });
-        
+
         await order.save();
-        
+
         // Process payment based on payment method
         if (paymentMethod === 'arb') {
             // For ARB, we'll create the order first and process payment separately
@@ -417,9 +426,9 @@ exports.createOrder = async (req, res) => {
             };
             order.status = 'processing';
         }
-        
+
         await order.save();
-        
+
         res.status(201).json({
             success: true,
             message: 'Order created successfully',
@@ -441,15 +450,15 @@ exports.getUserOrders = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        
+
         const orders = await Order.find({ user: req.user._id })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
-            
+
         const totalOrders = await Order.countDocuments({ user: req.user._id });
         const totalPages = Math.ceil(totalOrders / limit);
-        
+
         res.status(200).json({
             success: true,
             count: orders.length,
@@ -472,16 +481,16 @@ exports.getUserOrders = async (req, res) => {
 exports.getOrder = async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         const order = await Order.findById(id);
-        
+
         if (!order) {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found'
             });
         }
-        
+
         // Check if the order belongs to the current user or if the user is an admin
         if (order.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
             return res.status(403).json({
@@ -489,7 +498,7 @@ exports.getOrder = async (req, res) => {
                 message: 'Not authorized to access this order'
             });
         }
-        
+
         res.status(200).json({
             success: true,
             order
@@ -509,29 +518,29 @@ exports.trackOrder = async (req, res) => {
     try {
         const { orderNumber } = req.params;
         const { email } = req.query;
-        
+
         if (!email) {
             return res.status(400).json({
                 success: false,
                 message: 'Email address is required for tracking'
             });
         }
-        
-        const order = await Order.findOne({ 
+
+        const order = await Order.findOne({
             orderNumber,
             'shippingAddress.email': email.toLowerCase()
         });
-        
+
         if (!order) {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found or email does not match'
             });
         }
-        
+
         // Get tracking history
         const trackingHistory = await getOrderTrackingHistory(order);
-        
+
         // Return tracking information for public access
         const trackingInfo = {
             orderNumber: order.orderNumber,
@@ -555,7 +564,7 @@ exports.trackOrder = async (req, res) => {
             discount: order.discount,
             total: order.total
         };
-        
+
         res.status(200).json({
             success: true,
             tracking: trackingInfo
@@ -634,12 +643,12 @@ exports.lookupOrder = async (req, res) => {
 exports.getRecentOrders = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 3;
-        
+
         const orders = await Order.find({ user: req.user._id })
             .sort({ createdAt: -1 })
             .limit(limit)
             .select('orderNumber status items subtotal total createdAt');
-            
+
         // Format orders for the frontend
         const formattedOrders = orders.map(order => ({
             id: order.orderNumber,
@@ -648,7 +657,7 @@ exports.getRecentOrders = async (req, res) => {
             items: order.items.map(item => item.name),
             total: `${order.total.toFixed(2)} SAR`
         }));
-        
+
         res.status(200).json({
             success: true,
             orders: formattedOrders
@@ -669,15 +678,15 @@ exports.getAllUserOrders = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        
+
         // Build filter object
         const filter = { user: req.user._id };
-        
+
         // Status filter
         if (req.query.status) {
             filter.status = req.query.status;
         }
-        
+
         // Date range filter
         if (req.query.startDate || req.query.endDate) {
             filter.createdAt = {};
@@ -688,16 +697,16 @@ exports.getAllUserOrders = async (req, res) => {
                 filter.createdAt.$lte = new Date(req.query.endDate);
             }
         }
-        
+
         const orders = await Order.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .select('orderNumber status items subtotal total createdAt estimatedDeliveryDate trackingNumber');
-            
+
         const totalOrders = await Order.countDocuments(filter);
         const totalPages = Math.ceil(totalOrders / limit);
-        
+
         // Format orders for the frontend
         const formattedOrders = orders.map(order => ({
             id: order.orderNumber,
@@ -708,7 +717,7 @@ exports.getAllUserOrders = async (req, res) => {
             trackingNumber: order.trackingNumber || null,
             estimatedDelivery: order.estimatedDeliveryDate ? order.estimatedDeliveryDate.toISOString().split('T')[0] : null
         }));
-        
+
         res.status(200).json({
             success: true,
             count: formattedOrders.length,
@@ -730,7 +739,7 @@ exports.getAllUserOrders = async (req, res) => {
 // Helper function to get order tracking history
 const getOrderTrackingHistory = async (order) => {
     const history = [];
-    
+
     // Order placed
     history.push({
         date: order.createdAt.toISOString().split('T')[0],
@@ -738,13 +747,13 @@ const getOrderTrackingHistory = async (order) => {
         status: 'Order Placed',
         location: 'Online'
     });
-    
+
     // Processing
     if (['processing', 'shipped', 'delivered'].includes(order.status)) {
         // Assume processing starts 1 day after order is placed
         const processingDate = new Date(order.createdAt);
         processingDate.setDate(processingDate.getDate() + 1);
-        
+
         history.push({
             date: processingDate.toISOString().split('T')[0],
             time: new Date(processingDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
@@ -752,7 +761,7 @@ const getOrderTrackingHistory = async (order) => {
             location: 'Warehouse'
         });
     }
-    
+
     // Shipped
     if (['shipped', 'delivered'].includes(order.status)) {
         // If we have a specific shipping date, use it
@@ -761,7 +770,7 @@ const getOrderTrackingHistory = async (order) => {
         if (!order.shippedDate) {
             shippedDate.setDate(shippedDate.getDate() + 2);
         }
-        
+
         history.push({
             date: shippedDate.toISOString().split('T')[0],
             time: new Date(shippedDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
@@ -769,13 +778,13 @@ const getOrderTrackingHistory = async (order) => {
             location: 'Shipping Center'
         });
     }
-    
+
     // In Transit (only if shipped and not delivered)
     if (order.status === 'shipped') {
         // Assume in transit 1 day after shipping
         const inTransitDate = order.shippedDate || new Date(order.createdAt);
         inTransitDate.setDate(inTransitDate.getDate() + 3);
-        
+
         history.push({
             date: inTransitDate.toISOString().split('T')[0],
             time: new Date(inTransitDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
@@ -783,7 +792,7 @@ const getOrderTrackingHistory = async (order) => {
             location: getCurrentLocation(order) || 'Distribution Center'
         });
     }
-    
+
     // Delivered
     if (order.status === 'delivered' && order.deliveredDate) {
         history.push({
@@ -793,7 +802,7 @@ const getOrderTrackingHistory = async (order) => {
             location: `${order.shippingAddress.city}, ${order.shippingAddress.country}`
         });
     }
-    
+
     return history;
 };
 
@@ -820,16 +829,16 @@ exports.cancelOrder = async (req, res) => {
     try {
         const { id } = req.params;
         const { cancelReason } = req.body;
-        
+
         const order = await Order.findById(id);
-        
+
         if (!order) {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found'
             });
         }
-        
+
         // Check if the order belongs to the current user
         if (order.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
             return res.status(403).json({
@@ -837,7 +846,7 @@ exports.cancelOrder = async (req, res) => {
                 message: 'Not authorized to cancel this order'
             });
         }
-        
+
         // Check if the order can be cancelled
         if (!['pending', 'processing'].includes(order.status)) {
             return res.status(400).json({
@@ -845,12 +854,12 @@ exports.cancelOrder = async (req, res) => {
                 message: 'This order cannot be cancelled'
             });
         }
-        
+
         // Update order status
         order.status = 'cancelled';
         order.cancelReason = cancelReason || 'Customer cancelled';
         await order.save();
-        
+
         // Restore stock for each item
         for (const item of order.items) {
             if (item.product) {
@@ -863,7 +872,7 @@ exports.cancelOrder = async (req, res) => {
                 });
             }
         }
-        
+
         res.status(200).json({
             success: true,
             message: 'Order cancelled successfully',
@@ -885,16 +894,16 @@ exports.getAllOrders = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        
+
         // Build filter object with input validation to prevent NoSQL injection
         const filter = {};
-        
+
         // Status filter - validate against allowed values
         const allowedStatuses = ['pending', 'processing', 'confirmed', 'shipped', 'delivered', 'cancelled', 'refunded'];
         if (req.query.status && allowedStatuses.includes(req.query.status)) {
             filter.status = req.query.status;
         }
-        
+
         // Date range filter - validate date format
         if (req.query.startDate || req.query.endDate) {
             filter.createdAt = {};
@@ -905,22 +914,22 @@ exports.getAllOrders = async (req, res) => {
                 filter.createdAt.$lte = new Date(req.query.endDate);
             }
         }
-        
+
         // Search by order number - sanitize regex input
         if (req.query.search && typeof req.query.search === 'string') {
             const sanitizedSearch = req.query.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             filter.orderNumber = { $regex: sanitizedSearch, $options: 'i' };
         }
-        
+
         const orders = await Order.find(filter)
             .populate('user', 'username email')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
-            
+
         const totalOrders = await Order.countDocuments(filter);
         const totalPages = Math.ceil(totalOrders / limit);
-        
+
         res.status(200).json({
             success: true,
             count: orders.length,
@@ -944,32 +953,32 @@ exports.updateOrderStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status, shippingStatus, trackingNumber, trackingUrl, carrier, estimatedDeliveryDate } = req.body;
-        
+
         const order = await Order.findById(id);
-        
+
         if (!order) {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found'
             });
         }
-        
+
         // Update order fields
         if (status) order.status = status;
         if (shippingStatus) order.shippingStatus = shippingStatus;
-        
+
         if (trackingNumber) order.trackingNumber = trackingNumber;
         if (trackingUrl) order.trackingUrl = trackingUrl;
         if (carrier) order.carrier = carrier;
         if (estimatedDeliveryDate) order.estimatedDeliveryDate = estimatedDeliveryDate;
-        
+
         // If status is delivered, set delivered date
         if (status === 'delivered') {
             order.deliveredDate = new Date();
         }
-        
+
         await order.save();
-        
+
         res.status(200).json({
             success: true,
             message: 'Order status updated successfully',
@@ -989,36 +998,36 @@ exports.updateOrderStatus = async (req, res) => {
 exports.validateCoupon = async (req, res) => {
     try {
         const { code, cartTotal } = req.body;
-        
+
         if (!code || !cartTotal) {
             return res.status(400).json({
                 success: false,
                 message: 'Coupon code and cart total are required'
             });
         }
-        
+
         const coupon = await Coupon.findOne({ code, isActive: true });
-        
+
         if (!coupon) {
             return res.status(404).json({
                 success: false,
                 message: 'Invalid or expired coupon code'
             });
         }
-        
+
         // Check if coupon is valid
         const validationResult = coupon.isValid(req.user, cartTotal);
-        
+
         if (!validationResult.valid) {
             return res.status(400).json({
                 success: false,
                 message: validationResult.message
             });
         }
-        
+
         // Calculate discount amount
         const discountAmount = coupon.calculateDiscount(cartTotal);
-        
+
         res.status(200).json({
             success: true,
             coupon: {

@@ -69,7 +69,7 @@ const createAdminUser = async (req, res) => {
 // REGISTER new user
 const register = async (req, res) => {
     try {
-        const { fullName, email, password } = req.body;
+        let { fullName, email, password, username } = req.body;
 
         try {
             // Check if user already exists
@@ -78,8 +78,10 @@ const register = async (req, res) => {
                 return res.status(400).json({ error: 'User already exists' });
             }
 
-            // Generate username from fullName (email will be unique identifier)
-            const username = fullName.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
+            // Generate username from fullName (email will be unique identifier) if not provided
+            if (!username) {
+                username = fullName.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
+            }
             
             // Split fullName into firstName and lastName
             const nameParts = fullName.trim().split(' ');

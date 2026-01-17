@@ -1,0 +1,8 @@
+﻿drinkmate-main
+node_modules
+.git
+assets
+cloudinary-downloads
+docs
+deployment
+public
