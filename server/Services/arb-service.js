@@ -11,16 +11,16 @@ class ArbService {
         // Tranportal credentials (downloaded from merchant portal)
         this.tranportalId = process.env.ARB_TRANPORTAL_ID || process.env.ARB_MERCHANT_ID || '';
         this.tranportalPassword = process.env.ARB_TRANPORTAL_PASSWORD || process.env.ARB_PASSWORD || '';
-        
+
         // Resource Key for AES encryption (from merchant portal)
         this.resourceKey = process.env.ARB_RESOURCE_KEY || '';
-        
+
         // AES Encryption IV (as per ARB specification)
         this.encryptionIV = 'PGKEYENCDECIVSPC';
-        
+
         // Environment configuration
         this.environment = process.env.ARB_ENVIRONMENT || 'test';
-        
+
         // Set base URL - ARB_BASE_URL takes precedence (provided by ARB)
         // Otherwise use environment-specific URLs
         if (process.env.ARB_BASE_URL) {
@@ -30,26 +30,26 @@ class ArbService {
                 ? process.env.ARB_API_URL || 'https://securepayments.alrajhibank.com.sa'
                 : process.env.ARB_SANDBOX_URL || process.env.ARB_CERTIFICATION_URL || 'https://securepayments.alrajhibank.com.sa';
         }
-        
+
         // Payment page URL (where customers are redirected)
-        // Use same base URL for payment page
-        this.paymentPageBaseUrl = this.apiBaseUrl;
-        
+        // Can be overridden by ARB_PAYMENT_PAGE_URL
+        this.paymentPageBaseUrl = process.env.ARB_PAYMENT_PAGE_URL || this.apiBaseUrl;
+
         // Token endpoint path (configurable, default from ARB)
         // CRITICAL: Must be set from environment variable
         // Note: According to ARB, /pg/payment/hosted.htm is for Bank Hosted/iFrame/JS Widget
         //       /pg/payment/tranportal.htm is for Merchant Hosted/Supporting Transactions
         //       Token generation might use tranportal.htm - verify with ARB
-        this.tokenEndpointPath = process.env.ARB_TOKEN_ENDPOINT_PATH || 
-                                 process.env.ARB_TOKEN_GEN_ENDPOINT || 
-                                 '/pg/payment/hosted.htm';
-        
+        this.tokenEndpointPath = process.env.ARB_TOKEN_ENDPOINT_PATH ||
+            process.env.ARB_TOKEN_GEN_ENDPOINT ||
+            '/pg/payment/hosted.htm';
+
         // Validate endpoint path is set
         if (!this.tokenEndpointPath || this.tokenEndpointPath === 'undefined') {
             console.warn('⚠️  ARB_TOKEN_ENDPOINT_PATH not set, using default: /pg/payment/hosted.htm');
             this.tokenEndpointPath = '/pg/payment/hosted.htm';
         }
-        
+
         console.log('ARB Service Configuration:', {
             environment: this.environment,
             apiBaseUrl: this.apiBaseUrl,
@@ -86,13 +86,13 @@ class ArbService {
         const baseUrl = returnedUrl || `${fallbackBase}/pg/paymentpage.htm`;
         const joiner = baseUrl.includes("?") ? "&" : "?";
         const paymentUrl = `${baseUrl}${joiner}PaymentID=${paymentId}`;
-        
+
         console.log('✅ Framed ARB payment URL:', {
             baseUrl: baseUrl,
             paymentId: paymentId,
             paymentUrl: paymentUrl
         });
-        
+
         return { paymentId, paymentUrl };
     }
 
@@ -128,7 +128,7 @@ class ArbService {
             // Wrap the object in an array before stringifying
             const plainTrandataArray = [plainTrandata];
             const plainTrandataString = JSON.stringify(plainTrandataArray);
-            
+
             // Step 2: URL-encode the JSON string BEFORE encryption (as per ARB spec)
             const urlEncodedTrandata = encodeURIComponent(plainTrandataString);
 
@@ -187,7 +187,7 @@ class ArbService {
             // Step 4: Parse JSON array, then extract first object
             // CRITICAL: Plain trandata is a JSON array per PDF: [{ ... }]
             const plainTrandataArray = JSON.parse(urlDecodedTrandata);
-            
+
             // Extract the first object from the array
             if (Array.isArray(plainTrandataArray) && plainTrandataArray.length > 0) {
                 return plainTrandataArray[0];
@@ -281,12 +281,12 @@ class ArbService {
             if (description) {
                 plainTrandata.udf1 = description.substring(0, 100); // Limit length
             }
-            
+
             // Iframe support: set udf3='iframe' for iframe integration
             if (paymentData.iframeMode === true || paymentData.useIframe === true) {
                 plainTrandata.udf3 = 'iframe';
             }
-            
+
             // Store orderId in udf2 for easy retrieval
             plainTrandata.udf2 = orderId.toString();
 
@@ -343,14 +343,14 @@ class ArbService {
             // Make API call to ARB Payment Token Generation endpoint
             // Use configured endpoint path (provided by ARB)
             const tokenEndpointUrl = `${this.apiBaseUrl}${this.tokenEndpointPath}`;
-            
+
             console.log('ARB Payment Token API Call:', {
                 url: tokenEndpointUrl,
                 trackId: orderId,
                 amount: amount,
                 currency: currency
             });
-            
+
             // Make API call with explicit headers
             const headers = {
                 'Content-Type': 'application/json',
@@ -387,7 +387,7 @@ class ArbService {
             // Parse initial response from ARB
             // Format: [{ paymentId, trandata, error, errorText }]
             let responseData = null;
-            
+
             if (Array.isArray(response.data) && response.data[0]) {
                 responseData = response.data[0];
             } else if (response.data) {
@@ -413,7 +413,7 @@ class ArbService {
                     responseData.result,
                     this.paymentPageBaseUrl
                 );
-                
+
                 if (paymentId) {
                     return {
                         success: true,
@@ -427,7 +427,7 @@ class ArbService {
 
             // Fallback: Try to extract paymentId from response fields
             const paymentId = responseData?.paymentId || responseData?.PaymentID || responseData?.paymentID;
-            
+
             if (!paymentId) {
                 throw new Error('Payment ID not received from ARB gateway. Response: ' + JSON.stringify(responseData));
             }
@@ -447,7 +447,7 @@ class ArbService {
 
         } catch (error) {
             console.error('ARB payment error:', error);
-            
+
             if (error.response) {
                 // API error response
                 return {
@@ -539,9 +539,9 @@ class ArbService {
             // Determine payment status
             // 'CAPTURED' = Purchase successful, 'APPROVED' = Authorization successful
             // authRespCode '00' = success
-            const isSuccess = result === 'CAPTURED' || 
-                            result === 'APPROVED' ||
-                            authRespCode === '00';
+            const isSuccess = result === 'CAPTURED' ||
+                result === 'APPROVED' ||
+                authRespCode === '00';
 
             return {
                 success: isSuccess,
@@ -580,13 +580,13 @@ class ArbService {
             // ARB date format may vary - adjust based on actual format
             // For now, return current date if parsing fails
             if (!dateString) return new Date().toISOString();
-            
+
             // Try to parse if it's a standard format
             const date = new Date(dateString);
             if (!isNaN(date.getTime())) {
                 return date.toISOString();
             }
-            
+
             return new Date().toISOString();
         } catch (error) {
             return new Date().toISOString();
@@ -607,7 +607,7 @@ class ArbService {
             // Determine reference value and udf5 based on referenceType
             let referenceValue;
             let udf5Value;
-            
+
             // Validate and normalize reference values
             if (referenceType === 'PaymentID' && paymentId) {
                 const normalizedPaymentId = String(paymentId).trim();
@@ -706,7 +706,7 @@ class ArbService {
             // Supporting transactions (inquiry, refund, void, capture) use different endpoint
             const supportingEndpoint = process.env.ARB_SUPPORTING_TRANSACTIONS_ENDPOINT || '/pg/payment/tranportal.htm';
             const inquiryEndpointUrl = `${this.apiBaseUrl}${supportingEndpoint}`;
-            
+
             console.log('ARB Inquiry Request:', {
                 url: inquiryEndpointUrl,
                 referenceType: udf5Value,
@@ -788,14 +788,14 @@ class ArbService {
             // ARB callback can be in two formats:
             // 1. URL redirection: { paymentId, trandata, error, errorText }
             // 2. Final response: { tranid, trandata, status, error, errorText }
-            
+
             const encryptedTrandata = callbackData.trandata || callbackData.Trandata;
             const paymentId = callbackData.paymentId || callbackData.PaymentID || callbackData.PaymentId;
             const tranid = callbackData.tranid || callbackData.Tranid;
             const status = callbackData.status; // 1 = success, 2 = failure
             const error = callbackData.error;
             const errorText = callbackData.errorText;
-            
+
             // Check for errors in callback
             if (error || errorText) {
                 return {
@@ -819,14 +819,14 @@ class ArbService {
                     };
                 }
             }
-            
+
             if (!encryptedTrandata) {
                 throw new Error('Encrypted trandata not found in callback');
             }
 
             // Use verifyPayment to decrypt and parse
             const result = await this.verifyPayment(encryptedTrandata, null, paymentId);
-            
+
             // Add callback-specific fields
             if (paymentId) {
                 result.paymentId = paymentId;
@@ -865,7 +865,7 @@ class ArbService {
             // Determine reference value and udf5
             let referenceValue;
             let udf5Value;
-            
+
             if (referenceType === 'TRANID' && transId) {
                 referenceValue = transId;
                 udf5Value = 'TRANID';

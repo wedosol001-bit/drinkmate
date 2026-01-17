@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const arbController = require('../Controller/arb-controller');
+const tabbyController = require('../Controller/tabby-controller');
 const { authenticateToken } = require('../Middleware/auth-middleware');
 
 // ===========================================
@@ -39,5 +40,10 @@ router.post('/arb/void-auth', authenticateToken, arbController.voidAuthorization
 
 // Capture ARB authorization
 router.post('/arb/capture', authenticateToken, arbController.captureAuthorization);
+
+// ===========================================
+// TABBY PAYMENT GATEWAY ROUTES
+// ===========================================
+router.post('/tabby', tabbyController.createPayment);
 
 module.exports = router;
