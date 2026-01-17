@@ -16,7 +16,7 @@ export interface Translations {
     refillCylinder: string
     refill: string
   }
-  
+
   // Banner
   banner: {
     messages: {
@@ -31,7 +31,7 @@ export interface Translations {
       new25: string
     }
   }
-  
+
   // Homepage
   home: {
     hero: {
@@ -208,7 +208,7 @@ export interface Translations {
       healthBenefits: string
     }
   }
-  
+
   // Shop
   shop: {
     title: string
@@ -410,25 +410,25 @@ export interface Translations {
         country: string
       }
     }
-      categoryPages: {
-        explorePremium: string
-        loadingProducts: string
-        failedToLoad: string
-        noProductsFound: string
-        checkBackLater: string
-        errorLoading: string
-        omnifizzTitle: string
-        omnifizzDescription: string
-        luxeTitle: string
-        luxeDescription: string
-        activeFilters: string
-        tryAgain: string
-        filterApplied: string
-        filtersApplied: string
-        trySearchingFor: string
-        shopByCategory: string
-        discoverCollection: string
-        shopAllProducts: string
+    categoryPages: {
+      explorePremium: string
+      loadingProducts: string
+      failedToLoad: string
+      noProductsFound: string
+      checkBackLater: string
+      errorLoading: string
+      omnifizzTitle: string
+      omnifizzDescription: string
+      luxeTitle: string
+      luxeDescription: string
+      activeFilters: string
+      tryAgain: string
+      filterApplied: string
+      filtersApplied: string
+      trySearchingFor: string
+      shopByCategory: string
+      discoverCollection: string
+      shopAllProducts: string
       sodamakers: {
         title: string
       }
@@ -469,7 +469,7 @@ export interface Translations {
         accessories: string
       }
     }
-    
+
     customerReviews: {
       title: string
       subtitle: string
@@ -817,7 +817,7 @@ export interface Translations {
       }
     }
   }
-  
+
   // CO2
   co2: {
     hero: {
@@ -953,7 +953,7 @@ export interface Translations {
       }
     }
   }
-  
+
   // Contact
   contact: {
     title: string
@@ -1062,7 +1062,7 @@ export interface Translations {
     loginToChat: string
     startLiveChat: string
   }
-  
+
   // Profile
   profile: {
     hero: {
@@ -1139,7 +1139,7 @@ export interface Translations {
       failedToChangePassword: string
     }
   }
-  
+
   // Track Order (Waybill-based tracking)
   trackOrder: {
     headerTitle: string
@@ -1183,7 +1183,7 @@ export interface Translations {
       stillIssues: { title: string; body: string; buttonSupport: string }
     }
   }
-  
+
   // Blog & News
   blog: {
     hero: {
@@ -1394,7 +1394,7 @@ export interface Translations {
     }
 
   }
-  
+
   // Privacy Policy
   privacyPolicy: {
     hero: {
@@ -1430,58 +1430,58 @@ export interface Translations {
         description: string
         rights: string[]
       }
-              contactUs: {
-          title: string
-          description: string
-          email: string
-          phone: string
-        }
-        personalInfoDetails: {
-          nameContact: string
-          paymentBilling: string
-          orderHistory: string
-          customerService: string
-        }
-        usageDataDetails: {
-          ipDevice: string
-          websiteUsage: string
-          browserOS: string
-        }
-        cookiesDetails: {
-          trackingTech: string
-          sessionData: string
-          thirdPartyAnalytics: string
-        }
-        purposesDetails: {
-          processOrders: string
-          customerSupport: string
-          updatesMarketing: string
-          improveServices: string
-          securityFraud: string
-        }
-        exceptionsDetails: {
-          explicitConsent: string
-          legalObligations: string
-          protectRights: string
-          trustedProviders: string
-        }
-        securityDetails: {
-          encryption: string
-          securityAssessments: string
-          accessControls: string
-          secureTransmission: string
-        }
-        rightsDetails: {
-          accessData: string
-          correctInfo: string
-          deleteData: string
-          optOutMarketing: string
-          dataPortability: string
-        }
-        address: string
+      contactUs: {
+        title: string
+        description: string
+        email: string
+        phone: string
+      }
+      personalInfoDetails: {
+        nameContact: string
+        paymentBilling: string
+        orderHistory: string
+        customerService: string
+      }
+      usageDataDetails: {
+        ipDevice: string
+        websiteUsage: string
+        browserOS: string
+      }
+      cookiesDetails: {
+        trackingTech: string
+        sessionData: string
+        thirdPartyAnalytics: string
+      }
+      purposesDetails: {
+        processOrders: string
+        customerSupport: string
+        updatesMarketing: string
+        improveServices: string
+        securityFraud: string
+      }
+      exceptionsDetails: {
+        explicitConsent: string
+        legalObligations: string
+        protectRights: string
+        trustedProviders: string
+      }
+      securityDetails: {
+        encryption: string
+        securityAssessments: string
+        accessControls: string
+        secureTransmission: string
+      }
+      rightsDetails: {
+        accessData: string
+        correctInfo: string
+        deleteData: string
+        optOutMarketing: string
+        dataPortability: string
+      }
+      address: string
     }
   }
-  
+
   // Terms of Service
   termsOfService: {
     hero: {
@@ -1534,64 +1534,64 @@ export interface Translations {
         description: string
         conditions: string[]
       }
-              contact: {
-          title: string
-          description: string
-          email: string
-          phone: string
-        }
-        servicesDetails: {
-          productSales: string
-          co2Services: string
-          customerSupport: string
-          onlineOrdering: string
-        }
-        obligationsDetails: {
-          accurateInfo: string
-          safeUsage: string
-          intellectualProperty: string
-          accountSecurity: string
-        }
-        paymentDetails: {
-          sarPrices: string
-          paymentMethods: string
-          orderProcessing: string
-          refundTiming: string
-        }
-        shippingDetails: {
-          freeShipping: string
-          standardDelivery: string
-          expressDelivery: string
-          localPickup: string
-        }
-        returnsDetails: {
-          originalCondition: string
-          freeReturn: string
-          fullRefund: string
-          co2NotEligible: string
-        }
-        warrantyDetails: {
-          sodaMakerWarranty: string
-          accessoriesWarranty: string
-          manufacturingDefects: string
-          normalWear: string
-        }
-        liabilityDetails: {
-          maxLiability: string
-          noIndirectDamages: string
-          noMisuseLiability: string
-          forceMajeure: string
-        }
-        terminationDetails: {
-          termsViolation: string
-          fraudulentActivities: string
-          nonPayment: string
-          serviceAbuse: string
-        }
-        address: string
+      contact: {
+        title: string
+        description: string
+        email: string
+        phone: string
+      }
+      servicesDetails: {
+        productSales: string
+        co2Services: string
+        customerSupport: string
+        onlineOrdering: string
+      }
+      obligationsDetails: {
+        accurateInfo: string
+        safeUsage: string
+        intellectualProperty: string
+        accountSecurity: string
+      }
+      paymentDetails: {
+        sarPrices: string
+        paymentMethods: string
+        orderProcessing: string
+        refundTiming: string
+      }
+      shippingDetails: {
+        freeShipping: string
+        standardDelivery: string
+        expressDelivery: string
+        localPickup: string
+      }
+      returnsDetails: {
+        originalCondition: string
+        freeReturn: string
+        fullRefund: string
+        co2NotEligible: string
+      }
+      warrantyDetails: {
+        sodaMakerWarranty: string
+        accessoriesWarranty: string
+        manufacturingDefects: string
+        normalWear: string
+      }
+      liabilityDetails: {
+        maxLiability: string
+        noIndirectDamages: string
+        noMisuseLiability: string
+        forceMajeure: string
+      }
+      terminationDetails: {
+        termsViolation: string
+        fraudulentActivities: string
+        nonPayment: string
+        serviceAbuse: string
+      }
+      address: string
     }
   }
-  
+
   // Cookie Policy
   cookiePolicy: {
     hero: {
@@ -1631,28 +1631,28 @@ export interface Translations {
         title: string
         description: string
       }
-              contact: {
-          title: string
-          description: string
-          email: string
-        }
-        purposesDetails: {
-          rememberPreferences: string
-          analyzeTraffic: string
-          personalizedContent: string
-          improveFunctionality: string
-          ensureSecurity: string
-        }
-        thirdPartyServices: {
-          googleAnalytics: string
-          facebookPixel: string
-          paymentProcessors: string
-          socialMedia: string
-        }
-        address: string
+      contact: {
+        title: string
+        description: string
+        email: string
+      }
+      purposesDetails: {
+        rememberPreferences: string
+        analyzeTraffic: string
+        personalizedContent: string
+        improveFunctionality: string
+        ensureSecurity: string
+      }
+      thirdPartyServices: {
+        googleAnalytics: string
+        facebookPixel: string
+        paymentProcessors: string
+        socialMedia: string
+      }
+      address: string
     }
   }
-  
+
   // Common
   common: {
     loading: string
@@ -1693,7 +1693,7 @@ export interface Translations {
     terms: string
     cookies: string
   }
-  
+
   // Refill
   refill: {
     loadingTitle: string
@@ -1796,7 +1796,7 @@ export interface Translations {
       passwordChangeError: string
     }
   }
-  
+
   // Cart
   cart: {
     title: string
@@ -1821,7 +1821,7 @@ export interface Translations {
     price: string
     totalItems: string
   }
-  
+
   // Checkout
   checkout: {
     title: string
@@ -1842,10 +1842,13 @@ export interface Translations {
     expressDelivery: string
     orderNotes: string
     agreeToTerms: string
+    shipToDifferent: string
+    termsPrefix: string
+    termsLink: string
     required: string
     optional: string
   }
-  
+
   // Auth
   auth: {
     createAccount: string
@@ -1872,74 +1875,74 @@ export interface Translations {
     termsAndConditions: string
     privacyPolicy: string
   }
-  
+
   // Product
-    product: {
-      inStock: string
-      outOfStock: string
-      onlyLeftInStock: string
-      stockCount: string
-      addToCart: string
-      buyNow: string
-      addToWishlist: string
-      removeFromWishlist: string
-      share: string
-      notifyMe: string
-      writeReview: string
-      askQuestion: string
-      description: string
-      specifications: string
-      reviews: string
-      freeShipping?: string
-      featured?: string
-      questions: string
-      relatedProducts: string
-      youMayAlsoLike: string
-      frequentlyAskedQuestions: string
-      customerReviews: string
-      save: string
-      goToCart: string
-      quantity: string
-      keyFeatures: string
-      defaultFeature?: string
-      badges?: {
-        bestSeller: string
-        new: string
-        ecoFriendly: string
-      }
-      safetyQuality?: string
-      estimatedDelivery?: string
-      options?: string
-      notifyWhenAvailable?: string
-      loadingDetails?: string
-      preparingExperience?: string
-      technicalSpecifications: string
-      allReviews: string
-      allQuestions: string
-      usageFeatures: string
-      installationSetup: string
-      warrantySupport: string
-      sold: string
-      reviewsCount: string
-      questionsCount: string
-      videos?: string
-      qa?: string
-      certifications?: string
-      material?: string
-      dimensions?: string
-      weight?: string
-      warranty?: string
-      compatibility?: string
-      notFoundTitle?: string
-      notFoundDescription?: string
-      backToShop?: string
-      backToAccessories?: string
-      backToSodaMakers?: string
-      premium?: string
-      standard?: string
-      lightweight?: string
-      quickView?: string
-      compareProducts?: string
+  product: {
+    inStock: string
+    outOfStock: string
+    onlyLeftInStock: string
+    stockCount: string
+    addToCart: string
+    buyNow: string
+    addToWishlist: string
+    removeFromWishlist: string
+    share: string
+    notifyMe: string
+    writeReview: string
+    askQuestion: string
+    description: string
+    specifications: string
+    reviews: string
+    freeShipping?: string
+    featured?: string
+    questions: string
+    relatedProducts: string
+    youMayAlsoLike: string
+    frequentlyAskedQuestions: string
+    customerReviews: string
+    save: string
+    goToCart: string
+    quantity: string
+    keyFeatures: string
+    defaultFeature?: string
+    badges?: {
+      bestSeller: string
+      new: string
+      ecoFriendly: string
+    }
+    safetyQuality?: string
+    estimatedDelivery?: string
+    options?: string
+    notifyWhenAvailable?: string
+    loadingDetails?: string
+    preparingExperience?: string
+    technicalSpecifications: string
+    allReviews: string
+    allQuestions: string
+    usageFeatures: string
+    installationSetup: string
+    warrantySupport: string
+    sold: string
+    reviewsCount: string
+    questionsCount: string
+    videos?: string
+    qa?: string
+    certifications?: string
+    material?: string
+    dimensions?: string
+    weight?: string
+    warranty?: string
+    compatibility?: string
+    notFoundTitle?: string
+    notFoundDescription?: string
+    backToShop?: string
+    backToAccessories?: string
+    backToSodaMakers?: string
+    premium?: string
+    standard?: string
+    lightweight?: string
+    quickView?: string
+    compareProducts?: string
     writeAReview: string
     askAQuestion: string
     submitReview: string
@@ -1963,7 +1966,7 @@ export interface Translations {
     yes: string
     no: string
   }
-  
+
   // Footer
   footer: {
     companyDescription: string
@@ -2010,7 +2013,7 @@ export interface Translations {
     }
     copyright: string
   }
-  
+
   // Recipes
   recipes: {
     hero: {
@@ -2815,7 +2818,7 @@ export const translations: Record<Language, Translations> = {
           accessories: "Accessories"
         }
       },
-      
+
       customerReviews: {
         title: "What Our",
         subtitle: "Customers",
@@ -2877,12 +2880,12 @@ export const translations: Record<Language, Translations> = {
           category: "Product Category",
           product: "Product Name"
         },
-              badges: {
-        new: "New",
-        popular: "Popular",
-        discount: "Discount",
-        lowStock: "Low Stock"
-      },
+        badges: {
+          new: "New",
+          popular: "Popular",
+          discount: "Discount",
+          lowStock: "Low Stock"
+        },
         imageCounter: {
           of: "of"
         },
@@ -3412,7 +3415,7 @@ export const translations: Record<Language, Translations> = {
         }
       }
     },
-    
+
     blog: {
       hero: {
         title: "Blog & News",
@@ -3432,12 +3435,12 @@ export const translations: Record<Language, Translations> = {
         tips: "Tips & Tricks",
         recipes: "Recipes",
         company: "Company",
-      science: "Science",
-      guide: "Guide",
-      products: "Products",
-      environment: "Environment",
-      health: "Health",
-      lifestyle: "Lifestyle"
+        science: "Science",
+        guide: "Guide",
+        products: "Products",
+        environment: "Environment",
+        health: "Health",
+        lifestyle: "Lifestyle"
       },
       search: {
         placeholder: "Search articles...",
@@ -3449,177 +3452,177 @@ export const translations: Record<Language, Translations> = {
         emailPlaceholder: "Enter your email",
         subscribe: "Subscribe"
       },
-              pagination: {
-          previous: "Previous",
-          next: "Next",
-          page: "Page",
-          of: "of"
+      pagination: {
+        previous: "Previous",
+        next: "Next",
+        page: "Page",
+        of: "of"
+      },
+      blogPosts: {
+        readTime: "min read",
+        publishedOn: "Published on",
+        author: "Author",
+        category: "Category",
+        backToBlog: "Back to Blog",
+        shareThisPost: "Share this post",
+        relatedPosts: "Related Posts",
+        tags: "Tags",
+        comments: "Comments",
+        leaveComment: "Leave a comment",
+        commentPlaceholder: "Write your comment here...",
+        postComment: "Post Comment",
+        likePost: "Like",
+        likedPost: "Liked",
+        // Blog post content translations
+        postTitles: {
+          post1: "10 Refreshing Summer Drink Recipes with Drinkmate",
+          post2: "The Science Behind Perfect Carbonation",
+          post3: "How to Choose the Perfect CO2 Cylinder for Your Drinkmate",
+          post4: "Top 5 Premium Italian Syrups for Your Drinkmate",
+          post5: "Environmental Impact: How Drinkmate Reduces Plastic Waste",
+          post6: "Health Benefits of Carbonated Water: Myths vs. Facts",
+          post7: "How to Host the Perfect Carbonation Party with Drinkmate"
         },
-        blogPosts: {
-          readTime: "min read",
-          publishedOn: "Published on",
-          author: "Author",
-          category: "Category",
-          backToBlog: "Back to Blog",
-          shareThisPost: "Share this post",
-          relatedPosts: "Related Posts",
-          tags: "Tags",
-          comments: "Comments",
-          leaveComment: "Leave a comment",
-          commentPlaceholder: "Write your comment here...",
-          postComment: "Post Comment",
-          likePost: "Like",
-          likedPost: "Liked",
-          // Blog post content translations
-          postTitles: {
-            post1: "10 Refreshing Summer Drink Recipes with Drinkmate",
-            post2: "The Science Behind Perfect Carbonation",
-            post3: "How to Choose the Perfect CO2 Cylinder for Your Drinkmate",
-            post4: "Top 5 Premium Italian Syrups for Your Drinkmate",
-            post5: "Environmental Impact: How Drinkmate Reduces Plastic Waste",
-            post6: "Health Benefits of Carbonated Water: Myths vs. Facts",
-            post7: "How to Host the Perfect Carbonation Party with Drinkmate"
-          },
-          postExcerpts: {
-            post1: "Beat the summer heat with these delicious and easy-to-make sparkling drink recipes using your Drinkmate machine.",
-            post2: "Learn about the chemistry of carbonation and how Drinkmate technology creates the perfect fizz every time.",
-            post3: "Learn how to choose the perfect CO2 cylinder size for your Drinkmate machine based on usage, cost, and convenience.",
-            post4: "Discover the top 5 premium Italian syrups that will transform your Drinkmate beverages into authentic Italian delights.",
-            post5: "Discover how your Drinkmate machine helps reduce plastic waste and protect the environment while saving money.",
-            post6: "Discover the truth about carbonated water health benefits and debunk common myths with scientific evidence.",
-            post7: "Learn how to host an unforgettable carbonation party that will showcase your Drinkmate machine and impress your guests."
-          },
-          postAuthors: {
-            drinkmateTeam: "Drinkmate Team",
-            ahmedHassan: "Dr. Ahmed Hassan",
-            sarahJohnson: "Dr. Sarah Johnson",
-            environmentalTeam: "Environmental Team"
-          },
-          postDates: {
-            jan15: "January 15, 2024",
-            jan12: "January 12, 2024",
-            jan10: "January 10, 2024",
-            jan8: "January 8, 2024",
-            jan5: "January 5, 2024",
-            jan3: "January 3, 2024",
-            dec30: "December 30, 2023"
-          },
-          post1: {
-            title: "10 Refreshing Summer Drink Recipes with Drinkmate",
-            subtitle: "Beat the Summer Heat with Homemade Sparkling Drinks!",
-            intro: "Summer is here, and what better way to beat the heat than with refreshing, homemade sparkling drinks? Your Drinkmate machine makes it incredibly easy to create delicious beverages that are not only tasty but also healthier than store-bought alternatives. Say goodbye to artificial flavors and hello to natural, customizable refreshments!",
-            whyMake: {
-              title: "Why Make Your Own Sparkling Drinks?",
-              health: {
-                title: "Health Benefits",
-                benefit1: "No artificial preservatives or colors",
-                benefit2: "Control over sweetness levels",
-                benefit3: "Natural ingredients only",
-                benefit4: "Lower sugar content"
-              },
-              cost: {
-                title: "Cost Savings",
-                saving1: "70% cheaper than store-bought",
-                saving2: "Reusable bottles",
-                saving3: "Bulk ingredient purchases",
-                saving4: "No transportation costs"
-              }
+        postExcerpts: {
+          post1: "Beat the summer heat with these delicious and easy-to-make sparkling drink recipes using your Drinkmate machine.",
+          post2: "Learn about the chemistry of carbonation and how Drinkmate technology creates the perfect fizz every time.",
+          post3: "Learn how to choose the perfect CO2 cylinder size for your Drinkmate machine based on usage, cost, and convenience.",
+          post4: "Discover the top 5 premium Italian syrups that will transform your Drinkmate beverages into authentic Italian delights.",
+          post5: "Discover how your Drinkmate machine helps reduce plastic waste and protect the environment while saving money.",
+          post6: "Discover the truth about carbonated water health benefits and debunk common myths with scientific evidence.",
+          post7: "Learn how to host an unforgettable carbonation party that will showcase your Drinkmate machine and impress your guests."
+        },
+        postAuthors: {
+          drinkmateTeam: "Drinkmate Team",
+          ahmedHassan: "Dr. Ahmed Hassan",
+          sarahJohnson: "Dr. Sarah Johnson",
+          environmentalTeam: "Environmental Team"
+        },
+        postDates: {
+          jan15: "January 15, 2024",
+          jan12: "January 12, 2024",
+          jan10: "January 10, 2024",
+          jan8: "January 8, 2024",
+          jan5: "January 5, 2024",
+          jan3: "January 3, 2024",
+          dec30: "December 30, 2023"
+        },
+        post1: {
+          title: "10 Refreshing Summer Drink Recipes with Drinkmate",
+          subtitle: "Beat the Summer Heat with Homemade Sparkling Drinks!",
+          intro: "Summer is here, and what better way to beat the heat than with refreshing, homemade sparkling drinks? Your Drinkmate machine makes it incredibly easy to create delicious beverages that are not only tasty but also healthier than store-bought alternatives. Say goodbye to artificial flavors and hello to natural, customizable refreshments!",
+          whyMake: {
+            title: "Why Make Your Own Sparkling Drinks?",
+            health: {
+              title: "Health Benefits",
+              benefit1: "No artificial preservatives or colors",
+              benefit2: "Control over sweetness levels",
+              benefit3: "Natural ingredients only",
+              benefit4: "Lower sugar content"
             },
-            excerpt: "Beat the summer heat with these delicious and easy-to-make sparkling drink recipes using your Drinkmate machine.",
-            author: "Drinkmate Team",
-            date: "January 15, 2024",
-            tags: {
-              recipes: "Recipes",
-              summer: "Summer",
-              refreshing: "Refreshing",
-              healthy: "Healthy",
-              sparkling: "Sparkling"
+            cost: {
+              title: "Cost Savings",
+              saving1: "70% cheaper than store-bought",
+              saving2: "Reusable bottles",
+              saving3: "Bulk ingredient purchases",
+              saving4: "No transportation costs"
             }
           },
-          post2: {
-            title: "The Science Behind Perfect Carbonation",
-            content: "Content for science post...",
-            excerpt: "Learn about the chemistry of carbonation and how Drinkmate technology creates the perfect fizz every time.",
-            author: "Dr. Ahmed Hassan",
-            date: "January 12, 2024",
-            tags: {
-              science: "Science",
-              chemistry: "Chemistry",
-              carbonation: "Carbonation",
-              technology: "Technology"
-            }
-          },
-          post3: {
-            title: "How to Choose the Perfect CO2 Cylinder for Your Drinkmate",
-            content: "Content for guide post...",
-            excerpt: "Learn how to choose the perfect CO2 cylinder size for your Drinkmate machine based on usage, cost, and convenience.",
-            author: "Drinkmate Team",
-            date: "January 10, 2024",
-            tags: {
-              guide: "Guide",
-              co2: "CO2",
-              equipment: "Equipment",
-              tips: "Tips"
-            }
-          },
-          post4: {
-            title: "Top 5 Premium Italian Syrups for Your Drinkmate",
-            content: "Content for products post...",
-            excerpt: "Discover the top 5 premium Italian syrups that will transform your Drinkmate beverages into authentic Italian delights.",
-            author: "Drinkmate Team",
-            date: "January 8, 2024",
-            tags: {
-              products: "Products",
-              italian: "Italian",
-              syrups: "Syrups",
-              premium: "Premium"
-            }
-          },
-          post5: {
-            title: "Environmental Impact: How Drinkmate Reduces Plastic Waste",
-            content: "Content for environment post...",
-            excerpt: "Discover how your Drinkmate machine helps reduce plastic waste and protect the environment while saving money.",
-            author: "Environmental Team",
-            date: "January 5, 2024",
-            tags: {
-              environment: "Environment",
-              plastic: "Plastic",
-              sustainability: "Sustainability",
-              green: "Green"
-            }
-          },
-          post6: {
-            title: "Health Benefits of Carbonated Water: Myths vs. Facts",
-            content: "Content for health post...",
-            excerpt: "Discover the truth about carbonated water health benefits and debunk common myths with scientific evidence.",
-            author: "Dr. Sarah Johnson",
-            date: "January 3, 2024",
-            tags: {
-              health: "Health",
-              benefits: "Benefits",
-              myths: "Myths",
-              science: "Science"
-            }
-          },
-          post7: {
-            title: "How to Host the Perfect Carbonation Party with Drinkmate",
-            content: "Content for lifestyle post...",
-            excerpt: "Learn how to host an unforgettable carbonation party that will showcase your Drinkmate machine and impress your guests.",
-            author: "Drinkmate Team",
-            date: "December 30, 2023",
-            tags: {
-              party: "Party",
-              entertainment: "Entertainment",
-              social: "Social",
-              lifestyle: "Lifestyle",
-              carbonation: "Carbonation"
-            }
-          },
-          authorBio: {
-            team: "Our expert team of beverage enthusiasts and carbonation specialists who are passionate about helping you create the perfect sparkling drinks at home.",
-            expert: "A passionate expert in their field, dedicated to sharing knowledge and insights about carbonation technology and beverage science."
+          excerpt: "Beat the summer heat with these delicious and easy-to-make sparkling drink recipes using your Drinkmate machine.",
+          author: "Drinkmate Team",
+          date: "January 15, 2024",
+          tags: {
+            recipes: "Recipes",
+            summer: "Summer",
+            refreshing: "Refreshing",
+            healthy: "Healthy",
+            sparkling: "Sparkling"
           }
+        },
+        post2: {
+          title: "The Science Behind Perfect Carbonation",
+          content: "Content for science post...",
+          excerpt: "Learn about the chemistry of carbonation and how Drinkmate technology creates the perfect fizz every time.",
+          author: "Dr. Ahmed Hassan",
+          date: "January 12, 2024",
+          tags: {
+            science: "Science",
+            chemistry: "Chemistry",
+            carbonation: "Carbonation",
+            technology: "Technology"
+          }
+        },
+        post3: {
+          title: "How to Choose the Perfect CO2 Cylinder for Your Drinkmate",
+          content: "Content for guide post...",
+          excerpt: "Learn how to choose the perfect CO2 cylinder size for your Drinkmate machine based on usage, cost, and convenience.",
+          author: "Drinkmate Team",
+          date: "January 10, 2024",
+          tags: {
+            guide: "Guide",
+            co2: "CO2",
+            equipment: "Equipment",
+            tips: "Tips"
+          }
+        },
+        post4: {
+          title: "Top 5 Premium Italian Syrups for Your Drinkmate",
+          content: "Content for products post...",
+          excerpt: "Discover the top 5 premium Italian syrups that will transform your Drinkmate beverages into authentic Italian delights.",
+          author: "Drinkmate Team",
+          date: "January 8, 2024",
+          tags: {
+            products: "Products",
+            italian: "Italian",
+            syrups: "Syrups",
+            premium: "Premium"
+          }
+        },
+        post5: {
+          title: "Environmental Impact: How Drinkmate Reduces Plastic Waste",
+          content: "Content for environment post...",
+          excerpt: "Discover how your Drinkmate machine helps reduce plastic waste and protect the environment while saving money.",
+          author: "Environmental Team",
+          date: "January 5, 2024",
+          tags: {
+            environment: "Environment",
+            plastic: "Plastic",
+            sustainability: "Sustainability",
+            green: "Green"
+          }
+        },
+        post6: {
+          title: "Health Benefits of Carbonated Water: Myths vs. Facts",
+          content: "Content for health post...",
+          excerpt: "Discover the truth about carbonated water health benefits and debunk common myths with scientific evidence.",
+          author: "Dr. Sarah Johnson",
+          date: "January 3, 2024",
+          tags: {
+            health: "Health",
+            benefits: "Benefits",
+            myths: "Myths",
+            science: "Science"
+          }
+        },
+        post7: {
+          title: "How to Host the Perfect Carbonation Party with Drinkmate",
+          content: "Content for lifestyle post...",
+          excerpt: "Learn how to host an unforgettable carbonation party that will showcase your Drinkmate machine and impress your guests.",
+          author: "Drinkmate Team",
+          date: "December 30, 2023",
+          tags: {
+            party: "Party",
+            entertainment: "Entertainment",
+            social: "Social",
+            lifestyle: "Lifestyle",
+            carbonation: "Carbonation"
+          }
+        },
+        authorBio: {
+          team: "Our expert team of beverage enthusiasts and carbonation specialists who are passionate about helping you create the perfect sparkling drinks at home.",
+          expert: "A passionate expert in their field, dedicated to sharing knowledge and insights about carbonation technology and beverage science."
         }
+      }
     },
     privacyPolicy: {
       hero: {
@@ -4579,6 +4582,9 @@ export const translations: Record<Language, Translations> = {
       expressDelivery: "Express Delivery",
       orderNotes: "Order Notes",
       agreeToTerms: "I agree to the terms and conditions",
+      shipToDifferent: "Ship to a different address",
+      termsPrefix: "I agree to the",
+      termsLink: "Terms and Conditions",
       required: "Required",
       optional: "Optional"
     },
@@ -4926,7 +4932,7 @@ export const translations: Record<Language, Translations> = {
           buttonText: "تسوق الآن"
         }
       },
-      
+
       features: {
         title: "لماذا تختار درينك ميت",
         subtitle: "الجودة العالية تلتقي بالتكنولوجيا المبتكرة",
@@ -5334,7 +5340,7 @@ export const translations: Record<Language, Translations> = {
           accessories: "الملحقات"
         }
       },
-      
+
       customerReviews: {
         title: "ماذا يقول",
         subtitle: "عملاؤنا",
@@ -5724,7 +5730,7 @@ export const translations: Record<Language, Translations> = {
         }
       }
     },
-    
+
     blog: {
       hero: {
         title: "المدونة والأخبار",
@@ -5761,177 +5767,177 @@ export const translations: Record<Language, Translations> = {
         emailPlaceholder: "أدخل بريدك الإلكتروني",
         subscribe: "اشتراك"
       },
-              pagination: {
-          previous: "السابق",
-          next: "التالي",
-          page: "الصفحة",
-          of: "من"
+      pagination: {
+        previous: "السابق",
+        next: "التالي",
+        page: "الصفحة",
+        of: "من"
+      },
+      blogPosts: {
+        readTime: "دقائق للقراءة",
+        publishedOn: "نُشر في",
+        author: "الكاتب",
+        category: "الفئة",
+        backToBlog: "العودة إلى المدونة",
+        shareThisPost: "شارك هذا المنشور",
+        relatedPosts: "منشورات ذات صلة",
+        tags: "العلامات",
+        comments: "التعليقات",
+        leaveComment: "اترك تعليقاً",
+        commentPlaceholder: "اكتب تعليقك هنا...",
+        postComment: "نشر التعليق",
+        likePost: "إعجاب",
+        likedPost: "أعجبني",
+        // Blog post content translations
+        postTitles: {
+          post1: "10 وصفات مشروبات منعشة للصيف مع درينك ميت",
+          post2: "العلم وراء التكربن المثالي",
+          post3: "كيف تختار أسطوانة ثاني أكسيد الكربون المثالية لدرينك ميت",
+          post4: "أفضل 5 شرابات إيطالية فاخرة لدرينك ميت",
+          post5: "التأثير البيئي: كيف يقلل درينك ميت من النفايات البلاستيكية",
+          post6: "الفوائد الصحية للمياه الغازية: الخرافات مقابل الحقائق",
+          post7: "كيف تستضيف حفلة التكربن المثالية مع درينك ميت"
         },
-        blogPosts: {
-          readTime: "دقائق للقراءة",
-          publishedOn: "نُشر في",
-          author: "الكاتب",
-          category: "الفئة",
-          backToBlog: "العودة إلى المدونة",
-          shareThisPost: "شارك هذا المنشور",
-          relatedPosts: "منشورات ذات صلة",
-          tags: "العلامات",
-          comments: "التعليقات",
-          leaveComment: "اترك تعليقاً",
-          commentPlaceholder: "اكتب تعليقك هنا...",
-          postComment: "نشر التعليق",
-          likePost: "إعجاب",
-          likedPost: "أعجبني",
-          // Blog post content translations
-          postTitles: {
-            post1: "10 وصفات مشروبات منعشة للصيف مع درينك ميت",
-            post2: "العلم وراء التكربن المثالي",
-            post3: "كيف تختار أسطوانة ثاني أكسيد الكربون المثالية لدرينك ميت",
-            post4: "أفضل 5 شرابات إيطالية فاخرة لدرينك ميت",
-            post5: "التأثير البيئي: كيف يقلل درينك ميت من النفايات البلاستيكية",
-            post6: "الفوائد الصحية للمياه الغازية: الخرافات مقابل الحقائق",
-            post7: "كيف تستضيف حفلة التكربن المثالية مع درينك ميت"
-          },
-          postExcerpts: {
-            post1: "تغلب على حرارة الصيف مع وصفات المشروبات الغازية اللذيذة والسهلة الصنع باستخدام آلة درينك ميت.",
-            post2: "تعلم عن كيمياء التكربن وكيف تنشئ تقنية درينك ميت الفقاعات المثالية في كل مرة.",
-            post3: "تعلم كيف تختار الحجم المثالي لأسطوانة ثاني أكسيد الكربون لآلة درينك ميت بناءً على الاستخدام والتكلفة والراحة.",
-            post4: "اكتشف أفضل 5 شرابات إيطالية فاخرة ستغير مشروبات درينك ميت إلى متعة إيطالية أصيلة.",
-            post5: "اكتشف كيف تساعد آلة درينك ميت في تقليل النفايات البلاستيكية وحماية البيئة مع توفير المال.",
-            post6: "اكتشف الحقيقة حول الفوائد الصحية للمياه الغازية ودحض الخرافات الشائعة بالأدلة العلمية.",
-            post7: "تعلم كيف تستضيف حفلة تكربن لا تُنسى ستعرض آلة درينك ميت وتثير إعجاب ضيوفك."
-          },
-          postAuthors: {
-            drinkmateTeam: "فريق درينك ميت",
-            ahmedHassan: "د. أحمد حسن",
-            sarahJohnson: "د. سارة جونسون",
-            environmentalTeam: "فريق البيئة"
-          },
-          postDates: {
-            jan15: "15 يناير 2024",
-            jan12: "12 يناير 2024",
-            jan10: "10 يناير 2024",
-            jan8: "8 يناير 2024",
-            jan5: "5 يناير 2024",
-            jan3: "3 يناير 2024",
-            dec30: "30 ديسمبر 2023"
-          },
-          post1: {
-            title: "10 وصفات مشروبات منعشة للصيف مع درينك ميت",
-            subtitle: "تغلب على حرارة الصيف مع المشروبات الغازية محلية الصنع!",
-            intro: "الصيف هنا، وما أفضل طريقة للتغلب على الحرارة من المشروبات الغازية المنعشة محلية الصنع؟ تجعل آلة درينك ميت من السهل جداً إنشاء مشروبات لذيذة ليست فقط طيبة المذاق ولكن أيضاً أكثر صحة من البدائل التي تباع في المتاجر. قل وداعاً للنكهات الاصطناعية ومرحباً بالمنعشات الطبيعية والقابلة للتخصيص!",
-            whyMake: {
-              title: "لماذا تصنع مشروباتك الغازية الخاصة؟",
-              health: {
-                title: "الفوائد الصحية",
-                benefit1: "لا توجد مواد حافظة أو ألوان اصطناعية",
-                benefit2: "التحكم في مستويات الحلاوة",
-                benefit3: "مكونات طبيعية فقط",
-                benefit4: "محتوى سكر أقل"
-              },
-              cost: {
-                title: "توفير التكلفة",
-                saving1: "أرخص بنسبة 70% من المشترى من المتجر",
-                saving2: "زجاجات قابلة لإعادة الاستخدام",
-                saving3: "شراء المكونات بكميات كبيرة",
-                saving4: "لا توجد تكاليف نقل"
-              }
+        postExcerpts: {
+          post1: "تغلب على حرارة الصيف مع وصفات المشروبات الغازية اللذيذة والسهلة الصنع باستخدام آلة درينك ميت.",
+          post2: "تعلم عن كيمياء التكربن وكيف تنشئ تقنية درينك ميت الفقاعات المثالية في كل مرة.",
+          post3: "تعلم كيف تختار الحجم المثالي لأسطوانة ثاني أكسيد الكربون لآلة درينك ميت بناءً على الاستخدام والتكلفة والراحة.",
+          post4: "اكتشف أفضل 5 شرابات إيطالية فاخرة ستغير مشروبات درينك ميت إلى متعة إيطالية أصيلة.",
+          post5: "اكتشف كيف تساعد آلة درينك ميت في تقليل النفايات البلاستيكية وحماية البيئة مع توفير المال.",
+          post6: "اكتشف الحقيقة حول الفوائد الصحية للمياه الغازية ودحض الخرافات الشائعة بالأدلة العلمية.",
+          post7: "تعلم كيف تستضيف حفلة تكربن لا تُنسى ستعرض آلة درينك ميت وتثير إعجاب ضيوفك."
+        },
+        postAuthors: {
+          drinkmateTeam: "فريق درينك ميت",
+          ahmedHassan: "د. أحمد حسن",
+          sarahJohnson: "د. سارة جونسون",
+          environmentalTeam: "فريق البيئة"
+        },
+        postDates: {
+          jan15: "15 يناير 2024",
+          jan12: "12 يناير 2024",
+          jan10: "10 يناير 2024",
+          jan8: "8 يناير 2024",
+          jan5: "5 يناير 2024",
+          jan3: "3 يناير 2024",
+          dec30: "30 ديسمبر 2023"
+        },
+        post1: {
+          title: "10 وصفات مشروبات منعشة للصيف مع درينك ميت",
+          subtitle: "تغلب على حرارة الصيف مع المشروبات الغازية محلية الصنع!",
+          intro: "الصيف هنا، وما أفضل طريقة للتغلب على الحرارة من المشروبات الغازية المنعشة محلية الصنع؟ تجعل آلة درينك ميت من السهل جداً إنشاء مشروبات لذيذة ليست فقط طيبة المذاق ولكن أيضاً أكثر صحة من البدائل التي تباع في المتاجر. قل وداعاً للنكهات الاصطناعية ومرحباً بالمنعشات الطبيعية والقابلة للتخصيص!",
+          whyMake: {
+            title: "لماذا تصنع مشروباتك الغازية الخاصة؟",
+            health: {
+              title: "الفوائد الصحية",
+              benefit1: "لا توجد مواد حافظة أو ألوان اصطناعية",
+              benefit2: "التحكم في مستويات الحلاوة",
+              benefit3: "مكونات طبيعية فقط",
+              benefit4: "محتوى سكر أقل"
             },
-            excerpt: "تغلب على حرارة الصيف مع وصفات المشروبات الغازية اللذيذة والسهلة الصنع باستخدام آلة درينك ميت.",
-            author: "فريق درينك ميت",
-            date: "15 يناير 2024",
-            tags: {
-              recipes: "الوصفات",
-              summer: "الصيف",
-              refreshing: "منعش",
-              healthy: "صحي",
-              sparkling: "غازي"
+            cost: {
+              title: "توفير التكلفة",
+              saving1: "أرخص بنسبة 70% من المشترى من المتجر",
+              saving2: "زجاجات قابلة لإعادة الاستخدام",
+              saving3: "شراء المكونات بكميات كبيرة",
+              saving4: "لا توجد تكاليف نقل"
             }
           },
-          post2: {
-            title: "العلم وراء التكربن المثالي",
-            content: "محتوى للمنشور العلمي...",
-            excerpt: "تعلم عن كيمياء التكربن وكيف تنشئ تقنية درينك ميت الفقاعات المثالية في كل مرة.",
-            author: "د. أحمد حسن",
-            date: "12 يناير 2024",
-            tags: {
-              science: "العلم",
-              chemistry: "الكيمياء",
-              carbonation: "التكربن",
-              technology: "التقنية"
-            }
-          },
-          post3: {
-            title: "كيف تختار أسطوانة ثاني أكسيد الكربون المثالية لدرينك ميت",
-            content: "محتوى لمنشور الدليل...",
-            excerpt: "تعلم كيف تختار الحجم المثالي لأسطوانة ثاني أكسيد الكربون لآلة درينك ميت بناءً على الاستخدام والتكلفة والراحة.",
-            author: "فريق درينك ميت",
-            date: "10 يناير 2024",
-            tags: {
-              guide: "الدليل",
-              co2: "ثاني أكسيد الكربون",
-              equipment: "المعدات",
-              tips: "النصائح"
-            }
-          },
-          post4: {
-            title: "أفضل 5 شرابات إيطالية فاخرة لدرينك ميت",
-            content: "محتوى لمنشور المنتجات...",
-            excerpt: "اكتشف أفضل 5 شرابات إيطالية فاخرة ستغير مشروبات درينك ميت إلى متعة إيطالية أصيلة.",
-            author: "فريق درينك ميت",
-            date: "8 يناير 2024",
-            tags: {
-              products: "المنتجات",
-              italian: "إيطالي",
-              syrups: "الشرابات",
-              premium: "فاخر"
-            }
-          },
-          post5: {
-            title: "التأثير البيئي: كيف يقلل درينك ميت من النفايات البلاستيكية",
-            content: "محتوى لمنشور البيئة...",
-            excerpt: "اكتشف كيف تساعد آلة درينك ميت في تقليل النفايات البلاستيكية وحماية البيئة مع توفير المال.",
-            author: "فريق البيئة",
-            date: "5 يناير 2024",
-            tags: {
-              environment: "البيئة",
-              plastic: "البلاستيك",
-              sustainability: "الاستدامة",
-              green: "أخضر"
-            }
-          },
-          post6: {
-            title: "الفوائد الصحية للمياه الغازية: الخرافات مقابل الحقائق",
-            content: "محتوى لمنشور الصحة...",
-            excerpt: "اكتشف الحقيقة حول الفوائد الصحية للمياه الغازية ودحض الخرافات الشائعة بالأدلة العلمية.",
-            author: "د. سارة جونسون",
-            date: "3 يناير 2024",
-            tags: {
-              health: "الصحة",
-              benefits: "الفوائد",
-              myths: "الخرافات",
-              science: "العلم"
-            }
-          },
-          post7: {
-            title: "كيف تستضيف حفلة التكربن المثالية مع درينك ميت",
-            content: "محتوى لمنشور نمط الحياة...",
-            excerpt: "تعلم كيف تستضيف حفلة تكربن لا تُنسى ستعرض آلة درينك ميت وتثير إعجاب ضيوفك.",
-            author: "فريق درينك ميت",
-            date: "30 ديسمبر 2023",
-            tags: {
-              party: "الحفلة",
-              entertainment: "الترفيه",
-              social: "اجتماعي",
-              lifestyle: "نمط الحياة",
-              carbonation: "التكربن"
-            }
-          },
-          authorBio: {
-            team: "فريقنا الخبير من عشاق المشروبات ومتخصصي التكربن الذين يهتمون بمساعدتك في إنشاء المشروبات الغازية المثالية في المنزل.",
-            expert: "خبير متحمس في مجاله، مكرس لمشاركة المعرفة والرؤى حول تقنية التكربن وعلوم المشروبات."
+          excerpt: "تغلب على حرارة الصيف مع وصفات المشروبات الغازية اللذيذة والسهلة الصنع باستخدام آلة درينك ميت.",
+          author: "فريق درينك ميت",
+          date: "15 يناير 2024",
+          tags: {
+            recipes: "الوصفات",
+            summer: "الصيف",
+            refreshing: "منعش",
+            healthy: "صحي",
+            sparkling: "غازي"
           }
+        },
+        post2: {
+          title: "العلم وراء التكربن المثالي",
+          content: "محتوى للمنشور العلمي...",
+          excerpt: "تعلم عن كيمياء التكربن وكيف تنشئ تقنية درينك ميت الفقاعات المثالية في كل مرة.",
+          author: "د. أحمد حسن",
+          date: "12 يناير 2024",
+          tags: {
+            science: "العلم",
+            chemistry: "الكيمياء",
+            carbonation: "التكربن",
+            technology: "التقنية"
+          }
+        },
+        post3: {
+          title: "كيف تختار أسطوانة ثاني أكسيد الكربون المثالية لدرينك ميت",
+          content: "محتوى لمنشور الدليل...",
+          excerpt: "تعلم كيف تختار الحجم المثالي لأسطوانة ثاني أكسيد الكربون لآلة درينك ميت بناءً على الاستخدام والتكلفة والراحة.",
+          author: "فريق درينك ميت",
+          date: "10 يناير 2024",
+          tags: {
+            guide: "الدليل",
+            co2: "ثاني أكسيد الكربون",
+            equipment: "المعدات",
+            tips: "النصائح"
+          }
+        },
+        post4: {
+          title: "أفضل 5 شرابات إيطالية فاخرة لدرينك ميت",
+          content: "محتوى لمنشور المنتجات...",
+          excerpt: "اكتشف أفضل 5 شرابات إيطالية فاخرة ستغير مشروبات درينك ميت إلى متعة إيطالية أصيلة.",
+          author: "فريق درينك ميت",
+          date: "8 يناير 2024",
+          tags: {
+            products: "المنتجات",
+            italian: "إيطالي",
+            syrups: "الشرابات",
+            premium: "فاخر"
+          }
+        },
+        post5: {
+          title: "التأثير البيئي: كيف يقلل درينك ميت من النفايات البلاستيكية",
+          content: "محتوى لمنشور البيئة...",
+          excerpt: "اكتشف كيف تساعد آلة درينك ميت في تقليل النفايات البلاستيكية وحماية البيئة مع توفير المال.",
+          author: "فريق البيئة",
+          date: "5 يناير 2024",
+          tags: {
+            environment: "البيئة",
+            plastic: "البلاستيك",
+            sustainability: "الاستدامة",
+            green: "أخضر"
+          }
+        },
+        post6: {
+          title: "الفوائد الصحية للمياه الغازية: الخرافات مقابل الحقائق",
+          content: "محتوى لمنشور الصحة...",
+          excerpt: "اكتشف الحقيقة حول الفوائد الصحية للمياه الغازية ودحض الخرافات الشائعة بالأدلة العلمية.",
+          author: "د. سارة جونسون",
+          date: "3 يناير 2024",
+          tags: {
+            health: "الصحة",
+            benefits: "الفوائد",
+            myths: "الخرافات",
+            science: "العلم"
+          }
+        },
+        post7: {
+          title: "كيف تستضيف حفلة التكربن المثالية مع درينك ميت",
+          content: "محتوى لمنشور نمط الحياة...",
+          excerpt: "تعلم كيف تستضيف حفلة تكربن لا تُنسى ستعرض آلة درينك ميت وتثير إعجاب ضيوفك.",
+          author: "فريق درينك ميت",
+          date: "30 ديسمبر 2023",
+          tags: {
+            party: "الحفلة",
+            entertainment: "الترفيه",
+            social: "اجتماعي",
+            lifestyle: "نمط الحياة",
+            carbonation: "التكربن"
+          }
+        },
+        authorBio: {
+          team: "فريقنا الخبير من عشاق المشروبات ومتخصصي التكربن الذين يهتمون بمساعدتك في إنشاء المشروبات الغازية المثالية في المنزل.",
+          expert: "خبير متحمس في مجاله، مكرس لمشاركة المعرفة والرؤى حول تقنية التكربن وعلوم المشروبات."
         }
+      }
     },
     privacyPolicy: {
       hero: {
@@ -6894,6 +6900,9 @@ export const translations: Record<Language, Translations> = {
       expressDelivery: "التوصيل السريع",
       orderNotes: "ملاحظات الطلب",
       agreeToTerms: "أوافق على الشروط والأحكام",
+      shipToDifferent: "الشحن إلى عنوان مختلف",
+      termsPrefix: "أوافق على",
+      termsLink: "الشروط والأحكام",
       required: "مطلوب",
       optional: "اختياري"
     },

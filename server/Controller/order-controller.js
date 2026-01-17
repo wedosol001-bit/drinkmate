@@ -79,7 +79,7 @@ exports.createGuestOrder = async (req, res) => {
                     price: product.price,
                     quantity: item.quantity,
                     color: item.color,
-                    image: product.images.find(img => img.isPrimary)?.url || product.images[0]?.url,
+                    image: (product.images && Array.isArray(product.images)) ? (product.images.find(img => img.isPrimary)?.url || product.images[0]?.url) : null,
                     sku: product.sku
                 };
             } else if (item.bundle) {
@@ -105,7 +105,7 @@ exports.createGuestOrder = async (req, res) => {
                     price: bundle.price,
                     quantity: item.quantity,
                     color: item.color,
-                    image: bundle.images.find(img => img.isPrimary)?.url || bundle.images[0]?.url,
+                    image: (bundle.images && Array.isArray(bundle.images)) ? (bundle.images.find(img => img.isPrimary)?.url || bundle.images[0]?.url) : null,
                     sku: bundle.sku
                 };
             }
@@ -277,7 +277,7 @@ exports.createOrder = async (req, res) => {
                     price: product.price,
                     quantity: item.quantity,
                     color: item.color,
-                    image: product.images.find(img => img.isPrimary)?.url || product.images[0]?.url,
+                    image: (product.images && Array.isArray(product.images)) ? (product.images.find(img => img.isPrimary)?.url || product.images[0]?.url) : null,
                     sku: product.sku
                 };
             } else if (item.bundle) {
@@ -315,7 +315,7 @@ exports.createOrder = async (req, res) => {
                     name: bundle.name,
                     price: bundle.price,
                     quantity: item.quantity,
-                    image: bundle.images.find(img => img.isPrimary)?.url || bundle.images[0]?.url,
+                    image: (bundle.images && Array.isArray(bundle.images)) ? (bundle.images.find(img => img.isPrimary)?.url || bundle.images[0]?.url) : null,
                     sku: bundle.sku
                 };
             } else {
