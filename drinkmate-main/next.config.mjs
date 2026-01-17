@@ -2,20 +2,20 @@
 const nextConfig = {
   // Security: Enable strict mode
   reactStrictMode: true,
-  
+
   // TypeScript checking enabled
   typescript: {
     ignoreBuildErrors: false,
   },
-  
+
   // Performance: Font optimization is now handled automatically in Next.js 15
-  
+
   // Fix lockfile warning by setting the correct root
   outputFileTracingRoot: new URL('.', import.meta.url).pathname,
-  
+
   // Security: Disable X-Powered-By header
   poweredByHeader: false,
-  
+
   // Security: Enable security headers
   async headers() {
     return [
@@ -52,15 +52,15 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: process.env.NODE_ENV === 'development' 
-              ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000 https://api.cloudinary.com https://www.youtube.com https://drinkmate.sa wss://drinkmate.sa ws://localhost:* wss://localhost:*; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com https://www.google.com https://maps.google.com; object-src 'self' data:; base-uri 'self'; form-action 'self';"
-              : `default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'} ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'} wss://${process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, '') || 'localhost:3001'} https://api.cloudinary.com https://www.youtube.com wss: ws:; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com https://www.google.com https://maps.google.com; object-src 'self' data:; base-uri 'self'; form-action 'self';`,
+            value: process.env.NODE_ENV === 'development'
+              ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000 https://api.cloudinary.com https://www.youtube.com https://drinkmate.sa wss://drinkmate.sa ws://localhost:* wss://localhost:* *.railway.app drinkmate-production.up.railway.app; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com https://www.google.com https://maps.google.com; object-src 'self' data:; base-uri 'self'; form-action 'self';"
+              : `default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.googletagmanager.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'} ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'} wss://${process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, '') || 'localhost:3001'} https://api.cloudinary.com https://www.youtube.com wss: ws: *.railway.app drinkmate-production.up.railway.app; media-src 'self' https://www.youtube.com https://res.cloudinary.com; frame-src 'self' https://www.youtube.com https://www.google.com https://maps.google.com; object-src 'self' data:; base-uri 'self'; form-action 'self';`,
           },
         ],
       },
     ];
   },
-  
+
   // Security: Content Security Policy
   async rewrites() {
     return [
@@ -87,7 +87,7 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Development settings
   eslint: {
     ignoreDuringBuilds: false,
@@ -95,7 +95,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  
+
   // Image optimization with security
   images: {
     unoptimized: false,
@@ -179,23 +179,23 @@ const nextConfig = {
       },
     ],
   },
-  
+
   // Security: Environment variables validation
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  
+
   // Performance optimizations
   compress: true,
-  
+
   // Bundle optimization
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'framer-motion'],
   },
-  
+
   // Security: Disable source maps in production
   productionBrowserSourceMaps: false,
-  
+
   // SEO: Redirects for common misspellings and old URLs
   async redirects() {
     return [
@@ -276,14 +276,14 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Security: Strict mode for webpack
   webpack: (config, { dev, isServer }) => {
     // Allow eval in development for hot reloading
     if (dev) {
       config.devtool = 'eval-cheap-module-source-map';
     }
-    
+
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups = {
         ...config.optimization.splitChunks.cacheGroups,
