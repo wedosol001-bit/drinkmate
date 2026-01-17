@@ -221,6 +221,9 @@ exports.createGuestOrder = async (req, res) => {
 // Create a new order
 exports.createOrder = async (req, res) => {
     try {
+        console.log('Creating order for user:', req.user ? req.user._id : 'unknown');
+        console.log('Order body:', JSON.stringify(req.body, null, 2));
+
         const { items, shippingAddress, billingAddress, paymentMethod, couponCode, packingInstructions, isGift, giftMessage } = req.body;
 
         // Validate required fields
@@ -411,14 +414,6 @@ exports.createOrder = async (req, res) => {
 
         // Process payment based on payment method
         if (paymentMethod === 'arb') {
-            // For ARB, we'll create the order first and process payment separately
-            // The frontend will handle the payment flow
-            order.paymentDetails = {
-                paymentStatus: 'pending',
-                paymentDate: new Date()
-            };
-            order.status = 'pending';
-        } else if (paymentMethod === 'arb') {
             // For ARB, we'll create the order first and process payment separately
             // The frontend will handle the payment flow
             order.paymentDetails = {

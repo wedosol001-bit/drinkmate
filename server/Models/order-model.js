@@ -7,32 +7,32 @@ const orderSchema = new mongoose.Schema({
     unique: true,
     uppercase: true
   },
-  
+
   // Customer Information
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: false // Allow null for guest orders
   },
-  
+
   // Guest Information (for guest checkout)
   guestInfo: {
     email: {
       type: String,
-      required: function() { return !this.user; } // Required if no user
+      required: function () { return !this.user; } // Required if no user
     },
     name: {
       type: String,
-      required: function() { return !this.user; } // Required if no user
+      required: function () { return !this.user; } // Required if no user
     }
   },
-  
+
   // Flag to identify guest orders
   isGuestOrder: {
     type: Boolean,
     default: false
   },
-  
+
   // Items (matches controller format)
   items: [{
     product: {
@@ -54,7 +54,7 @@ const orderSchema = new mongoose.Schema({
     image: String,
     sku: String
   }],
-  
+
   // Addresses (matches controller format)
   shippingAddress: {
     fullName: String,
@@ -69,7 +69,7 @@ const orderSchema = new mongoose.Schema({
     nationalAddress: String,
     specialInstructions: String
   },
-  
+
   billingAddress: {
     sameAsShipping: {
       type: Boolean,
@@ -86,14 +86,14 @@ const orderSchema = new mongoose.Schema({
     },
     nationalAddress: String
   },
-  
+
   // Payment Information (matches controller format)
   paymentMethod: {
     type: String,
     required: true,
-    enum: ['tap', 'arb', 'cash_on_delivery', 'bank_transfer']
+    enum: ['tap', 'arb', 'cash_on_delivery', 'bank_transfer', 'tabby']
   },
-  
+
   paymentDetails: {
     paymentStatus: {
       type: String,
@@ -103,7 +103,7 @@ const orderSchema = new mongoose.Schema({
     transactionId: String,
     paymentDate: Date
   },
-  
+
   // Pricing (matches controller format)
   subtotal: {
     type: Number,
@@ -130,7 +130,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  
+
   // Coupon Information
   coupon: {
     code: String,
@@ -140,14 +140,14 @@ const orderSchema = new mongoose.Schema({
       ref: 'Coupon'
     }
   },
-  
+
   // Order Status
   status: {
     type: String,
     enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned', 'refunded'],
     default: 'pending'
   },
-  
+
   // Additional Order Details
   packingInstructions: String,
   isGift: {
@@ -155,7 +155,7 @@ const orderSchema = new mongoose.Schema({
     default: false
   },
   giftMessage: String,
-  
+
   // Order Timeline
   timeline: [{
     status: {
@@ -173,7 +173,7 @@ const orderSchema = new mongoose.Schema({
       default: 'system'
     }
   }],
-  
+
   // Aramex Shipping Integration
   shipping: {
     // Aramex specific fields
@@ -191,7 +191,7 @@ const orderSchema = new mongoose.Schema({
     deliveredAt: Date,
     lastTrackingUpdate: Date,
     currentStatus: String,
-    
+
     // Tracking history from Aramex
     trackingHistory: [{
       waybillNumber: String,
@@ -202,7 +202,7 @@ const orderSchema = new mongoose.Schema({
       comments: String,
       problemCode: String
     }],
-    
+
     // Shipping method and details
     method: {
       type: String,
@@ -213,7 +213,7 @@ const orderSchema = new mongoose.Schema({
       default: 'ONX' // Aramex service type
     },
     estimatedDelivery: Date,
-    
+
     // Delivery confirmation
     deliveryConfirmation: {
       deliveredBy: String,
@@ -222,14 +222,14 @@ const orderSchema = new mongoose.Schema({
       deliveryPhoto: String
     }
   },
-  
+
   // Notes and Comments
   notes: {
     customer: String,
     admin: String,
     internal: String
   },
-  
+
   // Timestamps
   createdAt: {
     type: Date,
@@ -246,7 +246,7 @@ const orderSchema = new mongoose.Schema({
 });
 
 // Virtual for customer full name
-orderSchema.virtual('customerFullName').get(function() {
+orderSchema.virtual('customerFullName').get(function () {
   if (this.shippingAddress && this.shippingAddress.fullName) {
     return this.shippingAddress.fullName;
   }
@@ -254,12 +254,12 @@ orderSchema.virtual('customerFullName').get(function() {
 });
 
 // Virtual for total items count
-orderSchema.virtual('totalItems').get(function() {
+orderSchema.virtual('totalItems').get(function () {
   return this.items.reduce((total, item) => total + item.quantity, 0);
 });
 
 // Virtual for order age in days
-orderSchema.virtual('ageInDays').get(function() {
+orderSchema.virtual('ageInDays').get(function () {
   return Math.floor((Date.now() - this.createdAt) / (1000 * 60 * 60 * 24));
 });
 
@@ -280,9 +280,9 @@ orderSchema.index({ 'shippingAddress.city': 1, createdAt: -1 }); // Location que
 orderSchema.index({ 'shippingAddress.country': 1, createdAt: -1 }); // Country queries
 
 // Pre-save middleware
-orderSchema.pre('save', async function(next) {
+orderSchema.pre('save', async function (next) {
   this.updatedAt = Date.now();
-  
+
   // Generate order number if not provided
   if (!this.orderNumber) {
     try {
@@ -296,12 +296,12 @@ orderSchema.pre('save', async function(next) {
       this.orderNumber = `DM-${timestamp}-${random}`;
     }
   }
-  
+
   next();
 });
 
 // Method to add timeline entry
-orderSchema.methods.addTimelineEntry = function(status, description, updatedBy = 'system') {
+orderSchema.methods.addTimelineEntry = function (status, description, updatedBy = 'system') {
   this.timeline.push({
     status,
     description,
@@ -312,54 +312,54 @@ orderSchema.methods.addTimelineEntry = function(status, description, updatedBy =
 };
 
 // Method to update status
-orderSchema.methods.updateStatus = function(newStatus, description, updatedBy = 'system') {
+orderSchema.methods.updateStatus = function (newStatus, description, updatedBy = 'system') {
   this.status = newStatus;
   this.addTimelineEntry(newStatus, description, updatedBy);
   return this.save();
 };
 
 // Method to update payment status
-orderSchema.methods.updatePaymentStatus = function(newStatus, transactionId = null) {
+orderSchema.methods.updatePaymentStatus = function (newStatus, transactionId = null) {
   this.paymentDetails.paymentStatus = newStatus;
-  
+
   if (transactionId) {
     this.paymentDetails.transactionId = transactionId;
   }
-  
+
   if (newStatus === 'paid') {
     this.paymentDetails.paymentDate = new Date();
   }
-  
+
   this.addTimelineEntry(`payment_${newStatus}`, `Payment ${newStatus}`, 'system');
   return this.save();
 };
 
 // Method to cancel order
-orderSchema.methods.cancelOrder = function(reason, cancelledBy = 'customer') {
+orderSchema.methods.cancelOrder = function (reason, cancelledBy = 'customer') {
   this.status = 'cancelled';
   this.addTimelineEntry('cancelled', `Order cancelled: ${reason}`, cancelledBy);
   return this.save();
 };
 
 // Method to check if order can be cancelled
-orderSchema.methods.canBeCancelled = function() {
-  return ['pending', 'confirmed'].includes(this.status) && 
-         this.paymentDetails.paymentStatus !== 'paid';
+orderSchema.methods.canBeCancelled = function () {
+  return ['pending', 'confirmed'].includes(this.status) &&
+    this.paymentDetails.paymentStatus !== 'paid';
 };
 
 // Method to check if order can be returned
-orderSchema.methods.canBeReturned = function() {
-  return this.status === 'delivered' && 
-         this.ageInDays <= 30; // 30-day return policy
+orderSchema.methods.canBeReturned = function () {
+  return this.status === 'delivered' &&
+    this.ageInDays <= 30; // 30-day return policy
 };
 
 // Static method to get order statistics
-orderSchema.statics.getOrderStats = function(startDate, endDate) {
+orderSchema.statics.getOrderStats = function (startDate, endDate) {
   const match = {};
   if (startDate && endDate) {
     match.createdAt = { $gte: startDate, $lte: endDate };
   }
-  
+
   return this.aggregate([
     { $match: match },
     {
