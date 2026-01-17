@@ -242,6 +242,14 @@ exports.createOrder = async (req, res) => {
 
             // Check if product or bundle exists and is in stock
             if (item.product) {
+                // Validate Product ID
+                if (!mongoose.Types.ObjectId.isValid(item.product)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Invalid Product ID: ${item.product}`
+                    });
+                }
+
                 const product = await Product.findById(item.product);
 
                 if (!product) {
@@ -281,6 +289,14 @@ exports.createOrder = async (req, res) => {
                     sku: product.sku
                 };
             } else if (item.bundle) {
+                // Validate Bundle ID
+                if (!mongoose.Types.ObjectId.isValid(item.bundle)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Invalid Bundle ID: ${item.bundle}`
+                    });
+                }
+
                 const bundle = await Bundle.findById(item.bundle);
 
                 if (!bundle) {
