@@ -261,8 +261,8 @@ class ArbService {
                 id: this.tranportalId,
                 currencyCode: currencyCode,
                 trackId: orderId.toString(),
-                responseURL: callbackUrl || returnUrl || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback?orderId=${orderId}`,
-                errorURL: cancelUrl || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback?orderId=${orderId}&error=cancelled`
+                responseURL: callbackUrl || returnUrl || process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback?orderId=${orderId}`,
+                errorURL: cancelUrl || process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback?orderId=${orderId}&error=cancelled`
             };
 
             // Add optional fields
@@ -709,8 +709,8 @@ class ArbService {
                 currencyCode: currencyCode,
                 trackId: trackId || referenceValue,
                 udf5: udf5Value, // Must be exactly "PaymentID", "TRANID", or "TrackID"
-                responseURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
-                errorURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
+                responseURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
+                errorURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
             };
 
             // Add reference value to appropriate field based on udf5
@@ -970,8 +970,8 @@ class ArbService {
                 trackId: refundTrackId,
                 udf1: reason.substring(0, 100), // Reason in udf1
                 udf5: udf5Value, // Must be "TRANID" or "PaymentID"
-                responseURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
-                errorURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
+                responseURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
+                errorURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
             };
 
             // Add reference value
@@ -1079,8 +1079,8 @@ class ArbService {
                 transId: transId,
                 udf1: reason.substring(0, 100),
                 udf5: 'TRANID', // Must be "TRANID" for void
-                responseURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
-                errorURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
+                responseURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
+                errorURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
             };
 
             const encryptedTrandata = this.encryptTrandata(plainTrandata);
@@ -1171,8 +1171,8 @@ class ArbService {
                 transId: transId,
                 udf1: reason.substring(0, 100),
                 udf5: 'TRANID', // Must be "TRANID" for void
-                responseURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
-                errorURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
+                responseURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
+                errorURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
             };
 
             const encryptedTrandata = this.encryptTrandata(plainTrandata);
@@ -1263,8 +1263,8 @@ class ArbService {
                 transId: transId,
                 udf1: reason.substring(0, 100),
                 udf5: 'TRANID', // Must be "TRANID" for capture
-                responseURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
-                errorURL: `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
+                responseURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`,
+                errorURL: process.env.PAYMENT_CALLBACK_URL || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback`
             };
 
             const encryptedTrandata = this.encryptTrandata(plainTrandata);
