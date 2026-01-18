@@ -188,7 +188,15 @@ app.use('/', generalLimiter, categoryRouter);
 app.use('/co2', generalLimiter, co2Router);
 app.use('/exchange-cylinders', generalLimiter, exchangeCylinderRouter);
 app.use('/refill', generalLimiter, refillRouter);
-app.use('/payments', apiLimiter, paymentRouter);
+// Payment router (legacy path) - exclude callback routes from rate limiting
+app.use('/payments', (req, res, next) => {
+  // Skip rate limiting for callback and notification endpoints (ARB webhooks)
+  if (req.path.includes('/arb/callback') || req.path.includes('/arb/notify')) {
+    return next();
+  }
+  // Apply rate limiting for other payment routes
+  return apiLimiter(req, res, next);
+}, paymentRouter);
 app.use('/chat', generalLimiter, chatRouter);
 app.use('/chat-settings', generalLimiter, chatSettingsRouter);
 app.use('/recipes', generalLimiter, recipeRouter);
@@ -212,7 +220,15 @@ app.use('/api/reviews', generalLimiter, reviewRouter);
 app.use('/api/co2', generalLimiter, co2Router);
 app.use('/api/exchange-cylinders', generalLimiter, exchangeCylinderRouter);
 app.use('/api/refill', generalLimiter, refillRouter);
-app.use('/api/payments', apiLimiter, paymentRouter);
+// Payment router - exclude callback routes from rate limiting (ARB needs to call them)
+app.use('/api/payments', (req, res, next) => {
+  // Skip rate limiting for callback and notification endpoints (ARB webhooks)
+  if (req.path.includes('/arb/callback') || req.path.includes('/arb/notify')) {
+    return next();
+  }
+  // Apply rate limiting for other payment routes
+  return apiLimiter(req, res, next);
+}, paymentRouter);
 app.use('/api/chat', generalLimiter, chatRouter);
 app.use('/api/recipes', generalLimiter, recipeRouter);
 app.use('/api/recommendations', generalLimiter, recommendationRouter);

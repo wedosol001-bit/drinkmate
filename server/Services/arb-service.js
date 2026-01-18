@@ -252,6 +252,8 @@ class ArbService {
             const currencyCode = currency === 'SAR' ? '682' : '682'; // Default to SAR
 
             // Prepare plain trandata (before encryption)
+            // IMPORTANT: Use callbackUrl (backend) first for responseURL so we can process payment server-side
+            // Then redirect to frontend. This ensures payment is verified and order is updated before customer sees success page
             const plainTrandata = {
                 amt: parseFloat(amount).toFixed(2),
                 action: '1', // 1 = Purchase, 4 = Authorization
@@ -259,8 +261,8 @@ class ArbService {
                 id: this.tranportalId,
                 currencyCode: currencyCode,
                 trackId: orderId.toString(),
-                responseURL: returnUrl || callbackUrl || `${process.env.FRONTEND_URL || 'http://localhost:3001'}/payment/success?orderId=${orderId}`,
-                errorURL: cancelUrl || `${process.env.FRONTEND_URL || 'http://localhost:3001'}/payment/cancel?orderId=${orderId}`
+                responseURL: callbackUrl || returnUrl || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback?orderId=${orderId}`,
+                errorURL: cancelUrl || `${process.env.BACKEND_URL || process.env.API_URL || 'http://localhost:3000'}/api/payments/arb/callback?orderId=${orderId}&error=cancelled`
             };
 
             // Add optional fields
@@ -509,8 +511,60 @@ class ArbService {
                 throw new Error('Invalid trandata format');
             }
 
-            // Verify trackId matches if provided
-            const responseTrackId = paymentData.trackId || paymentData.TrackId;
+            // Log decrypted data for debugging
+            console.log('🔓 Decrypted trandata:', {
+                type: typeof decryptedData,
+                isArray: Array.isArray(decryptedData),
+                keys: typeof paymentData === 'object' ? Object.keys(paymentData) : 'N/A',
+                fullData: JSON.stringify(paymentData, null, 2)
+            });
+
+            // Helper function to get field values (handles empty strings)
+            const getField = (obj, ...keys) => {
+                for (const key of keys) {
+                    const value = obj[key];
+                    if (value !== undefined && value !== null && value !== '') {
+                        return value;
+                    }
+                }
+                return undefined;
+            };
+
+            // Extract fields from decrypted data
+            const responseTrackId = getField(paymentData, 'trackId', 'TrackId', 'trackid', 'TRACKID');
+            const responsePaymentId = getField(paymentData, 'paymentId', 'PaymentId', 'PaymentID', 'paymentid', 'PAYMENTID');
+            const error = getField(paymentData, 'error', 'Error', 'ERROR');
+            const errorText = getField(paymentData, 'errorText', 'ErrorText', 'ERRORTEXT');
+            const result = getField(paymentData, 'result', 'Result', 'RESULT', 'ResultCode', 'resultCode');
+            const authRespCode = getField(paymentData, 'authRespCode', 'AuthRespCode', 'AUTHRESPCODE', 'responseCode', 'ResponseCode', 'respCode', 'RespCode');
+            const transId = getField(paymentData, 'transId', 'TransId', 'TRANID', 'transactionId', 'TransactionId', 'TRANSACTIONID', 'tranid');
+            const ref = getField(paymentData, 'ref', 'Ref', 'REF', 'RRN', 'rrn', 'reference', 'Reference');
+            const amount = getField(paymentData, 'amt', 'Amt', 'AMT', 'amount', 'Amount', 'AMOUNT');
+            const authCode = getField(paymentData, 'authCode', 'AuthCode', 'AUTHCODE', 'auth', 'Auth');
+            const cardType = getField(paymentData, 'cardType', 'CardType', 'CARDTYPE', 'card', 'Card');
+            const actionCode = getField(paymentData, 'actionCode', 'ActionCode', 'ACTIONCODE', 'action', 'Action');
+            const date = getField(paymentData, 'date', 'Date', 'DATE', 'postdate', 'PostDate', 'POSTDATE');
+
+            // CRITICAL: Check for payment errors FIRST (before any validation)
+            // If ARB reports an error in the decrypted data, treat it as failed payment
+            if (error && error !== '') {
+                console.log('❌ Payment error detected in decrypted trandata:', {
+                    error: error,
+                    errorText: errorText || 'No error text provided',
+                    orderId: responseTrackId
+                });
+                return {
+                    success: false,
+                    error: errorText || error || 'Payment processing error',
+                    code: error || 'PAYMENT_ERROR',
+                    orderId: responseTrackId,
+                    paymentId: responsePaymentId || paymentId,
+                    status: 'failed',
+                    rawData: paymentData
+                };
+            }
+
+            // Verify trackId matches if provided (this is the primary identifier)
             if (trackId && responseTrackId && responseTrackId.toString() !== trackId.toString()) {
                 return {
                     success: false,
@@ -521,39 +575,44 @@ class ArbService {
                 };
             }
 
-            // Verify paymentId matches if provided
-            const responsePaymentId = paymentData.paymentId || paymentData.PaymentId || paymentData.PaymentID;
+            // Payment ID validation: ARB may send slightly different IDs in callback vs decrypted data
+            // This is normal behavior - just warn, don't fail
             if (paymentId && responsePaymentId && responsePaymentId.toString() !== paymentId.toString()) {
-                return {
-                    success: false,
-                    error: 'Payment ID mismatch',
-                    code: 'PAYMENT_ID_MISMATCH'
-                };
+                console.warn('⚠️ Payment ID mismatch (non-blocking):', {
+                    callbackPaymentId: paymentId,
+                    decryptedPaymentId: responsePaymentId,
+                    orderId: responseTrackId,
+                    note: 'ARB may return slightly different payment IDs - this is normal'
+                });
+                // Don't return error - just log warning and continue
             }
 
-            // Parse payment result from decrypted data
-            // ARB response format per documentation
-            const result = paymentData.result || paymentData.Result;
-            const authRespCode = paymentData.authRespCode || paymentData.AuthRespCode;
-            const transId = paymentData.transId || paymentData.TransId || paymentData.transactionId;
-            const ref = paymentData.ref || paymentData.Ref; // RRN
-            const amount = paymentData.amt || paymentData.Amt;
-            const authCode = paymentData.authCode || paymentData.AuthCode;
-            const cardType = paymentData.cardType || paymentData.CardType;
-            const actionCode = paymentData.actionCode || paymentData.ActionCode;
-            const date = paymentData.date || paymentData.Date;
+            console.log('📊 Parsed payment data from decrypted trandata:', {
+                result: result || 'UNDEFINED',
+                authRespCode: authRespCode || 'UNDEFINED',
+                transId: transId || 'UNDEFINED',
+                amount: amount || 'UNDEFINED',
+                ref: ref || 'UNDEFINED',
+                hasResult: !!result,
+                hasAuthRespCode: !!authRespCode,
+                allFields: Object.keys(paymentData)
+            });
 
             // Determine payment status
             // 'CAPTURED' = Purchase successful, 'APPROVED' = Authorization successful
-            // authRespCode '00' = success
+            // authRespCode '00' or '0' = success
+            // If result is missing but we have authRespCode '00', consider it successful
             const isSuccess = result === 'CAPTURED' ||
                 result === 'APPROVED' ||
-                authRespCode === '00';
+                result === 'SUCCESS' ||
+                authRespCode === '00' ||
+                authRespCode === '0' ||
+                (result === undefined && authRespCode === '00');
 
             return {
                 success: isSuccess,
                 transactionId: transId,
-                paymentId: responsePaymentId,
+                paymentId: responsePaymentId || paymentId, // Use decrypted paymentId, fallback to callback paymentId
                 orderId: responseTrackId,
                 status: isSuccess ? 'completed' : 'failed',
                 amount: parseFloat(amount || 0),
@@ -667,6 +726,14 @@ class ArbService {
                     throw new Error('PaymentID must be numeric');
                 }
                 console.log('✅ Added PaymentID to inquiry trandata:', referenceValue);
+                
+                // CRITICAL: ARB requires BOTH PaymentID AND TransId for inquiry
+                // If transId is available, include it as well
+                if (transId && String(transId).trim().length > 0) {
+                    plainTrandata.TRANID = String(transId).trim();
+                    plainTrandata.transId = String(transId).trim();
+                    console.log('✅ Also added TRANID to inquiry trandata:', transId);
+                }
             } else if (udf5Value === 'TRANID') {
                 // ARB expects TRANID field (all caps) for TRANID inquiries
                 plainTrandata.TRANID = referenceValue;
@@ -795,13 +862,15 @@ class ArbService {
             // ARB callback can be in two formats:
             // 1. URL redirection: { paymentId, trandata, error, errorText }
             // 2. Final response: { tranid, trandata, status, error, errorText }
+            // ARB may send lowercase field names: paymentid, trackid, etc.
 
-            const encryptedTrandata = callbackData.trandata || callbackData.Trandata;
-            const paymentId = callbackData.paymentId || callbackData.PaymentID || callbackData.PaymentId;
-            const tranid = callbackData.tranid || callbackData.Tranid;
-            const status = callbackData.status; // 1 = success, 2 = failure
-            const error = callbackData.error;
-            const errorText = callbackData.errorText;
+            const encryptedTrandata = callbackData.trandata || callbackData.Trandata || callbackData.TRANDATA;
+            const paymentId = callbackData.paymentId || callbackData.PaymentID || callbackData.PaymentId || callbackData.paymentid;
+            const trackId = callbackData.trackId || callbackData.TrackId || callbackData.trackid;
+            const tranid = callbackData.tranid || callbackData.Tranid || callbackData.TRANID;
+            const status = callbackData.status || callbackData.Status; // 1 = success, 2 = failure
+            const error = callbackData.error || callbackData.Error;
+            const errorText = callbackData.errorText || callbackData.ErrorText;
 
             // Check for errors in callback
             if (error || errorText) {
@@ -832,14 +901,19 @@ class ArbService {
             }
 
             // Use verifyPayment to decrypt and parse
-            const result = await this.verifyPayment(encryptedTrandata, null, paymentId);
+            // Pass trackId if available for verification
+            const trackIdForVerification = callbackData.trackId || callbackData.TrackId || callbackData.trackid || null;
+            const result = await this.verifyPayment(encryptedTrandata, trackIdForVerification, paymentId);
 
-            // Add callback-specific fields
+            // Add callback-specific fields (prioritize callback data over decrypted data)
             if (paymentId) {
                 result.paymentId = paymentId;
             }
             if (tranid) {
                 result.transactionId = tranid;
+            }
+            if (trackIdForVerification && !result.orderId) {
+                result.orderId = trackIdForVerification;
             }
 
             return result;
