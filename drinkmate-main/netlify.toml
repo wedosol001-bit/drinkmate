@@ -1,10 +1,11 @@
 [build]
   command = "npm run build"
-  # Don't set publish - let the Next.js plugin handle it automatically
+  publish = ".next"
   functions = ".netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "18"
+  NEXT_USE_NETLIFY_EDGE = "true"
 
 [functions]
   node_bundler = "esbuild"
@@ -18,9 +19,12 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Remove ALL manual redirects and headers
-# The @netlify/plugin-nextjs handles:
-# - Headers from next.config.mjs
-# - Redirects from next.config.mjs
-# - Rewrites from next.config.mjs
-# - All Next.js routing automatically
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
