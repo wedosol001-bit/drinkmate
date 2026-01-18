@@ -165,10 +165,10 @@ const createPayment = async (req, res) => {
       customerPhone: customerPhone || '',
       description: description || `DrinkMate Order ${orderNumber}`,
       // User browser redirects go to backend first (GET request)
-      returnUrl: `${backendUrl}/api/payments/arb/callback`,
-      cancelUrl: `${backendUrl}/api/payments/arb/callback`,
+      returnUrl: process.env.PAYMENT_CALLBACK_URL || `${backendUrl}/api/payments/arb/callback`,
+      cancelUrl: process.env.PAYMENT_CALLBACK_URL || `${backendUrl}/api/payments/arb/callback`,
       // Server notifications also go to backend (POST request)
-      callbackUrl: `${backendUrl}/api/payments/arb/callback`
+      callbackUrl: process.env.PAYMENT_CALLBACK_URL || `${backendUrl}/api/payments/arb/callback`
     };
 
     console.log('📤 Calling ARB service with payment data:', {
