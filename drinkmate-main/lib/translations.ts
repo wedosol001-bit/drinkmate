@@ -169,6 +169,8 @@ export interface Translations {
       descriptionAr: string
       learnMore: string
       learnMoreAr: string
+      ShopNow: string
+      ShopNowAr: string
       exploreSubscriptions: string
       exploreSubscriptionsAr: string
       benefits: {
@@ -1936,6 +1938,7 @@ export interface Translations {
     notFoundTitle?: string
     notFoundDescription?: string
     backToShop?: string
+    backToHome?: string
     backToAccessories?: string
     backToSodaMakers?: string
     premium?: string
@@ -2520,6 +2523,8 @@ export const translations: Record<Language, Translations> = {
         descriptionAr: "مع برنامج تبادل ثاني أكسيد الكربون من Drinkmate، أرسل الأسطوانات الفارغة واحصل على خصم على مشترياتك القادمة من ثاني أكسيد الكربون. سهل ومستدام وجاهز للفوران—دائماً.",
         learnMore: "Learn More",
         learnMoreAr: "اعرف المزيد",
+        ShopNow: "Shop Now",
+        ShopNowAr: "تسوق الآن",
         exploreSubscriptions: "Explore Subscriptions",
         exploreSubscriptionsAr: "استكشف الاشتراكات",
         benefits: {
@@ -4694,6 +4699,7 @@ export const translations: Record<Language, Translations> = {
       notFoundTitle: "Product Not Found",
       notFoundDescription: "The product you're looking for doesn't exist or has been removed.",
       backToShop: "Back to Shop",
+      backToHome: "Back to Home",
       backToAccessories: "Back to Accessories",
       backToSodaMakers: "Back to Soda Makers",
       premium: "Premium",

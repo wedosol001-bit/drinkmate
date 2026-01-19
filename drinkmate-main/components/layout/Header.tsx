@@ -193,7 +193,7 @@ export default function Header({ currentPage }: HeaderProps) {
                 ></span>
               )}
             </Link>
-            <Link
+            {/* <Link
               href="/track-order"
               className={`text-sm font-semibold tracking-wide transition-all duration-300 relative group cursor-pointer ${isRTL ? "font-cairo px-2" : "font-montserrat px-2"} ${
                 currentPage === "track-order" ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
@@ -205,7 +205,7 @@ export default function Header({ currentPage }: HeaderProps) {
                   className={`absolute -bottom-1 w-full h-0.5 bg-[#12d6fa] hover:bg-[#0bc4e8] rounded-full ${isRTL ? "right-0" : "left-0"}`}
                 ></span>
               )}
-            </Link>
+            </Link> */}
           </nav>
 
           {/* Right Side Icons and Button */}

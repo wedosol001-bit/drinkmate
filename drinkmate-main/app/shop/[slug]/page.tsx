@@ -868,9 +868,9 @@ export default function ShopProductDetail() {
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
               <h1 className="text-2xl font-bold">{t("product.notFoundTitle")}</h1>
               <p className="text-gray-600 mb-4">{t("product.notFoundDescription")}</p>
-              <Link href={language === 'AR' ? '/ar/shop' : '/shop'} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+              <Link href={language === 'AR' ? '/ar' : '/'} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                {t("product.backToShop")}
+                {t("product.backToHome")}
               </Link>
             </div>
           </div>
