@@ -5048,6 +5048,8 @@ export const translations: Record<Language, Translations> = {
         descriptionAr: "مع برنامج تبادل ثاني أكسيد الكربون من Drinkmate، أرسل الأسطوانات الفارغة واحصل على خصم على مشترياتك القادمة من ثاني أكسيد الكربون. سهل ومستدام وجاهز للفوران—دائماً.",
         learnMore: "اعرف المزيد",
         learnMoreAr: "اعرف المزيد",
+        ShopNow: "تسوق الآن",
+        ShopNowAr: "تسوق الآن",
         exploreSubscriptions: "استكشف الاشتراكات",
         exploreSubscriptionsAr: "استكشف الاشتراكات",
         benefits: {
