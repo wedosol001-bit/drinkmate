@@ -557,7 +557,7 @@ export default function Header({ currentPage }: HeaderProps) {
                 >
                   {t("header.contactUs")}
                 </Link>
-                <Link
+                {/* <Link
                   href="/track-order"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`text-sm font-medium px-5 py-3 ${isRTL ? "text-right" : "text-left"} transition-all duration-200 cursor-pointer ${isRTL ? "font-cairo" : "font-montserrat"} ${
@@ -567,7 +567,7 @@ export default function Header({ currentPage }: HeaderProps) {
                   }`}
                 >
                   {t("header.trackOrder")}
-                </Link>
+                </Link> */}
 
                 {/* Auth links for mobile */}
                 <div className="border-t border-slate-100 mt-4 pt-4 space-y-1">
