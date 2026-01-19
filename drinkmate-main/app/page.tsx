@@ -890,10 +890,10 @@ export default function Home() {
                           // Second slide - navigate directly to flavor page
                           router.push((language === 'AR' ? '/ar' : '') + "/shop/flavor")
                         } else {
-                          router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
+                          router.push((language === 'AR' ? '/ar' : '') + "/shop")
                         }
                       } else {
-                        router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
+                        router.push((language === 'AR' ? '/ar' : '') + "/shop")
                       }
                     }}
                     className={`font-medium px-4 sm:px-6 py-2.5 sm:py-3 rounded-full min-w-[120px] sm:min-w-[140px] text-sm sm:text-base ${
@@ -932,7 +932,7 @@ export default function Home() {
           ) : (
             <>
               {/* Multi-image container for the third slide - Desktop */}
-              <div className="hidden md:block absolute inset-0 overflow-hidden">
+              <div className="hidden md:block inset-0 overflow-hidden">
                 <div className="relative w-full h-full">
                   {slide.multiImages &&
                     slide.multiImages.map((img, index) => (
@@ -1524,16 +1524,18 @@ export default function Home() {
 
               <div className="mt-6 flex flex-row space-x-4 justify-end">
                 <Button
+                  onClick={() => router.push("shop/co2-cylinders")}
                   aria-label="Learn more about Drinkmate CO2 Exchange"
                   className={`bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-semibold shadow-md hover:bg-yellow-500 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
                   {t("home.co2Section.learnMore")}
                 </Button>
                 <Button
+                  onClick={() => router.push("/shop")}
                   aria-label="Explore CO2 Subscriptions"
                   className={`bg-purple text-gray-900 border border-gray-300 px-8 py-3 rounded-full font-semibold shadow-md hover:bg-gray-50 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
-                  {t("home.co2Section.exploreSubscriptions")}
+                  {t("home.co2Section.ShopNow")}
                 </Button>
               </div>
             </motion.div>

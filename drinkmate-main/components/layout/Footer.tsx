@@ -138,10 +138,10 @@ export default function Footer() {
               className="h-8 w-auto filter drop-shadow-sm"
               priority
             />
-            <p className={`mt-3 text-sm text-black/70 leading-snug ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+            <p className={`mt-3 text-sm text-black/70 leading-snug ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.companyDescription")}
             </p>
-            <ul className={`mt-4 space-y-1 text-sm ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+            <ul className={`mt-4 space-y-1 text-sm ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               <li>
                 <a 
                   href="tel:+966544671116" 

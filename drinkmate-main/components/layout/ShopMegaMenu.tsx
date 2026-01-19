@@ -6,7 +6,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { useState, useRef, useEffect } from "react"
-import { ChevronDown, ArrowRight, Star, Gift, Zap, ShoppingBag } from "lucide-react"
+import { ChevronDown, ArrowRight, Star, Gift, Zap, ShoppingBag, ArrowLeft } from "lucide-react"
 
 interface ShopMegaMenuProps {
   isOpen: boolean
@@ -24,6 +24,7 @@ interface MenuTileProps {
   className?: string
   onMouseEnter?: () => void
   onClick?: () => void
+  language ?: string
 }
 
 function MenuTile({ 
@@ -35,8 +36,10 @@ function MenuTile({
   badgeColor = "bg-slate-900", 
   className = "",
   onMouseEnter,
-  onClick
+  onClick,
+  language
 }: MenuTileProps) {
+  const { t } = useTranslation();
   return (
     <Link 
       href={href} 
@@ -64,7 +67,8 @@ function MenuTile({
           {title}
         </span>
         <span className="subcta opacity-0 group-hover:opacity-100 transition-all duration-200 text-xs text-slate-500 font-medium flex items-center justify-center">
-          Shop now <ArrowRight className="w-3 h-3 ml-1" />
+          {t("shop.bundles.shopNow")}  {language === 'AR' ? (<ArrowLeft className="w-3 h-3 mr-1" />) : (<ArrowRight className="w-3 h-3 ml-1" />)}
+
         </span>
       </div>
     </Link>
@@ -184,6 +188,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
                 title={t("header.sodamakers")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559855/Artic-Black-Machine---Front_pxsies.png"
                 alt={t("header.sodamakers")}
+                language ={language}
                 onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
                 onClick={() => onOpenChange(false)}
               />
@@ -194,6 +199,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
                 alt={t("header.flavor")}
                 onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/flavor")}
                 onClick={() => onOpenChange(false)}
+                language ={language}
               />
               <MenuTile
                 href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}
@@ -202,6 +208,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
                 alt={t("header.accessories")}
                 onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/accessories")}
                 onClick={() => onOpenChange(false)}
+                language ={language}
               />
               <MenuTile
                 href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
@@ -210,6 +217,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
                 alt={t("header.co2")}
                 onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
                 onClick={() => onOpenChange(false)}
+                language ={language}
               />
           </div>
 
@@ -224,7 +232,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
             >
               <ShoppingBag className="w-5 h-5" />
               {t("shop.categoryPages.shopAllProducts")}
-              <ArrowRight className="w-4 h-4" />
+              {language === 'AR' ? (<ArrowLeft className="w-4 h-4" />) : (<ArrowRight className="w-4 h-4" />)}
             </Link>
           </div>
 
