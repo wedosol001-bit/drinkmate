@@ -111,7 +111,7 @@ export default function CarouselBanner({
           <div
             key={item.id}
             className={`absolute inset-0 duration-200 ease-linear transition-opacity ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
+              index === currentSlide ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
             }`}
             data-carousel-item={index === currentSlide ? "active" : ""}
           >

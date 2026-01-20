@@ -16,6 +16,7 @@ import { ChatStatusProvider } from "@/lib/contexts/chat-status-context"
 import { Providers } from "@/components/providers"
 import { suppressHydrationWarnings } from "@/lib/suppress-hydration-warnings"
 import FloatingCartButton from "@/components/cart/FloatingCartButton"
+import FloatingWhatsappButton from "@/components/contact/FloatingWhatsappButton"
 import CartToastWrapper from "@/components/cart/CartToastWrapper"
 import CartAuthSync from "@/components/cart/CartAuthSync"
 import { NavigationLoader } from "@/components/ui/NavigationLoader"
@@ -438,6 +439,7 @@ export default function RootLayout({
                         <ChatContextProvider>
                           <Providers>
                             <div suppressHydrationWarning>{children}</div>
+                            <FloatingWhatsappButton />
                             <FloatingCartButton />
                             <CartToastWrapper />
                           </Providers>

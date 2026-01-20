@@ -173,7 +173,7 @@ export default function Footer() {
 
           {/* Products - Desktop */}
           <nav className="hidden md:block md:col-span-3" aria-labelledby="f-products">
-            <h3 id="f-products" className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+            <h3 id="f-products" className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.products.title")}
             </h3>
             <ul className="space-y-2 text-sm leading-snug">
@@ -212,7 +212,7 @@ export default function Footer() {
 
           {/* Information - Desktop */}
           <nav className="hidden md:block md:col-span-3" aria-labelledby="f-info">
-            <h3 id="f-info" className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+            <h3 id="f-info" className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.information.title")}
             </h3>
             <ul className="space-y-2 text-sm leading-snug">
@@ -246,20 +246,20 @@ export default function Footer() {
                   {t("footer.information.blogs")}
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/track-order" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.more.trackOrder")}
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </nav>
 
           {/* Newsletter */}
           <section className="md:col-span-2 min-w-0">
-            <h3 className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+            <h3 className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.newsletter.title")}
             </h3>
-            <p className={`text-sm text-black/70 mb-3 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
+            <p className={`text-sm text-black/70 mb-3 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.newsletter.disclaimer")}
             </p>
             
@@ -389,11 +389,11 @@ export default function Footer() {
                     {t("footer.information.blogs")}
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="/track-order" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.more.trackOrder")}
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </details>
           </div>
