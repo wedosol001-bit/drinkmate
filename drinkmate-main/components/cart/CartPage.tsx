@@ -33,8 +33,8 @@ export default function CartPage() {
   const isFreeShipping = subtotal >= freeShippingThreshold
   const shipping = isFreeShipping ? 0 : (subtotal > 0 ? 23 : null)
   const discount = 0 // TODO: Add coupon support
-  const tax = subtotal * 0.15 // 15% VAT
-  const total = subtotal + (shipping || 0) - discount + tax
+  const tax = 0 // VAT included in prices
+  const total = subtotal + (shipping || 0) - discount
 
   const totals = {
     subtotal,

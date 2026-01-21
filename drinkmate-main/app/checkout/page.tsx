@@ -31,7 +31,6 @@ export default function CheckoutPage() {
 
   // Delivery options state
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState("standard")
-  const [shipToDifferentAddress, setShipToDifferentAddress] = useState(false)
   const [orderNotes, setOrderNotes] = useState("")
   const [deliveryAddress, setDeliveryAddress] = useState({
     fullName: "",
@@ -43,16 +42,15 @@ export default function CheckoutPage() {
     nationalAddress: ""
   })
 
-  // Shipping address (if different from billing)
-  const [shippingAddress, setShippingAddress] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    district: "",
-    city: "",
-    country: "Saudi Arabia",
-    nationalAddress: ""
-  })
+  // Add error state for form validation
+  const [fieldErrors, setFieldErrors] = useState<{
+    fullName?: string
+    phone?: string
+    district?: string
+    city?: string
+    email?: string
+    nationalAddress?: string
+  }>({})
 
   // Calculate delivery costs based on Aramex options
   const getDeliveryCost = () => {
@@ -79,8 +77,8 @@ export default function CheckoutPage() {
 
   // Calculate totals with coupon discount
   const discount = appliedCoupon?.discountAmount || 0
-  const tax = (subtotal - discount) * 0.15
-  const total = subtotal - discount + shippingCost + tax
+  const tax = 0 // VAT included in prices
+  const total = subtotal - discount + shippingCost
 
   // Apply coupon handler
   const handleApplyCoupon = async () => {
@@ -441,7 +439,7 @@ export default function CheckoutPage() {
   // Payment provider configuration (would come from admin panel)
   const paymentProviders = {
     card: {
-      name: "Credit/Debit (Al Rajhi)",
+      name: "Credit/Debit",
       description: "Pay securely by credit or debit card through Al Rajhi Bank payment gateway.",
       logo: "/images/payment-logos/arb-payment.png",
       gateway: "arb"
@@ -455,55 +453,168 @@ export default function CheckoutPage() {
     }
   }
 
+  // Validation functions
+  const validateFullName = (name: string): string | undefined => {
+    if (!name.trim()) {
+      return t("checkout.validation.fullNameRequired")
+    }
+    if (name.trim().length < 2) {
+      return t("checkout.validation.fullNameMinLength")
+    }
+    if (!/^[a-zA-Z\u0600-\u06FF\s]+$/.test(name.trim())) {
+      return t("checkout.validation.fullNameInvalid")
+    }
+    return undefined
+  }
+
+  const validatePhone = (phone: string): string | undefined => {
+    if (!phone.trim()) {
+      return t("checkout.validation.phoneRequired")
+    }
+    // Remove spaces and dashes for validation
+    const cleanPhone = phone.replace(/[\s-]/g, '')
+    if (!/^[0-9]+$/.test(cleanPhone)) {
+      return t("checkout.validation.phoneInvalid")
+    }
+    if (cleanPhone.length < 9 || cleanPhone.length > 15) {
+      return t("checkout.validation.phoneLength")
+    }
+    return undefined
+  }
+
+  const validateDistrict = (district: string): string | undefined => {
+    if (!district.trim()) {
+      return t("checkout.validation.districtRequired")
+    }
+    if (district.trim().length < 2) {
+      return t("checkout.validation.districtMinLength")
+    }
+    return undefined
+  }
+
+  const validateCity = (city: string): string | undefined => {
+    if (!city.trim()) {
+      return t("checkout.validation.cityRequired")
+    }
+    if (city.trim().length < 2) {
+      return t("checkout.validation.cityMinLength")
+    }
+    return undefined
+  }
+
+  const validateEmail = (email: string): string | undefined => {
+    if (!email.trim()) {
+      return t("checkout.validation.emailRequired")
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return t("checkout.validation.emailInvalid")
+    }
+    return undefined
+  }
+
+  const validateNationalAddress = (address: string): string | undefined => {
+    if (!address.trim()) {
+      return undefined // Optional field
+    }
+    if (address.length !== 8) {
+      return t("checkout.validation.nationalAddressLength")
+    }
+    if (!/^[A-Z]{4}[0-9]{4}$/.test(address)) {
+      return t("checkout.validation.nationalAddressFormat")
+    }
+    return undefined
+  }
+
+  // Enhanced handleAddressChange with validation
   const handleAddressChange = (field: string, value: string) => {
     setDeliveryAddress(prev => ({
       ...prev,
       [field]: value
     }))
+    
+    // Clear error when user starts typing
+    if (fieldErrors[field as keyof typeof fieldErrors]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [field]: undefined
+      }))
+    }
   }
 
-  const handleShippingAddressChange = (field: string, value: string) => {
-    setShippingAddress(prev => ({
+  // Validate field on blur
+  const handleFieldBlur = (field: string, value: string) => {
+    let error: string | undefined
+    
+    switch (field) {
+      case "fullName":
+        error = validateFullName(value)
+        break
+      case "phone":
+        error = validatePhone(value)
+        break
+      case "district":
+        error = validateDistrict(value)
+        break
+      case "city":
+        error = validateCity(value)
+        break
+      case "email":
+        error = validateEmail(value)
+        break
+      case "nationalAddress":
+        error = validateNationalAddress(value)
+        break
+    }
+    
+    setFieldErrors(prev => ({
       ...prev,
-      [field]: value
+      [field]: error
     }))
   }
 
+  // Enhanced phone handler to only allow numbers
+  const handlePhoneChange = (value: string) => {
+    // Only allow numbers, spaces, and dashes
+    const cleaned = value.replace(/[^\d\s-]/g, '')
+    handleAddressChange("phone", cleaned)
+  }
+
   const validateForm = () => {
-    // Validate main address
-    if (!deliveryAddress.fullName || !deliveryAddress.phone ||
-      !deliveryAddress.district || !deliveryAddress.city) {
-      toast.error("Please fill in all required fields")
+    const errors: typeof fieldErrors = {}
+    
+    // Validate all fields
+    errors.fullName = validateFullName(deliveryAddress.fullName)
+    errors.phone = validatePhone(deliveryAddress.phone)
+    errors.district = validateDistrict(deliveryAddress.district)
+    errors.city = validateCity(deliveryAddress.city)
+    
+    // Validate email for guest users
+    if (!isAuthenticated) {
+      errors.email = validateEmail(deliveryAddress.email)
+    }
+    
+    // Validate national address if provided
+    if (deliveryAddress.nationalAddress) {
+      errors.nationalAddress = validateNationalAddress(deliveryAddress.nationalAddress)
+    }
+    
+    setFieldErrors(errors)
+    
+    // Check if there are any errors
+    const hasErrors = Object.values(errors).some(error => error !== undefined)
+    
+    if (hasErrors) {
+      toast.error(t("checkout.validation.pleaseFixErrors"))
       return false
     }
-
-    // For guest users, also validate email
-    if (!isAuthenticated && !deliveryAddress.email) {
-      toast.error("Please provide your email address")
-      return false
-    }
-
-    // Validate shipping address if different
-    if (shipToDifferentAddress) {
-      if (!shippingAddress.fullName || !shippingAddress.phone ||
-        !shippingAddress.district || !shippingAddress.city) {
-        toast.error("Please fill in all required shipping address fields")
-        return false
-      }
-
-      // For guest users, also validate shipping email
-      if (!isAuthenticated && !shippingAddress.email) {
-        toast.error("Please provide email for shipping address")
-        return false
-      }
-    }
-
+    
     // Validate terms agreement
     if (!agreedToTerms) {
-      toast.error("Please agree to the terms and conditions")
+      toast.error(t("checkout.validation.agreeToTerms"))
       return false
     }
-
+    
     return true
   }
 
@@ -569,9 +680,8 @@ export default function CheckoutPage() {
 
           return orderItem
         }),
-        shippingAddress: shipToDifferentAddress ? shippingAddress : deliveryAddress,
+        shippingAddress: deliveryAddress,
         billingAddress: deliveryAddress,
-        shipToDifferentAddress: shipToDifferentAddress,
         orderNotes: orderNotes,
         paymentMethod: paymentProviders[selectedPaymentMethod as keyof typeof paymentProviders].gateway,
         deliveryOption: selectedDeliveryOption,
@@ -808,20 +918,35 @@ export default function CheckoutPage() {
             <div className="space-y-6">
               {/* Full Name Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.fullName")} *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("checkout.fullName")} *
+                </label>
                 <input
                   type="text"
                   value={deliveryAddress.fullName}
                   onChange={(e) => handleAddressChange("fullName", e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg"
+                  onBlur={(e) => handleFieldBlur("fullName", e.target.value)}
+                  className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg transition-colors ${
+                    fieldErrors.fullName 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                      : 'border-gray-300'
+                  }`}
                   placeholder={t("checkout.fullName")}
                   required
                 />
+                {fieldErrors.fullName && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {fieldErrors.fullName}
+                  </p>
+                )}
               </div>
 
               {/* Country (Read-only) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.country")}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("checkout.country")}
+                </label>
                 <div className="w-full px-3 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
                   Saudi Arabia
                 </div>
@@ -830,75 +955,150 @@ export default function CheckoutPage() {
               {/* District and City */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.district")} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t("checkout.district")} *
+                  </label>
                   <input
                     type="text"
                     value={deliveryAddress.district}
                     onChange={(e) => handleAddressChange("district", e.target.value)}
-                    className="w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base sm:text-lg"
+                    onBlur={(e) => handleFieldBlur("district", e.target.value)}
+                    className={`w-full px-3 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base sm:text-lg transition-colors ${
+                      fieldErrors.district 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder={t("checkout.district")}
                     required
                   />
+                  {fieldErrors.district && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center">
+                      <span className="mr-1">⚠️</span>
+                      {fieldErrors.district}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.city")} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t("checkout.city")} *
+                  </label>
                   <input
                     type="text"
                     value={deliveryAddress.city}
                     onChange={(e) => handleAddressChange("city", e.target.value)}
-                    className="w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base sm:text-lg"
+                    onBlur={(e) => handleFieldBlur("city", e.target.value)}
+                    className={`w-full px-3 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base sm:text-lg transition-colors ${
+                      fieldErrors.city 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder={t("checkout.city")}
                     required
                   />
+                  {fieldErrors.city && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center">
+                      <span className="mr-1">⚠️</span>
+                      {fieldErrors.city}
+                    </p>
+                  )}
                 </div>
               </div>
 
               {/* National Address */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("checkout.shortAddress")} (<a href="https://splonline.com.sa/en/national-address-1/" target="_blank" rel="noopener noreferrer" className="text-[#12d6fa] hover:text-[#0bc4e8] underline">{t("checkout.nationalAddress")}</a>) ({t("checkout.optional")})
+                  {t("checkout.shortAddress")} (
+                  <a 
+                    href="https://splonline.com.sa/en/national-address-1/" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-[#12d6fa] hover:text-[#0bc4e8] underline"
+                  >
+                    {t("checkout.nationalAddress")}
+                  </a>) ({t("checkout.optional")})
                 </label>
                 <input
                   type="text"
                   value={deliveryAddress.nationalAddress}
                   onChange={(e) => handleAddressChange("nationalAddress", e.target.value.toUpperCase())}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg font-mono tracking-wider"
+                  onBlur={(e) => handleFieldBlur("nationalAddress", e.target.value)}
+                  className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg font-mono tracking-wider transition-colors ${
+                    fieldErrors.nationalAddress 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                      : 'border-gray-300'
+                  }`}
                   placeholder="JESA3591"
                   maxLength={8}
                   pattern="[A-Z]{4}[0-9]{4}"
                 />
-                <p className="text-xs text-gray-500 mt-1">{t("checkout.shortAddressFormat")}</p>
+                {fieldErrors.nationalAddress ? (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {fieldErrors.nationalAddress}
+                  </p>
+                ) : (
+                  <p className="text-xs text-gray-500 mt-1">{t("checkout.shortAddressFormat")}</p>
+                )}
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.phone")} *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("checkout.phone")} *
+                </label>
                 <input
                   type="tel"
+                  inputMode="numeric"
                   value={deliveryAddress.phone}
-                  onChange={(e) => handleAddressChange("phone", e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg"
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  onBlur={(e) => handleFieldBlur("phone", e.target.value)}
+                  className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg transition-colors ${
+                    fieldErrors.phone 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                      : 'border-gray-300'
+                  }`}
                   placeholder={t("checkout.phone")}
                   required
                 />
+                {fieldErrors.phone && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {fieldErrors.phone}
+                  </p>
+                )}
               </div>
 
               {/* Email - Only for guest users */}
               {!user ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.email")} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t("checkout.email")} *
+                  </label>
                   <input
                     type="email"
                     value={deliveryAddress.email}
                     onChange={(e) => handleAddressChange("email", e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg"
+                    onBlur={(e) => handleFieldBlur("email", e.target.value)}
+                    className={`w-full px-3 py-3 border rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-lg transition-colors ${
+                      fieldErrors.email 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
+                        : 'border-gray-300'
+                    }`}
                     placeholder={t("checkout.email")}
                     required
                   />
+                  {fieldErrors.email && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center">
+                      <span className="mr-1">⚠️</span>
+                      {fieldErrors.email}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.email")}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t("checkout.email")}
+                  </label>
                   <div className="w-full px-3 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 flex items-center">
                     <span>{deliveryAddress.email}</span>
                     <span className="ml-2 text-xs text-gray-500">(from your account)</span>
@@ -906,113 +1106,11 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {/* Ship to Different Address Checkbox */}
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  id="shipToDifferentAddress"
-                  checked={shipToDifferentAddress}
-                  onChange={(e) => setShipToDifferentAddress(e.target.checked)}
-                  className="w-5 h-5 text-[#12d6fa] border-gray-300 rounded focus:ring-[#12d6fa]"
-                />
-                <label htmlFor="shipToDifferentAddress" className="text-sm font-medium text-gray-700">
-                  {t("checkout.shipToDifferent")}
-                </label>
-              </div>
-
-              {/* Shipping Address Fields (Conditional) */}
-              {shipToDifferentAddress && (
-                <div className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900">{t("checkout.shippingAddress")}</h3>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.fullName")} *</label>
-                    <input
-                      type="text"
-                      value={shippingAddress.fullName}
-                      onChange={(e) => handleShippingAddressChange("fullName", e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa]"
-                      placeholder={t("checkout.fullName")}
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.district")} *</label>
-                      <input
-                        type="text"
-                        value={shippingAddress.district}
-                        onChange={(e) => handleShippingAddressChange("district", e.target.value)}
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base"
-                        placeholder={t("checkout.district")}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.city")} *</label>
-                      <input
-                        type="text"
-                        value={shippingAddress.city}
-                        onChange={(e) => handleShippingAddressChange("city", e.target.value)}
-                        className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] text-base"
-                        placeholder={t("checkout.city")}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Short Address (<a href="https://splonline.com.sa/en/national-address-1/" target="_blank" rel="noopener noreferrer" className="text-[#12d6fa] hover:text-[#0bc4e8] underline">National Address</a>) (optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={shippingAddress.nationalAddress}
-                      onChange={(e) => handleShippingAddressChange("nationalAddress", e.target.value.toUpperCase())}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa] font-mono tracking-wider"
-                      placeholder="JESA3591"
-                      maxLength={8}
-                      pattern="[A-Z]{4}[0-9]{4}"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Format: 4 letters followed by 4 numbers (e.g., JESA3591)</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.phone")} *</label>
-                    <input
-                      type="tel"
-                      value={shippingAddress.phone}
-                      onChange={(e) => handleShippingAddressChange("phone", e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa]"
-                      placeholder={t("checkout.phone")}
-                      required
-                    />
-                  </div>
-                  {/* Email - Only for guest users */}
-                  {!user ? (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.email")} *</label>
-                      <input
-                        type="email"
-                        value={shippingAddress.email}
-                        onChange={(e) => handleShippingAddressChange("email", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-[#12d6fa]"
-                        placeholder={t("checkout.email")}
-                        required
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.email")}</label>
-                      <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 flex items-center">
-                        <span>{shippingAddress.email}</span>
-                        <span className="ml-2 text-xs text-gray-500">(from your account)</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
               {/* Order Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t("checkout.orderNotes")} ({t("checkout.optional")})</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("checkout.orderNotes")} ({t("checkout.optional")})
+                </label>
                 <textarea
                   value={orderNotes}
                   onChange={(e) => setOrderNotes(e.target.value)}
@@ -1189,15 +1287,15 @@ export default function CheckoutPage() {
 
               {/* Total */}
               <div className="flex justify-between items-center mb-2">
-                <span className="text-lg font-bold text-gray-900">{t("cart.total")}</span>
+                <div className="flex flex-col">
+                  <span className="text-lg font-bold text-gray-900">{t("cart.total")}</span>
+                  <span className="text-xs text-gray-500 mt-0.5">
+                    {t("checkout.taxIncluded")}
+                  </span>
+                </div>
                 <span className="text-lg font-bold text-gray-900">
                   <SaudiRiyal amount={total} />
                 </span>
-              </div>
-
-              {/* Tax Included Note */}
-              <div className="text-xs text-gray-500 text-right">
-                {t("checkout.taxIncluded")}
               </div>
             </div>
 
