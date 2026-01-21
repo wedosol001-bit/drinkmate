@@ -1154,7 +1154,7 @@ const handleCallback = async (req, res) => {
           : (result.error || 'Payment failed');
 
         console.log('🔄 ========== REDIRECTING TO FRONTEND ERROR PAGE ==========');
-        console.log('🔄 Request Method:', req.method);S
+        console.log('🔄 Request Method:', req.method);
         console.log('🔄 Order ID:', orderId);
         console.log('🔄 Error Message:', errorMessage);
         console.log('🔄 Frontend URL:', frontendUrl);
