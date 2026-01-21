@@ -296,7 +296,7 @@ export default function CheckoutPage() {
                   }
 
                   console.log('Setting shipping address from cache:', newShippingAddress)
-                  setShippingAddress(prev => {
+                  setDeliveryAddress(prev => {
                     console.log('Previous shipping address:', prev)
                     const updated = { ...prev, ...newShippingAddress }
                     console.log('Updated shipping address:', updated)
@@ -372,7 +372,7 @@ export default function CheckoutPage() {
                   }
 
                   console.log('Setting shipping address with:', newShippingAddress)
-                  setShippingAddress(prev => {
+                  setDeliveryAddress(prev => {
                     console.log('Previous shipping address:', prev)
                     const updated = { ...prev, ...newShippingAddress }
                     console.log('Updated shipping address:', updated)
