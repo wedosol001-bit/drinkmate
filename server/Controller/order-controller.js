@@ -35,9 +35,28 @@ exports.createGuestOrder = async (req, res) => {
         for (const item of items) {
             let itemData = null;
 
-            // Check if product or bundle exists and is in stock
-            if (item.product) {
-                // Validate Product ID
+            // Check if this is a CO2 cylinder (has productType: 'cylinder' or numeric ID)
+            const isCylinder = item.productType === 'cylinder' || 
+                               (typeof item.id === 'number' && item.id >= 1000 && item.id < 2000) ||
+                               item.category === 'co2';
+
+            if (isCylinder) {
+                // Handle CO2 cylinder items - they use numeric IDs, not MongoDB ObjectIds
+                // Use the item data directly from the cart since cylinders are handled differently
+                const itemTotal = (item.price || 0) * item.quantity;
+                subtotal += itemTotal;
+
+                itemData = {
+                    productType: 'cylinder',
+                    name: item.name || 'CO2 Cylinder Refill/Exchange',
+                    price: item.price || 0,
+                    quantity: item.quantity,
+                    image: item.image,
+                    cylinderId: item.id, // Store the numeric ID
+                    category: item.category || 'co2'
+                };
+            } else if (item.product) {
+                // Validate Product ID (only for regular products)
                 if (!mongoose.Types.ObjectId.isValid(item.product)) {
                     return res.status(400).json({
                         success: false,
@@ -110,7 +129,9 @@ exports.createGuestOrder = async (req, res) => {
                 };
             }
 
-            processedItems.push(itemData);
+            if (itemData) {
+                processedItems.push(itemData);
+            }
         }
 
         // Apply coupon if provided (simplified for guest orders)
@@ -258,10 +279,28 @@ exports.createOrder = async (req, res) => {
                 });
             }
 
+            // Check if this is a CO2 cylinder (has productType: 'cylinder' or numeric ID)
+            const isCylinder = item.productType === 'cylinder' || 
+                               (typeof item.id === 'number' && item.id >= 1000 && item.id < 2000) ||
+                               item.category === 'co2';
 
-            // Check if product or bundle exists and is in stock
-            if (item.product) {
-                // Validate Product ID
+            if (isCylinder) {
+                // Handle CO2 cylinder items - they use numeric IDs, not MongoDB ObjectIds
+                // Use the item data directly from the cart since cylinders are handled differently
+                const itemTotal = (item.price || 0) * quantity;
+                subtotal += itemTotal;
+
+                itemData = {
+                    productType: 'cylinder',
+                    name: item.name || 'CO2 Cylinder Refill/Exchange',
+                    price: item.price || 0,
+                    quantity: quantity,
+                    image: item.image,
+                    cylinderId: item.id, // Store the numeric ID
+                    category: item.category || 'co2'
+                };
+            } else if (item.product) {
+                // Validate Product ID (only for regular products)
                 if (!mongoose.Types.ObjectId.isValid(item.product)) {
                     return res.status(400).json({
                         success: false,
@@ -356,11 +395,13 @@ exports.createOrder = async (req, res) => {
             } else {
                 return res.status(400).json({
                     success: false,
-                    message: 'Each item must have either product or bundle ID'
+                    message: 'Each item must have either product, bundle, or be a CO2 cylinder'
                 });
             }
 
-            processedItems.push(itemData);
+            if (itemData) {
+                processedItems.push(itemData);
+            }
         }
 
         // Apply coupon if provided
