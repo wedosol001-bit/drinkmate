@@ -17,6 +17,25 @@ import Footer from "@/components/layout/Footer"
 import { getImageUrl } from "@/lib/utils/image-utils"
 import TabbyInfoDialog from "@/components/checkout/TabbyInfoDialog"
 
+interface DeliveryAddress {
+  fullName: string
+  email: string
+  phone: string
+  district: string
+  city: string
+  country: string
+  nationalAddress: string
+}
+
+interface FieldErrors {
+  fullName?: string
+  phone?: string
+  district?: string
+  city?: string
+  email?: string
+  nationalAddress?: string
+}
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { state, clearCart, removeItem, updateQuantity } = useCart()
@@ -32,7 +51,7 @@ export default function CheckoutPage() {
   // Delivery options state
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState("standard")
   const [orderNotes, setOrderNotes] = useState("")
-  const [deliveryAddress, setDeliveryAddress] = useState({
+  const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
     fullName: "",
     email: "",
     phone: "",
@@ -43,14 +62,7 @@ export default function CheckoutPage() {
   })
 
   // Add error state for form validation
-  const [fieldErrors, setFieldErrors] = useState<{
-    fullName?: string
-    phone?: string
-    district?: string
-    city?: string
-    email?: string
-    nationalAddress?: string
-  }>({})
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
   // Calculate delivery costs based on Aramex options
   const getDeliveryCost = () => {

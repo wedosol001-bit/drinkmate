@@ -1816,6 +1816,7 @@ export interface Translations {
     shipping: string
     tax: string
     total: string
+    vatIncluded: string
     freeShipping: string
     freeShippingThreshold: string
     checkout: string
@@ -1849,6 +1850,54 @@ export interface Translations {
     termsLink: string
     required: string
     optional: string
+    shippingCost: string
+    taxIncluded: string
+    country: string
+    deliveryInformation: string
+    shippingAddress: string
+    shortAddress: string
+    shortAddressFormat: string
+    featuredProducts: string
+    quantity: string
+    price: string
+    couponCode: string
+    apply: string
+    discount: string
+    currency: string
+    tabby: {
+      name: string
+      tagline: string
+      benefits: {
+        noInterest: string
+        noFees: string
+        payLater: string
+      }
+    }
+    newBadge: string
+    privacyNote: string
+    privacyPolicy: string
+    guestNotice: string
+    login: string
+    guestSuffix: string
+    loggedInAs: string
+    validation: {
+      fullNameRequired: string
+      fullNameMinLength: string
+      fullNameInvalid: string
+      phoneRequired: string
+      phoneInvalid: string
+      phoneLength: string
+      districtRequired: string
+      districtMinLength: string
+      cityRequired: string
+      cityMinLength: string
+      emailRequired: string
+      emailInvalid: string
+      nationalAddressLength: string
+      nationalAddressFormat: string
+      pleaseFixErrors: string
+      agreeToTerms: string
+    }
   }
 
   // Auth
