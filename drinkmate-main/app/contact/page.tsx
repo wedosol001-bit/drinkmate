@@ -605,8 +605,7 @@ function ContactPageContent() {
       })
     }
     
-    const message = encodeURIComponent("Hello! I need help with my order.")
-    const url = `https://wa.me/966544671116?text=${message}`
+    const url = `https://wa.me/message/DZK5ZUTOOWVEL1`
     window.open(url, '_blank')
   }
 

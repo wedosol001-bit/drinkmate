@@ -885,8 +885,11 @@ export default function Home() {
                       if (slide.buttonText === "Refill Now") {
                         router.push("/co2")
                       } else if (slide.buttonText === "Shop Now") {
-                        // Check if this is the second slide by looking at the slide content
-                        if (slide.headline && slide.headline.includes("ENERGY DRINK & COLA FLAVOR")) {
+                        // Check if this is the refill banner (first slide)
+                        if (slide.headline && (slide.headline.includes("REFILL MORE. SAVE MORE.") || slide.headline.includes("SHOP MORE. SAVE MORE.") || slide.headline.includes("أعد الملء أكثر. ووفّر أكثر.") || slide.headline.includes("تسوق أكثر. ووفّر أكثر."))) {
+                          // Refill banner - navigate to refill cylinder page
+                          router.push((language === 'AR' ? '/ar' : '') + "/refill-cylinder")
+                        } else if (slide.headline && slide.headline.includes("ENERGY DRINK & COLA FLAVOR")) {
                           // Second slide - navigate directly to flavor page
                           router.push((language === 'AR' ? '/ar' : '') + "/shop/flavor")
                         } else {
@@ -1021,7 +1024,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {/* Soda Makers */}
             <Link
-              href="/shop/soda-makers"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"}
               className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up block"
               dir={isRTL ? "rtl" : "ltr"}
             >
@@ -1049,7 +1052,7 @@ export default function Home() {
 
             {/* CO2 */}
             <Link
-              href="/shop/co2-cylinders"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
               className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-200 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
@@ -1077,7 +1080,7 @@ export default function Home() {
 
             {/* Premium Italian Flavors */}
             <Link
-              href="/shop/flavor"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"}
               className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-300 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
@@ -1105,7 +1108,7 @@ export default function Home() {
 
             {/* Accessories */}
             <LoadingLink
-              href="/shop/accessories"
+              href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}
               className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-500 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
@@ -1397,16 +1400,11 @@ export default function Home() {
 
               <div className="mt-6 flex flex-row space-x-4 justify-center">
                 <Button
-                  aria-label="Learn more about Drinkmate CO2 Exchange"
-                  className={`bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-semibold shadow-md hover:bg-yellow-500 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
-                >
-                  {t("home.co2Section.learnMore")}
-                </Button>
-                <Button
-                  aria-label="Explore CO2 Subscriptions"
+                  onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
+                  aria-label="Shop CO2 Cylinders"
                   className={`bg-purple text-gray-900 border border-gray-300 px-6 py-2 rounded-full font-semibold shadow-md hover:bg-gray-50 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
-                  {t("home.co2Section.exploreSubscriptions")}
+                  {t("home.co2Section.ShopNow")}
                 </Button>
               </div>
             </motion.div>
@@ -1524,15 +1522,8 @@ export default function Home() {
 
               <div className="mt-6 flex flex-row space-x-4 justify-end">
                 <Button
-                  onClick={() => router.push("shop/co2-cylinders")}
-                  aria-label="Learn more about Drinkmate CO2 Exchange"
-                  className={`bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-semibold shadow-md hover:bg-yellow-500 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
-                >
-                  {t("home.co2Section.learnMore")}
-                </Button>
-                <Button
-                  onClick={() => router.push("/shop")}
-                  aria-label="Explore CO2 Subscriptions"
+                  onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
+                  aria-label="Shop CO2 Cylinders"
                   className={`bg-purple text-gray-900 border border-gray-300 px-8 py-3 rounded-full font-semibold shadow-md hover:bg-gray-50 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
                   {t("home.co2Section.ShopNow")}
