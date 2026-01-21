@@ -23,7 +23,7 @@ export default function CartPopup({ isOpen, onClose }: CartPopupProps) {
   const { items, totalPrice, totalItems, updateQuantity, removeItem } = useCart()
   const { getText, settings } = useCartSettings()
   const { isAuthenticated } = useAuth()
-  const { isRTL } = useTranslation()
+  const { t, isRTL } = useTranslation()
   const router = useRouter()
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
 
@@ -32,8 +32,8 @@ export default function CartPopup({ isOpen, onClose }: CartPopupProps) {
   const freeShippingThreshold = settings.freeShipping.threshold
   const isFreeShipping = subtotal >= freeShippingThreshold
   const shipping = isFreeShipping ? 0 : (subtotal > 0 ? 25 : 0)
-  const tax = subtotal * 0.15 // 15% VAT
-  const total = subtotal + shipping + tax
+  const tax = 0 // VAT included in prices
+  const total = subtotal + shipping
 
   const handleQuantityChange = async (id: string | number, newQuantity: number) => {
     // Safety check for undefined or null id
@@ -230,14 +230,13 @@ export default function CartPopup({ isOpen, onClose }: CartPopupProps) {
                         )}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-xs sm:text-sm">
-                      <span className="text-gray-600">{getText('general.taxEn')} (15%)</span>
-                      <span className="font-medium">
-                        <Currency amount={tax} size="sm" />
-                      </span>
-                    </div>
                     <div className="flex items-center justify-between text-base sm:text-lg font-semibold border-t border-gray-200 pt-1.5 sm:pt-2">
-                      <span>{getText('general.totalEn')}</span>
+                      <div className="flex flex-col">
+                        <span>{getText('general.totalEn')}</span>
+                        <span className="text-xs text-gray-500 mt-0.5">
+                          {t('cart.vatIncluded')}
+                        </span>
+                      </div>
                       <span className="text-[#12d6fa]">
                         <Currency amount={total} size="md" />
                       </span>

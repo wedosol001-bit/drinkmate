@@ -60,11 +60,18 @@ export default function Summary({ totals }: SummaryProps) {
         {totals.tax > 0 && <Row label={getText(isRTL ? 'general.taxAr' : 'general.taxEn')} value={<Currency amount={totals.tax} />} />}
       </div>
 
-      <div className="mt-5 sm:mt-6 border-t border-ink-200 pt-4 sm:pt-5 flex items-center justify-between gap-4">
-        <span className="text-base sm:text-lg font-semibold text-ink-900 flex-shrink-0">{getText(isRTL ? 'general.totalAr' : 'general.totalEn')}</span>
-        <span className="text-xl sm:text-2xl font-bold text-ink-900 flex-shrink-0">
-          <Currency amount={totals.total} size="lg" />
-        </span>
+      <div className="mt-5 sm:mt-6 border-t border-ink-200 pt-4 sm:pt-5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col">
+            <span className="text-base sm:text-lg font-semibold text-ink-900 flex-shrink-0">{getText(isRTL ? 'general.totalAr' : 'general.totalEn')}</span>
+            <span className="text-xs text-ink-500 mt-0.5">
+              {t('cart.vatIncluded')}
+            </span>
+          </div>
+          <span className="text-xl sm:text-2xl font-bold text-ink-900 flex-shrink-0">
+            <Currency amount={totals.total} size="lg" />
+          </span>
+        </div>
       </div>
 
       {/* Coupon */}
