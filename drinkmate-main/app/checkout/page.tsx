@@ -60,11 +60,11 @@ export default function CheckoutPage() {
       case "express":
         return 75
       case "standard":
-        return subtotal >= 150 ? 0 : 50
+        return subtotal >= 150 ? 0 : 23
       case "economy":
-        return 23
+        return 25
       default:
-        return subtotal >= 150 ? 0 : 50
+        return subtotal >= 150 ? 0 : 23
     }
   }
 
