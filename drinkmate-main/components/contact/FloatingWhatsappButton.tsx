@@ -29,7 +29,7 @@ export default function FloatingWhatsappButton({
   if (!isVisible) return null
 
   const whatsappHref =
-    'https://wa.me/966544671116?text=Hello! I need help with my order.'
+    'https://wa.me/message/DZK5ZUTOOWVEL1'
 
   return (
     <motion.div

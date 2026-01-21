@@ -458,7 +458,7 @@ export default function Footer() {
 
           <nav aria-label="Follow us" className="flex items-center gap-3">
             <a 
-              href="https://wa.me/966544671116" 
+              href="https://wa.me/message/DZK5ZUTOOWVEL1" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="h-9 w-9 grid place-items-center rounded-full bg-emerald-50 hover:bg-emerald-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
