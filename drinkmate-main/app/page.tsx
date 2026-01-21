@@ -890,10 +890,10 @@ export default function Home() {
                           // Second slide - navigate directly to flavor page
                           router.push((language === 'AR' ? '/ar' : '') + "/shop/flavor")
                         } else {
-                          router.push((language === 'AR' ? '/ar' : '') + "/shop")
+                          router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
                         }
                       } else {
-                        router.push((language === 'AR' ? '/ar' : '') + "/shop")
+                        router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
                       }
                     }}
                     className={`font-medium px-4 sm:px-6 py-2.5 sm:py-3 rounded-full min-w-[120px] sm:min-w-[140px] text-sm sm:text-base ${
