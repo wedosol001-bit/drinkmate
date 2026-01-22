@@ -112,7 +112,7 @@ export default function SettingsPage() {
     },
     store: {
       storeName: "Drinkmate Saudi Arabia",
-      storeEmail: "cs@drinkmate.sa",
+      storeEmail: "cs@aqualine.sa.com",
       storePhone: "+966 12 345 6789",
       storeAddress: "123 King Fahd Road, Riyadh",
       productsPerPage: 12,
@@ -132,7 +132,7 @@ export default function SettingsPage() {
       requireTerms: true
     },
     notifications: {
-      emailFrom: "noreply@drinkmate.sa",
+      emailFrom: "noreply@aqualine.sa.com",
       emailName: "Drinkmate Saudi Arabia",
       smtpHost: "smtp.example.com",
       smtpPort: 587,
@@ -647,7 +647,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="store-email">Store Email</Label>
-                    <Input id="store-email" defaultValue="cs@drinkmate.sa" type="email" />
+                    <Input id="store-email" defaultValue="cs@aqualine.sa.com" type="email" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="store-phone">Store Phone</Label>
@@ -837,7 +837,7 @@ export default function SettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="email-from">From Email</Label>
-                    <Input id="email-from" defaultValue="noreply@drinkmate.sa" type="email" />
+                    <Input id="email-from" defaultValue="noreply@aqualine.sa.com" type="email" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email-name">From Name</Label>

@@ -156,11 +156,11 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="mailto:cs@drinkmate.sa" 
+                  href="mailto:cs@aqualine.sa.com" 
                   className="text-black/70 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
                   itemProp="email"
                 >
-                  cs@drinkmate.sa
+                  cs@aqualine.sa.com
                 </a>
               </li>
               <li>

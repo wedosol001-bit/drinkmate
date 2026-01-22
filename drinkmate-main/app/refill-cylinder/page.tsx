@@ -176,9 +176,9 @@ export default function CO2() {
       return {
         id: "quick-connect",
         name: "Quick connect",
-        price: 65,
+        price: 75,
         originalPrice: 75,
-        discount: 13,
+        discount: 0,
         description: "Quick connect CO2 cylinder refill",
         brand: "Quick connect",
         type: "refill",
@@ -191,9 +191,9 @@ export default function CO2() {
       return {
         id: "custom-brand",
         name: customBrandName.trim(),
-        price: 65,
-        originalPrice: 75,
-        discount: 13,
+        price: 95,
+        originalPrice: 95,
+        discount: 0,
         description: `${customBrandName.trim()} CO2 cylinder refill`,
         brand: customBrandName.trim(),
         type: "refill",
@@ -316,19 +316,21 @@ export default function CO2() {
 
     let basePrice = selectedCylinderData.price
 
-    // Quantity discounts
-    if (quantity >= 4) {
-      basePrice = basePrice * 0.85 // 15% off for 4+ cylinders
-    } else if (quantity >= 3) {
-      basePrice = basePrice * 0.90 // 10% off for 3+ cylinders
+    // Quantity discounts ONLY for Drinkmate cylinders
+    if (selectedCylinder === "drinkmate") {
+      if (quantity >= 4) {
+        basePrice = basePrice * 0.85 // 15% off for 4+ cylinders
+      } else if (quantity >= 3) {
+        basePrice = basePrice * 0.90 // 10% off for 3+ cylinders
+      }
     }
 
     return basePrice
   }
 
   const cylinderPrice = getCylinderPrice()
-  const deliveryCharge = quantity >= 4 ? 0 : 23.00 // Free delivery for 4+ cylinders
   const subtotal = cylinderPrice * quantity
+  const deliveryCharge = subtotal >= 150 ? 0 : 23.00 // Free delivery for orders 150+ SAR
   const total = subtotal + deliveryCharge
 
   const handleAddToCart = () => {
@@ -632,7 +634,7 @@ export default function CO2() {
                           {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
                         </span>
                       </div>
-                      {selectedCylinderData && quantity >= 3 && (selectedCylinderData.originalPrice * quantity) - subtotal > 0 && (
+                      {selectedCylinderData && selectedCylinder === "drinkmate" && quantity >= 3 && (selectedCylinderData.originalPrice * quantity) - subtotal > 0 && (
                         <div className="flex justify-between items-center text-[#a8f387]">
                           <span className="font-semibold">{t('refill.summary.youSave')}</span>
                           <span className="font-bold">
@@ -800,47 +802,49 @@ export default function CO2() {
                           </div>
                         </div>
 
-                        {/* Enhanced Premium Quantity Benefits */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 3
-                            ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
-                            : 'bg-blue-50 border-blue-200'
-                            }`}>
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all duration-300 ${quantity >= 3
-                              ? 'bg-[#12d6fa] shadow-sm scale-110'
-                              : 'bg-[#12d6fa]/70'
+                        {/* Enhanced Premium Quantity Benefits - Only show for Drinkmate */}
+                        {cylinderType === "drinkmate" && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 3
+                              ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
+                              : 'bg-blue-50 border-blue-200'
                               }`}>
-                              <span className="text-white font-black text-sm">3+</span>
-                            </div>
-                            <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 3 ? 'text-[#12d6fa]' : 'text-gray-600'
-                              }`}>{t('refill.discounts.threePlus')}</div>
-                            <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.threePlusLabel')}</div>
-                            {quantity >= 3 && (
-                              <div className="mt-1 text-xs font-semibold text-[#12d6fa] animate-pulse">
-                                {t('refill.discounts.active')}
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all duration-300 ${quantity >= 3
+                                ? 'bg-[#12d6fa] shadow-sm scale-110'
+                                : 'bg-[#12d6fa]/70'
+                                }`}>
+                                <span className="text-white font-black text-sm">3+</span>
                               </div>
-                            )}
-                          </div>
-                          <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 4
-                            ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
-                            : 'bg-blue-50 border-blue-200'
-                            }`}>
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all duration-300 ${quantity >= 4
-                              ? 'bg-[#12d6fa] shadow-sm scale-110'
-                              : 'bg-[#12d6fa]/70'
+                              <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 3 ? 'text-[#12d6fa]' : 'text-gray-600'
+                                }`}>{t('refill.discounts.threePlus')}</div>
+                              <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.threePlusLabel')}</div>
+                              {quantity >= 3 && (
+                                <div className="mt-1 text-xs font-semibold text-[#12d6fa] animate-pulse">
+                                  {t('refill.discounts.active')}
+                                </div>
+                              )}
+                            </div>
+                            <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 4
+                              ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
+                              : 'bg-blue-50 border-blue-200'
                               }`}>
-                              <span className="text-white font-black text-sm">4+</span>
-                            </div>
-                            <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 4 ? 'text-gray-800' : 'text-gray-600'
-                              }`}>{t('refill.discounts.fourPlus')}</div>
-                            <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.fourPlusLabel')}</div>
-                            {quantity >= 4 && (
-                              <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
-                                {t('refill.discounts.active')}
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all duration-300 ${quantity >= 4
+                                ? 'bg-[#12d6fa] shadow-sm scale-110'
+                                : 'bg-[#12d6fa]/70'
+                                }`}>
+                                <span className="text-white font-black text-sm">4+</span>
                               </div>
-                            )}
+                              <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 4 ? 'text-gray-800' : 'text-gray-600'
+                                }`}>{t('refill.discounts.fourPlus')}</div>
+                              <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.fourPlusLabel')}</div>
+                              {quantity >= 4 && (
+                                <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
+                                  {t('refill.discounts.active')}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>

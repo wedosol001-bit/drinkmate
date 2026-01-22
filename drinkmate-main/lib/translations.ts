@@ -3737,7 +3737,7 @@ export const translations: Record<Language, Translations> = {
         contactUs: {
           title: "Contact Us",
           description: "If you have questions about this Privacy Policy, please contact us.",
-          email: "privacy@drinkmate.sa",
+          email: "privacy@aqualine.sa.com",
           phone: "+966544671116"
         },
         personalInfoDetails: {
@@ -3879,7 +3879,7 @@ export const translations: Record<Language, Translations> = {
         contact: {
           title: "Contact Information",
           description: "For questions about these terms, please contact us.",
-          email: "legal@drinkmate.sa",
+          email: "legal@aqualine.sa.com",
           phone: "+966544671116"
         },
         servicesDetails: {
@@ -3985,7 +3985,7 @@ export const translations: Record<Language, Translations> = {
         contact: {
           title: "Contact Us",
           description: "If you have questions about our use of cookies, please contact us.",
-          email: "privacy@drinkmate.sa"
+          email: "privacy@aqualine.sa.com"
         },
         purposesDetails: {
           rememberPreferences: "Remember your preferences and settings",
@@ -4807,7 +4807,7 @@ export const translations: Record<Language, Translations> = {
     footer: {
       companyDescription: "Creating perfect sparkling drinks at home with premium Italian flavors and innovative soda makers",
       phone: "+966544671116",
-      email: "cs@drinkmate.sa",
+      email: "cs@aqualine.sa.com",
       address: "Riyadh, Saudi Arabia",
       products: {
         title: "Products",
@@ -6104,7 +6104,7 @@ export const translations: Record<Language, Translations> = {
         contactUs: {
           title: "اتصل بنا",
           description: "إذا كان لديك أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا.",
-          email: "privacy@drinkmate.sa",
+          email: "privacy@aqualine.sa.com",
           phone: "+966544671116"
         },
         personalInfoDetails: {
@@ -6246,7 +6246,7 @@ export const translations: Record<Language, Translations> = {
         contact: {
           title: "معلومات الاتصال",
           description: "للأسئلة حول هذه الشروط، يرجى الاتصال بنا.",
-          email: "legal@drinkmate.sa",
+          email: "legal@aqualine.sa.com",
           phone: "+966544671116"
         },
         servicesDetails: {
@@ -6352,7 +6352,7 @@ export const translations: Record<Language, Translations> = {
         contact: {
           title: "اتصل بنا",
           description: "إذا كان لديك أسئلة حول استخدامنا لملفات تعريف الارتباط، يرجى الاتصال بنا.",
-          email: "privacy@drinkmate.sa"
+          email: "privacy@aqualine.sa.com"
         },
         purposesDetails: {
           rememberPreferences: "تذكر تفضيلاتك وإعداداتك",
@@ -7176,7 +7176,7 @@ export const translations: Record<Language, Translations> = {
     footer: {
       companyDescription: "إنشاء مشروبات غازية مثالية في المنزل مع النكهات الإيطالية عالية الجودة وصانعات الصودا المبتكرة",
       phone: "+966544671116",
-      email: "cs@drinkmate.sa",
+      email: "cs@aqualine.sa.com",
       address: "الرياض، المملكة العربية السعودية",
       products: {
         title: "المنتجات",
