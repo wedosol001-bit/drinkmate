@@ -176,8 +176,8 @@ export default function CO2() {
       return {
         id: "quick-connect",
         name: "Quick connect",
-        price: 75,
-        originalPrice: 75,
+        price: 99,
+        originalPrice: 99,
         discount: 0,
         description: "Quick connect CO2 cylinder refill",
         brand: "Quick connect",
@@ -191,8 +191,8 @@ export default function CO2() {
       return {
         id: "custom-brand",
         name: customBrandName.trim(),
-        price: 95,
-        originalPrice: 95,
+        price: 75,
+        originalPrice: 75,
         discount: 0,
         description: `${customBrandName.trim()} CO2 cylinder refill`,
         brand: customBrandName.trim(),
@@ -207,8 +207,8 @@ export default function CO2() {
         id: "drinkmate",
         name: "Drinkmate",
         price: 65,
-        originalPrice: 75,
-        discount: 13,
+        originalPrice: 65,
+        discount: 0,
         description: "Original Drinkmate CO2 cylinder refill",
         brand: "Drinkmate",
         type: "refill",
@@ -316,13 +316,9 @@ export default function CO2() {
 
     let basePrice = selectedCylinderData.price
 
-    // Quantity discounts ONLY for Drinkmate cylinders
-    if (selectedCylinder === "drinkmate") {
-      if (quantity >= 4) {
-        basePrice = basePrice * 0.85 // 15% off for 4+ cylinders
-      } else if (quantity >= 3) {
-        basePrice = basePrice * 0.90 // 10% off for 3+ cylinders
-      }
+    // Quantity discount ONLY for Drinkmate cylinders - fixed price 59 SAR for 4+
+    if (selectedCylinder === "drinkmate" && quantity >= 4) {
+      basePrice = 59 // Fixed price of 59 SAR per cylinder for 4+
     }
 
     return basePrice
@@ -634,11 +630,11 @@ export default function CO2() {
                           {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
                         </span>
                       </div>
-                      {selectedCylinderData && selectedCylinder === "drinkmate" && quantity >= 3 && (selectedCylinderData.originalPrice * quantity) - subtotal > 0 && (
+                      {selectedCylinderData && selectedCylinder === "drinkmate" && quantity >= 4 && (65 * quantity) - subtotal > 0 && (
                         <div className="flex justify-between items-center text-[#a8f387]">
                           <span className="font-semibold">{t('refill.summary.youSave')}</span>
                           <span className="font-bold">
-                            <SaudiRiyal amount={(selectedCylinderData.originalPrice * quantity) - subtotal} size="sm" />
+                            <SaudiRiyal amount={(65 * quantity) - subtotal} size="sm" />
                           </span>
                         </div>
                       )}
@@ -804,26 +800,7 @@ export default function CO2() {
 
                         {/* Enhanced Premium Quantity Benefits - Only show for Drinkmate */}
                         {cylinderType === "drinkmate" && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 3
-                              ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
-                              : 'bg-blue-50 border-blue-200'
-                              }`}>
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all duration-300 ${quantity >= 3
-                                ? 'bg-[#12d6fa] shadow-sm scale-110'
-                                : 'bg-[#12d6fa]/70'
-                                }`}>
-                                <span className="text-white font-black text-sm">3+</span>
-                              </div>
-                              <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 3 ? 'text-[#12d6fa]' : 'text-gray-600'
-                                }`}>{t('refill.discounts.threePlus')}</div>
-                              <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.threePlusLabel')}</div>
-                              {quantity >= 3 && (
-                                <div className="mt-1 text-xs font-semibold text-[#12d6fa] animate-pulse">
-                                  {t('refill.discounts.active')}
-                                </div>
-                              )}
-                            </div>
+                          <div className="grid grid-cols-1 gap-4">
                             <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 4
                               ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
                               : 'bg-blue-50 border-blue-200'
@@ -835,7 +812,7 @@ export default function CO2() {
                                 <span className="text-white font-black text-sm">4+</span>
                               </div>
                               <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 4 ? 'text-gray-800' : 'text-gray-600'
-                                }`}>{t('refill.discounts.fourPlus')}</div>
+                                }`}>59 SAR each</div>
                               <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.fourPlusLabel')}</div>
                               {quantity >= 4 && (
                                 <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
@@ -944,11 +921,11 @@ export default function CO2() {
                               {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
                             </span>
                           </div>
-                          {selectedCylinderData && quantity >= 3 && (selectedCylinderData.originalPrice * quantity) - subtotal > 0 && (
+                          {selectedCylinderData && selectedCylinder === "drinkmate" && quantity >= 4 && (65 * quantity) - subtotal > 0 && (
                             <div className="flex justify-between items-center text-[#a8f387]">
                               <span className="font-semibold">{t('refill.summary.youSave')}</span>
                               <span className="font-bold">
-                                <SaudiRiyal amount={(selectedCylinderData.originalPrice * quantity) - subtotal} size="sm" />
+                                <SaudiRiyal amount={(65 * quantity) - subtotal} size="sm" />
                               </span>
                             </div>
                           )}
