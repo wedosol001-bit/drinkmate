@@ -1557,7 +1557,7 @@ export default function ShopProductDetail() {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                      <div>
+                      <div className={`${language === 'AR' ? 'order-2' : 'order-1'}`}>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
                           {t("product.keyFeatures")}
@@ -1584,7 +1584,7 @@ export default function ShopProductDetail() {
                         </ul>
                       </div>
 
-                      <div>
+                      <div className={`${language === 'AR' ? 'order-1' : 'order-2'}`}>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <Shield className="w-5 h-5 mr-2 text-blue-500" />
                           {t("product.safetyQuality")}

@@ -223,7 +223,7 @@ export default function ProductGrid({
     <>
       <div
         dir={dir}
-        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch ${className}`}
+        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch ${className}`}
       >
         {convertedProducts.map((product, index) => (
           <BundleStyleProductCard

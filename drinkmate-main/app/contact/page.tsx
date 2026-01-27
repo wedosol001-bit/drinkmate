@@ -34,6 +34,7 @@ import {
   HelpCircle,
   MapPin
 } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { toast } from 'sonner'
 
 // Contact Option Card Component
@@ -55,6 +56,10 @@ function ContactOptionCard({
   disabled?: boolean
 }) {
   const { t } = useTranslation()
+  
+  // Check if it's WhatsApp icon
+  const isWhatsApp = Icon === FaWhatsapp
+  
   const getStatusColor = () => {
     switch (status) {
       case 'available': return 'bg-green-100 text-green-800'
@@ -79,11 +84,11 @@ function ContactOptionCard({
     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-[#12d6fa]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div className={`w-12 h-12 ${isWhatsApp ? 'bg-[#25D366]/10' : 'bg-[#12d6fa]/10'} rounded-xl flex items-center justify-center flex-shrink-0`}>
             {Icon ? (
-              <Icon className="h-6 w-6 text-[#12d6fa]" aria-hidden="true" />
+              <Icon className={`h-6 w-6 ${isWhatsApp ? 'text-[#25D366]' : 'text-[#12d6fa]'}`} aria-hidden="true" />
             ) : (
-              <div className="h-6 w-6 bg-[#12d6fa] rounded" aria-label="Icon placeholder" />
+              <div className={`h-6 w-6 ${isWhatsApp ? 'bg-[#25D366]' : 'bg-[#12d6fa]'} rounded`} aria-label="Icon placeholder" />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -106,7 +111,9 @@ function ContactOptionCard({
             ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-40' 
             : status === 'login-required'
               ? 'bg-orange-500 hover:bg-orange-600 text-white hover:shadow-md'
-              : 'bg-[#12d6fa] hover:bg-[#0fb8d9] text-white hover:shadow-md'
+              : isWhatsApp
+                ? 'bg-[#25D366] hover:bg-[#20BA5A] text-white hover:shadow-md'
+                : 'bg-[#12d6fa] hover:bg-[#0fb8d9] text-white hover:shadow-md'
         }`}
         title={disabled ? t('shop.contact.options.chat.checking') : ""}
       >
@@ -768,7 +775,7 @@ function ContactPageContent() {
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('shop.contact.options.heading')}</h2>
                   <div className="space-y-6">
                     <ContactOptionCard
-                      icon={MessageCircle}
+                      icon={FaWhatsapp}
                       title={t('shop.contact.options.whatsapp.title')}
                       availability={t('shop.contact.options.whatsapp.availability')}
                       buttonText={t('shop.contact.options.whatsapp.button')}
@@ -888,7 +895,7 @@ function ContactPageContent() {
                 <h2 className="dm-heading-2 mb-6">{t('shop.contact.options.heading')}</h2>
                 <div className="space-y-4">
                   <ContactOptionCard
-                    icon={MessageCircle}
+                    icon={FaWhatsapp}
                     title={t('shop.contact.options.whatsapp.title')}
                     availability={`${t('shop.contact.status.always')} • ${t('shop.contact.options.whatsapp.availability')}`}
                     buttonText={t('shop.contact.options.whatsapp.button')}

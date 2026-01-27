@@ -995,7 +995,7 @@ function ShopPageContent() {
 
               {/* Product Grid Skeleton */}
               <div className="flex-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div key={i} className="animate-pulse">
                       <div className="bg-white rounded-3xl border border-gray-100/80 overflow-hidden h-[500px] sm:h-[540px] lg:h-[580px] flex flex-col">
@@ -1163,7 +1163,7 @@ function ShopPageContent() {
             </div>
 
             {/* Professional Controls Section - Mobile Optimized */}
-            <div className="flex flex-row items-center gap-3 sm:gap-6">
+            <div className="flex lg:flex-row flex-col sm:flex-wrap items-center gap-3 sm:gap-6">
               {/* Results Count with Professional Styling */}
               <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl justify-center sm:justify-start border border-gray-200/50">
                 <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
