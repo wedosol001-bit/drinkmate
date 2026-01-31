@@ -144,11 +144,11 @@ export default function Footer() {
             <ul className={`mt-4 space-y-1 text-sm ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               <li>
                 <a 
-                  href="tel:+966544671116" 
+                  href="tel:+966544671166" 
                   className="text-black/70 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
                   itemProp="telephone"
                 >
-                  +966544671116
+                  +966544671166
                 </a>
               </li>
               <li>

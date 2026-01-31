@@ -2022,6 +2022,7 @@ export interface Translations {
     notFoundTitle?: string
     notFoundDescription?: string
     backToShop?: string
+    goBack?: string
     backToHome?: string
     backToAccessories?: string
     backToSodaMakers?: string
@@ -2570,7 +2571,7 @@ export const translations: Record<Language, Translations> = {
         title: "Drinkmate OmniFizz",
         description: "Unlike traditional soda makers, the Drinkmate OmniFizz allows you to effortlessly carbonate any drink, from juice and iced tea to wine and cocktails, providing endless possibilities for sparkling refreshments.",
         availableColors: "Available Color Options",
-        offersBundles: "Offers & Bundles",
+        offersBundles: "Bundles",
         exploreMore: "Explore More"
       },
       howItWorks: {
@@ -4865,6 +4866,7 @@ export const translations: Record<Language, Translations> = {
       notFoundTitle: "Product Not Found",
       notFoundDescription: "The product you're looking for doesn't exist or has been removed.",
       backToShop: "Back to Shop",
+      goBack: "Go Back",
       backToHome: "Back to Home",
       backToAccessories: "Back to Accessories",
       backToSodaMakers: "Back to Soda Makers",
@@ -5177,7 +5179,7 @@ export const translations: Record<Language, Translations> = {
         title: "درينك ميت أومني فيز",
         description: "على عكس صانعات الصودا التقليدية، تسمح لك درينك ميت أومني فيز بإضافة الغاز لأي مشروب بسهولة، من العصير والشاي المثلج إلى النبيذ والكوكتيلات، مما يوفر إمكانيات لا تنتهي للمشروبات الغازية المنعشة.",
         availableColors: "خيارات الألوان المتاحة",
-        offersBundles: "العروض والباقات",
+        offersBundles: "حزم",
         exploreMore: "استكشف المزيد"
       },
       howItWorks: {
@@ -7268,6 +7270,8 @@ export const translations: Record<Language, Translations> = {
       notFoundTitle: "المنتج غير موجود",
       notFoundDescription: "المنتج الذي تبحث عنه غير موجود أو تم إزالته.",
       backToShop: "العودة إلى المتجر",
+      goBack: "العودة",
+      backToHome: "العودة إلى الرئيسية",
       backToAccessories: "العودة إلى الملحقات",
       backToSodaMakers: "العودة إلى صانعات الصودا",
       premium: "فاخر",

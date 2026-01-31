@@ -81,7 +81,7 @@ const defaultSettings: CartSettings = {
     threshold: 150,
     enabled: true,
     copyEn: "Add {amount} more for free shipping",
-    copyAr: "أضف {amount} أكثر للحصول على الشحن المجاني",
+    copyAr: "أضف أكثر من {amount} للحصول على الشحن المجاني",
     unlockedCopyEn: "You've unlocked free shipping!",
     unlockedCopyAr: "لقد حصلت على الشحن المجاني!"
   },
@@ -142,7 +142,7 @@ const defaultSettings: CartSettings = {
     applyCouponEn: "Apply",
     applyCouponAr: "تطبيق",
     secureCheckoutEn: "Secure Checkout",
-    secureCheckoutAr: "الدفع الآمن",
+    secureCheckoutAr: "ادفع الآن",
     notePlaceholderEn: "Special handling instructions…",
     notePlaceholderAr: "تعليمات خاصة للمعالجة...",
     noteLabelEn: "Add instructions for packing your order (optional)",
