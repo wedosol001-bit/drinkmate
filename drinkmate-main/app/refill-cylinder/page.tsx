@@ -792,10 +792,15 @@ export default function CO2() {
 
                         {/* Delivery Information */}
                         <div className="bg-blue-50 rounded-2xl p-4 mb-6 border border-blue-200">
-                          <div className="flex items-center justify-center space-x-2">
+                          <div className="flex items-center justify-center space-x-2 mb-2">
                             <Truck className="w-5 h-5 text-[#12d6fa]" />
                             <span className="text-sm font-semibold text-gray-700">{t('refill.qty.deliveryInfo')} {t('refill.qty.deliveryTime')}</span>
                           </div>
+                          <p className="text-center text-sm font-medium text-[#0bc4e8]">
+                            {cylinderType === "non-drinkmate" && (threadType === "standard-threaded" || threadType === "quick-connect")
+                              ? t('refill.qty.freeDeliveryNote2Plus')
+                              : t('refill.qty.freeDeliveryNote')}
+                          </p>
                         </div>
 
                         {/* Enhanced Premium Quantity Benefits - Only show for Drinkmate */}

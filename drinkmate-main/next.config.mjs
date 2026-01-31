@@ -226,12 +226,7 @@ const nextConfig = {
       },
       {
         source: '/cylinder',
-        destination: '/shop/co2-cylinders',
-        permanent: true,
-      },
-      {
-        source: '/cylinders',
-        destination: '/shop/co2-cylinders',
+        destination: '/cylinders',
         permanent: true,
       },
       {

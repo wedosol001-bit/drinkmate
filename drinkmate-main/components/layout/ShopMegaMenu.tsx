@@ -12,6 +12,7 @@ interface ShopMegaMenuProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
   isRTL: boolean
+  isActive?: boolean
 }
 
 interface MenuTileProps {
@@ -75,7 +76,7 @@ function MenuTile({
   )
 }
 
-export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMenuProps) {
+export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL, isActive }: ShopMegaMenuProps) {
   const { t, language } = useTranslation()
   const router = useRouter()
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -141,7 +142,7 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
       <Popover.Trigger asChild>
         <button
           ref={triggerRef}
-          className="shop-button flex items-center text-sm font-semibold tracking-wide transition-all duration-300 relative group px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+          className={`shop-button flex items-center text-sm font-semibold tracking-wide transition-all duration-300 relative group px-3 py-2 rounded-lg ${isActive ? "text-slate-900" : "text-slate-600 hover:text-slate-900"} hover:bg-slate-50`}
           aria-haspopup="menu"
           aria-expanded={isOpen ? "true" : "false"}
           aria-controls="shop-mega-menu"
@@ -150,6 +151,11 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
           onClick={handleClick}
         >
           {t("header.shop")}
+          {isActive && (
+            <span
+              className={`absolute -bottom-1 w-full h-0.5 bg-[#12d6fa] hover:bg-[#0bc4e8] rounded-full ${isRTL ? "right-0" : "left-0"}`}
+            />
+          )}
           <ChevronDown
             className={`${isRTL ? "mr-1" : "ml-1"} w-4 h-4 transition-all duration-300 ${isOpen ? "rotate-180" : ""}`}
           />
@@ -211,11 +217,11 @@ export default function ShopMegaMenu({ isOpen, onOpenChange, isRTL }: ShopMegaMe
                 language ={language}
               />
               <MenuTile
-                href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
+                href={(language === 'AR' ? '/ar' : '') + "/cylinders"}
                 title={t("header.co2")}
                 img="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893591/co2-cylinder-single_dcrdnx.png"
                 alt={t("header.co2")}
-                onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
+                onMouseEnter={() => handlePrefetch((language === 'AR' ? '/ar' : '') + "/cylinders")}
                 onClick={() => onOpenChange(false)}
                 language ={language}
               />

@@ -22,6 +22,7 @@ export default function Header({ currentPage }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const isShopActive = pathname?.startsWith("/shop") || pathname?.startsWith("/ar/shop") || false
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false)
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
@@ -151,11 +152,11 @@ export default function Header({ currentPage }: HeaderProps) {
             <Link
               href="/"
               className={`text-sm font-semibold tracking-wide transition-all duration-300 relative group cursor-pointer ${isRTL ? "font-cairo px-2" : "font-montserrat px-2"} ${
-                currentPage === "home" || !currentPage ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
+                (pathname === "/" || pathname === "/ar") ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {t("header.home")}
-              {(currentPage === "home" || !currentPage) && (
+              {(pathname === "/" || pathname === "/ar") && (
                 <span
                   className={`absolute -bottom-1 w-full h-0.5 bg-[#12d6fa] hover:bg-[#0bc4e8] rounded-full ${isRTL ? "right-0" : "left-0"}`}
                 ></span>
@@ -165,6 +166,7 @@ export default function Header({ currentPage }: HeaderProps) {
               isOpen={isShopDropdownOpen}
               onOpenChange={setIsShopDropdownOpen}
               isRTL={isRTL}
+              isActive={isShopActive}
             />
 
             <Link
@@ -475,9 +477,9 @@ export default function Header({ currentPage }: HeaderProps) {
                     </div>
                   </LoadingLink>
 
-                  {/* CO2 Cylinders */}
+                  {/* CO2 Cylinders - mediator page first */}
                   <Link
-                    href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
+                    href={(language === 'AR' ? '/ar' : '') + "/cylinders"}
                     className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl p-6 text-white hover:from-orange-500 hover:to-orange-600 transition-all duration-300 group relative overflow-hidden flex flex-col items-center justify-center aspect-square shadow-lg hover:shadow-xl hover:scale-105"
                     onClick={() => {
                       setIsMobileMenuOpen(false)
