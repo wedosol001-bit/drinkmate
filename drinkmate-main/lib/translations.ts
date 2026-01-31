@@ -1739,6 +1739,7 @@ export interface Translations {
     choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
     qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string; freeDeliveryNote: string; freeDeliveryNote2Plus: string; cylinder: string; emptyCylinders: string }
     discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
+    offers: { heading: string; buy3FreeDelivery: string; buyXFreeDelivery: string; buy4PriceEach: string; addOneMoreForOffer: string; addMoreForFreeDelivery: string; returnNoteShort: string }
     cta: { addToCart: string; subscribe: string; premium: string }
     why: { title: string; f1: string; f2: string; f3: string; f4: string }
     summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string; co2RefillExchange: string }
@@ -1841,6 +1842,7 @@ export interface Translations {
     empty: string
     emptyDescription: string
     continueShopping: string
+    orderSummary: string
     taxesNote?: string
     coupon?: { enter: string; applied: string; invalid: string }
     removeItem: string
@@ -4635,6 +4637,7 @@ export const translations: Record<Language, Translations> = {
       choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
       qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days", freeDeliveryNote: "Free delivery for 3+ cylinders", freeDeliveryNote2Plus: "Order 2+ cylinders for free delivery", cylinder: "cylinder", emptyCylinders: "empty cylinders" },
       discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
+      offers: { heading: "Unlock the opportunity now", buy3FreeDelivery: "BUY 2+ FREE DELIVERY", buyXFreeDelivery: "BUY {{count}}+ FREE DELIVERY", buy4PriceEach: "BUY 4 59/- EACH", addOneMoreForOffer: "Add {{count}} more cylinder(s) to get this offer", addMoreForFreeDelivery: "Add {{count}} more cylinder(s) to get free delivery", returnNoteShort: "Please make sure to return {{count}} cylinder(s)" },
       cta: { addToCart: "Add cylinders to cart", subscribe: "Subscribe & save 20%", premium: "Premium membership" },
       why: { title: "Why choose our service?", f1: "Food-grade CO2 for beverages", f2: "3-5 day turnaround", f3: "Home pickup and delivery", f4: "Quality guaranteed" },
       summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:", co2RefillExchange: "CO2 Cylinder Refill/Exchange" },
@@ -4666,6 +4669,7 @@ export const translations: Record<Language, Translations> = {
       empty: "Your cart is empty",
       emptyDescription: "Add some items to your cart to get started",
       continueShopping: "Continue Shopping",
+      orderSummary: "Order Summary",
       taxesNote: "Taxes and discount codes calculated at checkout",
       coupon: { enter: "Please enter a coupon code", applied: "Coupon applied successfully", invalid: "Invalid coupon code" },
       removeItem: "Remove Item",
@@ -7036,6 +7040,7 @@ export const translations: Record<Language, Translations> = {
       choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "غير درينك ميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
       qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل", freeDeliveryNote: "توصيل مجاني لـ 3 أسطوانات أو أكثر", freeDeliveryNote2Plus: "اطلب 2 أسطوانة أو أكثر للحصول على توصيل مجاني", cylinder: "أسطوانة", emptyCylinders: "أسطوانة فارغة" },
       discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
+      offers: { heading: "استفد من الفرصة الآن", buy3FreeDelivery: "اشترِ 2+ توصيل مجاني", buyXFreeDelivery: "اشترِ {{count}}+ توصيل مجاني", buy4PriceEach: "اشترِ 4 بسعر 59/- لكل واحدة", addOneMoreForOffer: "أضف {{count}} أسطوانة أخرى للحصول على هذا العرض", addMoreForFreeDelivery: "أضف {{count}} أسطوانة أخرى للحصول على توصيل مجاني", returnNoteShort: "يرجى إرجاع {{count}} أسطوانة" },
       cta: { addToCart: "أضف الأسطوانات إلى السلة", subscribe: "اشترك ووفر 20%", premium: "عضوية مميزة" },
       why: { title: "لماذا تختار خدمتنا؟", f1: "CO2 صالح للاستخدام الغذائي", f2: "دورة 3-5 أيام", f3: "استلام وتسليم من المنزل", f4: "جودة مضمونة" },
       summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:", co2RefillExchange: "إعادة تعبئة/تبديل أسطوانة CO2" },
@@ -7067,6 +7072,7 @@ export const translations: Record<Language, Translations> = {
       empty: "سلتك فارغة",
       emptyDescription: "أضف بعض العناصر إلى سلة التسوق للبدء",
       continueShopping: "متابعة التسوق",
+      orderSummary: "ملخص الطلب",
       taxesNote: "سيتم احتساب الضرائب وأكواد الخصم عند الدفع",
       coupon: { enter: "يرجى إدخال رمز الكوبون", applied: "تم تطبيق الكوبون بنجاح", invalid: "رمز الكوبون غير صالح" },
       removeItem: "إزالة العنصر",
