@@ -485,8 +485,8 @@ export default function CO2() {
                         {t('refill.carouselDescription.refill4').split('{amount}').map((part, i, arr) =>
                           i === arr.length - 1 ? part : (
                             <span key={i}>
-                              {part}
                               <SaudiRiyal amount={55} size="sm" className="font-bold text-[#12d6fa]" />
+                              {part}
                             </span>
                           )
                         )}

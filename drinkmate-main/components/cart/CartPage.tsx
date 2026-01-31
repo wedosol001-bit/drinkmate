@@ -46,7 +46,7 @@ export default function CartPage() {
       ? (isRTL ? 'مجاني' : 'FREE') 
       : shipping 
         ? <Currency amount={shipping} /> 
-        : (isRTL ? 'يُحسب عند الدفع' : 'Calculated at checkout')
+        : (isRTL ? 'عند إضافة منتجات' : 'Calculated at checkout')
   }
 
   // Show loading state

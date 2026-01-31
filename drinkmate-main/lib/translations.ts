@@ -2536,7 +2536,7 @@ export const translations: Record<Language, Translations> = {
         title: "Drinkmate OmniFizz",
         description: "Unlike traditional soda makers, the Drinkmate OmniFizz allows you to effortlessly carbonate any drink, from juice and iced tea to wine and cocktails, providing endless possibilities for sparkling refreshments.",
         availableColors: "Available Color Options",
-        offersBundles: "Offers & Bundles",
+        offersBundles: "Bundles",
         exploreMore: "Explore More"
       },
       howItWorks: {
@@ -5111,7 +5111,7 @@ export const translations: Record<Language, Translations> = {
         title: "درينك ميت أومني فيز",
         description: "على عكس صانعات الصودا التقليدية، تسمح لك درينك ميت أومني فيز بإضافة الغاز لأي مشروب بسهولة، من العصير والشاي المثلج إلى النبيذ والكوكتيلات، مما يوفر إمكانيات لا تنتهي للمشروبات الغازية المنعشة.",
         availableColors: "خيارات الألوان المتاحة",
-        offersBundles: "العروض والباقات",
+        offersBundles: "حزم",
         exploreMore: "استكشف المزيد"
       },
       howItWorks: {

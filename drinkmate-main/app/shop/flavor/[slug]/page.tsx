@@ -796,7 +796,6 @@ export default function FlavorDetailPage() {
 
   // Show error if product not found
   if (!product) {
-    const router = useRouter();
     return (
       <PageLayout>
         <div className="container mx-auto px-4 py-8">

@@ -886,13 +886,13 @@ export default function ShopProductDetail() {
         <div className="container mx-auto px-4 py-8">
           {/* Enhanced Back Button with breadcrumb */}
           <div className="mb-6 space-y-4">
-            <Link
-              href={language === 'AR' ? '/ar/shop' : '/shop'}
+            <button
+              onClick={() => router.back()}
               className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] transition-all duration-200 hover:translate-x-1"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              {t("product.backToShop")}
-            </Link>
+              {t("product.goBack")}
+            </button>
 
             {/* Enhanced Breadcrumb */}
             <nav className="text-sm text-muted-foreground flex items-center space-x-2">
