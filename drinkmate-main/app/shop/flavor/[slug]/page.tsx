@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useRouter, useParams } from "next/navigation"
+
 import Image from "next/image"
 import Link from "next/link"
 import { Suspense } from "react"
@@ -795,6 +796,7 @@ export default function FlavorDetailPage() {
 
   // Show error if product not found
   if (!product) {
+    const router = useRouter();
     return (
       <PageLayout>
         <div className="container mx-auto px-4 py-8">
@@ -803,10 +805,13 @@ export default function FlavorDetailPage() {
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
               <h1 className="text-2xl font-bold">Flavor Not Found</h1>
               <p className="text-gray-600 mb-4">The flavor you're looking for doesn't exist or has been removed.</p>
-              <Link href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"} className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium">
+              <button 
+                onClick={() => router.back()}
+                className="inline-flex items-center text-[#12d6fa] hover:text-[#0fb8d9] font-medium cursor-pointer"
+              >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                {t("product.backToShop") || "Back to Flavors"}
-              </Link>
+                {t("product.goBack") || "Back to Flavors"}
+              </button>
             </div>
           </div>
         </div>

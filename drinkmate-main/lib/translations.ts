@@ -1987,6 +1987,7 @@ export interface Translations {
     notFoundTitle?: string
     notFoundDescription?: string
     backToShop?: string
+    goBack?: string
     backToHome?: string
     backToAccessories?: string
     backToSodaMakers?: string
@@ -4797,6 +4798,7 @@ export const translations: Record<Language, Translations> = {
       notFoundTitle: "Product Not Found",
       notFoundDescription: "The product you're looking for doesn't exist or has been removed.",
       backToShop: "Back to Shop",
+      goBack: "Go Back",
       backToHome: "Back to Home",
       backToAccessories: "Back to Accessories",
       backToSodaMakers: "Back to Soda Makers",
@@ -7167,6 +7169,8 @@ export const translations: Record<Language, Translations> = {
       notFoundTitle: "المنتج غير موجود",
       notFoundDescription: "المنتج الذي تبحث عنه غير موجود أو تم إزالته.",
       backToShop: "العودة إلى المتجر",
+      goBack: "العودة",
+      backToHome: "العودة إلى الرئيسية",
       backToAccessories: "العودة إلى الملحقات",
       backToSodaMakers: "العودة إلى صانعات الصودا",
       premium: "فاخر",
