@@ -82,6 +82,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 
+// Map common color names to hex for variant swatches (exact + multi-word names)
+const COLOR_NAME_TO_HEX: Record<string, string> = {
+  red: "#DC2626", blue: "#2563EB", black: "#171717", white: "#FAFAFA", cyan: "#0891B2",
+  purple: "#7C3AED", pink: "#DB2777", green: "#16A34A", yellow: "#CA8A04", orange: "#EA580C",
+  gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A",
+  mint: "#34D399", coral: "#F97316", lavender: "#A78BFA", charcoal: "#404040",
+  "matte black": "#171717", "royal red": "#B91C1C", "arctic blue": "#0284C7", "classic white": "#FAFAFA",
+  "midnight black": "#0f172a", "jet black": "#0a0a0a", "snow white": "#FFFAFA", "ice blue": "#BAE6FD",
+}
+
+function getVariantSwatchHex(variant: any): string {
+  if (variant?.colorHex) return variant.colorHex
+  if (variant?.value && /^#[0-9A-Fa-f]{3,8}$/.test(variant.value)) return variant.value
+  const raw = (variant?.attributes?.color || variant?.name || "").toLowerCase().trim()
+  if (!raw) return "#E5E7EB"
+  if (COLOR_NAME_TO_HEX[raw]) return COLOR_NAME_TO_HEX[raw]
+  const words = raw.split(/\s+/)
+  for (let i = 0; i < words.length; i++) {
+    const part = words.slice(i).join(" ")
+    if (COLOR_NAME_TO_HEX[part]) return COLOR_NAME_TO_HEX[part]
+  }
+  const lastWord = words[words.length - 1]
+  return COLOR_NAME_TO_HEX[lastWord] ?? "#E5E7EB"
+}
+
 // Dynamic export to prevent static optimization
 export const dynamic = "force-dynamic"
 
@@ -140,10 +165,10 @@ export default function ShopProductDetail() {
   const router = useRouter()
 
   const productSlug = params?.slug as string
-  
+
   // Debug: Log the slug parameter
   console.log('Product detail page - received slug:', productSlug)
-  
+
   const [product, setProduct] = useState<ShopProduct | null>(null)
   const [loading, setLoading] = useState(true)
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([])
@@ -179,7 +204,7 @@ export default function ShopProductDetail() {
     category: "Usage & Features",
     tags: ""
   })
-  
+
   // Product variants state
   const [selectedVariant, setSelectedVariant] = useState<any>(null)
 
@@ -212,7 +237,7 @@ export default function ShopProductDetail() {
       console.error('convertProduct called with undefined product')
       return {} as ProductType
     }
-    
+
     // Always process the image, even if product seems to be in correct format
     // The image URL might need to be extracted from images array
 
@@ -233,7 +258,7 @@ export default function ShopProductDetail() {
       return product.name || product.title || 'product'
     })()
     const productSlug = product.slug || generateSlug(productTitle, productId)
-    
+
     // Extract primary image - EXACTLY match the logic used in flavor/page.tsx and accessories/page.tsx
     // They directly use product.image without processing, and pass product.images as-is
     // Priority: product.image > product.images[0] (string) > product.images[0].url > placeholder
@@ -265,7 +290,7 @@ export default function ShopProductDetail() {
       // Final fallback
       return '/placeholder-product.jpg'
     })()
-    
+
     // Keep images array as-is (don't process it) - BundleStyleProductCard will handle extraction
     // This matches how flavor/page.tsx does it - they pass product.images directly
 
@@ -289,7 +314,7 @@ export default function ShopProductDetail() {
       variants: product.variants?.map((v: any) => {
         // Get variant image using the utility function
         const variantImage = getImageUrl(v.image || product.images?.[0] || primaryImage, primaryImage)
-        
+
         return {
           id: v._id || v.id || `variant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           colorName: v.name || v.colorName,
@@ -306,7 +331,7 @@ export default function ShopProductDetail() {
       tags: product.tags || [],
       nameAr: product.nameAr
     }
-    
+
     return convertedProduct
   }, [language])
 
@@ -372,7 +397,7 @@ export default function ShopProductDetail() {
           const category = productData.category
           const categoryName = typeof category === 'string' ? category : category?.name || ''
           const categorySlug = categoryName.toLowerCase()
-          
+
           console.log('🔍 Product redirect debug:', {
             productSlug,
             category,
@@ -382,17 +407,17 @@ export default function ShopProductDetail() {
             name: productData.name,
             title: productData.title
           })
-          
+
           // Determine if this is a bundle
           // IMPORTANT: Products with variants should NOT be treated as bundles
           const isBundle = !productData.hasVariants && (
-            productData.subcategory?.toLowerCase().includes('bundle') || 
+            productData.subcategory?.toLowerCase().includes('bundle') ||
             productData.name?.toLowerCase().includes('bundle') ||
             productData.title?.toLowerCase().includes('bundle')
           )
-          
+
           console.log('📦 Bundle check:', { isBundle, hasVariants: productData.hasVariants, subcategory: productData.subcategory })
-          
+
           // Generate the correct URL based on category
           let correctUrl = ''
           const isArabic = language === 'AR'
@@ -408,9 +433,9 @@ export default function ShopProductDetail() {
             else if (categorySlug === 'co2-cylinders' || categorySlug === 'co2-cylinder' || categorySlug === 'co2') correctUrl = `${prefix}/shop/co2-cylinders/${productSlug}`
             else if (categorySlug === 'sodamakers' || categorySlug === 'sodamaker' || categorySlug === 'machine' || categorySlug === 'machines') correctUrl = `${prefix}/shop/sodamakers/${productSlug}`
           }
-          
+
           console.log('🎯 Generated correct URL:', correctUrl)
-          
+
           // If we have a correct URL and it's different from current, redirect
           if (correctUrl && correctUrl !== `${prefix}/shop/${productSlug}`) {
             console.log(`🔄 Redirecting from /shop/${productSlug} to ${correctUrl}`)
@@ -426,14 +451,14 @@ export default function ShopProductDetail() {
             ...productData,
             // Ensure image URL is absolute
             image: productData.image?.startsWith('http') ? productData.image :
-                   productData.image?.startsWith('/') ? `http://localhost:3000${productData.image}` :
-                   '/placeholder.svg',
+              productData.image?.startsWith('/') ? `http://localhost:3000${productData.image}` :
+                '/placeholder.svg',
             // Ensure image URLs in arrays are absolute
             images: (productData.images || []).map((img: any) => {
               const imageUrl = typeof img === 'string' ? img : img?.url || img
               return imageUrl?.startsWith('http') ? imageUrl :
-                     imageUrl?.startsWith('/') ? `http://localhost:3000${imageUrl}` :
-                     '/placeholder.svg'
+                imageUrl?.startsWith('/') ? `http://localhost:3000${imageUrl}` :
+                  '/placeholder.svg'
             }),
             // Ensure variants is always an array
             hasVariants: Boolean(productData.hasVariants),
@@ -566,7 +591,7 @@ export default function ShopProductDetail() {
     [quantity, effectiveStock],
   )
 
-  // Create combined media array (images + videos)
+  // Create combined media array (images + videos) for products without variants
   const combinedMedia = useMemo(() => {
     const media: Array<{ type: 'image' | 'video', src: string, index: number }> = []
 
@@ -588,11 +613,38 @@ export default function ShopProductDetail() {
     return media
   }, [product?.images, product?.videos])
 
+  // Thumbnails under main image: use variant images when product has variants, else product media
+  const thumbnailMedia = useMemo(() => {
+    if (localizedProduct?.hasVariants && Array.isArray(localizedProduct.variants) && localizedProduct.variants.length > 0) {
+      const primaryImage = typeof product?.images?.[0] === 'string' ? product.images[0] : (product?.images?.[0] as any)?.url || '/placeholder.svg'
+      return localizedProduct.variants.map((v: any, i: number) => ({
+        type: 'image' as const,
+        src: v.image || primaryImage,
+        index: i,
+        variant: v as any,
+      }))
+    }
+    return combinedMedia.map((m, i) => ({ ...m, index: i, variant: undefined as any }))
+  }, [localizedProduct?.hasVariants, localizedProduct?.variants, combinedMedia, product?.images])
+
+  const hasVariantThumbnails = Boolean(localizedProduct?.hasVariants && thumbnailMedia.length > 0 && (thumbnailMedia[0] as any).variant)
+
   const handleImageSelect = useCallback((index: number) => {
     setSelectedImage(index)
     const media = combinedMedia[index]
     setIsShowingVideo(media?.type === 'video')
   }, [combinedMedia])
+
+  const handleThumbnailSelect = useCallback((item: { variant?: any; index: number }) => {
+    if (item.variant) {
+      const inStock = item.variant.stock === undefined || item.variant.stock > 0
+      if (!inStock) return
+      setSelectedVariant(item.variant)
+      setIsShowingVideo(false)
+    } else {
+      handleImageSelect(item.index)
+    }
+  }, [handleImageSelect])
 
   const handleImageZoom = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -739,13 +791,6 @@ export default function ShopProductDetail() {
     if (effectiveStock <= 10) return t("product.stockCount").replace("{count}", effectiveStock.toString())
     return t("product.inStock")
   }, [effectiveStock, t])
-
-  const getStockColor = useCallback(() => {
-    if (!effectiveStock && effectiveStock !== 0) return "text-green-600"
-    if (effectiveStock === 0) return "text-red-600"
-    if (effectiveStock <= 5) return "text-orange-600"
-    return "text-green-600"
-  }, [effectiveStock])
 
   const getDeliveryDate = useMemo(() => {
     const today = new Date()
@@ -894,18 +939,6 @@ export default function ShopProductDetail() {
               {t("product.goBack")}
             </button>
 
-            {/* Enhanced Breadcrumb */}
-            <nav className="text-sm text-muted-foreground flex items-center space-x-2">
-              <Link href={`${language === 'AR' ? '/ar' : ''}/`} className="hover:text-[#12d6fa] transition-colors">
-                {t("common.home")}
-              </Link>
-              <ChevronRight className="w-3 h-3" />
-              <Link href={`${language === 'AR' ? '/ar' : ''}/shop`} className="hover:text-[#12d6fa] transition-colors">
-                {t("header.shop")}
-              </Link>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{localizedProduct?.name || product.name}</span>
-            </nav>
           </div>
 
           <div className="flex gap-8">
@@ -937,11 +970,10 @@ export default function ShopProductDetail() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-200 group ${
-                      isInWishlist(product?._id || '')
+                    className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-200 group ${isInWishlist(product?._id || '')
                         ? "border-[#12d6fa] bg-[#12d6fa] text-white shadow-lg"
                         : "border-gray-300 hover:border-[#12d6fa] hover:bg-[#12d6fa] hover:text-white"
-                    } ${wishlistAnimation ? "animate-pulse" : ""} ${wishlistLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                      } ${wishlistAnimation ? "animate-pulse" : ""} ${wishlistLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={handleAddToWishlist}
                     disabled={wishlistLoading}
                     aria-label={isInWishlist(product?._id || '') ? "Remove from favorites" : "Add to favorites"}
@@ -961,7 +993,7 @@ export default function ShopProductDetail() {
                 <TooltipTrigger asChild>
                   <button
                     className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-[#12d6fa] hover:bg-[#12d6fa] hover:text-white transition-all duration-200 group"
-                        onClick={() => {}}
+                    onClick={() => { }}
                     aria-label="Compare products"
                   >
                     <TrendingUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -977,7 +1009,7 @@ export default function ShopProductDetail() {
                 <TooltipTrigger asChild>
                   <button
                     className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-[#12d6fa] hover:bg-[#12d6fa] hover:text-white transition-all duration-200 group"
-                        onClick={() => {}}
+                    onClick={() => { }}
                     aria-label="Quick view product details"
                   >
                     <Eye className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -1066,17 +1098,23 @@ export default function ShopProductDetail() {
                       </div>
                     </div>
 
-                    {/* Image Navigation */}
-                    {combinedMedia.length > 1 && (
+                    {/* Image Navigation - cycles variants when product has variants, else product media */}
+                    {(hasVariantThumbnails ? thumbnailMedia.length > 1 : combinedMedia.length > 1) && (
                       <>
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            const newIndex = selectedImage > 0 ? selectedImage - 1 : combinedMedia.length - 1
-                            handleImageSelect(newIndex)
+                            if (hasVariantThumbnails && localizedProduct?.variants?.length) {
+                              const idx = selectedVariant ? localizedProduct.variants.findIndex((v: any) => v._id === selectedVariant._id || v.id === selectedVariant.id) : -1
+                              const newIdx = idx <= 0 ? localizedProduct.variants.length - 1 : idx - 1
+                              setSelectedVariant(localizedProduct.variants[newIdx])
+                            } else {
+                              const newIndex = selectedImage > 0 ? selectedImage - 1 : combinedMedia.length - 1
+                              handleImageSelect(newIndex)
+                            }
                           }}
                           className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200"
-                          aria-label="Previous media"
+                          aria-label="Previous"
                         >
                           <ChevronLeft className="w-4 h-4" />
                         </button>
@@ -1084,11 +1122,17 @@ export default function ShopProductDetail() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            const newIndex = selectedImage < combinedMedia.length - 1 ? selectedImage + 1 : 0
-                            handleImageSelect(newIndex)
+                            if (hasVariantThumbnails && localizedProduct?.variants?.length) {
+                              const idx = selectedVariant ? localizedProduct.variants.findIndex((v: any) => v._id === selectedVariant._id || v.id === selectedVariant.id) : 0
+                              const newIdx = idx < 0 || idx >= localizedProduct.variants.length - 1 ? 0 : idx + 1
+                              setSelectedVariant(localizedProduct.variants[newIdx])
+                            } else {
+                              const newIndex = selectedImage < combinedMedia.length - 1 ? selectedImage + 1 : 0
+                              handleImageSelect(newIndex)
+                            }
                           }}
                           className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200"
-                          aria-label="Next media"
+                          aria-label="Next"
                         >
                           <ChevronRight className="w-4 h-4" />
                         </button>
@@ -1096,41 +1140,56 @@ export default function ShopProductDetail() {
                     )}
                   </div>
 
-                  {/* Enhanced Media Thumbnails */}
-                  <div className="flex space-x-2 overflow-x-auto pb-2">
-                    {combinedMedia.map((media, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleImageSelect(index)}
-                        className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 relative ${
-                          selectedImage === index
-                            ? "border-[#12d6fa] shadow-lg scale-105"
-                            : "border-gray-200 hover:border-gray-300 hover:scale-102"
-                        }`}
-                      >
-                        {media.type === 'video' ? (
-                          <>
-                            <video
-                              className="w-full h-full object-cover"
-                              muted
-                            >
-                              <source src={media.src} type="video/mp4" />
-                              <source src={media.src} type="video/webm" />
-                              <source src={media.src} type="video/ogg" />
-                            </video>
-                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                              <Play className="w-4 h-4 text-white" />
-                            </div>
-                          </>
-                        ) : (
-                          <img
-                            src={media.src || "/placeholder.svg"}
-                            alt={`${product.name} ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </button>
-                    ))}
+                  {/* Enhanced Media Thumbnails - synced with variant selection when product has variants */}
+                  <div className="flex justify-center gap-2 overflow-x-auto py-4 px-2">
+                    {thumbnailMedia.map((item, index) => {
+                      const media = item as { type: 'image' | 'video'; src: string; index: number; variant?: any }
+                      const isActive = media.variant
+                        ? selectedVariant?._id === media.variant._id || selectedVariant?.id === media.variant.id
+                        : selectedImage === index
+                      const isVariantOutOfStock = media.variant && (media.variant.stock !== undefined && media.variant.stock <= 0)
+                      return (
+                        <button
+                          key={media.variant ? media.variant._id ?? media.variant.id ?? index : index}
+                          onClick={() => handleThumbnailSelect(media)}
+                          disabled={isVariantOutOfStock}
+                          title={isVariantOutOfStock ? t("product.outOfStock") : undefined}
+                          className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 relative ${isActive
+                              ? "border-[#12d6fa] shadow-lg scale-105"
+                              : "border-gray-200 hover:border-gray-300 hover:scale-102"
+                            } ${isVariantOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
+                        >
+                          {media.type === 'video' ? (
+                            <>
+                              <video
+                                className="w-full h-full object-cover"
+                                muted
+                              >
+                                <source src={media.src} type="video/mp4" />
+                                <source src={media.src} type="video/webm" />
+                                <source src={media.src} type="video/ogg" />
+                              </video>
+                              <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                <Play className="w-4 h-4 text-white" />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <img
+                                src={media.src || "/placeholder.svg"}
+                                alt={media.variant ? `${product.name} - ${media.variant.name}` : `${product.name} ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                              {isVariantOutOfStock && (
+                                <span className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[10px] font-medium text-center px-0.5">
+                                  {t("product.outOfStock")}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -1169,11 +1228,10 @@ export default function ShopProductDetail() {
                           {[1, 2, 3, 4, 5].map((star) => (
                             <Star
                               key={star}
-                              className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                                star <= (product.averageRating || (typeof product.rating === 'object' ? product.rating?.average : product.rating) || 0)
+                              className={`w-4 h-4 sm:w-5 sm:h-5 ${star <= (product.averageRating || (typeof product.rating === 'object' ? product.rating?.average : product.rating) || 0)
                                   ? "text-yellow-400 fill-current"
                                   : "text-gray-300"
-                              }`}
+                                }`}
                             />
                           ))}
                         </div>
@@ -1197,7 +1255,7 @@ export default function ShopProductDetail() {
                         const displayPrice = localizedProduct ? getProductDisplayPrice(localizedProduct) : { price: product.price, originalPrice: product.originalPrice, hasVariants: false };
                         const currentPrice = selectedVariant ? selectedVariant.price : displayPrice.price;
                         const currentOriginalPrice = selectedVariant ? selectedVariant.originalPrice : displayPrice.originalPrice;
-                        
+
                         if (displayPrice.hasVariants && displayPrice.priceRange) {
                           return (
                             <div className="flex flex-col">
@@ -1237,23 +1295,31 @@ export default function ShopProductDetail() {
                       })()}
                     </div>
 
-                    {/* Enhanced Stock and Badges */}
+                    {/* Enhanced Stock and Badges - consistent UI styling */}
                     <div className="flex items-center flex-wrap gap-2 mb-6">
-                      <Badge variant={(effectiveStock ?? 0) > 0 ? "default" : "destructive"} className={`${getStockColor()} text-xs sm:text-sm`}>
+                      <Badge
+                        variant="outline"
+                        className={`text-xs sm:text-sm font-medium border ${(effectiveStock ?? 0) > 10
+                            ? "bg-gray-50 border-gray-200 text-gray-700"
+                            : (effectiveStock ?? 0) > 0
+                              ? "bg-amber-50 border-amber-200 text-amber-800"
+                              : "bg-red-50 border-red-200 text-red-700"
+                          }`}
+                      >
                         <Package className="w-3 h-3 mr-1" />
                         {stockMessage}
                       </Badge>
-                      <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 text-xs sm:text-sm">
+                      <Badge variant="outline" className="bg-gray-50 border-gray-200 text-gray-700 text-xs sm:text-sm font-medium">
                         <Truck className="w-3 h-3 mr-1" />
                         {t("product.freeShipping")}
                       </Badge>
                       {product.isFeatured && (
-                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
+                        <Badge variant="outline" className="bg-gray-50 border-gray-200 text-gray-700 text-xs sm:text-sm font-medium">
                           <Star className="w-3 h-3 mr-1" />
                           {t("product.featured") || "Featured"}
                         </Badge>
                       )}
-                      <Badge variant="outline" className="border-blue-200 text-blue-700 text-xs sm:text-sm">
+                      <Badge variant="outline" className="bg-gray-50 border-gray-200 text-gray-700 text-xs sm:text-sm font-medium">
                         <Clock className="w-3 h-3 mr-1" />
                         {(t("product.estimatedDelivery") || "Est. delivery:") + " "}{getDeliveryDate}
                       </Badge>
@@ -1284,14 +1350,13 @@ export default function ShopProductDetail() {
                                     <button
                                       key={index}
                                       onClick={() => setSelectedColor(colorName)}
-                                      className={`px-3 py-1 rounded border text-sm transition-colors flex items-center gap-2 ${
-                                        selectedColor === colorName
+                                      className={`px-3 py-1 rounded border text-sm transition-colors flex items-center gap-2 ${selectedColor === colorName
                                           ? "border-[#12d6fa] bg-[#12d6fa] text-white"
                                           : "border-gray-300 hover:border-[#12d6fa]"
-                                      }`}
+                                        }`}
                                     >
                                       {colorHex && (
-                                        <div 
+                                        <div
                                           className={`color-swatch ${styles.colorSwatch}`}
                                           style={{ '--color-hex': colorHex } as React.CSSProperties}
                                         />
@@ -1311,11 +1376,10 @@ export default function ShopProductDetail() {
                                   <button
                                     key={size}
                                     onClick={() => setSelectedSize(size)}
-                                    className={`px-3 py-1 rounded border text-sm transition-colors ${
-                                      selectedSize === size
+                                    className={`px-3 py-1 rounded border text-sm transition-colors ${selectedSize === size
                                         ? "border-[#12d6fa] bg-[#12d6fa] text-white"
                                         : "border-gray-300 hover:border-[#12d6fa]"
-                                    }`}
+                                      }`}
                                   >
                                     {size}
                                   </button>
@@ -1328,59 +1392,79 @@ export default function ShopProductDetail() {
                     </Card>
                   )}
 
-                  {/* Product Variants Selector */}
+                  {/* Product Variants Selector - Color palette list */}
                   {localizedProduct?.hasVariants && Array.isArray(localizedProduct?.variants) && localizedProduct.variants.length > 0 && (
-                    <div className="space-y-4 mb-6">
-                      <h4 className="text-lg font-semibold text-gray-900">Choose Variant</h4>
-                      <div className="space-y-4">
-                        <select
-                          value={selectedVariant?._id || ''}
-                          onChange={(e) => {
-                            if (e.target.value === '') {
-                              setSelectedVariant(null)
-                            } else {
-                              const variant = localizedProduct.variants?.find((v: any) => v._id === e.target.value)
-                              setSelectedVariant(variant || null)
-                            }
-                          }}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12d6fa] focus:border-transparent"
-                        >
-                          <option value="">Select a variant (Required)</option>
-                          {localizedProduct.variants?.map((variant: any, index: number) => (
-                            <option key={variant._id || index} value={variant._id}>
-                              {variant.name} - <SaudiRiyal amount={variant.price} size="sm" />
-                              {variant.attributes?.color && ` (${variant.attributes.color})`}
-                            </option>
-                          ))}
-                        </select>
-                        
-                        {/* Selected Variant Display */}
-                        {selectedVariant && (
-                          <div className="border-2 border-[#12d6fa] rounded-lg p-4 bg-blue-50">
-                            <div className="flex items-center space-x-3">
+                    <div className="space-y-4 mb-6 overflow-visible">
+                      <h4 className="text-lg font-semibold text-gray-900 text-center">{t("product.options") || "Choose Variant"}</h4>
+                      <div className="flex flex-wrap gap-2 justify-center pt-3 pb-1 px-1">
+                        {localizedProduct.variants.map((variant: any, index: number) => {
+                          const variantId = variant._id || variant.id || index
+                          const isSelected = selectedVariant?._id === variant._id || selectedVariant?.id === variantId
+                          const swatchHex = getVariantSwatchHex(variant)
+                          const inStock = variant.stock === undefined || variant.stock > 0
+                          return (
+                            <button
+                              key={variantId}
+                              type="button"
+                              onClick={() => setSelectedVariant(variant)}
+                              disabled={!inStock}
+                              className={`
+                                flex items-center gap-2 rounded-lg border-2 p-2 min-w-0 max-w-[130px] transition-all duration-200
+                                focus:outline-none focus:ring-2 focus:ring-[#12d6fa] focus:ring-offset-1
+                                ${isSelected
+                                  ? "border-[#12d6fa] bg-[#12d6fa]/5 shadow-sm"
+                                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"}
+                                ${!inStock ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                              `}
+                            >
+                              <span
+                                className="h-7 w-7 rounded-full flex-shrink-0 ring-1 ring-gray-200 transition-shadow border border-gray-200/80"
+                                style={{
+                                  backgroundColor: swatchHex,
+                                  boxShadow: isSelected ? "0 0 0 2px #12d6fa" : undefined,
+                                }}
+                              />
+                              <div className="text-start flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 truncate text-sm">{variant.name}</p>
+                                <p className="text-xs text-gray-600 flex items-center gap-0.5">
+                                  <SaudiRiyal amount={variant.price ?? 0} size="sm" />
+                                </p>
+                                {!inStock && (
+                                  <p className="text-[10px] text-red-600 leading-tight">{t("product.outOfStock")}</p>
+                                )}
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                      {/* Selected Variant Summary */}
+                      {selectedVariant && (
+                        <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4">
+                          <div className="flex items-center gap-3">
+                            {selectedVariant.image && (
                               <img
                                 src={selectedVariant.image}
                                 alt={selectedVariant.name}
-                                className="w-16 h-16 object-cover rounded-lg"
+                                className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                               />
-                              <div className="flex-1">
-                                <h5 className="font-medium text-gray-900">{selectedVariant.name}</h5>
-                                <p className="text-sm text-gray-600">
-                                  <SaudiRiyal amount={selectedVariant.price} size="sm" />
+                            )}
+                            <div className="flex-1">
+                              <h5 className="font-medium text-gray-900">{selectedVariant.name}</h5>
+                              <p className="text-sm text-gray-600">
+                                <SaudiRiyal amount={selectedVariant.price} size="sm" />
+                              </p>
+                              {selectedVariant.attributes?.color && (
+                                <p className="text-xs text-gray-500">{selectedVariant.attributes.color}</p>
+                              )}
+                              {selectedVariant.stock !== undefined && (
+                                <p className="text-xs text-gray-500">
+                                  {t("product.inStock")}: {selectedVariant.stock}
                                 </p>
-                                {selectedVariant.attributes?.color && (
-                                  <p className="text-xs text-gray-500">{selectedVariant.attributes.color}</p>
-                                )}
-                                {selectedVariant.stock !== undefined && (
-                                  <p className="text-xs text-gray-500">
-                                    Stock: {selectedVariant.stock} available
-                                  </p>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1425,9 +1509,8 @@ export default function ShopProductDetail() {
                       {(effectiveStock ?? 0) > 0 ? (
                         <Button
                           onClick={handleAddToCart}
-                          className={`flex-1 bg-[#12d6fa] hover:bg-[#0fb8d9] text-white transition-all duration-200 ${
-                            cartAnimation ? "animate-pulse scale-105" : ""
-                          }`}
+                          className={`flex-1 bg-[#12d6fa] hover:bg-[#0fb8d9] text-white transition-all duration-200 ${cartAnimation ? "animate-pulse scale-105" : ""
+                            }`}
                           size="lg"
                         >
                           <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
@@ -1449,11 +1532,10 @@ export default function ShopProductDetail() {
                         variant="outline"
                         onClick={handleAddToWishlist}
                         disabled={wishlistLoading}
-                        className={`border-2 transition-all duration-200 ${
-                          isInWishlist(product?._id || '')
+                        className={`border-2 transition-all duration-200 ${isInWishlist(product?._id || '')
                             ? "text-[#12d6fa] border-[#12d6fa] bg-[#12d6fa]/10"
                             : "hover:border-[#12d6fa] hover:text-[#12d6fa]"
-                        } ${wishlistAnimation ? "animate-pulse" : ""} ${wishlistLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                          } ${wishlistAnimation ? "animate-pulse" : ""} ${wishlistLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                         size="lg"
                       >
                         <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isInWishlist(product?._id || '') ? "fill-current" : ""}`} />
@@ -1510,7 +1592,7 @@ export default function ShopProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                        <span className="hidden sm:inline">{t("product.description") || "Description"}</span>
+                    <span className="hidden sm:inline">{t("product.description") || "Description"}</span>
                     <span className="sm:hidden">Info</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1518,7 +1600,7 @@ export default function ShopProductDetail() {
                     className="data-[state=active]:bg-[#12d6fa] data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-200 text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-4"
                   >
                     <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
-                        <span className="hidden sm:inline">{t("product.specifications") || "Specifications"}</span>
+                    <span className="hidden sm:inline">{t("product.specifications") || "Specifications"}</span>
                     <span className="sm:hidden">Specs</span>
                   </TabsTrigger>
                   <TabsTrigger
@@ -1715,11 +1797,10 @@ export default function ShopProductDetail() {
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <Star
                                   key={star}
-                                  className={`w-5 h-5 ${
-                                    star <= (product.averageRating || (typeof product.rating === 'object' ? product.rating?.average : product.rating) || 0)
+                                  className={`w-5 h-5 ${star <= (product.averageRating || (typeof product.rating === 'object' ? product.rating?.average : product.rating) || 0)
                                       ? "text-yellow-400 fill-current"
                                       : "text-gray-300"
-                                  }`}
+                                    }`}
                                 />
                               ))}
                             </div>
@@ -1729,8 +1810,8 @@ export default function ShopProductDetail() {
                           </div>
                           <div className="space-y-2">
                             {[5, 4, 3, 2, 1].map((rating) => {
-                              const count = reviews && Array.isArray(reviews) 
-                                ? reviews.filter((r) => (r.rating || 0) === rating).length 
+                              const count = reviews && Array.isArray(reviews)
+                                ? reviews.filter((r) => (r.rating || 0) === rating).length
                                 : 0
                               const percentage = reviews && reviews.length > 0 ? (count / reviews.length) * 100 : 0
                               return (
@@ -1860,20 +1941,20 @@ export default function ShopProductDetail() {
                         // Normalize review data to handle both API and local structures
                         const reviewAny = review as any
                         const reviewId = reviewAny.id || reviewAny._id || `review-${Math.random()}`
-                        const userName = typeof reviewAny.user === 'string' 
-                          ? reviewAny.user 
+                        const userName = typeof reviewAny.user === 'string'
+                          ? reviewAny.user
                           : (reviewAny.user?.username || reviewAny.userName || 'Anonymous')
-                        const userAvatar = typeof reviewAny.user === 'object' 
-                          ? reviewAny.user?.avatar 
+                        const userAvatar = typeof reviewAny.user === 'object'
+                          ? reviewAny.user?.avatar
                           : (reviewAny.avatar || undefined)
                         const reviewDate = reviewAny.date || reviewAny.createdAt || ''
                         const isVerified = reviewAny.verified || reviewAny.isVerifiedPurchase || false
                         const helpfulCount = reviewAny.helpful || reviewAny.helpfulCount || 0
-                        const prosList: string[] = Array.isArray(reviewAny.pros) 
-                          ? reviewAny.pros 
+                        const prosList: string[] = Array.isArray(reviewAny.pros)
+                          ? reviewAny.pros
                           : (reviewAny.pros && typeof reviewAny.pros === 'string' ? reviewAny.pros.split(',').map((p: string) => p.trim()).filter(Boolean) : [])
-                        const consList: string[] = Array.isArray(reviewAny.cons) 
-                          ? reviewAny.cons 
+                        const consList: string[] = Array.isArray(reviewAny.cons)
+                          ? reviewAny.cons
                           : (reviewAny.cons && typeof reviewAny.cons === 'string' ? reviewAny.cons.split(',').map((c: string) => c.trim()).filter(Boolean) : [])
 
                         return (
@@ -1905,9 +1986,8 @@ export default function ShopProductDetail() {
                                     {[1, 2, 3, 4, 5].map((star) => (
                                       <Star
                                         key={star}
-                                        className={`w-4 h-4 ${
-                                          star <= (reviewAny.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
-                                        }`}
+                                        className={`w-4 h-4 ${star <= (reviewAny.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
+                                          }`}
                                       />
                                     ))}
                                   </div>
@@ -2164,18 +2244,18 @@ export default function ShopProductDetail() {
                           console.error('Product not found with ID:', payload.productId)
                           return
                         }
-                        
+
                         // Use the same image URL that's displayed on the shop page
                         const displayImage = getProductImageUrl(product, '/placeholder-product.jpg')
-                        
+
                         const isBundle = payload.isBundle || (product as any).isBundle || false
                         // Use stable productId as cart item ID so same products combine in cart
                         const cartItemId = payload.productId
-                        
+
                         // Get category names in both languages
                         const categoryName = getCategoryName(product.category, false)
                         const categoryNameAr = getCategoryName(product.category, true)
-                        
+
                         const cartItem = {
                           id: cartItemId,
                           name: product.title || product.name || '',
@@ -2190,7 +2270,7 @@ export default function ShopProductDetail() {
                           productType: isBundle ? 'bundle' as const : 'product' as const,
                           isBundle: isBundle
                         }
-                        
+
                         addItem(cartItem)
                       }
 
@@ -2263,15 +2343,21 @@ export default function ShopProductDetail() {
                   <X className="w-4 h-4" />
                 </Button>
 
-                {combinedMedia.length > 1 && (
+                {(hasVariantThumbnails ? thumbnailMedia.length > 1 : combinedMedia.length > 1) && (
                   <>
                     <Button
                       variant="outline"
                       size="icon"
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-                      onClick={() =>
-                        handleImageSelect(selectedImage > 0 ? selectedImage - 1 : combinedMedia.length - 1)
-                      }
+                      onClick={() => {
+                        if (hasVariantThumbnails && localizedProduct?.variants?.length) {
+                          const idx = selectedVariant ? localizedProduct.variants.findIndex((v: any) => v._id === selectedVariant._id || v.id === selectedVariant.id) : -1
+                          const newIdx = idx <= 0 ? localizedProduct.variants.length - 1 : idx - 1
+                          setSelectedVariant(localizedProduct.variants[newIdx])
+                        } else {
+                          handleImageSelect(selectedImage > 0 ? selectedImage - 1 : combinedMedia.length - 1)
+                        }
+                      }}
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </Button>
@@ -2279,9 +2365,15 @@ export default function ShopProductDetail() {
                       variant="outline"
                       size="icon"
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-                      onClick={() =>
-                        handleImageSelect(selectedImage < combinedMedia.length - 1 ? selectedImage + 1 : 0)
-                      }
+                      onClick={() => {
+                        if (hasVariantThumbnails && localizedProduct?.variants?.length) {
+                          const idx = selectedVariant ? localizedProduct.variants.findIndex((v: any) => v._id === selectedVariant._id || v.id === selectedVariant.id) : 0
+                          const newIdx = idx < 0 || idx >= localizedProduct.variants.length - 1 ? 0 : idx + 1
+                          setSelectedVariant(localizedProduct.variants[newIdx])
+                        } else {
+                          handleImageSelect(selectedImage < combinedMedia.length - 1 ? selectedImage + 1 : 0)
+                        }
+                      }}
                     >
                       <ChevronRight className="w-4 h-4" />
                     </Button>
@@ -2290,38 +2382,49 @@ export default function ShopProductDetail() {
               </div>
 
               <div className="p-4 border-t">
-                <div className="flex space-x-2 overflow-x-auto">
-                  {combinedMedia.map((media, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleImageSelect(index)}
-                      className={`flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden relative ${
-                        selectedImage === index ? "border-[#12d6fa]" : "border-gray-200"
-                      }`}
-                    >
-                      {media.type === 'video' ? (
-                        <>
-                          <video
-                            className="w-full h-full object-cover"
-                            muted
-                          >
-                            <source src={media.src} type="video/mp4" />
-                            <source src={media.src} type="video/webm" />
-                            <source src={media.src} type="video/ogg" />
-                          </video>
-                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                            <Play className="w-4 h-4 text-white" />
-                          </div>
-                        </>
-                      ) : (
-                        <img
-                          src={media.src || "/placeholder.svg"}
-                          alt={`${product.name} ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                    </button>
-                  ))}
+                <div className="flex justify-center gap-2 overflow-x-auto">
+                  {thumbnailMedia.map((item, index) => {
+                    const media = item as { type: 'image' | 'video'; src: string; index: number; variant?: any }
+                    const isActive = media.variant
+                      ? selectedVariant?._id === media.variant._id || selectedVariant?.id === media.variant.id
+                      : selectedImage === index
+                    const isVariantOutOfStock = media.variant && (media.variant.stock !== undefined && media.variant.stock <= 0)
+                    return (
+                      <button
+                        key={media.variant ? media.variant._id ?? media.variant.id ?? index : index}
+                        onClick={() => handleThumbnailSelect(media)}
+                        disabled={isVariantOutOfStock}
+                        title={isVariantOutOfStock ? t("product.outOfStock") : undefined}
+                        className={`flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden relative ${isActive ? "border-[#12d6fa]" : "border-gray-200"} ${isVariantOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        {media.type === 'video' ? (
+                          <>
+                            <video className="w-full h-full object-cover" muted>
+                              <source src={media.src} type="video/mp4" />
+                              <source src={media.src} type="video/webm" />
+                              <source src={media.src} type="video/ogg" />
+                            </video>
+                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                              <Play className="w-4 h-4 text-white" />
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <img
+                              src={media.src || "/placeholder.svg"}
+                              alt={media.variant ? `${product.name} - ${media.variant.name}` : `${product.name} ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            {isVariantOutOfStock && (
+                              <span className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[10px] font-medium text-center px-0.5">
+                                {t("product.outOfStock")}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             </DialogContent>
@@ -2367,8 +2470,8 @@ export default function ShopProductDetail() {
       </TooltipProvider>
     </PageLayout>
   )
-    setTimeout(() => setWishlistAnimation(false), 1000);
-  };
+  setTimeout(() => setWishlistAnimation(false), 1000);
+};
 
 
 

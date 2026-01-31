@@ -211,6 +211,39 @@ export interface Translations {
     }
   }
 
+  // Cylinders mediator page (/cylinders)
+  cylinders: {
+    banner: {
+      title: string
+      subtitle: string
+    }
+    cardNew: {
+      title: string
+      description: string
+      shopNow: string
+      imageAlt: string
+    }
+    cardRefill: {
+      title: string
+      description: string
+      shopNow: string
+      imageAlt: string
+    }
+    effortless: {
+      title: string
+      quickRefill: string
+      spareCylinder: string
+      foodGrade: string
+      ecoFriendly: string
+    }
+    exchangeBanner: {
+      title: string
+      description: string
+      shopNow: string
+      imageAlt: string
+    }
+  }
+
   // Shop
   shop: {
     title: string
@@ -1704,8 +1737,9 @@ export interface Translations {
     retry: string
     carousel: { goTo: string }
     choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
-    qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string; cylinder: string; emptyCylinders: string }
+    qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string; freeDeliveryNote: string; freeDeliveryNote2Plus: string; cylinder: string; emptyCylinders: string }
     discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
+    offers: { heading: string; buy3FreeDelivery: string; buyXFreeDelivery: string; buy4PriceEach: string; addOneMoreForOffer: string; addMoreForFreeDelivery: string; returnNoteShort: string }
     cta: { addToCart: string; subscribe: string; premium: string }
     why: { title: string; f1: string; f2: string; f3: string; f4: string }
     summary: { unitPrice: string; subtotal: string; delivery: string; free: string; youSave: string; total: string; pickupNote: string; requiredReturn: string; deliveryTime: string; co2RefillExchange: string }
@@ -1808,6 +1842,7 @@ export interface Translations {
     empty: string
     emptyDescription: string
     continueShopping: string
+    orderSummary: string
     taxesNote?: string
     coupon?: { enter: string; applied: string; invalid: string }
     removeItem: string
@@ -2612,6 +2647,37 @@ export const translations: Record<Language, Translations> = {
         plasticImpact: "Our impact on One time plastic use",
         naturalFlavors: "How our natural flavors are made",
         healthBenefits: "Health Benefits of sparkling water"
+      }
+    },
+    cylinders: {
+      banner: {
+        title: "Exchange CO₂ / REFILL CO₂",
+        subtitle: "Fast, reliable CO₂ exchange and refill so your sparkle never stops."
+      },
+      cardNew: {
+        title: "New / Spare Cylinder",
+        description: "Keep a spare cylinder on hand so you never run out of sparkling drinks. Buy a new cylinder for just 175.00 SAR",
+        shopNow: "Shop Now",
+        imageAlt: "New Drinkmate CO2 cylinders"
+      },
+      cardRefill: {
+        title: "Refill / Exchange Cylinder",
+        description: "Bring your empty cylinder and receive a full one at the cost of the refill only, it only starts from",
+        shopNow: "Shop Now",
+        imageAlt: "Refill or exchange CO2 cylinder"
+      },
+      effortless: {
+        title: "Effortless sparkling with Drinkmate CO₂",
+        quickRefill: "Quick, hassle-free cylinder refills and exchanges",
+        spareCylinder: "Keep a spare cylinder to never run out of sparkle",
+        foodGrade: "Food-grade CO₂ for safe, consistent carbonation",
+        ecoFriendly: "Eco-friendly cylinder exchanges reduce waste"
+      },
+      exchangeBanner: {
+        title: "Exchange Made Simple",
+        description: "Swap your empty CO₂ cylinder for a freshly filled one. Pay only for the refill and keep your sparkling drinks uninterrupted.",
+        shopNow: "Shop now",
+        imageAlt: "Exchange empty for full CO2 cylinders"
       }
     },
     shop: {
@@ -4570,8 +4636,9 @@ export const translations: Record<Language, Translations> = {
       retry: "Retry",
       carousel: { goTo: "Go to slide" },
       choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
-      qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days", cylinder: "cylinder", emptyCylinders: "empty cylinders" },
+      qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days", freeDeliveryNote: "Free delivery for 3+ cylinders", freeDeliveryNote2Plus: "Order 2+ cylinders for free delivery", cylinder: "cylinder", emptyCylinders: "empty cylinders" },
       discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
+      offers: { heading: "Unlock the opportunity now", buy3FreeDelivery: "BUY 2+ FREE DELIVERY", buyXFreeDelivery: "BUY {{count}}+ FREE DELIVERY", buy4PriceEach: "BUY 4 59/- EACH", addOneMoreForOffer: "Add {{count}} more cylinder(s) to get this offer", addMoreForFreeDelivery: "Add {{count}} more cylinder(s) to get free delivery", returnNoteShort: "Please make sure to return {{count}} cylinder(s)" },
       cta: { addToCart: "Add cylinders to cart", subscribe: "Subscribe & save 20%", premium: "Premium membership" },
       why: { title: "Why choose our service?", f1: "Food-grade CO2 for beverages", f2: "3-5 day turnaround", f3: "Home pickup and delivery", f4: "Quality guaranteed" },
       summary: { unitPrice: "Unit price:", subtotal: "Subtotal", delivery: "Delivery:", free: "FREE", youSave: "You save:", total: "Total:", pickupNote: "* Empty cylinders will be picked up from your location", requiredReturn: "Return required:", deliveryTime: "Delivery time:", co2RefillExchange: "CO2 Cylinder Refill/Exchange" },
@@ -4590,8 +4657,8 @@ export const translations: Record<Language, Translations> = {
         a3: "Yes, we use only premium food-grade CO2 that meets all safety and quality standards for beverage use. Every cylinder is tested and filled according to industry regulations.",
         q4: "Do I need to return the same number of cylinders?",
         a4: "Yes, please make sure to return the same number of empty cylinders that you're ordering refills for. This helps us maintain the exchange program efficiently.",
-        q5: "What are the quantity discounts?",
-        a5: "We offer tiered pricing: 5% off for 2+ cylinders, 10% off for 3+ cylinders, and 15% off for 4+ cylinders. Additionally, orders of 4+ cylinders get free delivery!"
+        q5: "What quantity discounts are available?",
+        a5: "We offer tiered pricing on CO₂ cylinders. Enjoy free delivery when you purchase 3 or more cylinders. When you buy 4 or more cylinders, the price drops to 59 SAR per cylinder instead of 65 SAR, with free delivery included."
       },
       carouselDescription: { refill4: "Now refill 4 cylinders all together for the price of {amount} each cylinder." }
     },
@@ -4603,6 +4670,7 @@ export const translations: Record<Language, Translations> = {
       empty: "Your cart is empty",
       emptyDescription: "Add some items to your cart to get started",
       continueShopping: "Continue Shopping",
+      orderSummary: "Order Summary",
       taxesNote: "Taxes and discount codes calculated at checkout",
       coupon: { enter: "Please enter a coupon code", applied: "Coupon applied successfully", invalid: "Invalid coupon code" },
       removeItem: "Remove Item",
@@ -5187,6 +5255,37 @@ export const translations: Record<Language, Translations> = {
         plasticImpact: "تأثيرنا على استخدام البلاستيك لمرة واحدة",
         naturalFlavors: "كيف تُصنع نكهاتنا الطبيعية",
         healthBenefits: "الفوائد الصحية للمياه الغازية"
+      }
+    },
+    cylinders: {
+      banner: {
+        title: "استبدال CO₂ / إعادة تعبئة CO₂",
+        subtitle: "استبدال وإعادة تعبئة سريعة وموثوقة لثاني أكسيد الكربون حتى لا يتوقف الفوران أبداً."
+      },
+      cardNew: {
+        title: "أسطوانة جديدة / احتياطية",
+        description: "احتفظ بأسطوانة احتياطية حتى لا ينفد مشروبك الغازي. اشترِ أسطوانة جديدة مقابل 175.00 ريال فقط",
+        shopNow: "تسوق الآن",
+        imageAlt: "أسطوانات Drinkmate CO2 جديدة"
+      },
+      cardRefill: {
+        title: "إعادة تعبئة / استبدال الأسطوانة",
+        description: "أحضر أسطوانتك الفارغة واستلم أسطوانة ممتلئة بسعر إعادة التعبئة فقط، يبدأ من",
+        shopNow: "تسوق الآن",
+        imageAlt: "إعادة تعبئة أو استبدال أسطوانة CO2"
+      },
+      effortless: {
+        title: "فوران بلا جهد مع Drinkmate CO₂",
+        quickRefill: "إعادة تعبئة واستبدال أسطوانات سريعة وبلا متاعب",
+        spareCylinder: "احتفظ بأسطوانة احتياطية لعدم انقطاع الفوران",
+        foodGrade: "CO₂ غذائي آمن لتحويل ثابت",
+        ecoFriendly: "استبدال أسطوانات صديق للبيئة يقلل النفايات"
+      },
+      exchangeBanner: {
+        title: "الاستبدال ببساطة",
+        description: "استبدل أسطوانة CO₂ الفارغة بأخرى ممتلئة حديثاً. ادفع فقط ثمن إعادة التعبئة وحافظ على مشروباتك الغازية دون انقطاع.",
+        shopNow: "تسوق الآن",
+        imageAlt: "استبدال أسطوانات فارغة بأسطوانات ممتلئة CO2"
       }
     },
     shop: {
@@ -6941,8 +7040,9 @@ export const translations: Record<Language, Translations> = {
       retry: "إعادة المحاولة",
       carousel: { goTo: "اذهب إلى الشريحة" },
       choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "غير درينك ميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
-      qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل", cylinder: "أسطوانة", emptyCylinders: "أسطوانة فارغة" },
+      qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل", freeDeliveryNote: "توصيل مجاني لـ 3 أسطوانات أو أكثر", freeDeliveryNote2Plus: "اطلب 2 أسطوانة أو أكثر للحصول على توصيل مجاني", cylinder: "أسطوانة", emptyCylinders: "أسطوانة فارغة" },
       discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
+      offers: { heading: "استفد من الفرصة الآن", buy3FreeDelivery: "اشترِ 2+ توصيل مجاني", buyXFreeDelivery: "اشترِ {{count}}+ توصيل مجاني", buy4PriceEach: "اشترِ 4 بسعر 59/- لكل واحدة", addOneMoreForOffer: "أضف {{count}} أسطوانة أخرى للحصول على هذا العرض", addMoreForFreeDelivery: "أضف {{count}} أسطوانة أخرى للحصول على توصيل مجاني", returnNoteShort: "يرجى إرجاع {{count}} أسطوانة" },
       cta: { addToCart: "أضف الأسطوانات إلى السلة", subscribe: "اشترك ووفر 20%", premium: "عضوية مميزة" },
       why: { title: "لماذا تختار خدمتنا؟", f1: "CO2 صالح للاستخدام الغذائي", f2: "دورة 3-5 أيام", f3: "استلام وتسليم من المنزل", f4: "جودة مضمونة" },
       summary: { unitPrice: "سعر الوحدة:", subtotal: "المجموع الفرعي", delivery: "التسليم:", free: "مجاني", youSave: "توفير:", total: "المجموع:", pickupNote: "* سيتم استلام الأسطوانات الفارغة من موقعك", requiredReturn: "مطلوب إرجاع:", deliveryTime: "وقت التسليم:", co2RefillExchange: "إعادة تعبئة/تبديل أسطوانة CO2" },
@@ -6961,8 +7061,8 @@ export const translations: Record<Language, Translations> = {
         a3: "نعم، نستخدم فقط CO2 مميز صالح للاستخدام الغذائي يلبي جميع معايير السلامة والجودة للاستخدام في المشروبات. كل أسطوانة يتم اختبارها وملؤها وفقاً للوائح الصناعة.",
         q4: "هل أحتاج لإرجاع نفس عدد الأسطوانات؟",
         a4: "نعم، يرجى التأكد من إرجاع نفس عدد الأسطوانات الفارغة التي تطلبها معاد تعبئتها. هذا يساعدنا في الحفاظ على برنامج التبديل بكفاءة.",
-        q5: "ما هي خصومات الكمية؟",
-        a5: "نقدم تسعير متدرج: خصم 5% لـ 2+ أسطوانات، خصم 10% لـ 3+ أسطوانات، وخصم 15% لـ 4+ أسطوانات. بالإضافة إلى ذلك، طلبات 4+ أسطوانات تحصل على تسليم مجاني!"
+        q5: "ما خصومات الكمية المتاحة؟",
+        a5: "نقدم تسعيراً متدرجاً على أسطوانات CO₂. استمتع بتوصيل مجاني عند شراء 3 أسطوانات أو أكثر. عند شراء 4 أسطوانات أو أكثر، ينخفض السعر إلى 59 ريالاً لكل أسطوانة بدلاً من 65 ريالاً، مع التوصيل المجاني مشمولاً."
       },
       carouselDescription: { refill4: "الآن أعد تعبئة 4 أسطوانات معاً بسعر {amount} لكل أسطوانة." }
     },
@@ -6974,6 +7074,7 @@ export const translations: Record<Language, Translations> = {
       empty: "سلتك فارغة",
       emptyDescription: "أضف بعض العناصر إلى سلة التسوق للبدء",
       continueShopping: "متابعة التسوق",
+      orderSummary: "ملخص الطلب",
       taxesNote: "سيتم احتساب الضرائب وأكواد الخصم عند الدفع",
       coupon: { enter: "يرجى إدخال رمز الكوبون", applied: "تم تطبيق الكوبون بنجاح", invalid: "رمز الكوبون غير صالح" },
       removeItem: "إزالة العنصر",

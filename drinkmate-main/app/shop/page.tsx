@@ -397,7 +397,8 @@ function ShopPageContent() {
         const title = product?.title || (product as any)?.name || ''
         const description = (product as any)?.description || ''
         const brand = (product as any)?.brand || ''
-        const category = (product as any)?.category || ''
+        const categoryRaw = (product as any)?.category
+        const category = typeof categoryRaw === 'string' ? categoryRaw : (categoryRaw?.name ?? '')
         
         const titleMatch = title.toLowerCase().includes(query)
         const descriptionMatch = description.toLowerCase().includes(query)

@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
@@ -14,6 +15,7 @@ import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import CylinderCard from "@/components/refill/CylinderCard"
 import OrderSummary from "@/components/refill/OrderSummary"
 import QuantityControl from "@/components/refill/QuantityControl"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { toast } from "sonner"
 import styles from "./refill-cylinder.module.css"
 
@@ -60,14 +62,14 @@ export default function CO2() {
   ]
 
   const [currentRefillSlide, setCurrentRefillSlide] = useState(0)
-  const [selectedCylinder, setSelectedCylinder] = useState("")
+  const [selectedCylinder, setSelectedCylinder] = useState("drinkmate")
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState("faqs")
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)
 
-  // New state for button functionality
-  const [showBlocks, setShowBlocks] = useState(false)
-  const [cylinderType, setCylinderType] = useState("") // "drinkmate" or "non-drinkmate"
+  // New state for button functionality (Drinkmate default so mobile UI is always active)
+  const [showBlocks, setShowBlocks] = useState(true)
+  const [cylinderType, setCylinderType] = useState("drinkmate") // "drinkmate" or "non-drinkmate"
   const [nonDrinkmateBrand, setNonDrinkmateBrand] = useState("")
   const [threadType, setThreadType] = useState<"standard-threaded" | "quick-connect" | "">("") // Thread type for non-drinkmate
   const [customBrandName, setCustomBrandName] = useState("") // Custom brand name for standard threaded
@@ -310,6 +312,16 @@ export default function CO2() {
 
   const selectedCylinderData = getCylinderData(selectedCylinder)
 
+  /** Main hero image: changes when user selects Drinkmate vs Non-Drinkmate (non-Drinkmate uses same image until asset available) */
+  const REFILL_MAIN_IMAGES = {
+    drinkmate: "/images/refillPage/drinkmateRefill.svg",
+    nonDrinkmate: "/images/refillPage/drinkmateRefill.svg",
+  } as const
+  const mainImageSrc = cylinderType === "drinkmate" ? REFILL_MAIN_IMAGES.drinkmate : (cylinderType === "non-drinkmate" ? REFILL_MAIN_IMAGES.nonDrinkmate : REFILL_MAIN_IMAGES.drinkmate)
+
+  /** Free delivery when subtotal >= 150 SAR (dynamic: 3 for Drinkmate @ 65, 2 for non-Drinkmate @ 75/99) */
+  const FREE_DELIVERY_THRESHOLD = 150
+
   // Dynamic pricing based on quantity and brand
   const getCylinderPrice = () => {
     if (!selectedCylinderData) return 65.00
@@ -326,8 +338,13 @@ export default function CO2() {
 
   const cylinderPrice = getCylinderPrice()
   const subtotal = cylinderPrice * quantity
-  const deliveryCharge = subtotal >= 150 ? 0 : 23.00 // Free delivery for orders 150+ SAR
+  const deliveryCharge = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : 23.00 // Free delivery at 150+ SAR
   const total = subtotal + deliveryCharge
+
+  /** Min cylinders needed for free delivery (derived from 150 SAR threshold and current unit price) */
+  const minCylindersForFreeDelivery = Math.ceil(FREE_DELIVERY_THRESHOLD / cylinderPrice)
+  const freeDeliveryActive = subtotal >= FREE_DELIVERY_THRESHOLD
+  const cylindersNeededForFreeDelivery = Math.max(0, minCylindersForFreeDelivery - quantity)
 
   const handleAddToCart = () => {
     if (selectedCylinderData) {
@@ -543,325 +560,210 @@ export default function CO2() {
         </div>
       </section>
 
-      {/* Enhanced Refill / Exchange Cylinder Section */}
-      <section className="py-12 md:py-16">
+      {/* Refill / Exchange Cylinder Section - 6|6 split */}
+      <section className="py-10 md:py-14">
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-
-
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Side - Premium Visual (7 columns) */}
-            <div className="lg:col-span-7">
-              <div className="relative overflow-hidden">
-                {/* White Background */}
-                <div className="absolute inset-0 bg-white rounded-3xl"></div>
-
-                {/* Main Content */}
-                <div className="relative bg-white rounded-3xl border border-gray-200 shadow-sm p-8">
-                  <div className="relative">
-                    <Image
-                      src="https://res.cloudinary.com/da6dzmflp/image/upload/v1757353811/drinkmate/tgxojr9o5oiihkf6tv21.png"
-                      alt="CO2 Cylinders"
-                      width={600}
-                      height={845}
-                      className="w-full h-auto object-contain drop-shadow-sm"
-                      priority
-                    />
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left column (6) - Main image + compact order summary */}
+            <div className="space-y-4">
+              {/* Main image - fills available space, center-aligned */}
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="relative w-full aspect-[4/3] min-h-[280px] flex items-center justify-center bg-slate-50 overflow-hidden">
+                  <Image
+                    src={mainImageSrc}
+                    alt="CO2 Refill / Exchange"
+                    width={560}
+                    height={420}
+                    className="object-contain max-w-full max-h-full"
+                    priority
+                  />
                 </div>
               </div>
 
-              {/* Order Summary - Hidden on mobile, shown on desktop under image */}
-              {showBlocks && (
-                <div className="mt-8 hidden lg:block">
-                  <div className="bg-white rounded-3xl border-2 border-[#12d6fa]/20 shadow-sm p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">{t("cart.orderSummary")}</h3>
-
-                    {/* Selected Cylinder Info */}
-                    {selectedCylinderData && (
-                      <div className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-200">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-[#12d6fa] rounded-xl flex items-center justify-center">
-                            <span className="text-white font-bold text-lg">
-                              {selectedCylinderData.name.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-gray-900">{selectedCylinderData.name}</h4>
-                            <p className="text-sm text-gray-600">CO2 Cylinder Refill/Exchange</p>
-                          </div>
+              {/* Compact order summary - only when selection made (open down / close up) */}
+              <AnimatePresence>
+                {showBlocks && selectedCylinderData && (
+                  <motion.div
+                    key="refill-order-summary"
+                    initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                    animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+                    exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                    transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="hidden lg:block overflow-hidden"
+                  >
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-3">{t("cart.orderSummary")}</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('refill.summary.co2RefillExchange')}</span>
+                          <span className="font-medium">×{quantity}</span>
                         </div>
-                      </div>
-                    )}
-
-                    {/* Quantity and Return Info */}
-                    <div className="mb-6 space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700">Quantity:</span>
-                        <span className="font-semibold text-gray-900">{quantity} cylinder{quantity > 1 ? 's' : ''}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700">Return required:</span>
-                        <span className="font-semibold text-gray-900">{quantity} empty cylinder{quantity > 1 ? 's' : ''}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700">Delivery time:</span>
-                        <span className="font-semibold text-[#12d6fa]">3-5 business days</span>
-                      </div>
-                    </div>
-
-                    {/* Pricing Breakdown */}
-                    <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700">{t('refill.summary.unitPrice')}</span>
-                        <span className="font-semibold text-gray-900">
-                          <SaudiRiyal amount={cylinderPrice} size="sm" />
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700 whitespace-nowrap">{t('refill.summary.subtotal')} ({quantity} × <SaudiRiyal amount={cylinderPrice} size="sm" />):</span>
-                        <span className="font-semibold text-gray-900">
-                          <SaudiRiyal amount={subtotal} size="sm" />
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700">{t('refill.summary.delivery')}</span>
-                        <span className={`font-semibold ${deliveryCharge === 0 ? 'text-[#a8f387]' : 'text-gray-900'}`}>
-                          {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
-                        </span>
-                      </div>
-                      {selectedCylinderData && selectedCylinder === "drinkmate" && quantity >= 4 && (65 * quantity) - subtotal > 0 && (
-                        <div className="flex justify-between items-center text-[#a8f387]">
-                          <span className="font-semibold">{t('refill.summary.youSave')}</span>
-                          <span className="font-bold">
-                            <SaudiRiyal amount={(65 * quantity) - subtotal} size="sm" />
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('refill.summary.subtotal')}</span>
+                          <span className="font-medium"><SaudiRiyal amount={subtotal} size="sm" /></span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t('refill.summary.delivery')}</span>
+                          <span className={deliveryCharge === 0 ? 'font-semibold text-[#22c55e]' : 'font-medium'}>
+                            {deliveryCharge === 0 ? t('refill.summary.free') : <SaudiRiyal amount={deliveryCharge} size="sm" />}
                           </span>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Total */}
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xl font-bold text-gray-900">{t('refill.summary.total')}</span>
-                        <span className="text-2xl font-black text-[#12d6fa]">
-                          <SaudiRiyal amount={total} size="lg" />
-                        </span>
+                        {selectedCylinder === "drinkmate" && quantity >= 4 && (65 * quantity) - subtotal > 0 && (
+                          <div className="flex justify-between text-[#22c55e]">
+                            <span className="font-medium">{t('refill.summary.youSave')}</span>
+                            <span className="font-bold"><SaudiRiyal amount={(65 * quantity) - subtotal} size="sm" /></span>
+                          </div>
+                        )}
                       </div>
+                      <div className="border-t border-gray-100 mt-3 pt-3 flex justify-between items-center">
+                        <span className="font-bold text-gray-900">{t('refill.summary.total')}</span>
+                        <span className="text-xl font-black text-[#12d6fa]"><SaudiRiyal amount={total} size="md" /></span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">{t('refill.summary.pickupNote')}</p>
+                      <p className="text-xs text-gray-600 mt-1">{t('refill.qty.deliveryInfo')} {t('refill.qty.deliveryTime')}</p>
                     </div>
-
-                    {/* Additional Info */}
-                    <div className="mt-6 text-center">
-                      <p className="text-xs text-gray-500">{t('refill.summary.pickupNote')}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Right Side - Controls (5 columns) */}
-            <div className="lg:col-span-5 space-y-6">
-              {/* Choose Your Cylinder header */}
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
-                <div>
-                  <h2 className="text-3xl font-black text-black tracking-tight">{t('refill.choose.heading')}</h2>
-                  <p className="text-gray-600 mt-2">{t('refill.choose.subheading')}</p>
-                </div>
-                <a
-                  href="/contact"
-                  className="inline-flex items-center space-x-2 text-[#12d6fa] text-sm font-semibold hover:text-[#0bc4e8] transition-colors duration-200"
-                >
-                  <Info className="w-4 h-4" />
-                  <span>{t('refill.choose.needHelp')}</span>
+            {/* Right column (6) - Cards, quantity, offers */}
+            <div className="lg:col-span-1 space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xl font-bold text-gray-900">{t('refill.choose.heading')}</h2>
+                <a href="/contact" className="inline-flex items-center gap-1 text-[#12d6fa] text-xs font-semibold hover:text-[#0bc4e8] shrink-0">
+                  <Info className="w-3.5 h-3.5" />
+                  {t('refill.choose.needHelp')}
                 </a>
               </div>
 
-              {/* Two Buttons */}
-              <div className="flex space-x-4">
-                <Button
+              {/* Two cylinder type cards - select UI (images clipped to card) */}
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
                   onClick={handleDrinkmateClick}
-                  className={`flex-1 h-32 font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105 ${cylinderType === "drinkmate"
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-900 border-2 border-gray-300 hover:border-gray-400"
-                    }`}
+                  className={`rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:shadow-md flex flex-col items-center overflow-hidden ${cylinderType === "drinkmate" ? "border-[#12d6fa] bg-[#12d6fa]/5 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
                 >
-                  {t('refill.choose.drinkmate')}
-                </Button>
-                <Button
+                  <div className="w-14 h-14 mb-2 flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-slate-50 [&_img]:max-w-[56px] [&_img]:max-h-[56px] [&_img]:object-contain">
+                    <Image src="/images/refillPage/drinkmateCard.svg" alt="Drinkmate" width={56} height={56} className="object-contain" />
+                  </div>
+                  <span className="font-bold text-gray-900 text-sm">{t('refill.choose.drinkmate')}</span>
+                  <span className="text-sm font-semibold text-[#12d6fa] mt-0.5">65.00 SAR</span>
+                </button>
+                <button
+                  type="button"
                   onClick={handleNonDrinkmateClick}
-                  className={`flex-1 h-32 font-bold text-lg rounded-2xl transition-all duration-300 hover:shadow-sm hover:scale-105 ${cylinderType === "non-drinkmate"
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-900 border-2 border-gray-300 hover:border-gray-400"
-                    }`}
+                  className={`rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:shadow-md flex flex-col items-center overflow-hidden ${cylinderType === "non-drinkmate" ? "border-[#12d6fa] bg-[#12d6fa]/5 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
                 >
-                  {t('refill.choose.nonDrinkmate')}
-                </Button>
+                  <div className="w-14 h-14 mb-2 flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-slate-50 [&_img]:max-w-[56px] [&_img]:max-h-[56px] [&_img]:object-contain">
+                    <Image src="/images/refillPage/nonDrinkmateCard.svg" alt="Non-Drinkmate" width={56} height={56} className="object-contain" />
+                  </div>
+                  <span className="font-bold text-gray-900 text-sm">{t('refill.choose.nonDrinkmate')}</span>
+                  <span className="text-sm font-semibold text-[#12d6fa] mt-0.5">
+                    {cylinderType === "non-drinkmate" && threadType === "quick-connect"
+                      ? "99.00 SAR"
+                      : cylinderType === "non-drinkmate" && threadType === "standard-threaded"
+                        ? "75.00 SAR"
+                        : "75.00 - 99.00 SAR"}
+                  </span>
+                </button>
               </div>
 
-              {/* Non-Drinkmate Thread Type Options */}
+              {/* Non-Drinkmate: thread type + brand */}
               {cylinderType === "non-drinkmate" && (
-                <div className="space-y-4">
-                  {/* Thread Type Selection */}
-                  <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="standard-threaded"
-                        name="thread-type"
-                        value="standard-threaded"
-                        checked={threadType === "standard-threaded"}
-                        onChange={() => handleThreadTypeChange("standard-threaded")}
-                        className="w-4 h-4 text-blue-500"
-                      />
-                      <label htmlFor="standard-threaded" className="text-lg font-semibold text-gray-900 cursor-pointer">{t('refill.choose.standardThreaded')}</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="quick-connect"
-                        name="thread-type"
-                        value="quick-connect"
-                        checked={threadType === "quick-connect"}
-                        onChange={() => handleThreadTypeChange("quick-connect")}
-                        className="w-4 h-4 text-blue-500"
-                      />
-                      <label htmlFor="quick-connect" className="text-lg font-semibold text-gray-900 cursor-pointer">Quick connect</label>
-                    </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="thread-type" checked={threadType === "standard-threaded"} onChange={() => handleThreadTypeChange("standard-threaded")} className="w-4 h-4 text-[#12d6fa]" />
+                      <span className="text-sm font-semibold text-gray-900">{t('refill.choose.standardThreaded')}</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="thread-type" checked={threadType === "quick-connect"} onChange={() => handleThreadTypeChange("quick-connect")} className="w-4 h-4 text-[#12d6fa]" />
+                      <span className="text-sm font-semibold text-gray-900">Quick connect</span>
+                    </label>
                   </div>
-
-                  {/* Brand Input for Standard Threaded */}
                   {threadType === "standard-threaded" && (
-                    <div className="space-y-2">
-                      <label htmlFor="custom-brand" className="text-sm font-medium text-gray-700">Brand Name</label>
-                      <Input
-                        id="custom-brand"
-                        type="text"
-                        value={customBrandName}
-                        onChange={(e) => handleCustomBrandChange(e.target.value)}
-                        placeholder="Enter your brand name"
-                        className="w-full h-12 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                      />
-                    </div>
+                    <Input
+                      id="custom-brand"
+                      type="text"
+                      value={customBrandName}
+                      onChange={(e) => handleCustomBrandChange(e.target.value)}
+                      placeholder="Enter your brand name"
+                      className="w-full h-10 border border-gray-300 rounded-xl focus:border-[#12d6fa] focus:ring-2 focus:ring-[#12d6fa]/20 text-sm"
+                    />
                   )}
                 </div>
               )}
 
-              {/* Hidden Blocks - Show when button is clicked */}
-              {showBlocks && (
-                <>
-
-                  {/* Enhanced Premium Quantity Control */}
-                  <div className="space-y-8">
-                    <div className="text-center">
-                      <h3 className="text-3xl font-black text-black mb-3">{t('refill.qty.title')}</h3>
-                      <p className="text-gray-600 text-lg">{t('refill.qty.subtitle')}</p>
-                    </div>
-
-                    <div className="relative group">
-                      <div className="absolute inset-0 bg-blue-50 rounded-3xl transition-all duration-300"></div>
-                      <div className="relative bg-white rounded-3xl border-2 border-[#12d6fa]/30 shadow-sm p-8 group-hover:shadow-md transition-all duration-300">
-                        {/* Quantity Selection Form */}
-                        <div className="mb-8">
-                          <label className="block text-lg font-semibold text-gray-900 mb-4">{t('refill.qty.label')}</label>
-                          <div className="flex items-center justify-center space-x-4">
-                            <button
-                              onClick={() => handleQuantityChange(-1)}
-                              disabled={quantity <= 1}
-                              className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 flex items-center justify-center transition-all duration-200"
-                              aria-label="Decrease quantity"
-                              title="Decrease quantity"
-                            >
-                              <Minus className="w-5 h-5" />
-                            </button>
-                            <div className="w-20 h-12 bg-blue-50 rounded-xl flex items-center justify-center border-2 border-blue-200">
-                              <span className="text-2xl font-bold text-gray-900">{quantity}</span>
-                            </div>
-                            <button
-                              onClick={() => handleQuantityChange(1)}
-                              disabled={quantity >= 10}
-                              className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 flex items-center justify-center transition-all duration-200"
-                              aria-label="Increase quantity"
-                              title="Increase quantity"
-                            >
-                              <Plus className="w-5 h-5" />
-                            </button>
-                          </div>
-                          <p className="text-center text-sm text-gray-600 mt-3">{t('refill.qty.returnNote').replace('{{count}}', String(quantity))}</p>
-                        </div>
-
-                        {/* Delivery Information */}
-                        <div className="bg-blue-50 rounded-2xl p-4 mb-6 border border-blue-200">
-                          <div className="flex items-center justify-center space-x-2">
-                            <Truck className="w-5 h-5 text-[#12d6fa]" />
-                            <span className="text-sm font-semibold text-gray-700">{t('refill.qty.deliveryInfo')} {t('refill.qty.deliveryTime')}</span>
-                          </div>
-                        </div>
-
-                        {/* Enhanced Premium Quantity Benefits - Only show for Drinkmate */}
-                        {cylinderType === "drinkmate" && (
-                          <div className="grid grid-cols-1 gap-4">
-                            <div className={`text-center p-4 rounded-2xl border-2 transition-all duration-300 ${quantity >= 4
-                              ? 'bg-blue-100 border-blue-300 shadow-sm scale-105'
-                              : 'bg-blue-50 border-blue-200'
-                              }`}>
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all duration-300 ${quantity >= 4
-                                ? 'bg-[#12d6fa] shadow-sm scale-110'
-                                : 'bg-[#12d6fa]/70'
-                                }`}>
-                                <span className="text-white font-black text-sm">4+</span>
-                              </div>
-                              <div className={`text-sm font-bold transition-colors duration-300 ${quantity >= 4 ? 'text-gray-800' : 'text-gray-600'
-                                }`}>59 SAR each</div>
-                              <div className="text-xs text-gray-600 font-medium">{t('refill.discounts.fourPlusLabel')}</div>
-                              {quantity >= 4 && (
-                                <div className="mt-1 text-xs font-semibold text-[#a8f387] animate-pulse">
-                                  {t('refill.discounts.active')}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
+              {/* Quantity + Add to cart + Offers - conditional UI (open down / close up) */}
+              <AnimatePresence>
+                {showBlocks && (
+                  <motion.div
+                    key="refill-conditional-blocks"
+                    initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                    animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+                    exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+                    transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="space-y-4 overflow-hidden"
+                  >
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-gray-900">{t('refill.qty.label')}</label>
+                    <div className="flex items-center gap-3">
+                      <div className="inline-flex items-center rounded-xl border-2 border-gray-200 bg-slate-50 p-1">
+                        <button type="button" onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1} className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-white disabled:opacity-50" aria-label="Decrease quantity">
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="w-10 text-center font-bold text-gray-900">{quantity}</span>
+                        <button type="button" onClick={() => handleQuantityChange(1)} disabled={quantity >= 10} className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-white disabled:opacity-50" aria-label="Increase quantity">
+                          <Plus className="w-4 h-4" />
+                        </button>
                       </div>
+                      <Button onClick={handleAddToCart} className="flex-1 bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold py-4 rounded-xl shrink-0">
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        {t('refill.cta.addToCart')}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
                     </div>
                   </div>
 
-                  {/* Enhanced Premium CTAs */}
-                  <div className="space-y-6">
-                    <div className="relative group">
-                      <div className="absolute inset-0 bg-blue-50 rounded-3xl transition-all duration-300"></div>
-                      <Button
-                        onClick={handleAddToCart}
-                        className="relative w-full bg-[#12d6fa] hover:bg-[#0bc4e8] text-white px-10 py-6 rounded-3xl font-black text-xl transition-all duration-300 hover:shadow-md hover:scale-105 border-0 group-hover:shadow-lg"
-                      >
-                        <ShoppingCart className="w-6 h-6 mr-4 group-hover:animate-bounce" />
-                        {t('refill.cta.addToCart')}
-                        <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform duration-300" />
-                      </Button>
-                    </div>
-
-                    {/* Additional Premium Features */}
-                    <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
-                      <h4 className="text-lg font-bold text-gray-900 mb-4 text-center">{t('refill.why.title')}</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex items-center space-x-3">
-                          <CheckCircle className="w-5 h-5 text-[#a8f387] flex-shrink-0" />
-                          <span className="text-sm font-medium text-gray-700">{t('refill.why.f1')}</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <CheckCircle className="w-5 h-5 text-[#12d6fa] flex-shrink-0" />
-                          <span className="text-sm font-medium text-gray-700">{t('refill.why.f2')}</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <CheckCircle className="w-5 h-5 text-[#a8f387] flex-shrink-0" />
-                          <span className="text-sm font-medium text-gray-700">{t('refill.why.f3')}</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <CheckCircle className="w-5 h-5 text-[#12d6fa] flex-shrink-0" />
-                          <span className="text-sm font-medium text-gray-700">{t('refill.why.f4')}</span>
-                        </div>
+                  {/* Unlock the opportunity - free delivery at 150 SAR (dynamic min qty) & 4+ 59 each */}
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 mb-2">{t('refill.offers.heading')}</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* Free delivery card - active when subtotal >= 150 SAR */}
+                      <div className={`rounded-xl border-2 p-3 text-center transition-all ${freeDeliveryActive ? 'border-[#12d6fa] bg-[#12d6fa]/10' : 'border-gray-200 bg-slate-50'}`}>
+                        <div className={`text-xs font-bold ${freeDeliveryActive ? 'text-[#12d6fa]' : 'text-gray-600'}`}>{t('refill.offers.buyXFreeDelivery').replace('{{count}}', String(minCylindersForFreeDelivery))}</div>
+                        {freeDeliveryActive ? (
+                          <span className="text-xs font-semibold text-[#22c55e] mt-1 block">{t('refill.discounts.active')}</span>
+                        ) : (
+                          <span className="text-xs text-gray-500 mt-1 block">{t('refill.offers.addMoreForFreeDelivery').replace('{{count}}', String(cylindersNeededForFreeDelivery))}</span>
+                        )}
                       </div>
+                      {/* 4+ 59 each - Drinkmate only */}
+                      {cylinderType === "drinkmate" && (
+                        <div className={`rounded-xl border-2 p-3 text-center transition-all ${quantity >= 4 ? 'border-[#12d6fa] bg-[#12d6fa]/10' : 'border-gray-200 bg-white'}`}>
+                          <div className={`text-xs font-bold ${quantity >= 4 ? 'text-[#12d6fa]' : 'text-gray-600'}`}>{t('refill.offers.buy4PriceEach')}</div>
+                          {quantity >= 4 ? (
+                            <span className="text-xs font-semibold text-[#22c55e] mt-1 block">{t('refill.discounts.active')}</span>
+                          ) : (
+                            <span className="text-xs text-gray-500 mt-1 block">{t('refill.offers.addOneMoreForOffer').replace('{{count}}', String(4 - quantity))}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
+                    <p className="text-xs text-gray-500 mt-2">{t('refill.offers.returnNoteShort').replace('{{count}}', String(quantity))}</p>
+                  </div>
+
+                  {/* Why choose - compact */}
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                    <h4 className="text-sm font-bold text-gray-900 mb-2">{t('refill.why.title')}</h4>
+                    <ul className="space-y-1.5 text-xs text-gray-700">
+                      <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#22c55e] shrink-0" />{t('refill.why.f1')}</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#12d6fa] shrink-0" />{t('refill.why.f2')}</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#22c55e] shrink-0" />{t('refill.why.f3')}</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="w-3.5 h-3.5 text-[#12d6fa] shrink-0" />{t('refill.why.f4')}</li>
+                    </ul>
+                  </div>
 
                     {/* Order Summary - Mobile only, appears under Why Choose Our Premium Service */}
                     <div className="lg:hidden mt-6">
@@ -942,16 +844,15 @@ export default function CO2() {
                         </div>
 
                         {/* Additional Info */}
-                        <div className="mt-6 text-center">
+                        <div className="mt-4 text-center">
                           <p className="text-xs text-gray-500">{t('refill.summary.pickupNote')}</p>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                </>
-              )}
-
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 

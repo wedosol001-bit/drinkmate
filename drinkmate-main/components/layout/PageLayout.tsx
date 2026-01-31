@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import Banner from "./Banner"
 import Header from "./Header"
 import Footer from "./Footer"
@@ -15,8 +15,7 @@ interface PageLayoutProps {
 
 export default function PageLayout({ children, currentPage }: PageLayoutProps) {
   const router = useRouter()
-  const pathname = usePathname()
-  const { isRTL, isHydrated, setLanguage } = useTranslation()
+  const { isRTL, isHydrated } = useTranslation()
   
   // Handle session expiration
   useEffect(() => {
@@ -32,16 +31,8 @@ export default function PageLayout({ children, currentPage }: PageLayoutProps) {
     }
   }, [router])
 
-  // Auto-switch language based on route prefix (e.g., "/ar")
-  useEffect(() => {
-    if (!pathname) return
-    if (pathname.startsWith('/ar')) {
-      setLanguage('AR')
-    } else {
-      setLanguage('EN')
-    }
-  }, [pathname, setLanguage])
-  
+  // Language is persisted in localStorage via TranslationProvider; only changes when user toggles it manually.
+
   return (
     <div 
       className={`min-h-screen bg-white font-primary`}

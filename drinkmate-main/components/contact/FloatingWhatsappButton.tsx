@@ -38,7 +38,11 @@ export default function FloatingWhatsappButton({
       exit={{ scale: 0, opacity: 0 }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className={`fixed bottom-24 right-6 z-50 ${className}`}
+      className={`fixed z-50 ${className}`}
+      style={{
+        bottom: 'max(6rem, calc(2rem + env(safe-area-inset-bottom, 0px)))',
+        right: 'max(2rem, env(safe-area-inset-right, 0px))',
+      }}
     >
       <motion.a
         href={whatsappHref}

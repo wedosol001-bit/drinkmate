@@ -854,9 +854,9 @@ export default function Home() {
       
       <PageLayout currentPage="home">
       <HydrationBoundary>
-      {/* Hero Section - Carousel Banner */}
-      <section className="py-6 md:py-16 px-8 md:px-20 lg:px-24 xl:px-32 2xl:px-40 relative z-30" suppressHydrationWarning>
-        <div className="w-full rounded-b-3xl relative overflow-hidden shadow-2xl shadow-gray-200/50" suppressHydrationWarning>
+      {/* Hero Section - Carousel Banner (mobile view below lg so iPad ~786px uses mobile layout) */}
+      <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 relative z-30 overflow-x-hidden" suppressHydrationWarning>
+        <div className="w-full max-w-full rounded-b-3xl relative overflow-hidden shadow-2xl shadow-gray-200/50" suppressHydrationWarning>
           <CarouselBanner 
             items={carouselItems}
             autoPlay={true}
@@ -866,8 +866,8 @@ export default function Home() {
             renderCustomContent={(item, isActive) => {
               if (item.type === "hero") {
                 return (
-                  <div className="w-full bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-b-3xl relative overflow-hidden min-h-[600px] backdrop-blur-sm shadow-2xl shadow-gray-200/50 border border-white/20">
-                    {/* Product Images (Absolute Positioning) */}
+                  <div className="w-full bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-b-3xl relative overflow-hidden min-h-[600px] sm:min-h-[700px] md:min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] 2xl:min-h-[650px] backdrop-blur-sm shadow-2xl shadow-gray-200/50 border border-white/20">
+                    {/* Product Images (Absolute Positioning) - desktop only from lg */}
                     <ImageWithFallback
                       src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
                       alt="Drinkmate OmniFizz Soda Maker"
@@ -875,7 +875,7 @@ export default function Home() {
                       height={417}
                       quality={85}
                       priority={true}
-                      className="absolute object-contain hidden md:block drop-shadow-2xl"
+                      className="absolute object-contain hidden lg:block drop-shadow-2xl"
                       style={{ top: "203px", left: "121px" }}
                     />
                     <ImageWithFallback
@@ -885,63 +885,63 @@ export default function Home() {
                       height={206}
                       quality={85}
                       priority={true}
-                      className="absolute object-contain hidden md:block drop-shadow-xl"
+                      className="absolute object-contain hidden lg:block drop-shadow-xl"
                       style={{ top: "414px", left: "313px" }}
                     />
 
-                    {/* Mobile Product Images */}
-                    <div className="block md:hidden w-full" dir="ltr">
-                      <div className="flex flex-row items-end justify-center p-6">
+                    {/* Mobile/Tablet Product Images + content - full height like sibling banners */}
+                    <div className="block lg:hidden w-full min-h-[600px] sm:min-h-[700px] md:min-h-[500px] flex flex-col" dir="ltr">
+                      <div className="flex flex-row items-end justify-center flex-shrink-0 pt-4 px-4">
                         <ImageWithFallback
                           src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
                           alt="Drinkmate OmniFizz Soda Maker"
-                          width={140}
-                          height={220}
+                          width={100}
+                          height={160}
                           quality={85}
                           priority={true}
-                          className="object-contain drop-shadow-2xl"
+                          className="object-contain drop-shadow-2xl max-h-[140px] w-auto"
                         />
                         <ImageWithFallback
                           src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
                           alt="Italian Strawberry Lemon Flavor"
-                          width={80}
-                          height={160}
+                          width={56}
+                          height={112}
                           quality={85}
                           priority={true}
-                          className="object-contain drop-shadow-xl"
+                          className="object-contain drop-shadow-xl max-h-[90px] w-auto"
                         />
                       </div>
 
-                      {/* Mobile Content - After Images */}
-                      <div className="text-center px-6 py-10 bg-white/98 backdrop-blur-md rounded-3xl mx-6 shadow-2xl shadow-gray-200/40 mb-8 hover:shadow-3xl hover:bg-white transition-all duration-500 transform hover:-translate-y-2 animate-fade-in-up border border-white/50">
-                        <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
+                      {/* Mobile Content - fits inside banner height */}
+                      <div className="text-center px-4 py-4 bg-white/98 backdrop-blur-md rounded-2xl mx-4 mb-4 mt-2 shadow-2xl shadow-gray-200/40 hover:shadow-3xl hover:bg-white transition-all duration-500 border border-white/50 flex-1 min-h-0 flex flex-col justify-center">
+                        <div className="space-y-2" dir={isRTL ? "rtl" : "ltr"}>
                           <h1
-                            className={`text-2xl font-bold text-gray-900 leading-tight ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up tracking-tight`}
+                            className={`text-lg font-bold text-gray-900 leading-tight line-clamp-2 ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up tracking-tight`}
                           >
                             {t("home.hero.title")}
                           </h1>
                           <h2
-                            className={`text-lg text-gray-600 font-semibold ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up delay-200 tracking-wide`}
+                            className={`text-sm text-gray-600 font-semibold ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up delay-200 tracking-wide line-clamp-1`}
                           >
                             {t("home.hero.subtitle")}
                           </h2>
                           <p
-                            className={`text-gray-600 text-sm leading-relaxed ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} px-2 animate-slide-in-up delay-300 font-medium`}
+                            className={`text-gray-600 text-xs leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} px-1 animate-slide-in-up delay-300 font-medium`}
                           >
                             {t("home.hero.description")}
                           </p>
                           <div
-                            className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} gap-4 justify-center animate-slide-in-up delay-500`}
+                            className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} gap-2 justify-center pt-1 animate-slide-in-up delay-500 flex-shrink-0`}
                           >
                             <button
-                              onClick={() => router.push("/shop")}
-                              className="px-8 py-4 text-gray-700 border-2 border-gray-300 bg-white/90 backdrop-blur-sm hover:bg-white hover:border-gray-400 font-semibold rounded-xl min-w-[130px] transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-md text-sm"
+                              onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
+                              className="px-4 py-2.5 text-gray-700 border-2 border-gray-300 bg-white/90 backdrop-blur-sm hover:bg-white hover:border-gray-400 font-semibold rounded-lg min-w-[100px] transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md text-xs"
                             >
                               {t("home.hero.exploreMore")}
                             </button>
                             <button
-                              onClick={() => router.push("/shop")}
-                              className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-8 py-4 font-semibold shadow-xl border-2 border-[#12d6fa]/20 rounded-xl min-w-[130px] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl backdrop-blur-sm text-sm"
+                              onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
+                              className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-4 py-2.5 font-semibold shadow-xl border-2 border-[#12d6fa]/20 rounded-lg min-w-[100px] transition-all duration-300 hover:scale-105 hover:shadow-2xl backdrop-blur-sm text-xs"
                             >
                               {t("home.hero.buyNow")}
                             </button>
@@ -950,41 +950,45 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Content (positioned to the right on desktop, below images on mobile) */}
+                    {/* Content - desktop from lg: LTR = left of images, RTL = right of images, no overlap */}
                     <div
-                      className={`absolute top-1/2 -translate-y-1/2 ${isRTL ? "right-4 md:right-[550px] left-4 md:left-auto" : "left-4 md:left-[550px] right-4 md:right-auto"} w-auto md:w-[500px] ${isRTL ? "md:pl-4" : "md:pr-4"} md:block hidden`}
+                      className={`absolute top-1/2 -translate-y-1/2 w-auto lg:max-w-[500px] lg:block hidden ${
+                        isRTL
+                          ? "right-4 left-4 lg:left-[420px] lg:right-6 lg:pl-4"
+                          : "left-4 right-4 lg:left-[550px] lg:right-6 lg:pr-4"
+                      }`}
                     >
                       <div
-                        className={`space-y-6 md:space-y-8 text-center ${isRTL ? "md:text-right rtl" : "md:text-left ltr"} animate-fade-in-up`}
+                        className={`space-y-6 lg:space-y-8 text-center ${isRTL ? "lg:text-right rtl" : "lg:text-left ltr"} animate-fade-in-up`}
                         dir={isRTL ? "rtl" : "ltr"}
                       >
                         <h1
-                          className={`text-3xl md:text-5xl lg:text-6xl font-semibold text-gray-900 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left tracking-tight`}
+                          className={`text-3xl lg:text-5xl xl:text-6xl font-semibold text-gray-900 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left tracking-tight`}
                         >
                           {t("home.hero.title")}
                         </h1>
                         <h2
-                          className={`text-lg md:text-2xl text-gray-600 font-medium ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left delay-200 tracking-wide`}
+                          className={`text-lg lg:text-2xl text-gray-600 font-medium ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left delay-200 tracking-wide`}
                         >
                           {t("home.hero.subtitle")}
                         </h2>
                         <p
-                          className={`text-gray-600 text-base md:text-lg leading-relaxed ${isRTL ? "font-noto-arabic" : "font-noto-sans"} max-w-md ${isRTL ? "md:ml-auto" : "md:mr-auto"} animate-slide-in-left delay-300 font-medium`}
+                          className={`text-gray-600 text-base lg:text-lg leading-relaxed ${isRTL ? "font-noto-arabic" : "font-noto-sans"} max-w-md ${isRTL ? "lg:ml-auto" : "lg:mr-auto"} animate-slide-in-left delay-300 font-medium`}
                         >
                           {t("home.hero.description")}
                         </p>
                         <div
-                          className={`flex flex-col sm:flex-row ${isRTL ? "sm:space-x-reverse sm:space-x-4 sm:flex-row-reverse" : "sm:space-x-4"} justify-center md:${isRTL ? "justify-start" : "justify-start"} gap-3 sm:gap-4 animate-slide-in-left delay-500`}
+                          className={`flex flex-col sm:flex-row ${isRTL ? "sm:space-x-reverse sm:space-x-4 sm:flex-row-reverse" : "sm:space-x-4"} justify-center lg:${isRTL ? "justify-start" : "justify-start"} gap-3 sm:gap-4 animate-slide-in-left delay-500`}
                         >
                           <Button
-                            onClick={() => router.push("/shop")}
+                            onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
                             variant="outline"
                             className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
                           >
                             {t("home.hero.exploreMore")}
                           </Button>
                           <Button
-                            onClick={() => router.push("/shop")}
+                            onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
                             className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-6 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20 text-sm sm:text-base"
                           >
                             {t("home.hero.buyNow")}
@@ -1001,38 +1005,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Refill Section */}
-      <section className="py-6 md:py-16 px-8 md:px-20 lg:px-24 xl:px-32 2xl:px-40 animate-fade-in-up">
-        <div className="w-full bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] rounded-3xl relative min-h-[350px] md:h-[250px] flex items-center justify-between px-8 md:px-16 lg:px-20 xl:px-24 shadow-2xl shadow-gray-200/40 backdrop-blur-sm border border-white/30">
+      {/* Refill Section (mobile view below lg; content fits inside banner height) */}
+      <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
+        <div className="w-full max-w-full bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] rounded-3xl relative h-[320px] lg:h-[250px] flex items-stretch justify-between px-6 lg:px-16 xl:px-20 2xl:px-24 py-5 lg:py-0 shadow-2xl shadow-gray-200/40 backdrop-blur-sm border border-white/30 overflow-hidden">
           {/* Left Navigation Button */}
           <Button
-            className="rounded-full w-12 h-12 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110"
+            className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110 self-center"
             onClick={prevSlide}
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5" />
           </Button>
 
-          {/* Main Content Area - Responsive Layout */}
-          <div className="flex-1 mx-4 md:mx-0 md:absolute md:top-[44px] md:left-[125px]">
-            <div className="w-full md:w-[520px] h-auto md:h-[138px] flex flex-col justify-between text-center md:text-left">
-              <div className="space-y-3 md:space-y-4 mb-4 md:mb-0">
+          {/* Main Content Area - fits inside banner height */}
+          <div className="flex-1 mx-2 lg:mx-0 lg:absolute lg:top-[44px] lg:left-[125px] min-w-0 flex flex-col justify-center lg:justify-between py-2">
+            <div className="w-full lg:w-[520px] flex flex-col justify-center lg:justify-between gap-2 lg:gap-0 lg:h-[138px] text-center lg:text-left">
+              <div className="space-y-1 lg:space-y-4">
                 <h2
-                  className={`text-xl md:text-4xl font-semibold text-gray-800 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} tracking-wide`}
+                  className={`text-base lg:text-4xl font-semibold text-gray-800 leading-tight line-clamp-2 ${isRTL ? "font-cairo" : "font-montserrat"} tracking-wide`}
                 >
                   {slide.headline}
                 </h2>
                 <p
-                  className={`text-gray-700 text-sm md:text-[15px] md:whitespace-nowrap ${isRTL ? "font-noto-arabic" : "font-noto-sans"} font-medium leading-relaxed`}
+                  className={`text-gray-700 text-xs lg:text-[15px] lg:whitespace-nowrap leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic" : "font-noto-sans"} font-medium`}
                 >
                   {slide.description}
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 justify-center lg:justify-start flex-shrink-0">
                 {slide.buttonText && (
                   <Button
                     onClick={() => {
                       if (slide.buttonText === "Refill Now") {
-                        router.push("/co2")
+                        router.push((language === 'AR' ? '/ar' : '') + "/cylinders")
                       } else if (slide.buttonText === "Shop Now") {
                         // Check if this is the refill banner (first slide)
                         if (slide.headline && (slide.headline.includes("REFILL MORE. SAVE MORE.") || slide.headline.includes("SHOP MORE. SAVE MORE.") || slide.headline.includes("أعد الملء أكثر. ووفّر أكثر.") || slide.headline.includes("تسوق أكثر. ووفّر أكثر."))) {
@@ -1062,29 +1066,29 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Product Image Container */}
+          {/* Product Image Container - desktop only from lg */}
           {slide.imageSrc ? (
-            <div className="hidden md:flex absolute right-[100px] h-full justify-center items-center">
+            <div className="hidden lg:flex absolute right-[100px] top-0 bottom-0 w-[200px] justify-center items-center">
               <Image
                 src={slide.imageSrc || "/placeholder.svg"}
                 alt={slide.imageAlt}
-                width={300}
-                height={200}
-                className="object-cover w-auto h-full"
+                width={200}
+                height={160}
+                className="object-contain w-auto h-[80%] max-h-[200px]"
               />
               {/* Yellow 60 Liters Circle */}
               {slide.showYellowCircle && slide.yellowCircleData && (
-                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 rounded-full w-28 h-28 flex flex-col items-center justify-center text-white font-bold text-center p-2 shadow-md">
-                  <span className="text-[10px]">{slide.yellowCircleData.carbonatesUpto}</span>
-                  <span className="text-4xl">{slide.yellowCircleData.liters}</span>
-                  <span className="text-[10px]">{slide.yellowCircleData.litersOfDrink}</span>
+                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 rounded-full w-20 h-20 lg:w-28 lg:h-28 flex flex-col items-center justify-center text-white font-bold text-center p-1 lg:p-2 shadow-md">
+                  <span className="text-[8px] lg:text-[10px]">{slide.yellowCircleData.carbonatesUpto}</span>
+                  <span className="text-2xl lg:text-4xl">{slide.yellowCircleData.liters}</span>
+                  <span className="text-[8px] lg:text-[10px]">{slide.yellowCircleData.litersOfDrink}</span>
                 </div>
               )}
             </div>
           ) : (
             <>
-              {/* Multi-image container for the third slide - Desktop */}
-              <div className="hidden md:block inset-0 overflow-hidden">
+              {/* Multi-image container for the third slide - Desktop from lg */}
+              <div className="hidden lg:block inset-0 overflow-hidden">
                 <div className="relative w-full h-full">
                   {slide.multiImages &&
                     slide.multiImages.map((img, index) => (
@@ -1107,8 +1111,8 @@ export default function Home() {
                     ))}
                 </div>
               </div>
-              {/* Mobile responsive multi-image container for the third slide */}
-              <div className="block md:hidden absolute inset-0 overflow-hidden">
+              {/* Mobile/Tablet multi-image container - show up to lg (includes iPad) */}
+              <div className="block lg:hidden absolute inset-0 overflow-hidden">
                 <div className="relative w-full h-full flex items-end justify-end pr-4 pb-4">
                   {slide.multiImages &&
                     slide.multiImages.map((img, index) => (
@@ -1139,14 +1143,14 @@ export default function Home() {
 
           {/* Right Navigation Button */}
           <Button
-            className="rounded-full w-12 h-12 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110"
+            className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110 self-center"
             onClick={nextSlide}
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5" />
           </Button>
 
           {/* Slideshow Dots */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
             {slides.map((_, index) => (
               <div
                 key={index}
@@ -1199,9 +1203,9 @@ export default function Home() {
               </h3>
             </Link>
 
-            {/* CO2 */}
+            {/* CO2 - mediator page first */}
             <Link
-              href={(language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders"}
+              href={(language === 'AR' ? '/ar' : '') + "/cylinders"}
               className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-200 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
@@ -1360,7 +1364,7 @@ export default function Home() {
                     {t("home.megaOffer.offersBundles")}
                   </Button>
                   <Button
-                    onClick={() => router.push("/shop")}
+                    onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
                     className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold px-4 md:px-8 py-3 md:py-4 min-w-[120px] md:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 rounded-xl backdrop-blur-sm border border-yellow-300/30 text-sm md:text-base"
                   >
                     {t("home.megaOffer.exploreMore")}
@@ -1371,8 +1375,6 @@ export default function Home() {
               {/* Right Image - Slideshow */}
               <div className="relative flex justify-center items-center h-[450px] md:h-[800px] order-2 md:order-2">
                 {baseMachines.map((machine) => {
-                  console.log(machine);
-                  const isRedMachine = machine.id === "red";
                   const styles = (machineStyles as any)[activeMachineColor]?.[machine.id]
                   if (!styles) return null // Fallback in case a style is not defined for a state
                   return (
@@ -1382,11 +1384,11 @@ export default function Home() {
                         alt={machine.alt}
                         width={styles.width}
                         height={styles.height}
-                        className={`absolute object-contain transition-all duration-300 ease-in-out md:hidden ${isRedMachine ? "scale-y-[-1] rotate-180" : ""}`}
+                        className="absolute object-contain transition-all duration-300 ease-in-out md:hidden"
                         style={{
                           top: styles.top,
                           left: styles.left,
-                          transform: styles.transform || (activeMachineColor === machine.id ? "scale(1)" : "scale(0.95)"),
+                          transform: `${styles.transform || (activeMachineColor === machine.id ? "scale(1)" : "scale(0.95)")}${machine.id === "red" ? " scaleX(-1)" : ""}`,
                           opacity: activeMachineColor === machine.id ? 1 : Math.max(styles.opacity, 0.6), // Increased minimum opacity to 60%
                           zIndex: styles.zIndex,
                           borderRadius: styles.borderRadius || "0px",
@@ -1400,11 +1402,11 @@ export default function Home() {
                         alt={machine.alt}
                         width={styles.mdWidth || styles.width}
                         height={styles.mdHeight || styles.height}
-                        className={`absolute object-contain transition-all duration-300 ease-in-out hidden md:block ${isRedMachine ? "scale-y-[-1] rotate-180" : ""}`}
+                        className="absolute object-contain transition-all duration-300 ease-in-out hidden md:block"
                         style={{
                           top: styles.mdTop || styles.top,
                           left: styles.mdLeft || styles.left,
-                          transform: styles.transform || (activeMachineColor === machine.id ? "scale(1)" : "scale(0.95)"),
+                          transform: `${styles.transform || (activeMachineColor === machine.id ? "scale(1)" : "scale(0.95)")}${machine.id === "red" ? " scaleX(-1)" : ""}`,
                           opacity: activeMachineColor === machine.id ? 1 : Math.max(styles.opacity, 0.6), // Increased minimum opacity to 60%
                           zIndex: styles.zIndex,
                           borderRadius: styles.borderRadius || "0px",
@@ -1551,7 +1553,7 @@ export default function Home() {
 
               <div className="mt-6 flex flex-row space-x-4 justify-center">
                 <Button
-                  onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
+                  onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/cylinders")}
                   aria-label="Shop CO2 Cylinders"
                   className={`bg-purple text-gray-900 border border-gray-300 px-6 py-2 rounded-full font-semibold shadow-md hover:bg-gray-50 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
@@ -1673,7 +1675,7 @@ export default function Home() {
 
               <div className="mt-6 flex flex-row space-x-4 justify-end">
                 <Button
-                  onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/co2-cylinders")}
+                  onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/cylinders")}
                   aria-label="Shop CO2 Cylinders"
                   className={`bg-purple text-gray-900 border border-gray-300 px-8 py-3 rounded-full font-semibold shadow-md hover:bg-gray-50 transition ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
