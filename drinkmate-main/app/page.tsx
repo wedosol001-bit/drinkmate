@@ -925,11 +925,11 @@ export default function Home() {
                           >
                             {t("home.hero.subtitle")}
                           </h2>
-                          <p
+                          {/* <p
                             className={`text-gray-600 text-xs leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} px-1 animate-slide-in-up delay-300 font-medium`}
                           >
                             {t("home.hero.description")}
-                          </p>
+                          </p> */}
                           <div
                             className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} gap-2 justify-center pt-1 animate-slide-in-up delay-500 flex-shrink-0`}
                           >
@@ -972,11 +972,11 @@ export default function Home() {
                         >
                           {t("home.hero.subtitle")}
                         </h2>
-                        <p
+                        {/* <p
                           className={`text-gray-600 text-base lg:text-lg leading-relaxed ${isRTL ? "font-noto-arabic" : "font-noto-sans"} max-w-md ${isRTL ? "lg:ml-auto" : "lg:mr-auto"} animate-slide-in-left delay-300 font-medium`}
                         >
                           {t("home.hero.description")}
-                        </p>
+                        </p> */}
                         <div
                           className={`flex flex-col sm:flex-row ${isRTL ? "sm:space-x-reverse sm:space-x-4 sm:flex-row-reverse" : "sm:space-x-4"} justify-center lg:${isRTL ? "justify-start" : "justify-start"} gap-3 sm:gap-4 animate-slide-in-left delay-500`}
                         >

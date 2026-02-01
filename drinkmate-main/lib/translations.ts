@@ -1991,6 +1991,8 @@ export interface Translations {
     quantity: string
     keyFeatures: string
     defaultFeature?: string
+    defaultSafety1?: string
+    defaultSafety2?: string
     badges?: {
       bestSeller: string
       new: string
@@ -4823,6 +4825,8 @@ export const translations: Record<Language, Translations> = {
       askAQuestion: "Ask a Question",
       submitReview: "Submit Review",
       submitQuestion: "Submit Question",
+      defaultSafety1: "Quality tested and certified",
+      defaultSafety2: "Safe for everyday use",
       rating: "Rating",
       helpful: "Helpful",
       notHelpful: "Not Helpful",
@@ -4932,7 +4936,7 @@ export const translations: Record<Language, Translations> = {
       contactUs: "اتصل بنا",
       trackOrder: "تتبع الطلب",
       userMenu: "قائمة المستخدم",
-      refillCylinder: "إعادة ملء الأسطوانة",
+      refillCylinder: "إعادة تعبئة الأسطوانة",
       refill: "إعادة ملء"
     },
     trackOrder: {
@@ -5070,9 +5074,9 @@ export const translations: Record<Language, Translations> = {
       messages: {
         freeDelivery: "🚚 توصيل مجاني للطلبات فوق 150 ﷼",
         colaFlavors: "🥤 احصل على 3 نكهات كولا مقابل 149 ﷼ فقط استخدم الكود كولا44",
-        firstOrderDiscount: "🎉 احصل على خصم 5% على أول طلب معنا استخدم الكود جديد25",
+        firstOrderDiscount: "🎉 احصل على خصم 5% على أول طلب معنا استخدم الكود ",
         megaOffer: "⚡ درينك ميت أومني فيز يبدأ من 599 ﷼",
-        cylinderRefill: "🔄 إعادة ملء أسطوانة ثاني أكسيد الكربون من 65 ﷼"
+        cylinderRefill: "🔄 إعادة تعبئة الأسطوانة ثاني أكسيد الكربون من 65 ﷼"
       },
       codes: {
         cola44: "كولا44",
@@ -5149,9 +5153,9 @@ export const translations: Record<Language, Translations> = {
       },
       carousel: {
         slide1: {
-          headline: "أعد الملء أكثر. ووفّر أكثر.",
+          headline: "أعد التعبئة أكثر. ووفّر أكثر.",
           description: "الآن أعد ملء 4 أسطوانات معاً بسعر 55 ريال لكل أسطوانة.",
-          buttonText: "أعد الملء الآن",
+          buttonText: "أعد التعبئة الآن",
           offerText: "*العرض صالح طوال العام*",
           carbonatesUpto: "يضيف الغاز حتى",
           liters: "60",
@@ -5164,7 +5168,7 @@ export const translations: Record<Language, Translations> = {
         },
         slide3: {
           headline: "خصم 5% على أول طلب للعملاء الجدد",
-          description: "تدخل عالم المشروبات الغازية؟ استمتع بخصم 5% على أول طلب مع درينك ميت.",
+          description: "تود دخول عالم المشروبات الغازية؟ استمتع بخصم 5% على أول طلب مع درينك ميت",
           buttonText: "تسوق الآن"
         }
       },
@@ -5230,15 +5234,15 @@ export const translations: Record<Language, Translations> = {
         }
       },
       flavorSection: {
-        subtitle: "لا تكتفِ بتفاعيل الماء فقط",
-        title: "فاعل أي شيء",
+        subtitle: "لا تكتفِ بكربنة المياه فقط",
+        title: "كربن أي شيء",
         description: "اكتشف نكهاتنا الإيطالية عالية الجودة وأنشئ مشروبات غازية مذهلة في المنزل. من الكولا الكلاسيكي إلى تركيبات الفواكه الغريبة، الإمكانيات لا تنتهي!",
         exploreFlavors: "استكشف النكهات"
       },
       additionalSections: {
         howToUse: {
           title: "كيفية الاستخدام",
-          description: "تعلم كيفية صنع مشروبات مثالية في كل مرة باستخدام شرابات درينك ميت الإيطالية عالية الجودة."
+          description: "تعلم كيفية صنع مشروبات مثالية في كل مرة باستخدام سيروبات درينك ميت الإيطالية عالية الجودة."
         },
         recipes: {
           title: "الوصفات",
@@ -7039,7 +7043,7 @@ export const translations: Record<Language, Translations> = {
       errorTitle: "تعذر تحميل بيانات الأسطوانات",
       retry: "إعادة المحاولة",
       carousel: { goTo: "اذهب إلى الشريحة" },
-      choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "غير درينك ميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "خيوط قياسية" },
+      choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "ليست درينك ميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "مدخل لولي" },
       qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل", freeDeliveryNote: "توصيل مجاني لـ 3 أسطوانات أو أكثر", freeDeliveryNote2Plus: "اطلب 2 أسطوانة أو أكثر للحصول على توصيل مجاني", cylinder: "أسطوانة", emptyCylinders: "أسطوانة فارغة" },
       discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
       offers: { heading: "استفد من الفرصة الآن", buy3FreeDelivery: "اشترِ 2+ توصيل مجاني", buyXFreeDelivery: "اشترِ {{count}}+ توصيل مجاني", buy4PriceEach: "اشترِ 4 بسعر 59/- لكل واحدة", addOneMoreForOffer: "أضف {{count}} أسطوانة أخرى للحصول على هذا العرض", addMoreForFreeDelivery: "أضف {{count}} أسطوانة أخرى للحصول على توصيل مجاني", returnNoteShort: "يرجى إرجاع {{count}} أسطوانة" },
@@ -7054,7 +7058,7 @@ export const translations: Record<Language, Translations> = {
       },
       faqs: {
         q1: "كم من الوقت تستغرق عملية إعادة التعبئة/التبديل؟",
-        a1: "وقت الدوران المعياري لدينا هو 3-5 أيام عمل من الاستلام إلى التسليم. سنحدد وقت استلام مناسب ونخطرك عندما تكون أسطواناتك المعاد تعبئتها جاهزة للتسليم.",
+        a1: "مدة التوصيل لدينا تتراوح بين 3–5 أيام عمل من الاستلام إلى التسليم. سنحدد وقت استلام مناسب ونخطرك عندما تكون أسطواناتك المعاد تعبئتها جاهزة للتسليم.",
         q2: "ما العلامات التجارية للأسطوانات التي تقبلونها؟",
         a2: "نقبل أسطوانات من جميع العلامات التجارية الرئيسية بما في ذلك درينكميت، سوداستريم، إيرفا، فووار، فيليبس، والعديد من العلامات الأخرى. إذا لم تكن متأكداً من التوافق، يرجى الاتصال بفريق الدعم لدينا.",
         q3: "هل CO2 صالح للاستخدام الغذائي وآمن؟",
@@ -7223,6 +7227,8 @@ export const translations: Record<Language, Translations> = {
       sold: "مباع",
       reviewsCount: "مراجعة",
       questionsCount: "سؤال",
+      defaultSafety1: "مختبرة ومعتمدة من حيث الجودة",
+      defaultSafety2: "آمنة للاستخدام اليومي",
       writeAReview: "اكتب مراجعة",
       askAQuestion: "اسأل سؤال",
       submitReview: "إرسال المراجعة",
@@ -7287,7 +7293,7 @@ export const translations: Record<Language, Translations> = {
         title: "المنتجات",
         sodaMakers: "صانعات الصودا درينك ميت",
         co2Cylinders: "ثاني أكسيد الكربون",
-        italianSyrups: "الشرابات الإيطالية عالية الجودة",
+        italianSyrups: "سيروبات الإيطالية عالية الجودة",
         accessories: "الملحقات",
         giftBundles: "هدايا للعائلة والأصدقاء",
         bulkOrders: "طلب بالجملة"
