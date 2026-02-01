@@ -1638,7 +1638,7 @@ export default function ShopProductDetail() {
                       <p className="text-base sm:text-lg leading-relaxed text-gray-700">{localizedProduct?.fullDescription || localizedProduct?.description || product.fullDescription || product.description}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                    <div dir={`${language === 'AR' ? 'rtl' : 'ltr'}`} className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                       <div className={`${language === 'AR' ? 'order-2' : 'order-1'}`}>
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
@@ -1681,13 +1681,13 @@ export default function ShopProductDetail() {
                             ))
                           ) : (
                             <>
-                              <li className="flex items-start">
-                                <Shield className="w-4 h-4 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">Quality tested and certified</span>
+                              <li className="flex items-start text-sm sm:text-base">
+                                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-700">{t('product.defaultSafety1')}</span>
                               </li>
-                              <li className="flex items-start">
-                                <Shield className="w-4 h-4 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">Safe for everyday use</span>
+                              <li className="flex items-start text-sm sm:text-base">
+                                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-700">{t('product.defaultSafety2')}</span>
                               </li>
                             </>
                           )}
