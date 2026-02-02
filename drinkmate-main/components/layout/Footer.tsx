@@ -143,7 +143,7 @@ export default function Footer() {
             </p>
             <ul className={`mt-4 space-y-1 text-sm ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               <li>
-                <a 
+                <a dir="ltr"
                   href="tel:+966544671166" 
                   className="text-black/70 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
                   itemProp="telephone"
@@ -165,7 +165,7 @@ export default function Footer() {
               </li>
               <li>
                 <address className="not-italic text-black/70" itemProp="address">
-                  Riyadh, Saudi Arabia
+                  Jeddah, Saudi Arabia
                 </address>
               </li>
             </ul>
