@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** Returns true if value looks like a MongoDB ObjectId (24 hex chars). Use to avoid rendering IDs in UI (e.g. category badge). */
+export function isMongoId(value: unknown): boolean {
+  return typeof value === "string" && /^[a-fA-F0-9]{24}$/.test(value)
+}
+
 /**
  * Validates if an image URL is valid and not empty
  * @param image - The image URL to validate

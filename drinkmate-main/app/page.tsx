@@ -15,7 +15,6 @@ import HydrationBoundary from "@/components/HydrationBoundary"
 import { generateStructuredData } from "@/lib/seo"
 import Balancer from "react-wrap-balancer"
 import { useAutoPlayOnView } from "@/hooks/use-auto-play-on-view"
-import CarouselBanner from "@/components/ui/carousel-banner"
 import { useLatestBlogs } from "@/hooks/use-latest-blogs"
 
 // StepCard component for mobile-optimized cards
@@ -282,34 +281,6 @@ export default function Home() {
   useEffect(() => {
     setIsClient(true)
   }, [])
-
-  // Carousel banner data
-  const carouselItems = [
-    {
-      id: 1,
-      type: "hero" as const, // Special type for the original hero content
-      src: "", // Not used for hero type
-      alt: "Drinkmate Hero Section"
-    },
-    {
-      id: 2,
-      type: "banner" as const,
-      src: "/images/banner/WhatsApp Image 2025-08-27 at 7.09.33 PM (1).webp", 
-      alt: "Drinkmate Soda Makers Collection",
-      mobileSrc: "/images/banner/WhatsApp Image 2025-08-27 at 7.09.32 PM (1).webp",
-      mobileAlt: "Drinkmate Soda Makers Collection Mobile"
-    },
-    {
-      id: 4,
-      type: "banner" as const,
-      src: "/images/banner/flavors3-banner.jpg",
-      alt: "Premium Flavors Collection",
-      mobileSrc: "/images/banner/flavors3-banner.jpg",
-      mobileAlt: "Premium Flavors Collection",
-      objectFit: "cover" as const,
-      objectPosition: "center center"
-    }
-  ]
 
   const slides = [
     {
@@ -854,158 +825,63 @@ export default function Home() {
       
       <PageLayout currentPage="home">
       <HydrationBoundary>
-      {/* Hero Section - Carousel Banner (mobile view below lg so iPad ~786px uses mobile layout) */}
+      {/* Hero Section - first banner only, no slider; 6|6 grid: image + content */}
       <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 relative z-30 overflow-x-hidden" suppressHydrationWarning>
-        <div className="w-full max-w-full rounded-b-3xl relative overflow-hidden shadow-2xl shadow-gray-200/50" suppressHydrationWarning>
-          <CarouselBanner 
-            items={carouselItems}
-            autoPlay={true}
-            autoPlayInterval={5000}
-            isRTL={isRTL}
-            className="w-full"
-            renderCustomContent={(item, isActive) => {
-              if (item.type === "hero") {
-                return (
-                  <div className="w-full bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-b-3xl relative overflow-hidden min-h-[600px] sm:min-h-[700px] md:min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] 2xl:min-h-[650px] backdrop-blur-sm shadow-2xl shadow-gray-200/50 border border-white/20">
-                    {/* Product Images (Absolute Positioning) - desktop only from lg */}
-                    <ImageWithFallback
-                      src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
-                      alt="Drinkmate OmniFizz Soda Maker"
-                      width={242}
-                      height={417}
-                      quality={85}
-                      priority={true}
-                      className="absolute object-contain hidden lg:block drop-shadow-2xl"
-                      style={{ top: "203px", left: "121px" }}
-                    />
-                    <ImageWithFallback
-                      src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
-                      alt="Italian Strawberry Lemon Flavor"
-                      width={99}
-                      height={206}
-                      quality={85}
-                      priority={true}
-                      className="absolute object-contain hidden lg:block drop-shadow-xl"
-                      style={{ top: "414px", left: "313px" }}
-                    />
-
-                    {/* Mobile/Tablet Product Images + content - full height like sibling banners */}
-                    <div className="block lg:hidden w-full min-h-[600px] sm:min-h-[700px] md:min-h-[500px] flex flex-col" dir="ltr">
-                      <div className="flex flex-row items-end justify-center flex-shrink-0 pt-4 px-4">
-                        <ImageWithFallback
-                          src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
-                          alt="Drinkmate OmniFizz Soda Maker"
-                          width={100}
-                          height={160}
-                          quality={85}
-                          priority={true}
-                          className="object-contain drop-shadow-2xl max-h-[140px] w-auto"
-                        />
-                        <ImageWithFallback
-                          src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
-                          alt="Italian Strawberry Lemon Flavor"
-                          width={56}
-                          height={112}
-                          quality={85}
-                          priority={true}
-                          className="object-contain drop-shadow-xl max-h-[90px] w-auto"
-                        />
-                      </div>
-
-                      {/* Mobile Content - fits inside banner height */}
-                      <div className="text-center px-4 py-4 bg-white/98 backdrop-blur-md rounded-2xl mx-4 mb-4 mt-2 shadow-2xl shadow-gray-200/40 hover:shadow-3xl hover:bg-white transition-all duration-500 border border-white/50 flex-1 min-h-0 flex flex-col justify-center">
-                        <div className="space-y-2" dir={isRTL ? "rtl" : "ltr"}>
-                          <h1
-                            className={`text-lg font-bold text-gray-900 leading-tight line-clamp-2 ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up tracking-tight`}
-                          >
-                            {t("home.hero.title")}
-                          </h1>
-                          <h2
-                            className={`text-sm text-gray-600 font-semibold ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up delay-200 tracking-wide line-clamp-1`}
-                          >
-                            {t("home.hero.subtitle")}
-                          </h2>
-                          {/* <p
-                            className={`text-gray-600 text-xs leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} px-1 animate-slide-in-up delay-300 font-medium`}
-                          >
-                            {t("home.hero.description")}
-                          </p> */}
-                          <div
-                            className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} gap-2 justify-center pt-1 animate-slide-in-up delay-500 flex-shrink-0`}
-                          >
-                            <button
-                              onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
-                              className="px-4 py-2.5 text-gray-700 border-2 border-gray-300 bg-white/90 backdrop-blur-sm hover:bg-white hover:border-gray-400 font-semibold rounded-lg min-w-[100px] transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md text-xs"
-                            >
-                              {t("home.hero.exploreMore")}
-                            </button>
-                            <button
-                              onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
-                              className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-4 py-2.5 font-semibold shadow-xl border-2 border-[#12d6fa]/20 rounded-lg min-w-[100px] transition-all duration-300 hover:scale-105 hover:shadow-2xl backdrop-blur-sm text-xs"
-                            >
-                              {t("home.hero.buyNow")}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Content - desktop from lg: LTR = left of images, RTL = right of images, no overlap */}
-                    <div
-                      className={`absolute top-1/2 -translate-y-1/2 w-auto lg:max-w-[500px] lg:block hidden ${
-                        isRTL
-                          ? "right-4 left-4 lg:left-[420px] lg:right-6 lg:pl-4"
-                          : "left-4 right-4 lg:left-[550px] lg:right-6 lg:pr-4"
-                      }`}
-                    >
-                      <div
-                        className={`space-y-6 lg:space-y-8 text-center ${isRTL ? "lg:text-right rtl" : "lg:text-left ltr"} animate-fade-in-up`}
-                        dir={isRTL ? "rtl" : "ltr"}
-                      >
-                        <h1
-                          className={`text-3xl lg:text-5xl xl:text-6xl font-semibold text-gray-900 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left tracking-tight`}
-                        >
-                          {t("home.hero.title")}
-                        </h1>
-                        <h2
-                          className={`text-lg lg:text-2xl text-gray-600 font-medium ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left delay-200 tracking-wide`}
-                        >
-                          {t("home.hero.subtitle")}
-                        </h2>
-                        {/* <p
-                          className={`text-gray-600 text-base lg:text-lg leading-relaxed ${isRTL ? "font-noto-arabic" : "font-noto-sans"} max-w-md ${isRTL ? "lg:ml-auto" : "lg:mr-auto"} animate-slide-in-left delay-300 font-medium`}
-                        >
-                          {t("home.hero.description")}
-                        </p> */}
-                        <div
-                          className={`flex flex-col sm:flex-row ${isRTL ? "sm:space-x-reverse sm:space-x-4 sm:flex-row-reverse" : "sm:space-x-4"} justify-center lg:${isRTL ? "justify-start" : "justify-start"} gap-3 sm:gap-4 animate-slide-in-left delay-500`}
-                        >
-                          <Button
-                            onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
-                            variant="outline"
-                            className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
-                          >
-                            {t("home.hero.exploreMore")}
-                          </Button>
-                          <Button
-                            onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
-                            className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-6 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20 text-sm sm:text-base"
-                          >
-                            {t("home.hero.buyNow")}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
-              return null
-            }}
-          />
+        <div className="w-full max-w-full rounded-b-3xl overflow-hidden shadow-2xl shadow-gray-200/50 border border-white/20 bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] flex items-center">
+          <div className={`relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] p-6 lg:p-10 xl:p-12 ${isRTL ? "lg:grid-flow-dense" : ""}`}>
+            {/* Image column (6) */}
+            <div className={`relative flex items-center justify-center lg:min-h-[400px] ${isRTL ? "lg:order-2" : "lg:order-1"}`}>
+              <div className="relative w-full max-w-md flex items-end justify-center gap-4">
+                <ImageWithFallback
+                  src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
+                  alt="Drinkmate OmniFizz Soda Maker"
+                  width={242}
+                  height={417}
+                  quality={85}
+                  priority={true}
+                  className="object-contain w-auto h-[280px] sm:h-[320px] lg:h-[380px] drop-shadow-2xl"
+                />
+                <ImageWithFallback
+                  src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
+                  alt="Italian Strawberry Lemon Flavor"
+                  width={99}
+                  height={206}
+                  quality={85}
+                  priority={true}
+                  className="object-contain w-auto h-[140px] sm:h-[180px] lg:h-[200px] drop-shadow-xl hidden sm:block"
+                />
+              </div>
+            </div>
+            {/* Content column (6) */}
+            <div className={`flex flex-col justify-center text-center lg:text-left ${isRTL ? "lg:order-1 lg:text-right" : "lg:order-2"}`} dir={isRTL ? "rtl" : "ltr"}>
+              <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-gray-900 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} tracking-tight`}>
+                {t("home.hero.title")}
+              </h1>
+              <h2 className={`mt-3 lg:mt-4 text-lg lg:text-2xl text-gray-600 font-medium ${isRTL ? "font-cairo" : "font-montserrat"} tracking-wide`}>
+                {t("home.hero.subtitle")}
+              </h2>
+              <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 lg:mt-8 justify-center ${isRTL ? "lg:justify-end" : "lg:justify-start"}`}>
+                <Button
+                  onClick={() => router.push((language === "AR" ? "/ar" : "") + "/shop")}
+                  variant="outline"
+                  className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
+                >
+                  {t("home.hero.exploreMore")}
+                </Button>
+                <Button
+                  onClick={() => router.push((language === "AR" ? "/ar" : "") + "/shop/sodamakers")}
+                  className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-6 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20 text-sm sm:text-base"
+                >
+                  {t("home.hero.buyNow")}
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Refill Section (mobile view below lg; content fits inside banner height) */}
+      {/* 2nd slider (Refill Section) - commented out for now */}
+      {false && (
       <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
         <div className="w-full max-w-full bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] rounded-3xl relative h-[320px] lg:h-[250px] flex items-stretch justify-between px-6 lg:px-16 xl:px-20 2xl:px-24 py-5 lg:py-0 shadow-2xl shadow-gray-200/40 backdrop-blur-sm border border-white/30 overflow-hidden">
           {/* Left Navigation Button */}
@@ -1160,6 +1036,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Product Categories Section */}
       <section className="py-6 md:py-16 px-8 md:px-20 lg:px-24 xl:px-32 2xl:px-40 animate-fade-in-up">

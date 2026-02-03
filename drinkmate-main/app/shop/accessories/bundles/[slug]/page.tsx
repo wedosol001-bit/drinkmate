@@ -1244,8 +1244,8 @@ export default function AccessoriesBundleDetail() {
                           <span className="text-lg text-muted-foreground line-through">
                             <SaudiRiyal amount={product.originalPrice || 0} />
                           </span>
-                          <Badge className="bg-red-500 text-white">
-                            Save <SaudiRiyal amount={calculateSavings()} />
+                          <Badge className="bg-green-100 text-green-800 border-green-200 text-xs sm:text-sm">
+                            {t("product.save")} <SaudiRiyal amount={calculateSavings()} size="sm" />
                           </Badge>
                         </>
                       )}

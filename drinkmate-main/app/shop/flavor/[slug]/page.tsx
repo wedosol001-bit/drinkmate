@@ -1072,10 +1072,17 @@ export default function FlavorDetailPage() {
                   {/* Product Header */}
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-2">
-                      <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
-                        {typeof product.category === 'object' ? product.category.name : (product.category || "Flavor")}
-                      </Badge>
-                      {product.brand && (
+                      {(() => {
+                        const catDisplay = typeof product.category === 'object' ? product.category?.name : (product.category || "Flavor")
+                        const isId = typeof catDisplay === 'string' && /^[a-fA-F0-9]{24}$/.test(catDisplay)
+                        if (!catDisplay || isId) return null
+                        return (
+                          <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
+                            {catDisplay}
+                          </Badge>
+                        )
+                      })()}
+                      {product.brand && typeof product.brand === 'string' && !/^[a-fA-F0-9]{24}$/.test(product.brand) && (
                         <Badge variant="outline" className="border-gray-300 text-xs sm:text-sm">
                           {product.brand}
                         </Badge>

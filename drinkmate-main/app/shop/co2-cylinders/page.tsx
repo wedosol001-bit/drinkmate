@@ -1,7 +1,6 @@
 "use client"
 import { CylindersShopSection } from "@/components/sections/CylindersShopSection"
 import PageLayout from "@/components/layout/PageLayout"
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useTranslation } from "@/lib/contexts/translation-context"
@@ -96,16 +95,15 @@ export default function CO2() {
 
   return (
     <PageLayout currentPage="shop">
-      {/* Hero Section */}
+      {/* Hero Section - image background with centered heading */}
       <section className="relative w-full bg-white overflow-hidden">
-        <div className="relative w-full h-[280px] md:h-[320px] lg:h-[400px]">
-          <Image
-            src="/images/banner/Web--Cylinder--Page (1).png"
-            alt="CO2 Cylinders"
-            fill
-            className="object-cover w-full h-full"
-            priority
-          />
+        <div
+          className="relative w-full h-[280px] md:h-[320px] lg:h-[400px] bg-cover bg-center bg-no-repeat flex items-center justify-center"
+          style={{ backgroundImage: "url(/images/bannerNew/co2Banner.png)" }}
+        >
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center drop-shadow-md px-4">
+            {t("shop.co2BannerHeading")}
+          </h1>
         </div>
       </section>
 

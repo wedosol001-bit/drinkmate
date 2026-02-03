@@ -1145,12 +1145,19 @@ export default function BundleDetailPage() {
                   {/* Bundle Header */}
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-2">
-                      <Badge variant="outline" className="text-sm sm:text-base" style={{ 
-                        color: bundle.badge?.color || '#12d6fa', 
-                        borderColor: bundle.badge?.color || '#12d6fa' 
-                      }}>
-                        {bundle.category || "Soda Maker Bundle"}
-                      </Badge>
+                      {(() => {
+                        const catDisplay = bundle.category || "Soda Maker Bundle"
+                        const isId = typeof catDisplay === 'string' && /^[a-fA-F0-9]{24}$/.test(catDisplay)
+                        if (isId) return null
+                        return (
+                          <Badge variant="outline" className="text-sm sm:text-base" style={{ 
+                            color: bundle.badge?.color || '#12d6fa', 
+                            borderColor: bundle.badge?.color || '#12d6fa' 
+                          }}>
+                            {catDisplay}
+                          </Badge>
+                        )
+                      })()}
                       {bundle.badge && bundle.badge.text && (
                         <Badge variant="secondary" className="capitalize text-sm sm:text-base" style={{ 
                           backgroundColor: bundle.badge?.color || '#12d6fa',
@@ -1951,28 +1958,6 @@ export default function BundleDetailPage() {
 
           <TabsContent value="videos" className="mt-8">
             <div className="space-y-6">
-              {/* Debug info */}
-              <div className="text-xs text-gray-500 p-2 bg-gray-100 rounded">
-                Debug: videos={bundle.videos?.length || 0}, youtubeLinks={bundle.youtubeLinks?.length || 0}
-                {bundle.youtubeLinks && (
-                  <div>YouTube URLs: {JSON.stringify(bundle.youtubeLinks)}</div>
-                )}
-                <div>Badge Color: {bundle.badge?.color || 'Not set'}</div>
-                <div>Price: {bundle.price}</div>
-                <div>Original Price: {bundle.originalPrice}</div>
-                <div>Bundle ID: {bundle._id}</div>
-                <button 
-                  onClick={() => {
-                    console.log('Manual refresh triggered')
-                    invalidateCache(`bundle-flexible-${bundleSlug}`)
-                    invalidateCache(`bundle-flexible-68c1527bb1df185393fb3b6f`)
-                    fetchBundle()
-                  }}
-                  className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs"
-                >
-                  Refresh Data
-                </button>
-              </div>
               {(bundle.videos && bundle.videos.length > 0) || (bundle.youtubeLinks && bundle.youtubeLinks.length > 0) ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                   {/* All Videos (including YouTube) */}
