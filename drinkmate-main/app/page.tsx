@@ -1531,7 +1531,7 @@ export default function Home() {
                   scale: 1.05,
                   boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
                 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 rounded-full flex flex-col items-center justify-center text-white font-bold text-center shadow-lg w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 z-10"
+                className="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 rounded-full flex flex-col items-center justify-center text-white font-bold text-center shadow-lg w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 z-10"
               >
                 <span className="text-[10px] sm:text-xs md:text-sm">Drinkmate</span>
                 <span className="text-[22px] sm:text-2xl md:text-3xl">CO₂</span>

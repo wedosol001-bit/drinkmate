@@ -743,7 +743,7 @@ export default function BundleDetailPage() {
 
           <div className="flex gap-8">
             {/* Enhanced Sidebar Controls */}
-            <div className="w-16 flex flex-col space-y-4">
+            <div className="flex-col hidden sm:flex space-y-4 w-16">
               {/* 3D View Button */}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -1035,9 +1035,9 @@ export default function BundleDetailPage() {
                   {/* Product Header */}
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-2">
-                      <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-sm sm:text-base">
+                      {/* <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-sm sm:text-base">
                         {typeof product.category === 'object' ? product.category.name : (product.category || "Flavor Bundle")}
-                      </Badge>
+                      </Badge> */}
                       {product.brand && (
                         <Badge variant="outline" className="border-gray-300 text-xs sm:text-sm">
                           {product.brand}
