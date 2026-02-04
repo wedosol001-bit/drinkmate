@@ -476,7 +476,7 @@ export default function Footer() {
               <FaFacebook className="h-5 w-5 text-blue-600" />
             </a>
             <a 
-              href="https://www.instagram.com/drinkmate.sa" 
+              href="https://www.instagram.com/drinkmatesa?igsh=MWt2ZHFuNDlqN2t2Mg%3D%3D" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="h-9 w-9 grid place-items-center rounded-full bg-pink-50 hover:bg-pink-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
