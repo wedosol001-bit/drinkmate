@@ -38,7 +38,7 @@ export default function MobileStickyContactBar({ isRTL, isAuthenticated, chatSta
   }
 
   const handlePhoneClick = () => {
-    window.open('tel:+966544671116')
+    window.open('tel:+966544671166')
   }
 
   const handleChatClick = () => {

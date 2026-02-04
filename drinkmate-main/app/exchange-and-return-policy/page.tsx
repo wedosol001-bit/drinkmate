@@ -96,7 +96,7 @@ export default function ExchangeAndReturnPolicyPage() {
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-700">
                   <strong>Email:</strong> support@drinkmates.com<br />
-                  <strong>Phone:</strong> +966544671116<br />
+                  <strong>Phone:</strong> +966544671166<br />
                   <strong>TOLL FREE NUMBER: 920016893</strong><br />
                   <strong>Address:</strong> Kingdom of Saudi Arabia
                 </p>

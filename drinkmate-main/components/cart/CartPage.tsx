@@ -138,7 +138,7 @@ export default function CartPage() {
 
           <CartNote />
 
-          <FreeGift />
+          {/* <FreeGift /> */}
 
           <PersonalizedRecommendations />
         </div>

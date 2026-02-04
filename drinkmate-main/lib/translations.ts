@@ -3807,7 +3807,7 @@ export const translations: Record<Language, Translations> = {
           title: "Contact Us",
           description: "If you have questions about this Privacy Policy, please contact us.",
           email: "privacy@aqualine.sa.com",
-          phone: "+966544671116"
+          phone: "+966544671166"
         },
         personalInfoDetails: {
           nameContact: "Name and contact information (email, phone, address)",
@@ -3949,7 +3949,7 @@ export const translations: Record<Language, Translations> = {
           title: "Contact Information",
           description: "For questions about these terms, please contact us.",
           email: "legal@aqualine.sa.com",
-          phone: "+966544671116"
+          phone: "+966544671166"
         },
         servicesDetails: {
           productSales: "Product sales and delivery",
@@ -4486,13 +4486,13 @@ export const translations: Record<Language, Translations> = {
           title: "Main Office - Riyadh",
           address: "King Fahd Road, Al Olaya, Riyadh",
           hours: "Mon-Fri: 9:00 AM - 6:00 PM",
-          phone: "+966544671116"
+          phone: "+966544671166"
         },
         jeddah: {
           title: "Service Center - Jeddah",
           address: "Prince Sultan Road, Al Hamra, Jeddah",
           hours: "Mon-Fri: 8:00 AM - 5:00 PM",
-          phone: "+966544671116"
+          phone: "+966544671166"
         }
       },
       testimonials: {
@@ -4880,7 +4880,7 @@ export const translations: Record<Language, Translations> = {
     },
     footer: {
       companyDescription: "Creating perfect sparkling drinks at home with premium Italian flavors and innovative soda makers",
-      phone: "+966544671116",
+      phone: "+966544671166",
       email: "cs@aqualine.sa.com",
       address: "Riyadh, Saudi Arabia",
       products: {
@@ -6210,7 +6210,7 @@ export const translations: Record<Language, Translations> = {
           title: "اتصل بنا",
           description: "إذا كان لديك أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا.",
           email: "privacy@aqualine.sa.com",
-          phone: "+966544671116"
+          phone: "+966544671166"
         },
         personalInfoDetails: {
           nameContact: "الاسم ومعلومات الاتصال (البريد الإلكتروني، الهاتف، العنوان)",
@@ -6352,7 +6352,7 @@ export const translations: Record<Language, Translations> = {
           title: "معلومات الاتصال",
           description: "للأسئلة حول هذه الشروط، يرجى الاتصال بنا.",
           email: "legal@aqualine.sa.com",
-          phone: "+966544671116"
+          phone: "+966544671166"
         },
         servicesDetails: {
           productSales: "بيع المنتجات والتوصيل",
@@ -6685,13 +6685,13 @@ export const translations: Record<Language, Translations> = {
           title: "المكتب الرئيسي - الرياض",
           address: "طريق الملك فهد، العليا، الرياض",
           hours: "الاثنين-الجمعة: 9:00 صباحاً - 6:00 مساءً",
-          phone: "+966544671116"
+          phone: "+966544671166"
         },
         jeddah: {
           title: "مركز الخدمة - جدة",
           address: "طريق الأمير سلطان، الحمراء، جدة",
           hours: "الاثنين-الجمعة: 8:00 صباحاً - 5:00 مساءً",
-          phone: "+966544671116"
+          phone: "+966544671166"
         }
       },
       testimonials: {
@@ -7286,7 +7286,7 @@ export const translations: Record<Language, Translations> = {
     },
     footer: {
       companyDescription: "إنشاء مشروبات غازية مثالية في المنزل مع النكهات الإيطالية عالية الجودة وصانعات الصودا المبتكرة",
-      phone: "+966544671116",
+      phone: "+966544671166",
       email: "cs@aqualine.sa.com",
       address: "الرياض، المملكة العربية السعودية",
       products: {

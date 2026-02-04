@@ -526,9 +526,9 @@ export default function CheckoutPage() {
   }
 
   const validateNationalAddress = (address: string): string | undefined => {
-    if (!address.trim()) {
-      return undefined // Optional field
-    }
+    // if (!address.trim()) {
+    //   return undefined // Optional field
+    // }
     if (address.length !== 8) {
       return t("checkout.validation.nationalAddressLength")
     }
@@ -600,16 +600,12 @@ export default function CheckoutPage() {
     errors.phone = validatePhone(deliveryAddress.phone)
     errors.district = validateDistrict(deliveryAddress.district)
     errors.city = validateCity(deliveryAddress.city)
-    
+    errors.nationalAddress = validateNationalAddress(deliveryAddress.nationalAddress)
     // Validate email for guest users
     if (!isAuthenticated) {
       errors.email = validateEmail(deliveryAddress.email)
     }
-    
-    // Validate national address if provided
-    if (deliveryAddress.nationalAddress) {
-      errors.nationalAddress = validateNationalAddress(deliveryAddress.nationalAddress)
-    }
+
     
     setFieldErrors(errors)
     
@@ -1027,7 +1023,7 @@ export default function CheckoutPage() {
                     className="text-[#12d6fa] hover:text-[#0bc4e8] underline"
                   >
                     {t("checkout.nationalAddress")}
-                  </a>) ({t("checkout.optional")})
+                  </a>)
                 </label>
                 <input
                   type="text"
@@ -1042,6 +1038,7 @@ export default function CheckoutPage() {
                   placeholder="JESA3591"
                   maxLength={8}
                   pattern="[A-Z]{4}[0-9]{4}"
+                  required
                 />
                 {fieldErrors.nationalAddress ? (
                   <p className="mt-1 text-sm text-red-600 flex items-center">

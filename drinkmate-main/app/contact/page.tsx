@@ -1094,7 +1094,7 @@ function ContactPageContent() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{t('shop.contact.map.phone')}</p>
-                        <p className="text-gray-600">+966544671116</p>
+                        <p className="text-gray-600">+966544671166</p>
                         <p className="text-gray-600 font-bold">TOLL FREE NUMBER: 920016893</p>
                       </div>
                     </div>

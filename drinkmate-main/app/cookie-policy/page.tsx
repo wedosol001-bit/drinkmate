@@ -143,7 +143,7 @@ export default function CookiePolicy() {
                 </p>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p><strong>Email:</strong> {t('cookiePolicy.sections.contact.email')}</p>
-                  <p><strong>Phone:</strong> +966544671116</p>
+                  <p><strong>Phone:</strong> +966544671166</p>
                   <p><strong>TOLL FREE NUMBER: 920016893</strong></p>
                   <p><strong>Address:</strong> {t('cookiePolicy.sections.address')}</p>
                 </div>

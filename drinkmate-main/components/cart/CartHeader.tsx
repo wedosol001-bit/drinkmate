@@ -17,7 +17,7 @@ export default function CartHeader() {
     const confirmed = await confirm({
       title: isRTL ? 'مسح السلة' : 'Clear Cart',
       description: isRTL ? 'هل أنت متأكد أنك تريد مسح السلة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to clear your cart? This action cannot be undone.',
-      variant: 'destructive',
+      variant: 'default',
       confirmText: isRTL ? 'مسح السلة' : 'Clear Cart',
       cancelText: isRTL ? 'الاحتفاظ بالعناصر' : 'Keep Items'
     })
