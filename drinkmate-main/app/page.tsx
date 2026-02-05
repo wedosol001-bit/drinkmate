@@ -122,7 +122,6 @@ function BlogCard({
 export default function Home() {
   const { t, isRTL, language } = useTranslation()
   const router = useRouter()
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [activeMachineColor, setActiveMachineColor] = useState("cyan") // Default to cyan
   const [isClient, setIsClient] = useState(false)
   
@@ -135,89 +134,6 @@ export default function Home() {
     setIsClient(true)
   }, [])
 
-  const slides = [
-    {
-      headline: t("home.carousel.slide1.headline"),
-      description: t("home.carousel.slide1.description"),
-      buttonText: t("home.carousel.slide1.buttonText"),
-      offerText: t("home.carousel.slide1.offerText"),
-      imageSrc: "/images/co2-cylinders.png",
-      imageAlt: "CO2 Cylinders",
-      showYellowCircle: true,
-      yellowCircleData: {
-        carbonatesUpto: t("home.carousel.slide1.carbonatesUpto"),
-        liters: t("home.carousel.slide1.liters"),
-        litersOfDrink: t("home.carousel.slide1.litersOfDrink"),
-      },
-      multiImages: [], // Not used for this slide
-    },
-    {
-      headline: t("home.carousel.slide2.headline"),
-      description: t("home.carousel.slide2.description"),
-      buttonText: t("home.carousel.slide2.buttonText"),
-      offerText: "",
-      imageSrc: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756657902/energy-cola-flavors_lx3fvx.png",
-      imageAlt: "Energy Drink & Cola Flavor",
-      showYellowCircle: false,
-      yellowCircleData: null,
-      multiImages: [], // Not used for this slide
-    },
-    {
-      headline: t("home.carousel.slide3.headline"),
-      description: t("home.carousel.slide3.description"),
-      buttonText: t("home.carousel.slide3.buttonText"),
-      offerText: "",
-      imageSrc: null, // Not a single image for this slide
-      imageAlt: "Drinkmate products",
-      showYellowCircle: false,
-      yellowCircleData: null,
-      multiImages: [
-        {
-          src: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559855/Artic-Black-Machine---Front_pxsies.png",
-          alt: "Drinkmate Machine",
-          width: 193,
-          height: 493,
-          top: 28, // Relative to the main gray container
-          left: 1160, // Relative to the main gray container
-          zIndex: 2, // Machine is in front
-          // Responsive positioning using percentages
-          responsiveTop: "20%",
-          responsiveLeft: "60%",
-          responsiveWidth: 60,
-          responsiveHeight: 150,
-        },
-        {
-          src: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893591/co2-cylinder-single_dcrdnx.png",
-          alt: "CO2 Cylinder",
-          width: 340,
-          height: 340,
-          top: 28, // Relative to the main gray container
-          left: 1170, // Relative to the main gray container
-          zIndex: 1, // Cylinder is behind machine
-          // Responsive positioning using percentages
-          responsiveTop: "20%",
-          responsiveLeft: "62%",
-          responsiveWidth: 100,
-          responsiveHeight: 100,
-        },
-        {
-          src: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559866/Strawberry-Lemon-Flavor_sjdzju.png",
-          alt: "Strawberry Lemon Flavor",
-          width: 100,
-          height: 257,
-          top: 135, // Relative to the main gray container
-          left: 1350, // Relative to the main gray container
-          zIndex: 3, // Strawberry is in front of machine
-          // Responsive positioning using percentages
-          responsiveTop: "40%",
-          responsiveLeft: "70%",
-          responsiveWidth: 30,
-          responsiveHeight: 80,
-        },
-      ],
-    },
-  ]
-  
   const steps = [
     {
       id: 1,
@@ -248,16 +164,6 @@ export default function Home() {
       alt: "Step 4: Fill into a glass and enjoy the drink",
     },
   ]
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
-  }
-
-  const slide = slides[currentSlide]
 
   // Calculate the starting X position of the right grid column relative to the max-w-7xl container
   // max-w-7xl is 1280px. Inner content area (1280 - 2*p-16) = 1152px.
@@ -733,163 +639,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2nd slider (Refill Section) - commented out for now */}
-      {false && (
+      {/* 2nd section - shop variant banners slider (same as shop index), language-aware, clickable */}
       <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
-        <div className="w-full max-w-full bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] rounded-3xl relative h-[320px] lg:h-[250px] flex items-stretch justify-between px-6 lg:px-16 xl:px-20 2xl:px-24 py-5 lg:py-0 shadow-2xl shadow-gray-200/40 backdrop-blur-sm border border-white/30 overflow-hidden">
-          {/* Left Navigation Button */}
-          <Button
-            className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110 self-center"
-            onClick={prevSlide}
-          >
-            <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5" />
-          </Button>
-
-          {/* Main Content Area - fits inside banner height */}
-          <div className="flex-1 mx-2 lg:mx-0 lg:absolute lg:top-[44px] lg:left-[125px] min-w-0 flex flex-col justify-center lg:justify-between py-2">
-            <div className="w-full lg:w-[520px] flex flex-col justify-center lg:justify-between gap-2 lg:gap-0 lg:h-[138px] text-center lg:text-left">
-              <div className="space-y-1 lg:space-y-4">
-                <h2
-                  className={`text-base lg:text-4xl font-semibold text-gray-800 leading-tight line-clamp-2 ${isRTL ? "font-cairo" : "font-montserrat"} tracking-wide`}
-                >
-                  {slide.headline}
-                </h2>
-                <p
-                  className={`text-gray-700 text-xs lg:text-[15px] lg:whitespace-nowrap leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic" : "font-noto-sans"} font-medium`}
-                >
-                  {slide.description}
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 justify-center lg:justify-start flex-shrink-0">
-                {slide.buttonText && (
-                  <Button
-                    onClick={() => {
-                      if (slide.buttonText === "Refill Now") {
-                        router.push((language === 'AR' ? '/ar' : '') + "/cylinders")
-                      } else if (slide.buttonText === "Shop Now") {
-                        // Check if this is the refill banner (first slide)
-                        if (slide.headline && (slide.headline.includes("REFILL MORE. SAVE MORE.") || slide.headline.includes("SHOP MORE. SAVE MORE.") || slide.headline.includes("أعد الملء أكثر. ووفّر أكثر.") || slide.headline.includes("تسوق أكثر. ووفّر أكثر."))) {
-                          // Refill banner - navigate to refill cylinder page
-                          router.push((language === 'AR' ? '/ar' : '') + "/refill-cylinder")
-                        } else if (slide.headline && slide.headline.includes("ENERGY DRINK & COLA FLAVOR")) {
-                          // Second slide - navigate directly to flavor page
-                          router.push((language === 'AR' ? '/ar' : '') + "/shop/flavor")
-                        } else {
-                          router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
-                        }
-                      } else {
-                        router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
-                      }
-                    }}
-                    className={`font-medium px-4 sm:px-6 py-2.5 sm:py-3 rounded-full min-w-[120px] sm:min-w-[140px] text-sm sm:text-base ${
-                      slide.buttonText === "Shop Now"
-                        ? "bg-[#a8f387] hover:bg-[#9ae374] text-black"
-                        : "bg-[#a8f387] hover:bg-[#9ae374] text-black"
-                    }`}
-                  >
-                    {slide.buttonText}
-                  </Button>
-                )}
-                {slide.offerText && <span className="text-sm text-gray-500">{slide.offerText}</span>}
-              </div>
-            </div>
-          </div>
-
-          {/* Product Image Container - desktop only from lg */}
-          {slide.imageSrc ? (
-            <div className="hidden lg:flex absolute right-[100px] top-0 bottom-0 w-[200px] justify-center items-center">
-              <Image
-                src={slide.imageSrc || "/placeholder.svg"}
-                alt={slide.imageAlt}
-                width={200}
-                height={160}
-                className="object-contain w-auto h-[80%] max-h-[200px]"
-              />
-              {/* Yellow 60 Liters Circle */}
-              {slide.showYellowCircle && slide.yellowCircleData && (
-                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 rounded-full w-20 h-20 lg:w-28 lg:h-28 flex flex-col items-center justify-center text-white font-bold text-center p-1 lg:p-2 shadow-md">
-                  <span className="text-[8px] lg:text-[10px]">{slide.yellowCircleData.carbonatesUpto}</span>
-                  <span className="text-2xl lg:text-4xl">{slide.yellowCircleData.liters}</span>
-                  <span className="text-[8px] lg:text-[10px]">{slide.yellowCircleData.litersOfDrink}</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              {/* Multi-image container for the third slide - Desktop from lg */}
-              <div className="hidden lg:block inset-0 overflow-hidden">
-                <div className="relative w-full h-full">
-                  {slide.multiImages &&
-                    slide.multiImages.map((img, index) => (
-                      <Image
-                        key={index}
-                        src={img.src || "/placeholder.svg"}
-                        alt={img.alt}
-                        width={img.width}
-                        height={img.height}
-                        className="absolute object-contain"
-                        style={{ 
-                          top: `${img.top}px`, 
-                          left: `${img.left}px`, 
-                          zIndex: img.zIndex,
-                          // Ensure images stay within container bounds
-                          maxWidth: '100%',
-                          maxHeight: '100%'
-                        }}
-                      />
-                    ))}
-                </div>
-              </div>
-              {/* Mobile/Tablet multi-image container - show up to lg (includes iPad) */}
-              <div className="block lg:hidden absolute inset-0 overflow-hidden">
-                <div className="relative w-full h-full flex items-end justify-end pr-4 pb-4">
-                  {slide.multiImages &&
-                    slide.multiImages.map((img, index) => (
-                      <Image
-                        key={index}
-                        src={img.src || "/placeholder.svg"}
-                        alt={img.alt}
-                        width={img.responsiveWidth || img.width}
-                        height={img.responsiveHeight || img.height}
-                        className="absolute object-contain"
-                        style={{ 
-                          top: img.responsiveTop || '50%', 
-                          left: img.responsiveLeft || '50%', 
-                          zIndex: img.zIndex,
-                          // Ensure images stay within container bounds
-                          maxWidth: '80%',
-                          maxHeight: '80%',
-                          // Use transform to center and scale properly
-                          transform: 'translate(-50%, -50%)',
-                          transformOrigin: 'center center'
-                        }}
-                      />
-                    ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Right Navigation Button */}
-          <Button
-            className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110 self-center"
-            onClick={nextSlide}
-          >
-            <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5" />
-          </Button>
-
-          {/* Slideshow Dots */}
-          <div className="absolute bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {slides.map((_, index) => (
-              <div
-                key={index}
-                className={`w-3 h-3 rounded-full ${index === currentSlide ? "bg-yellow-400" : "bg-gray-300"}`}
-              ></div>
-            ))}
-          </div>
+        <div className="w-full max-w-7xl mx-auto">
+          <QualitySlideshow
+            items={[
+              {
+                id: 1,
+                src: getBannerSrc("shop", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.shopAllProducts"),
+                href: (language === "AR" ? "/ar" : "") + "/shop",
+              },
+              {
+                id: 2,
+                src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.accessories.title"),
+                href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
+              },
+              {
+                id: 3,
+                src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.flavors.title"),
+                href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
+              },
+            ]}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            className="w-full rounded-2xl overflow-hidden shadow-xl"
+            containerHeight="h-[280px] sm:h-[320px] md:h-[360px] lg:h-[400px]"
+          />
         </div>
       </section>
-      )}
 
       {/* Product Categories Section */}
       <section className="py-6 md:py-16 px-8 md:px-20 lg:px-24 xl:px-32 2xl:px-40 animate-fade-in-up">

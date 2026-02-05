@@ -86,11 +86,8 @@ import SaudiRiyal from "@/components/ui/SaudiRiyal"
 const COLOR_NAME_TO_HEX: Record<string, string> = {
   red: "#DC2626", blue: "#2563EB", black: "#171717", white: "#FAFAFA", cyan: "#0891B2",
   purple: "#7C3AED", pink: "#DB2777", green: "#16A34A", yellow: "#CA8A04", orange: "#EA580C",
-  gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A￼
-Sparkling Made Simple
-With Drinkmate OmniFizz
-￼Explore more
-lue": "#BAE6FD",
+  gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A",
+  lightBlue: "#BAE6FD",
 }
 
 function getVariantSwatchHex(variant: any): string {
@@ -1281,16 +1278,7 @@ export default function ShopProductDetail() {
                               {selectedVariant && currentOriginalPrice && currentOriginalPrice > currentPrice && (
                                 <span className="text-lg text-muted-foreground line-through">
                                   <SaudiRiyal amount={currentOriginalPrice} size="md" />
-                                </span>{(() => {
-                        const catDisplay = typeof product.category === 'object' ? product.category?.name : (product.category || "Product")
-                        const isId = typeof catDisplay === 'string' && /^[a-fA-F0-9]{24}$/.test(catDisplay)
-                        if (!catDisplay || isId) return null
-                        return (
-                          <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
-                            {catDisplay}
-                          </Badge>
-                        )
-                      })()}
+                                </span>
                               )}
                             </div>
                           );
