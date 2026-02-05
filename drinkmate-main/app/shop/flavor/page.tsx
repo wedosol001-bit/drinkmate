@@ -21,6 +21,7 @@ import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-forma
 import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // Define product types
 interface Product {
@@ -61,7 +62,7 @@ interface Bundle {
 }
 
 export default function FlavorPage() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const { triggerAddAnimation } = useCartAnimations()
@@ -449,34 +450,13 @@ export default function FlavorPage() {
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
 
-        <div className="w-full h-[300px] sm:h-[400px] md:h-[350px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-lg">
-          {/* Desktop Banner */}
-          <Image
-            src="/images/banner/flavor banner.webp"
-            alt="Flavor Banner"
-            fill
-            className="object-cover object-center hidden md:block"
-            priority
-            quality={90}
-            sizes="(max-width: 768px) 100vw, 100vw"
-            loading="eager"
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YxZjVmOSIvPjwvc3ZnPg=="
-          />
-          {/* Mobile Banner */}
-          <Image
-            src="/images/banner/flavor mobile.webp"
-            alt="Flavor Banner Mobile"
-            fill
-            className="object-cover object-center md:hidden"
-            priority
-            quality={90}
-            sizes="100vw"
-            loading="eager"
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YxZjVmOSIvPjwvc3ZnPg=="
-          />
-        </div>
+        {/* Flavors / Italian Syrups banner - simple image only, no overlay, language-aware */}
+        <div
+          className="w-full h-[220px] sm:h-[280px] md:h-[320px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-xl bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getBannerSrc("italianSyrup", { lang: language })})` }}
+          role="img"
+          aria-label={t("shop.categoryPages.flavors.title")}
+        />
 
         {/* Error message */}
         {error && (

@@ -1,10 +1,10 @@
 "use client"
 import { CylindersShopSection } from "@/components/sections/CylindersShopSection"
 import PageLayout from "@/components/layout/PageLayout"
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useTranslation } from "@/lib/contexts/translation-context"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 const faqCards = [
   {
@@ -92,21 +92,18 @@ const benefits = [
 ]
 
 export default function CO2() {
-  const { isRTL, t } = useTranslation()
+  const { isRTL, t, language } = useTranslation()
 
   return (
     <PageLayout currentPage="shop">
-      {/* Hero Section */}
+      {/* CO2 banner - simple image only, language-aware from bannerNew */}
       <section className="relative w-full bg-white overflow-hidden">
-        <div className="relative w-full h-[280px] md:h-[320px] lg:h-[400px]">
-          <Image
-            src="/images/banner/Web--Cylinder--Page (1).png"
-            alt="CO2 Cylinders"
-            fill
-            className="object-cover w-full h-full"
-            priority
-          />
-        </div>
+        <div
+          className="relative w-full h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getBannerSrc("co2", { lang: language })})` }}
+          role="img"
+          aria-label={t("shop.co2BannerHeading")}
+        />
       </section>
 
       {/* Shop CO2 Cylinders Section */}

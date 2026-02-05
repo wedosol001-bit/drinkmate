@@ -87,9 +87,7 @@ const COLOR_NAME_TO_HEX: Record<string, string> = {
   red: "#DC2626", blue: "#2563EB", black: "#171717", white: "#FAFAFA", cyan: "#0891B2",
   purple: "#7C3AED", pink: "#DB2777", green: "#16A34A", yellow: "#CA8A04", orange: "#EA580C",
   gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A",
-  mint: "#34D399", coral: "#F97316", lavender: "#A78BFA", charcoal: "#404040",
-  "matte black": "#171717", "royal red": "#B91C1C", "arctic blue": "#0284C7", "classic white": "#FAFAFA",
-  "midnight black": "#0f172a", "jet black": "#0a0a0a", "snow white": "#FFFAFA", "ice blue": "#BAE6FD",
+  lightBlue: "#BAE6FD",
 }
 
 function getVariantSwatchHex(variant: any): string {
@@ -1198,10 +1196,21 @@ export default function ShopProductDetail() {
                   {/* Product Header */}
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-2">
-                      {/* <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
-                        {typeof product.category === 'object' ? product.category.name : (product.category || "Product")}
-                      </Badge> */}
-                      {product.brand && (
+                    
+                    {/*
+                    {(() => {
+                        const catDisplay = typeof product.category === 'object' ? product.category?.name : (product.category || "Product")
+                        const isId = typeof catDisplay === 'string' && /^[a-fA-F0-9]{24}$/.test(catDisplay)
+                        if (!catDisplay || isId) return null
+                        return (
+                          <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
+                            {catDisplay}
+                          </Badge>
+                        )
+                      })()}
+                    
+                    */}  
+                      {product.brand && typeof product.brand === 'string' && !/^[a-fA-F0-9]{24}$/.test(product.brand) && (
                         <Badge variant="outline" className="border-gray-300 text-xs sm:text-sm">
                           {product.brand}
                         </Badge>

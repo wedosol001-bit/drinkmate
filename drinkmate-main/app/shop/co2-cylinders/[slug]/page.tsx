@@ -1061,9 +1061,11 @@ export default function CO2ProductDetail() {
                   {/* Product Header */}
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-2">
-                      <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
-                        {product.brand}
-                      </Badge>
+                      {product.brand && typeof product.brand === 'string' && !/^[a-fA-F0-9]{24}$/.test(product.brand) && (
+                        <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
+                          {product.brand}
+                        </Badge>
+                      )}
                       {product.tags?.slice(0, 3).map((tag) => (
                         <Badge key={tag} variant="secondary" className="capitalize text-xs sm:text-sm">
                           {tag}

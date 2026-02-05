@@ -20,6 +20,7 @@ import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-forma
 import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // Define product types
 interface Product {
@@ -57,7 +58,7 @@ interface Bundle {
 }
 
 export default function SodamakersPage() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const { triggerAddAnimation } = useCartAnimations()
@@ -576,36 +577,13 @@ export default function SodamakersPage() {
   return (
     <PageLayout currentPage="shop-sodamakers">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.sodamakers.title")}</h1>
-
-     
-
-        {/* Category Banners */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          {/* OmniFizz Banner */}
-          <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
-            <Image
-              src="/images/banner/omnifizz.jpg"
-              alt="OmniFizz Soda Maker"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          {/* Lux Banner */}
-          <div className="relative h-40 sm:h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
-            <Image
-              src="/images/banner/luxe.jpg"
-              alt="Lux Soda Maker"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-        </div>
+        {/* Top banner - soda maker (image only, no text/overlay), language-aware */}
+        <div
+          className="relative w-full h-[220px] sm:h-[280px] md:h-[320px] rounded-2xl overflow-hidden shadow-xl mb-6 sm:mb-8 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getBannerSrc("sodamaker", { lang: language })})` }}
+          role="img"
+          aria-label={t("shop.categoryPages.sodamakers.title")}
+        />
 
         {/* Error message */}
         {error && (

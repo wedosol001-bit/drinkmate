@@ -32,6 +32,13 @@ export interface Translations {
     }
   }
 
+  // Banner section headings (used on home and individual pages)
+  banners: {
+    premiumItalianSyrups: { title: string; subtitle: string }
+    colaBundle: string
+    easyRefill: string
+  }
+
   // Homepage
   home: {
     hero: {
@@ -249,6 +256,7 @@ export interface Translations {
     title: string
     subtitle: string
     description: string
+    co2BannerHeading: string
     hero: {
       title: string
       subtitle: string
@@ -2474,6 +2482,11 @@ export const translations: Record<Language, Translations> = {
         new25: "NEW25"
       }
     },
+    banners: {
+      premiumItalianSyrups: { title: "PREMIUM ITALIAN SYRUPS", subtitle: "100% NATURAL | NO ADDED SUGAR" },
+      colaBundle: "COLA BUNDLE",
+      easyRefill: "Easy Refill | Seamless Exchange"
+    },
     home: {
       hero: {
         title: "Sparkling Made Simple",
@@ -2686,6 +2699,7 @@ export const translations: Record<Language, Translations> = {
       title: "Shop Our Products",
       subtitle: "Premium soda makers and authentic Italian flavors",
       description: "Discover our complete range of soda makers, CO2 cylinders, premium Italian syrups, and accessories. Everything you need to create perfect sparkling drinks at home.",
+      co2BannerHeading: "Where the frizz begin",
       hero: {
         title: "Shop Our",
         subtitle: "Products",
@@ -5083,6 +5097,11 @@ export const translations: Record<Language, Translations> = {
         new25: "جديد25"
       }
     },
+    banners: {
+      premiumItalianSyrups: { title: "مشروبات إيطالية فاخرة", subtitle: "طبيعي 100٪ | بدون سكر مضاف" },
+      colaBundle: "باقة الكولا",
+      easyRefill: "إعادة تعبئة سهلة | استبدال سلس."
+    },
     home: {
       hero: {
         title: "المشروبات الغازية أصبحت بسيطة",
@@ -5296,6 +5315,7 @@ export const translations: Record<Language, Translations> = {
       title: "تسوق منتجاتنا",
       subtitle: "صانعات الصودا عالية الجودة والنكهات الإيطالية الأصيلة",
       description: "اكتشف مجموعتنا الكاملة من صانعات الصودا وأسطوانات ثاني أكسيد الكربون والشرابات الإيطالية عالية الجودة والملحقات. كل ما تحتاجه لإنشاء مشروبات غازية مثالية في المنزل.",
+      co2BannerHeading: "من هنا يبدأ الفوران",
       hero: {
         title: "تسوق",
         subtitle: "منتجاتنا",

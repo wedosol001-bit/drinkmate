@@ -15,8 +15,9 @@ import HydrationBoundary from "@/components/HydrationBoundary"
 import { generateStructuredData } from "@/lib/seo"
 import Balancer from "react-wrap-balancer"
 import { useAutoPlayOnView } from "@/hooks/use-auto-play-on-view"
-import CarouselBanner from "@/components/ui/carousel-banner"
 import { useLatestBlogs } from "@/hooks/use-latest-blogs"
+import QualitySlideshow from "@/components/ui/quality-slideshow"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // StepCard component for mobile-optimized cards
 function StepCard({ 
@@ -118,159 +119,9 @@ function BlogCard({
   )
 }
 
-// FlavorCarousel component for displaying flavor images in a carousel
-function FlavorCarousel({ isRTL }: { isRTL: boolean }) {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
-
-  // Flavor carousel items
-  const flavorSlides = [
-    {
-      id: 1,
-      src: "/images/flavor-section-background.png",
-      alt: "Italian Flavors and Cherry Cola Bottle"
-    },
-    {
-      id: 2,
-      src: "/images/banner/flavors3-banner.jpg",
-      alt: "Premium Flavors Collection"
-    },
-    {
-      id: 3,
-      src: "/images/banner/flavorsbanner2.jpg",
-      alt: "Flavor Variety"
-    },
-  ]
-
-  // Auto-play functionality
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isRTL) {
-        setCurrentSlide((prev) => (prev === 0 ? flavorSlides.length - 1 : prev - 1))
-      } else {
-        setCurrentSlide((prev) => (prev === flavorSlides.length - 1 ? 0 : prev + 1))
-      }
-    }, 5000) // Change slide every 5 seconds
-
-    return () => clearInterval(interval)
-  }, [isRTL, flavorSlides.length])
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === flavorSlides.length - 1 ? 0 : prev + 1))
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? flavorSlides.length - 1 : prev - 1))
-  }
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index)
-  }
-
-  // Touch handlers for mobile swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isRTL) {
-      // Reverse swipe direction for RTL
-      if (isLeftSwipe) {
-        prevSlide()
-      } else if (isRightSwipe) {
-        nextSlide()
-      }
-    } else {
-      if (isLeftSwipe) {
-        nextSlide()
-      } else if (isRightSwipe) {
-        prevSlide()
-      }
-    }
-  }
-
-  return (
-    <div className="relative w-full">
-      {/* Carousel wrapper */}
-      <div
-        className="mx-auto bg-white rounded-xl md:rounded-2xl relative overflow-hidden h-[600px] md:h-[500px] lg:h-[550px] touch-pan-y"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {flavorSlides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 duration-500 ease-in-out transition-opacity ${
-              index === currentSlide ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <Image
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 90vw, (max-width: 1024px) 80vw, 1200px"
-              priority={index === 0}
-              quality={90}
-              className="object-cover rounded-xl md:rounded-2xl"
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation arrows */}
-      <button
-        type="button"
-        className={`absolute top-1/2 ${isRTL ? 'right-4' : 'left-4'} z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 transform -translate-y-1/2 hover:scale-110`}
-        aria-label="Previous slide"
-        onClick={prevSlide}
-      >
-        <ChevronLeft className={`w-5 h-5 text-gray-800 ${isRTL ? 'rotate-180' : ''}`} />
-      </button>
-      <button
-        type="button"
-        className={`absolute top-1/2 ${isRTL ? 'left-4' : 'right-4'} z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 transform -translate-y-1/2 hover:scale-110`}
-        aria-label="Next slide"
-        onClick={nextSlide}
-      >
-        <ChevronRight className={`w-5 h-5 text-gray-800 ${isRTL ? 'rotate-180' : ''}`} />
-      </button>
-
-      {/* Slide indicators */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
-        {flavorSlides.map((_, index) => (
-          <button
-            key={index}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? "bg-white scale-125"
-                : "bg-white/60 hover:bg-white/80"
-            }`}
-            onClick={() => goToSlide(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export default function Home() {
   const { t, isRTL, language } = useTranslation()
   const router = useRouter()
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [activeMachineColor, setActiveMachineColor] = useState("cyan") // Default to cyan
   const [isClient, setIsClient] = useState(false)
   
@@ -283,117 +134,6 @@ export default function Home() {
     setIsClient(true)
   }, [])
 
-  // Carousel banner data
-  const carouselItems = [
-    {
-      id: 1,
-      type: "hero" as const, // Special type for the original hero content
-      src: "", // Not used for hero type
-      alt: "Drinkmate Hero Section"
-    },
-    {
-      id: 2,
-      type: "banner" as const,
-      src: "/images/banner/WhatsApp Image 2025-08-27 at 7.09.33 PM (1).webp", 
-      alt: "Drinkmate Soda Makers Collection",
-      mobileSrc: "/images/banner/WhatsApp Image 2025-08-27 at 7.09.32 PM (1).webp",
-      mobileAlt: "Drinkmate Soda Makers Collection Mobile"
-    },
-    {
-      id: 4,
-      type: "banner" as const,
-      src: "/images/banner/flavors3-banner.jpg",
-      alt: "Premium Flavors Collection",
-      mobileSrc: "/images/banner/flavors3-banner.jpg",
-      mobileAlt: "Premium Flavors Collection",
-      objectFit: "cover" as const,
-      objectPosition: "center center"
-    }
-  ]
-
-  const slides = [
-    {
-      headline: t("home.carousel.slide1.headline"),
-      description: t("home.carousel.slide1.description"),
-      buttonText: t("home.carousel.slide1.buttonText"),
-      offerText: t("home.carousel.slide1.offerText"),
-      imageSrc: "/images/co2-cylinders.png",
-      imageAlt: "CO2 Cylinders",
-      showYellowCircle: true,
-      yellowCircleData: {
-        carbonatesUpto: t("home.carousel.slide1.carbonatesUpto"),
-        liters: t("home.carousel.slide1.liters"),
-        litersOfDrink: t("home.carousel.slide1.litersOfDrink"),
-      },
-      multiImages: [], // Not used for this slide
-    },
-    {
-      headline: t("home.carousel.slide2.headline"),
-      description: t("home.carousel.slide2.description"),
-      buttonText: t("home.carousel.slide2.buttonText"),
-      offerText: "",
-      imageSrc: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756657902/energy-cola-flavors_lx3fvx.png",
-      imageAlt: "Energy Drink & Cola Flavor",
-      showYellowCircle: false,
-      yellowCircleData: null,
-      multiImages: [], // Not used for this slide
-    },
-    {
-      headline: t("home.carousel.slide3.headline"),
-      description: t("home.carousel.slide3.description"),
-      buttonText: t("home.carousel.slide3.buttonText"),
-      offerText: "",
-      imageSrc: null, // Not a single image for this slide
-      imageAlt: "Drinkmate products",
-      showYellowCircle: false,
-      yellowCircleData: null,
-      multiImages: [
-        {
-          src: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559855/Artic-Black-Machine---Front_pxsies.png",
-          alt: "Drinkmate Machine",
-          width: 193,
-          height: 493,
-          top: 28, // Relative to the main gray container
-          left: 1160, // Relative to the main gray container
-          zIndex: 2, // Machine is in front
-          // Responsive positioning using percentages
-          responsiveTop: "20%",
-          responsiveLeft: "60%",
-          responsiveWidth: 60,
-          responsiveHeight: 150,
-        },
-        {
-          src: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893591/co2-cylinder-single_dcrdnx.png",
-          alt: "CO2 Cylinder",
-          width: 340,
-          height: 340,
-          top: 28, // Relative to the main gray container
-          left: 1170, // Relative to the main gray container
-          zIndex: 1, // Cylinder is behind machine
-          // Responsive positioning using percentages
-          responsiveTop: "20%",
-          responsiveLeft: "62%",
-          responsiveWidth: 100,
-          responsiveHeight: 100,
-        },
-        {
-          src: "https://res.cloudinary.com/dw2h8hejn/image/upload/v1756559866/Strawberry-Lemon-Flavor_sjdzju.png",
-          alt: "Strawberry Lemon Flavor",
-          width: 100,
-          height: 257,
-          top: 135, // Relative to the main gray container
-          left: 1350, // Relative to the main gray container
-          zIndex: 3, // Strawberry is in front of machine
-          // Responsive positioning using percentages
-          responsiveTop: "40%",
-          responsiveLeft: "70%",
-          responsiveWidth: 30,
-          responsiveHeight: 80,
-        },
-      ],
-    },
-  ]
-  
   const steps = [
     {
       id: 1,
@@ -424,16 +164,6 @@ export default function Home() {
       alt: "Step 4: Fill into a glass and enjoy the drink",
     },
   ]
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
-  }
-
-  const slide = slides[currentSlide]
 
   // Calculate the starting X position of the right grid column relative to the max-w-7xl container
   // max-w-7xl is 1280px. Inner content area (1280 - 2*p-16) = 1152px.
@@ -854,310 +584,90 @@ export default function Home() {
       
       <PageLayout currentPage="home">
       <HydrationBoundary>
-      {/* Hero Section - Carousel Banner (mobile view below lg so iPad ~786px uses mobile layout) */}
+      {/* Hero Section - first banner only, no slider; 6|6 grid: image + content */}
       <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 relative z-30 overflow-x-hidden" suppressHydrationWarning>
-        <div className="w-full max-w-full rounded-b-3xl relative overflow-hidden shadow-2xl shadow-gray-200/50" suppressHydrationWarning>
-          <CarouselBanner 
-            items={carouselItems}
-            autoPlay={true}
-            autoPlayInterval={5000}
-            isRTL={isRTL}
-            className="w-full"
-            renderCustomContent={(item, isActive) => {
-              if (item.type === "hero") {
-                return (
-                  <div className="w-full bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-b-3xl relative overflow-hidden min-h-[600px] sm:min-h-[700px] md:min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] 2xl:min-h-[650px] backdrop-blur-sm shadow-2xl shadow-gray-200/50 border border-white/20">
-                    {/* Product Images (Absolute Positioning) - desktop only from lg */}
-                    <ImageWithFallback
-                      src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
-                      alt="Drinkmate OmniFizz Soda Maker"
-                      width={242}
-                      height={417}
-                      quality={85}
-                      priority={true}
-                      className="absolute object-contain hidden lg:block drop-shadow-2xl"
-                      style={{ top: "203px", left: "121px" }}
-                    />
-                    <ImageWithFallback
-                      src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
-                      alt="Italian Strawberry Lemon Flavor"
-                      width={99}
-                      height={206}
-                      quality={85}
-                      priority={true}
-                      className="absolute object-contain hidden lg:block drop-shadow-xl"
-                      style={{ top: "414px", left: "313px" }}
-                    />
-
-                    {/* Mobile/Tablet Product Images + content - full height like sibling banners */}
-                    <div className="block lg:hidden w-full min-h-[600px] sm:min-h-[700px] md:min-h-[500px] flex flex-col" dir="ltr">
-                      <div className="flex flex-row items-end justify-center flex-shrink-0 pt-4 px-4">
-                        <ImageWithFallback
-                          src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
-                          alt="Drinkmate OmniFizz Soda Maker"
-                          width={100}
-                          height={160}
-                          quality={85}
-                          priority={true}
-                          className="object-contain drop-shadow-2xl max-h-[140px] w-auto"
-                        />
-                        <ImageWithFallback
-                          src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
-                          alt="Italian Strawberry Lemon Flavor"
-                          width={56}
-                          height={112}
-                          quality={85}
-                          priority={true}
-                          className="object-contain drop-shadow-xl max-h-[90px] w-auto"
-                        />
-                      </div>
-
-                      {/* Mobile Content - fits inside banner height */}
-                      <div className="text-center px-4 py-4 bg-white/98 backdrop-blur-md rounded-2xl mx-4 mb-4 mt-2 shadow-2xl shadow-gray-200/40 hover:shadow-3xl hover:bg-white transition-all duration-500 border border-white/50 flex-1 min-h-0 flex flex-col justify-center">
-                        <div className="space-y-2" dir={isRTL ? "rtl" : "ltr"}>
-                          <h1
-                            className={`text-lg font-bold text-gray-900 leading-tight line-clamp-2 ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up tracking-tight`}
-                          >
-                            {t("home.hero.title")}
-                          </h1>
-                          <h2
-                            className={`text-sm text-gray-600 font-semibold ${isRTL ? "font-cairo text-right" : "font-montserrat"} animate-slide-in-up delay-200 tracking-wide line-clamp-1`}
-                          >
-                            {t("home.hero.subtitle")}
-                          </h2>
-                          {/* <p
-                            className={`text-gray-600 text-xs leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} px-1 animate-slide-in-up delay-300 font-medium`}
-                          >
-                            {t("home.hero.description")}
-                          </p> */}
-                          <div
-                            className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} gap-2 justify-center pt-1 animate-slide-in-up delay-500 flex-shrink-0`}
-                          >
-                            <button
-                              onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
-                              className="px-4 py-2.5 text-gray-700 border-2 border-gray-300 bg-white/90 backdrop-blur-sm hover:bg-white hover:border-gray-400 font-semibold rounded-lg min-w-[100px] transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md text-xs"
-                            >
-                              {t("home.hero.exploreMore")}
-                            </button>
-                            <button
-                              onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
-                              className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-4 py-2.5 font-semibold shadow-xl border-2 border-[#12d6fa]/20 rounded-lg min-w-[100px] transition-all duration-300 hover:scale-105 hover:shadow-2xl backdrop-blur-sm text-xs"
-                            >
-                              {t("home.hero.buyNow")}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Content - desktop from lg: LTR = left of images, RTL = right of images, no overlap */}
-                    <div
-                      className={`absolute top-1/2 -translate-y-1/2 w-auto lg:max-w-[500px] lg:block hidden ${
-                        isRTL
-                          ? "right-4 left-4 lg:left-[420px] lg:right-6 lg:pl-4"
-                          : "left-4 right-4 lg:left-[550px] lg:right-6 lg:pr-4"
-                      }`}
-                    >
-                      <div
-                        className={`space-y-6 lg:space-y-8 text-center ${isRTL ? "lg:text-right rtl" : "lg:text-left ltr"} animate-fade-in-up`}
-                        dir={isRTL ? "rtl" : "ltr"}
-                      >
-                        <h1
-                          className={`text-3xl lg:text-5xl xl:text-6xl font-semibold text-gray-900 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left tracking-tight`}
-                        >
-                          {t("home.hero.title")}
-                        </h1>
-                        <h2
-                          className={`text-lg lg:text-2xl text-gray-600 font-medium ${isRTL ? "font-cairo" : "font-montserrat"} animate-slide-in-left delay-200 tracking-wide`}
-                        >
-                          {t("home.hero.subtitle")}
-                        </h2>
-                        {/* <p
-                          className={`text-gray-600 text-base lg:text-lg leading-relaxed ${isRTL ? "font-noto-arabic" : "font-noto-sans"} max-w-md ${isRTL ? "lg:ml-auto" : "lg:mr-auto"} animate-slide-in-left delay-300 font-medium`}
-                        >
-                          {t("home.hero.description")}
-                        </p> */}
-                        <div
-                          className={`flex flex-col sm:flex-row ${isRTL ? "sm:space-x-reverse sm:space-x-4 sm:flex-row-reverse" : "sm:space-x-4"} justify-center lg:${isRTL ? "justify-start" : "justify-start"} gap-3 sm:gap-4 animate-slide-in-left delay-500`}
-                        >
-                          <Button
-                            onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop")}
-                            variant="outline"
-                            className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
-                          >
-                            {t("home.hero.exploreMore")}
-                          </Button>
-                          <Button
-                            onClick={() => router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")}
-                            className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-6 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20 text-sm sm:text-base"
-                          >
-                            {t("home.hero.buyNow")}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
-              return null
-            }}
-          />
+        <div className="w-full max-w-full rounded-b-3xl overflow-hidden shadow-2xl shadow-gray-200/50 border border-white/20 bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] flex items-center">
+          <div className={`relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] p-6 lg:p-10 xl:p-12 ${isRTL ? "lg:grid-flow-dense" : ""}`}>
+            {/* Image column (6) */}
+            <div className={`relative flex items-center justify-center lg:min-h-[400px] ${isRTL ? "lg:order-2" : "lg:order-1"}`}>
+              <div className="relative w-full max-w-md flex items-end justify-center gap-4">
+                <ImageWithFallback
+                  src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/drinkmate-machine-hero_ckcqe4.png"
+                  alt="Drinkmate OmniFizz Soda Maker"
+                  width={242}
+                  height={417}
+                  quality={85}
+                  priority={true}
+                  className="object-contain w-auto h-[280px] sm:h-[320px] lg:h-[380px] drop-shadow-2xl"
+                />
+                <ImageWithFallback
+                  src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1756893175/italian-strawberry-lemon_zp1jui.png"
+                  alt="Italian Strawberry Lemon Flavor"
+                  width={99}
+                  height={206}
+                  quality={85}
+                  priority={true}
+                  className="object-contain w-auto h-[140px] sm:h-[180px] lg:h-[200px] drop-shadow-xl hidden sm:block"
+                />
+              </div>
+            </div>
+            {/* Content column (6) */}
+            <div className={`flex flex-col justify-center text-center lg:text-left ${isRTL ? "lg:order-1 lg:text-right" : "lg:order-2"}`} dir={isRTL ? "rtl" : "ltr"}>
+              <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-gray-900 leading-tight ${isRTL ? "font-cairo" : "font-montserrat"} tracking-tight`}>
+                {t("home.hero.title")}
+              </h1>
+              <h2 className={`mt-3 lg:mt-4 text-lg lg:text-2xl text-gray-600 font-medium ${isRTL ? "font-cairo" : "font-montserrat"} tracking-wide`}>
+                {t("home.hero.subtitle")}
+              </h2>
+              <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 lg:mt-8 justify-center ${isRTL ? "lg:justify-end" : "lg:justify-start"}`}>
+                <Button
+                  onClick={() => router.push((language === "AR" ? "/ar" : "") + "/shop")}
+                  variant="outline"
+                  className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base text-gray-700 border-2 border-gray-300 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[140px] hover:bg-white hover:border-gray-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-semibold rounded-xl"
+                >
+                  {t("home.hero.exploreMore")}
+                </Button>
+                <Button
+                  onClick={() => router.push((language === "AR" ? "/ar" : "") + "/shop/sodamakers")}
+                  className="bg-gradient-to-r from-[#12d6fa] to-[#0bc4e8] hover:from-[#0bc4e8] hover:to-[#09b3d1] text-white px-6 sm:px-8 py-3 sm:py-4 min-w-[120px] sm:min-w-[140px] shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold rounded-xl backdrop-blur-sm border border-white/20 text-sm sm:text-base"
+                >
+                  {t("home.hero.buyNow")}
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Refill Section (mobile view below lg; content fits inside banner height) */}
+      {/* 2nd section - shop variant banners slider (same as shop index), language-aware, clickable */}
       <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
-        <div className="w-full max-w-full bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] rounded-3xl relative h-[320px] lg:h-[250px] flex items-stretch justify-between px-6 lg:px-16 xl:px-20 2xl:px-24 py-5 lg:py-0 shadow-2xl shadow-gray-200/40 backdrop-blur-sm border border-white/30 overflow-hidden">
-          {/* Left Navigation Button */}
-          <Button
-            className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110 self-center"
-            onClick={prevSlide}
-          >
-            <ChevronLeft className="w-4 h-4 lg:w-5 lg:h-5" />
-          </Button>
-
-          {/* Main Content Area - fits inside banner height */}
-          <div className="flex-1 mx-2 lg:mx-0 lg:absolute lg:top-[44px] lg:left-[125px] min-w-0 flex flex-col justify-center lg:justify-between py-2">
-            <div className="w-full lg:w-[520px] flex flex-col justify-center lg:justify-between gap-2 lg:gap-0 lg:h-[138px] text-center lg:text-left">
-              <div className="space-y-1 lg:space-y-4">
-                <h2
-                  className={`text-base lg:text-4xl font-semibold text-gray-800 leading-tight line-clamp-2 ${isRTL ? "font-cairo" : "font-montserrat"} tracking-wide`}
-                >
-                  {slide.headline}
-                </h2>
-                <p
-                  className={`text-gray-700 text-xs lg:text-[15px] lg:whitespace-nowrap leading-snug line-clamp-2 ${isRTL ? "font-noto-arabic" : "font-noto-sans"} font-medium`}
-                >
-                  {slide.description}
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 justify-center lg:justify-start flex-shrink-0">
-                {slide.buttonText && (
-                  <Button
-                    onClick={() => {
-                      if (slide.buttonText === "Refill Now") {
-                        router.push((language === 'AR' ? '/ar' : '') + "/cylinders")
-                      } else if (slide.buttonText === "Shop Now") {
-                        // Check if this is the refill banner (first slide)
-                        if (slide.headline && (slide.headline.includes("REFILL MORE. SAVE MORE.") || slide.headline.includes("SHOP MORE. SAVE MORE.") || slide.headline.includes("أعد الملء أكثر. ووفّر أكثر.") || slide.headline.includes("تسوق أكثر. ووفّر أكثر."))) {
-                          // Refill banner - navigate to refill cylinder page
-                          router.push((language === 'AR' ? '/ar' : '') + "/refill-cylinder")
-                        } else if (slide.headline && slide.headline.includes("ENERGY DRINK & COLA FLAVOR")) {
-                          // Second slide - navigate directly to flavor page
-                          router.push((language === 'AR' ? '/ar' : '') + "/shop/flavor")
-                        } else {
-                          router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
-                        }
-                      } else {
-                        router.push((language === 'AR' ? '/ar' : '') + "/shop/sodamakers")
-                      }
-                    }}
-                    className={`font-medium px-4 sm:px-6 py-2.5 sm:py-3 rounded-full min-w-[120px] sm:min-w-[140px] text-sm sm:text-base ${
-                      slide.buttonText === "Shop Now"
-                        ? "bg-[#a8f387] hover:bg-[#9ae374] text-black"
-                        : "bg-[#a8f387] hover:bg-[#9ae374] text-black"
-                    }`}
-                  >
-                    {slide.buttonText}
-                  </Button>
-                )}
-                {slide.offerText && <span className="text-sm text-gray-500">{slide.offerText}</span>}
-              </div>
-            </div>
-          </div>
-
-          {/* Product Image Container - desktop only from lg */}
-          {slide.imageSrc ? (
-            <div className="hidden lg:flex absolute right-[100px] top-0 bottom-0 w-[200px] justify-center items-center">
-              <Image
-                src={slide.imageSrc || "/placeholder.svg"}
-                alt={slide.imageAlt}
-                width={200}
-                height={160}
-                className="object-contain w-auto h-[80%] max-h-[200px]"
-              />
-              {/* Yellow 60 Liters Circle */}
-              {slide.showYellowCircle && slide.yellowCircleData && (
-                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 bg-yellow-400 rounded-full w-20 h-20 lg:w-28 lg:h-28 flex flex-col items-center justify-center text-white font-bold text-center p-1 lg:p-2 shadow-md">
-                  <span className="text-[8px] lg:text-[10px]">{slide.yellowCircleData.carbonatesUpto}</span>
-                  <span className="text-2xl lg:text-4xl">{slide.yellowCircleData.liters}</span>
-                  <span className="text-[8px] lg:text-[10px]">{slide.yellowCircleData.litersOfDrink}</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              {/* Multi-image container for the third slide - Desktop from lg */}
-              <div className="hidden lg:block inset-0 overflow-hidden">
-                <div className="relative w-full h-full">
-                  {slide.multiImages &&
-                    slide.multiImages.map((img, index) => (
-                      <Image
-                        key={index}
-                        src={img.src || "/placeholder.svg"}
-                        alt={img.alt}
-                        width={img.width}
-                        height={img.height}
-                        className="absolute object-contain"
-                        style={{ 
-                          top: `${img.top}px`, 
-                          left: `${img.left}px`, 
-                          zIndex: img.zIndex,
-                          // Ensure images stay within container bounds
-                          maxWidth: '100%',
-                          maxHeight: '100%'
-                        }}
-                      />
-                    ))}
-                </div>
-              </div>
-              {/* Mobile/Tablet multi-image container - show up to lg (includes iPad) */}
-              <div className="block lg:hidden absolute inset-0 overflow-hidden">
-                <div className="relative w-full h-full flex items-end justify-end pr-4 pb-4">
-                  {slide.multiImages &&
-                    slide.multiImages.map((img, index) => (
-                      <Image
-                        key={index}
-                        src={img.src || "/placeholder.svg"}
-                        alt={img.alt}
-                        width={img.responsiveWidth || img.width}
-                        height={img.responsiveHeight || img.height}
-                        className="absolute object-contain"
-                        style={{ 
-                          top: img.responsiveTop || '50%', 
-                          left: img.responsiveLeft || '50%', 
-                          zIndex: img.zIndex,
-                          // Ensure images stay within container bounds
-                          maxWidth: '80%',
-                          maxHeight: '80%',
-                          // Use transform to center and scale properly
-                          transform: 'translate(-50%, -50%)',
-                          transformOrigin: 'center center'
-                        }}
-                      />
-                    ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Right Navigation Button */}
-          <Button
-            className="rounded-full w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 flex items-center justify-center border-2 border-gray-300/50 bg-white/90 backdrop-blur-md text-gray-700 shadow-xl z-10 hover:bg-white hover:border-gray-400 hover:shadow-2xl transition-all duration-300 transform hover:scale-110 self-center"
-            onClick={nextSlide}
-          >
-            <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5" />
-          </Button>
-
-          {/* Slideshow Dots */}
-          <div className="absolute bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {slides.map((_, index) => (
-              <div
-                key={index}
-                className={`w-3 h-3 rounded-full ${index === currentSlide ? "bg-yellow-400" : "bg-gray-300"}`}
-              ></div>
-            ))}
-          </div>
+        <div className="w-full max-w-7xl mx-auto">
+          <QualitySlideshow
+            items={[
+              {
+                id: 1,
+                src: getBannerSrc("shop", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.shopAllProducts"),
+                href: (language === "AR" ? "/ar" : "") + "/shop",
+              },
+              {
+                id: 2,
+                src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.accessories.title"),
+                href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
+              },
+              {
+                id: 3,
+                src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.flavors.title"),
+                href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
+              },
+            ]}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            className="w-full rounded-2xl overflow-hidden shadow-xl"
+            containerHeight="h-[280px] sm:h-[320px] md:h-[360px] lg:h-[400px]"
+          />
         </div>
       </section>
 
@@ -1717,8 +1227,33 @@ export default function Home() {
           <div className="w-20 md:w-32 h-1.5 bg-[#12d6fa] mx-auto rounded-full shadow-lg"></div>
         </div>
 
-        {/* Flavor Carousel */}
-        <FlavorCarousel isRTL={isRTL} />
+        {/* Flavor / shop banners slider - all shop variants, language-aware, clickable; contained in section padding */}
+        <QualitySlideshow
+          items={[
+            {
+              id: 1,
+              src: getBannerSrc("shop", { lang: language, variant: "shop" }),
+              alt: t("shop.categoryPages.shopAllProducts"),
+              href: (language === "AR" ? "/ar" : "") + "/shop",
+            },
+            {
+              id: 2,
+              src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
+              alt: t("shop.categoryPages.accessories.title"),
+              href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
+            },
+            {
+              id: 3,
+              src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
+              alt: t("shop.categoryPages.flavors.title"),
+              href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
+            },
+          ]}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          className="w-full rounded-xl overflow-hidden"
+          containerHeight="h-[340px] sm:h-[400px] md:h-[450px] lg:h-[520px]"
+        />
       </section>
 
       {/* Horizontal Border */}

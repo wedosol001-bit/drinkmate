@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -16,6 +15,7 @@ import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-forma
 import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // Define product types
 interface Product {
@@ -52,7 +52,7 @@ interface Bundle {
 }
 
 export default function AccessoriesPage() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const { triggerAddAnimation } = useCartAnimations()
@@ -481,27 +481,13 @@ export default function AccessoriesPage() {
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.accessories.title")}</h1>
 
-        {/* Hero section - Accessories Banner */}
-        <div className="w-full h-[300px] sm:h-[400px] md:h-[350px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-lg">
-          {/* Desktop Banner */}
-          <Image
-            src="/images/banner/WhatsApp Image 2025-08-27 at 7.09.33 PM (1).webp"
-            alt="Accessories Banner"
-            fill
-            className="object-cover object-center hidden md:block"
-            priority
-            sizes="(max-width: 768px) 100vw, 100vw"
-          />
-          {/* Mobile Banner */}
-          <Image
-            src="/images/banner/WhatsApp Image 2025-08-27 at 7.09.32 PM (1).webp"
-            alt="Accessories Banner Mobile"
-            fill
-            className="object-cover object-center md:hidden"
-            priority
-            sizes="100vw"
-          />
-        </div>
+        {/* Accessories banner - simple image, language-aware from bannerNew */}
+        <div
+          className="w-full h-[220px] sm:h-[280px] md:h-[320px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-xl bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getBannerSrc("accessories", { lang: language })})` }}
+          role="img"
+          aria-label={t("shop.categoryPages.accessories.title")}
+        />
 
         {/* Error message */}
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 sm:px-6 py-3 sm:py-4 rounded-xl mb-6 sm:mb-8 shadow-sm">{error}</div>}
