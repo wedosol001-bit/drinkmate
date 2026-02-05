@@ -315,8 +315,8 @@ export default function CO2() {
   /** Main hero image: switches by variant — Drinkmate (svg), Non-Drinkmate quick-connect or standard-threaded (jpeg) */
   const REFILL_MAIN_IMAGES = {
     drinkmate: "/images/refillPage/drinkmateRefill.svg",
-    quickConnect: "/images/refillPage/quickConnectRefill.jpeg",
-    standardThreaded: "/images/refillPage/standardThreadedRefill.jpeg",
+    quickConnect: "/images/refillPage/quick-co2.png",
+    standardThreaded: "/images/refillPage/screw-co2.png",
   } as const
   const mainImageSrc =
     cylinderType === "drinkmate"
