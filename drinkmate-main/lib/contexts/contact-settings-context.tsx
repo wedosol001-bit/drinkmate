@@ -57,7 +57,7 @@ const defaultSettings: ContactSettings = {
   maxConcurrentChats: parseInt(process.env.NEXT_PUBLIC_MAX_CONCURRENT_CHATS || '10') || 10,
   whatsapp: {
     enabled: true,
-    number: '+966544671116',
+    number: '+966544671166',
     messageTemplate: 'Hello! I need help with my order.',
     utmParams: '?utm_source=contact&utm_medium=whatsapp'
   },

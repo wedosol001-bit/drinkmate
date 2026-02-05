@@ -624,13 +624,14 @@ export default function OrderDetailsPage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-500">
-                        Short Address (<a href="https://splonline.com.sa/en/national-address-1/" target="_blank" rel="noopener noreferrer" className="text-[#12d6fa] hover:text-[#0bc4e8] underline">National Address</a>) (Optional)
+                        Short Address (<a href="https://splonline.com.sa/en/national-address-1/" target="_blank" rel="noopener noreferrer" className="text-[#12d6fa] hover:text-[#0bc4e8] underline">National Address</a>)
                       </label>
                       {editing ? (
                         <Input
                           value={editData.shippingAddress?.nationalAddress || order.shippingAddress.nationalAddress || ''}
                           onChange={(e) => handleAddressChange('nationalAddress', e.target.value.toUpperCase())}
                           className="mt-1 font-mono tracking-wider"
+                          required
                           placeholder="JESA3591"
                           maxLength={8}
                           pattern="[A-Z]{4}[0-9]{4}"

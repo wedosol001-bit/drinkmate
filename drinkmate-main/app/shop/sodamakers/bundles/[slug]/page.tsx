@@ -847,7 +847,7 @@ export default function BundleDetailPage() {
 
           <div className="flex gap-8">
             {/* Enhanced Sidebar Controls */}
-            <div className="w-16 flex flex-col space-y-4">
+            <div className="flex-col hidden sm:flex space-y-4 w-16">
               {/* 3D View Button */}
               <Tooltip>
                 <TooltipTrigger asChild>

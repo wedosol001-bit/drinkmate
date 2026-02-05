@@ -491,9 +491,9 @@ export default function CO2() {
               </div>
             ) : (
               // Text content slide
-              <div className="h-full flex flex-col items-center justify-center text-center space-y-6 px-8">
+              <div className="h-full flex flex-col items-center justify-center text-center space-y-4 sm:space-y-6 px-4 sm:px-8">
                 <div className="space-y-4">
-                  <h2 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
                     {refillSlides[currentRefillSlide].headline}
                   </h2>
                   <p className="text-gray-700 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
@@ -517,7 +517,7 @@ export default function CO2() {
                   {refillSlides[currentRefillSlide].buttonText && (
                     <Button
                       onClick={() => window.location.href = refillSlides[currentRefillSlide].buttonText === "Shop Now" ? "/co2" : "/shop"}
-                      className="bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold px-8 py-4 rounded-full text-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
+                      className="bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg py-4 rounded-full text-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
                     >
                       {refillSlides[currentRefillSlide].buttonText}
                       <ArrowRight className="w-5 h-5 ml-2" />
@@ -931,7 +931,7 @@ export default function CO2() {
           <div className="py-16">
             <div className="max-w-5xl mx-auto">
               {/* Enhanced Tab Headers */}
-              <div className="flex w-full mb-12 bg-gray-100 rounded-2xl p-2">
+              <div className="flex flex-col sm:flex-row w-full mb-12 bg-gray-100 rounded-2xl p-2">
                 <button
                   onClick={() => setActiveTab("faqs")}
                   className={`flex-1 py-4 px-8 font-bold text-center transition-all duration-300 rounded-xl ${activeTab === "faqs"

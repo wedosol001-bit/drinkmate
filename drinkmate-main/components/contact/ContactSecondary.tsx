@@ -80,7 +80,7 @@ export default function ContactSecondary({ isRTL }: ContactSecondaryProps) {
       nameAr: 'متجر الرياض',
       address: 'King Fahd Road, Riyadh 12345',
       addressAr: 'طريق الملك فهد، الرياض 12345',
-      phone: '+966544671116',
+      phone: '+966544671166',
       hours: '9:00 AM - 10:00 PM',
       hoursAr: '9:00 صباحاً - 10:00 مساءً'
     },
@@ -89,7 +89,7 @@ export default function ContactSecondary({ isRTL }: ContactSecondaryProps) {
       nameAr: 'متجر جدة',
       address: 'Prince Mohammed Bin Abdulaziz St, Jeddah 21432',
       addressAr: 'شارع الأمير محمد بن عبدالعزيز، جدة 21432',
-      phone: '+966544671116',
+      phone: '+966544671166',
       hours: '9:00 AM - 10:00 PM',
       hoursAr: '9:00 صباحاً - 10:00 مساءً'
     }

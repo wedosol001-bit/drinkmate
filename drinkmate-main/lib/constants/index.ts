@@ -20,7 +20,7 @@ export const APP_CONFIG = {
   VERSION: '1.0.0',
   DESCRIPTION: 'Premium Soda Makers, Flavors & Accessories',
   SUPPORT_EMAIL: 'support@drinkmate.com',
-  PHONE: '+966544671116',
+  PHONE: '+966544671166',
   ADDRESS: 'Riyadh, Saudi Arabia',
 } as const
 

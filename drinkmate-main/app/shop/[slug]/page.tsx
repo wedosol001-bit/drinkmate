@@ -86,10 +86,11 @@ import SaudiRiyal from "@/components/ui/SaudiRiyal"
 const COLOR_NAME_TO_HEX: Record<string, string> = {
   red: "#DC2626", blue: "#2563EB", black: "#171717", white: "#FAFAFA", cyan: "#0891B2",
   purple: "#7C3AED", pink: "#DB2777", green: "#16A34A", yellow: "#CA8A04", orange: "#EA580C",
-  gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A",
-  mint: "#34D399", coral: "#F97316", lavender: "#A78BFA", charcoal: "#404040",
-  "matte black": "#171717", "royal red": "#B91C1C", "arctic blue": "#0284C7", "classic white": "#FAFAFA",
-  "midnight black": "#0f172a", "jet black": "#0a0a0a", "snow white": "#FFFAFA", "ice blue": "#BAE6FD",
+  gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A￼
+Sparkling Made Simple
+With Drinkmate OmniFizz
+￼Explore more
+lue": "#BAE6FD",
 }
 
 function getVariantSwatchHex(variant: any): string {
@@ -943,7 +944,7 @@ export default function ShopProductDetail() {
 
           <div className="flex gap-8">
             {/* Enhanced Sidebar Controls */}
-            <div className="w-16 flex flex-col space-y-4">
+            <div className="flex-col hidden sm:flex space-y-4 w-16">
               {/* 3D View Button */}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -1198,7 +1199,9 @@ export default function ShopProductDetail() {
                   {/* Product Header */}
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-2">
-                      {(() => {
+                    
+                    {/*
+                    {(() => {
                         const catDisplay = typeof product.category === 'object' ? product.category?.name : (product.category || "Product")
                         const isId = typeof catDisplay === 'string' && /^[a-fA-F0-9]{24}$/.test(catDisplay)
                         if (!catDisplay || isId) return null
@@ -1208,6 +1211,8 @@ export default function ShopProductDetail() {
                           </Badge>
                         )
                       })()}
+                    
+                    */}  
                       {product.brand && typeof product.brand === 'string' && !/^[a-fA-F0-9]{24}$/.test(product.brand) && (
                         <Badge variant="outline" className="border-gray-300 text-xs sm:text-sm">
                           {product.brand}
@@ -1276,7 +1281,16 @@ export default function ShopProductDetail() {
                               {selectedVariant && currentOriginalPrice && currentOriginalPrice > currentPrice && (
                                 <span className="text-lg text-muted-foreground line-through">
                                   <SaudiRiyal amount={currentOriginalPrice} size="md" />
-                                </span>
+                                </span>{(() => {
+                        const catDisplay = typeof product.category === 'object' ? product.category?.name : (product.category || "Product")
+                        const isId = typeof catDisplay === 'string' && /^[a-fA-F0-9]{24}$/.test(catDisplay)
+                        if (!catDisplay || isId) return null
+                        return (
+                          <Badge variant="outline" className="text-[#12d6fa] border-[#12d6fa] text-xs sm:text-sm">
+                            {catDisplay}
+                          </Badge>
+                        )
+                      })()}
                               )}
                             </div>
                           );

@@ -32,7 +32,7 @@ export function useLatestBlogs(limit: number = 3): UseLatestBlogsReturn {
       const response = await blogAPI.getPosts({
         limit,
         sort: 'newest',
-        language: 'en' // You can make this dynamic based on current language
+        language: 'ar' // You can make this dynamic based on current language
       })
       
       if (response.success) {
