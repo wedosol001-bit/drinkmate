@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface QualitySlideshowItem {
@@ -10,6 +11,8 @@ interface QualitySlideshowItem {
   alt: string
   mobileSrc?: string
   mobileAlt?: string
+  /** When set, the slide is wrapped in a link to this href (e.g. shop category). */
+  href?: string
 }
 
 interface QualitySlideshowProps {
@@ -87,42 +90,54 @@ export default function QualitySlideshow({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            className={`absolute inset-0 duration-500 ease-in-out transition-opacity flex items-center justify-center ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {/* Desktop Image */}
-            <div className="relative w-full h-full flex items-center justify-center">
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                className="object-contain"
-                priority={index === 0}
-                quality={95}
-                sizes="100vw"
-              />
-            </div>
-            
-            {/* Mobile Image (if provided) */}
-            {item.mobileSrc && (
-              <div className="relative w-full h-full flex items-center justify-center md:hidden">
+        {items.map((item, index) => {
+          const slideContent = (
+            <>
+              {/* Main image: full width, fills slide like div bg; buttons sit over it */}
+              <div className="absolute inset-0 overflow-hidden">
                 <Image
-                  src={item.mobileSrc}
-                  alt={item.mobileAlt || item.alt}
+                  src={item.src}
+                  alt={item.alt}
                   fill
-                  className="object-contain"
+                  className="object-cover object-center"
                   priority={index === 0}
                   quality={95}
                   sizes="100vw"
                 />
               </div>
-            )}
-          </div>
-        ))}
+              {/* Mobile Image (if provided) */}
+              {item.mobileSrc && (
+                <div className="absolute inset-0 overflow-hidden md:hidden">
+                  <Image
+                    src={item.mobileSrc}
+                    alt={item.mobileAlt || item.alt}
+                    fill
+                    className="object-cover object-center"
+                    priority={index === 0}
+                    quality={95}
+                    sizes="100vw"
+                  />
+                </div>
+              )}
+            </>
+          )
+          return (
+            <div
+              key={item.id}
+              className={`absolute inset-0 overflow-hidden duration-500 ease-in-out transition-opacity ${
+                index === currentSlide ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+              }`}
+            >
+              {item.href ? (
+                <Link href={item.href} className="block relative w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-cyan-500">
+                  {slideContent}
+                </Link>
+              ) : (
+                slideContent
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* Navigation buttons */}

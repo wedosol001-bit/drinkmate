@@ -16,6 +16,8 @@ import { generateStructuredData } from "@/lib/seo"
 import Balancer from "react-wrap-balancer"
 import { useAutoPlayOnView } from "@/hooks/use-auto-play-on-view"
 import { useLatestBlogs } from "@/hooks/use-latest-blogs"
+import QualitySlideshow from "@/components/ui/quality-slideshow"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // StepCard component for mobile-optimized cards
 function StepCard({ 
@@ -113,155 +115,6 @@ function BlogCard({
       >
         {blog.title}
       </h3>
-    </div>
-  )
-}
-
-// FlavorCarousel component for displaying flavor images in a carousel
-function FlavorCarousel({ isRTL }: { isRTL: boolean }) {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
-
-  // Flavor carousel items
-  const flavorSlides = [
-    {
-      id: 1,
-      src: "/images/flavor-section-background.png",
-      alt: "Italian Flavors and Cherry Cola Bottle"
-    },
-    {
-      id: 2,
-      src: "/images/banner/flavors3-banner.jpg",
-      alt: "Premium Flavors Collection"
-    },
-    {
-      id: 3,
-      src: "/images/banner/flavorsbanner2.jpg",
-      alt: "Flavor Variety"
-    },
-  ]
-
-  // Auto-play functionality
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isRTL) {
-        setCurrentSlide((prev) => (prev === 0 ? flavorSlides.length - 1 : prev - 1))
-      } else {
-        setCurrentSlide((prev) => (prev === flavorSlides.length - 1 ? 0 : prev + 1))
-      }
-    }, 5000) // Change slide every 5 seconds
-
-    return () => clearInterval(interval)
-  }, [isRTL, flavorSlides.length])
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === flavorSlides.length - 1 ? 0 : prev + 1))
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? flavorSlides.length - 1 : prev - 1))
-  }
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index)
-  }
-
-  // Touch handlers for mobile swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
-
-    if (isRTL) {
-      // Reverse swipe direction for RTL
-      if (isLeftSwipe) {
-        prevSlide()
-      } else if (isRightSwipe) {
-        nextSlide()
-      }
-    } else {
-      if (isLeftSwipe) {
-        nextSlide()
-      } else if (isRightSwipe) {
-        prevSlide()
-      }
-    }
-  }
-
-  return (
-    <div className="relative w-full">
-      {/* Carousel wrapper */}
-      <div
-        className="mx-auto bg-white rounded-xl md:rounded-2xl relative overflow-hidden h-[600px] md:h-[500px] lg:h-[550px] touch-pan-y"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {flavorSlides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 duration-500 ease-in-out transition-opacity ${
-              index === currentSlide ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <Image
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 90vw, (max-width: 1024px) 80vw, 1200px"
-              priority={index === 0}
-              quality={90}
-              className="object-cover rounded-xl md:rounded-2xl"
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation arrows */}
-      <button
-        type="button"
-        className={`absolute top-1/2 ${isRTL ? 'right-4' : 'left-4'} z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 transform -translate-y-1/2 hover:scale-110`}
-        aria-label="Previous slide"
-        onClick={prevSlide}
-      >
-        <ChevronLeft className={`w-5 h-5 text-gray-800 ${isRTL ? 'rotate-180' : ''}`} />
-      </button>
-      <button
-        type="button"
-        className={`absolute top-1/2 ${isRTL ? 'left-4' : 'right-4'} z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200 transform -translate-y-1/2 hover:scale-110`}
-        aria-label="Next slide"
-        onClick={nextSlide}
-      >
-        <ChevronRight className={`w-5 h-5 text-gray-800 ${isRTL ? 'rotate-180' : ''}`} />
-      </button>
-
-      {/* Slide indicators */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
-        {flavorSlides.map((_, index) => (
-          <button
-            key={index}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? "bg-white scale-125"
-                : "bg-white/60 hover:bg-white/80"
-            }`}
-            onClick={() => goToSlide(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
     </div>
   )
 }
@@ -1594,8 +1447,33 @@ export default function Home() {
           <div className="w-20 md:w-32 h-1.5 bg-[#12d6fa] mx-auto rounded-full shadow-lg"></div>
         </div>
 
-        {/* Flavor Carousel */}
-        <FlavorCarousel isRTL={isRTL} />
+        {/* Flavor / shop banners slider - all shop variants, language-aware, clickable; contained in section padding */}
+        <QualitySlideshow
+          items={[
+            {
+              id: 1,
+              src: getBannerSrc("shop", { lang: language, variant: "shop" }),
+              alt: t("shop.categoryPages.shopAllProducts"),
+              href: (language === "AR" ? "/ar" : "") + "/shop",
+            },
+            {
+              id: 2,
+              src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
+              alt: t("shop.categoryPages.accessories.title"),
+              href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
+            },
+            {
+              id: 3,
+              src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
+              alt: t("shop.categoryPages.flavors.title"),
+              href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
+            },
+          ]}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          className="w-full rounded-xl overflow-hidden"
+          containerHeight="h-[340px] sm:h-[400px] md:h-[450px] lg:h-[520px]"
+        />
       </section>
 
       {/* Horizontal Border */}

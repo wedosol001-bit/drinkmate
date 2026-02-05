@@ -312,12 +312,22 @@ export default function CO2() {
 
   const selectedCylinderData = getCylinderData(selectedCylinder)
 
-  /** Main hero image: changes when user selects Drinkmate vs Non-Drinkmate (non-Drinkmate uses same image until asset available) */
+  /** Main hero image: switches by variant — Drinkmate (svg), Non-Drinkmate quick-connect or standard-threaded (jpeg) */
   const REFILL_MAIN_IMAGES = {
     drinkmate: "/images/refillPage/drinkmateRefill.svg",
-    nonDrinkmate: "/images/refillPage/drinkmateRefill.svg",
+    quickConnect: "/images/refillPage/quickConnectRefill.jpeg",
+    standardThreaded: "/images/refillPage/standardThreadedRefill.jpeg",
   } as const
-  const mainImageSrc = cylinderType === "drinkmate" ? REFILL_MAIN_IMAGES.drinkmate : (cylinderType === "non-drinkmate" ? REFILL_MAIN_IMAGES.nonDrinkmate : REFILL_MAIN_IMAGES.drinkmate)
+  const mainImageSrc =
+    cylinderType === "drinkmate"
+      ? REFILL_MAIN_IMAGES.drinkmate
+      : threadType === "quick-connect"
+        ? REFILL_MAIN_IMAGES.quickConnect
+        : threadType === "standard-threaded"
+          ? REFILL_MAIN_IMAGES.standardThreaded
+          : cylinderType === "non-drinkmate"
+            ? REFILL_MAIN_IMAGES.standardThreaded
+            : REFILL_MAIN_IMAGES.drinkmate
 
   /** Free delivery when subtotal >= 150 SAR (dynamic: 3 for Drinkmate @ 65, 2 for non-Drinkmate @ 75/99) */
   const FREE_DELIVERY_THRESHOLD = 150

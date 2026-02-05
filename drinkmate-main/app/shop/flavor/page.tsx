@@ -21,6 +21,7 @@ import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-forma
 import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // Define product types
 interface Product {
@@ -61,7 +62,7 @@ interface Bundle {
 }
 
 export default function FlavorPage() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const { triggerAddAnimation } = useCartAnimations()
@@ -449,21 +450,13 @@ export default function FlavorPage() {
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
 
-        {/* Premium Italian Syrups banner - bg image + heading */}
+        {/* Flavors / Italian Syrups banner - simple image only, no overlay, language-aware */}
         <div
-          className="w-full h-[300px] sm:h-[400px] md:h-[350px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-lg bg-cover bg-center bg-no-repeat flex items-center justify-center"
-          style={{ backgroundImage: "url(/images/bannerNew/preminumItalianSyrup.png)" }}
-        >
-          <div className="absolute inset-0 bg-black/30" aria-hidden />
-          <div className="relative z-10 text-center px-4">
-            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow-lg ${isRTL ? "font-cairo" : "font-montserrat"}`}>
-              {t("banners.premiumItalianSyrups.title")}
-            </h2>
-            <p className={`mt-2 text-sm sm:text-base md:text-lg text-[#12d6fa] font-medium drop-shadow-sm ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
-              {t("banners.premiumItalianSyrups.subtitle")}
-            </p>
-          </div>
-        </div>
+          className="w-full h-[220px] sm:h-[280px] md:h-[320px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-xl bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getBannerSrc("italianSyrup", { lang: language })})` }}
+          role="img"
+          aria-label={t("shop.categoryPages.flavors.title")}
+        />
 
         {/* Error message */}
         {error && (

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'reac
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import QualitySlideshow from '@/components/ui/quality-slideshow'
+import { getBannerSrc } from '@/lib/utils/banner-paths'
 import { useCart } from '@/lib/contexts/cart-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -49,7 +50,8 @@ import { toast } from 'sonner'
 export const dynamic = "force-dynamic"
 
 function ShopPageContent() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
+  const localePrefix = language === 'AR' ? '/ar' : ''
   const { addItem, state } = useCart()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -1067,26 +1069,36 @@ function ShopPageContent() {
 
   return (
     <PageLayout>
-      {/* Shop Slideshow - matches original hero height */}
-      <section className="relative overflow-hidden">
-        <QualitySlideshow
-          items={[
-            {
-              id: 1,
-              src: "/images/banner/Shop-Banner-4-re.png",
-              alt: "Shop banner",
-            },
-            {
-              id: 2,
-              src: "/images/banner/flavors3-banner-theresult.jpg",
-              alt: "Premium Flavors Collection",
-            },
-          ]}
-          autoPlay={true}
-          autoPlayInterval={5000}
-          className="w-full"
-          containerHeight="h-[200px] md:h-[250px] lg:h-[300px]"
-        />
+      {/* Shop banner slider - contained in layout (max-w-7xl), taller, all shop variants; buttons over images */}
+      <section className="relative overflow-hidden w-full">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+          <QualitySlideshow
+            items={[
+              {
+                id: 1,
+                src: getBannerSrc('shop', { lang: language, variant: 'shop' }),
+                alt: t('shop.categoryPages.shopAllProducts'),
+                href: `${localePrefix}/shop`,
+              },
+              {
+                id: 2,
+                src: getBannerSrc('accessories', { lang: language, variant: 'shop' }),
+                alt: t('shop.categoryPages.accessories.title'),
+                href: `${localePrefix}/shop/accessories`,
+              },
+              {
+                id: 3,
+                src: getBannerSrc('italianSyrup', { lang: language, variant: 'shop' }),
+                alt: t('shop.categoryPages.flavors.title'),
+                href: `${localePrefix}/shop/flavor`,
+              },
+            ]}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            className="w-full rounded-xl overflow-hidden"
+            containerHeight="h-[260px] sm:h-[300px] md:h-[340px] lg:h-[380px]"
+          />
+        </div>
       </section>
 
       {/* Professional Toolbar */}

@@ -20,6 +20,7 @@ import { convertVariants, getVariantPriceRange } from "@/lib/utils/product-forma
 import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 // Define product types
 interface Product {
@@ -57,7 +58,7 @@ interface Bundle {
 }
 
 export default function SodamakersPage() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const router = useRouter()
   const { addItem, isInCart } = useCart()
   const { triggerAddAnimation } = useCartAnimations()
@@ -576,10 +577,10 @@ export default function SodamakersPage() {
   return (
     <PageLayout currentPage="shop-sodamakers">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        {/* Top banner - soda maker (image only, no text/overlay) */}
+        {/* Top banner - soda maker (image only, no text/overlay), language-aware */}
         <div
           className="relative w-full h-[220px] sm:h-[280px] md:h-[320px] rounded-2xl overflow-hidden shadow-xl mb-6 sm:mb-8 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/images/bannerNew/sodaMakerBanner.png)" }}
+          style={{ backgroundImage: `url(${getBannerSrc("sodamaker", { lang: language })})` }}
           role="img"
           aria-label={t("shop.categoryPages.sodamakers.title")}
         />
