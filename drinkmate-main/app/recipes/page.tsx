@@ -295,7 +295,7 @@ export default function Recipes() {
           <div
             className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
             style={{
-              backgroundImage: `url(${getBannerSrc("recipes", { lang: language })})`,
+              backgroundImage: `url(${getBannerSrc("flavour", { lang: language })})`,
               backgroundRepeat: "no-repeat",
             }}
             role="img"

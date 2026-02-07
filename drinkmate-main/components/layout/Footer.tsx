@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { LoadingLink } from "@/components/ui/LoadingLink"
 import { useTranslation } from "@/lib/contexts/translation-context"
-import { FaFacebook, FaTwitter, FaInstagram, FaWhatsapp } from "react-icons/fa"
+import { FaFacebook, FaTwitter, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa"
 
 export default function Footer() {
   const { t, isRTL, isHydrated, language } = useTranslation()
@@ -401,7 +401,7 @@ export default function Footer() {
 
         {/* Lower bar */}
         <div className="mt-8 border-t border-black/10 pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className={`flex items-center gap-3 text-sm text-black/60 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat'}`}>
+          <div className={`flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-2 text-sm text-black/60 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat'}`}>
             <span>Payment:</span>
             <div className="flex items-center gap-2">
               <Image
@@ -445,7 +445,7 @@ export default function Footer() {
                 loading="lazy"
               />
             </div>
-            <span className="ml-6">Delivery partner:</span>
+            <span className="md:ml-6">Delivery partner:</span>
             <Image
               src="/images/delivery-logos/aramex-seeklogo.png"
               alt="Aramex"
@@ -467,7 +467,7 @@ export default function Footer() {
               <FaWhatsapp className="h-5 w-5 text-emerald-600" />
             </a>
             <a 
-              href="https://www.facebook.com/drinkmate.sa" 
+              href="https://www.facebook.com/drinkmateksa" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="h-9 w-9 grid place-items-center rounded-full bg-blue-50 hover:bg-blue-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
@@ -476,7 +476,7 @@ export default function Footer() {
               <FaFacebook className="h-5 w-5 text-blue-600" />
             </a>
             <a 
-              href="https://www.instagram.com/drinkmatesa?igsh=MWt2ZHFuNDlqN2t2Mg%3D%3D" 
+              href="https://www.instagram.com/drinkmatesa/" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="h-9 w-9 grid place-items-center rounded-full bg-pink-50 hover:bg-pink-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
@@ -485,18 +485,27 @@ export default function Footer() {
               <FaInstagram className="h-5 w-5 text-pink-600" />
             </a>
             <a 
-              href="https://twitter.com/drinkmate_sa" 
+              href="https://www.tiktok.com/@drinkmatesa" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="h-9 w-9 grid place-items-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+              aria-label="TikTok"
+            >
+              <FaTiktok className="h-5 w-5 text-gray-800" />
+            </a>
+            <a 
+              href="https://x.com/Drinkmatesa" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="h-9 w-9 grid place-items-center rounded-full bg-sky-50 hover:bg-sky-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
-              aria-label="Twitter"
+              aria-label="X (Twitter)"
             >
               <FaTwitter className="h-5 w-5 text-sky-600" />
             </a>
           </nav>
         </div>
 
-        <div className="text-xs text-black/60 text-center">
+        <div className="text-xs text-black/60 text-center mt-2 md:mt-0 px-2 break-words">
           © <span suppressHydrationWarning>{new Date().getFullYear()}</span> Drinkmate. All rights reserved.
         </div>
       </div>

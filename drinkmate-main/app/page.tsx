@@ -96,25 +96,27 @@ function BlogCard({
     <div
       className={`text-center animate-slide-in-up group cursor-pointer transition-all duration-500 hover:transform hover:-translate-y-3 hover:scale-[1.02] ${
         index === 1 ? 'delay-200' : index === 2 ? 'delay-400' : ''
-      }`}
+      } ${index === 2 ? 'col-span-2 md:col-span-1 flex justify-center' : ''}`}
       dir={isRTL ? "rtl" : "ltr"}
       onClick={handleClick}
     >
-      <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <Image
-          src={blog.image || "/images/placeholder.jpg"}
-          alt={blog.title}
-          width={300}
-          height={280}
-          className="object-cover w-full h-56 md:h-72 rounded-3xl group-hover:scale-110 transition-all duration-700 filter group-hover:brightness-105"
-        />
+      <div className={index === 2 ? 'w-full max-w-[calc((100%-1.5rem)/2)] md:max-w-none mx-auto' : ''}>
+        <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <Image
+            src={blog.image || "/images/placeholder.jpg"}
+            alt={blog.title}
+            width={300}
+            height={280}
+            className="object-cover w-full h-56 md:h-72 rounded-3xl group-hover:scale-110 transition-all duration-700 filter group-hover:brightness-105"
+          />
+        </div>
+        <h3
+          className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
+        >
+          {blog.title}
+        </h3>
       </div>
-      <h3
-        className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
-      >
-        {blog.title}
-      </h3>
     </div>
   )
 }
@@ -961,7 +963,7 @@ export default function Home() {
 
           {/* Cards */}
           <div className="w-full">
-            <ul className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+            <ul className="grid gap-8 grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
               {steps.map((step, index) => (
                 <motion.li
                   key={step.id}
@@ -1270,7 +1272,7 @@ export default function Home() {
       {/* New Sections below Flavor Section */}
       <section className="py-6 md:py-16 px-8 md:px-20 lg:px-24 xl:px-32 2xl:px-40 animate-fade-in-up">
         <div className="w-full bg-white rounded-2xl relative overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 py-12">
             {/* How to Use */}
             <Link href="/recipes/drinkmate-diet-fizzy-lemonade" className="block">
               <div
@@ -1287,12 +1289,12 @@ export default function Home() {
                   />
                 </div>
                 <h3
-                  className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
+                  className={`text-base sm:text-lg md:text-xl font-medium text-gray-800 mt-4 sm:mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 leading-tight`}
                 >
                   {t("home.additionalSections.howToUse.title")}
                 </h3>
                 <p
-                  className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
+                  className={`text-gray-600 text-xs sm:text-sm px-1 sm:px-2 mt-1 sm:mt-2 leading-relaxed ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
                 >
                   {t("home.additionalSections.howToUse.description")}
                 </p>
@@ -1315,22 +1317,22 @@ export default function Home() {
                   />
                 </div>
                 <h3
-                  className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
+                  className={`text-base sm:text-lg md:text-xl font-medium text-gray-800 mt-4 sm:mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 leading-tight`}
                 >
                   {t("home.additionalSections.recipes.title")}
                 </h3>
                 <p
-                  className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
+                  className={`text-gray-600 text-xs sm:text-sm px-1 sm:px-2 mt-1 sm:mt-2 leading-relaxed ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
                 >
                   {t("home.additionalSections.recipes.description")}
                 </p>
               </div>
             </Link>
 
-            {/* Premium Italian Flavors */}
-            <Link href="/shop/flavor" className="block">
+            {/* Premium Italian Flavors - centered on mobile (2-col row) */}
+            <Link href="/shop/flavor" className="block col-span-2 md:col-span-1 flex justify-center">
               <div
-                className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up delay-400"
+                className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up delay-400 w-full max-w-[calc((100%-2rem)/2)] md:max-w-none"
                 dir={isRTL ? "rtl" : "ltr"}
               >
                 <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
@@ -1343,12 +1345,12 @@ export default function Home() {
                   />
                 </div>
                 <h3
-                  className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
+                  className={`text-base sm:text-lg md:text-xl font-medium text-gray-800 mt-4 sm:mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300 leading-tight`}
                 >
                   {t("home.additionalSections.premiumFlavors.title")}
                 </h3>
                 <p
-                  className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
+                  className={`text-gray-600 text-xs sm:text-sm px-1 sm:px-2 mt-1 sm:mt-2 leading-relaxed ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
                 >
                   {t("home.additionalSections.premiumFlavors.description")}
                 </p>
@@ -1380,8 +1382,8 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* Dynamic Blog Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {/* Dynamic Blog Cards - 2 per row on mobile, 3rd centered */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {blogsLoading ? (
               // Loading state
               <>
@@ -1390,10 +1392,10 @@ export default function Home() {
                     key={index}
                     className={`text-center animate-slide-in-up ${
                       index === 1 ? 'delay-200' : index === 2 ? 'delay-400' : ''
-                    }`}
+                    } ${index === 2 ? 'col-span-2 md:col-span-1 flex justify-center' : ''}`}
                     dir={isRTL ? "rtl" : "ltr"}
                   >
-                    <div className="bg-gray-200 rounded-3xl overflow-hidden mb-6 h-56 md:h-72 animate-pulse">
+                    <div className={`bg-gray-200 rounded-3xl overflow-hidden mb-6 h-56 md:h-72 animate-pulse ${index === 2 ? 'w-full max-w-[calc((100%-1.5rem)/2)] md:max-w-none mx-auto' : ''}`}>
                       <div className="w-full h-full bg-gray-300"></div>
                     </div>
                     <div className="h-6 bg-gray-200 rounded animate-pulse mx-2"></div>
@@ -1418,7 +1420,7 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
+                    className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
                   >
                     {t("home.environmental.plasticImpact")}
                   </h3>
@@ -1439,31 +1441,33 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
+                    className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
                   >
                     {t("home.environmental.naturalFlavors")}
                   </h3>
                 </div>
 
                 <div
-                  className="text-center animate-slide-in-up delay-400 group cursor-pointer transition-all duration-500 hover:transform hover:-translate-y-3 hover:scale-[1.02]"
+                  className="text-center animate-slide-in-up delay-400 group cursor-pointer transition-all duration-500 hover:transform hover:-translate-y-3 hover:scale-[1.02] col-span-2 md:col-span-1 flex justify-center"
                   dir={isRTL ? "rtl" : "ltr"}
                 >
-                  <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
-                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <Image
-                      src="/images/health-benefits.png"
-                      alt="Health Benefits of sparkling water"
-                      width={300}
-                      height={280}
-                      className="object-cover w-full h-56 md:h-72 rounded-3xl group-hover:scale-110 transition-all duration-700 filter group-hover:brightness-105"
-                    />
+                  <div className="w-full max-w-[calc((100%-1.5rem)/2)] md:max-w-none mx-auto">
+                    <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <Image
+                        src="/images/health-benefits.png"
+                        alt="Health Benefits of sparkling water"
+                        width={300}
+                        height={280}
+                        className="object-cover w-full h-56 md:h-72 rounded-3xl group-hover:scale-110 transition-all duration-700 filter group-hover:brightness-105"
+                      />
+                    </div>
+                    <h3
+                      className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
+                    >
+                      {t("home.environmental.healthBenefits")}
+                    </h3>
                   </div>
-                  <h3
-                    className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
-                  >
-                    {t("home.environmental.healthBenefits")}
-                  </h3>
                 </div>
               </>
             ) : latestBlogs.length > 0 ? (
@@ -1494,7 +1498,7 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
+                    className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
                   >
                     {t("home.environmental.plasticImpact")}
                   </h3>
@@ -1515,31 +1519,33 @@ export default function Home() {
                     />
                   </div>
                   <h3
-                    className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
+                    className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
                   >
                     {t("home.environmental.naturalFlavors")}
                   </h3>
                 </div>
 
                 <div
-                  className="text-center animate-slide-in-up delay-400 group cursor-pointer transition-all duration-500 hover:transform hover:-translate-y-3 hover:scale-[1.02]"
+                  className="text-center animate-slide-in-up delay-400 group cursor-pointer transition-all duration-500 hover:transform hover:-translate-y-3 hover:scale-[1.02] col-span-2 md:col-span-1 flex justify-center"
                   dir={isRTL ? "rtl" : "ltr"}
                 >
-                  <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
-                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <Image
-                      src="/images/health-benefits.png"
-                      alt="Health Benefits of sparkling water"
-                      width={300}
-                      height={280}
-                      className="object-cover w-full h-56 md:h-72 rounded-3xl group-hover:scale-110 transition-all duration-700 filter group-hover:brightness-105"
-                    />
+                  <div className="w-full max-w-[calc((100%-1.5rem)/2)] md:max-w-none mx-auto">
+                    <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <Image
+                        src="/images/health-benefits.png"
+                        alt="Health Benefits of sparkling water"
+                        width={300}
+                        height={280}
+                        className="object-cover w-full h-56 md:h-72 rounded-3xl group-hover:scale-110 transition-all duration-700 filter group-hover:brightness-105"
+                      />
+                    </div>
+                    <h3
+                      className={`text-sm sm:text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-1 sm:px-2 leading-tight`}
+                    >
+                      {t("home.environmental.healthBenefits")}
+                    </h3>
                   </div>
-                  <h3
-                    className={`text-base md:text-lg font-medium text-gray-700 ${isRTL ? "font-cairo" : "font-montserrat"} group-hover:text-[#12d6fa] transition-all duration-300 tracking-wide leading-relaxed px-2`}
-                  >
-                    {t("home.environmental.healthBenefits")}
-                  </h3>
                 </div>
               </>
             )}

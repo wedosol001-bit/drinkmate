@@ -2005,7 +2005,7 @@ export default function FlavorDetailPage() {
                     ))}
                   </div>
                 ) : relatedProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
                     {relatedProducts.map((relatedProduct, index) => {
                       // Handler for add to cart - same logic as main shop detail page
                       const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {

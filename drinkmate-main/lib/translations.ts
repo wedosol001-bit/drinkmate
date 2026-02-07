@@ -11,6 +11,7 @@ export interface Translations {
     co2: string
     recipes: string
     contactUs: string
+    offers: string
     trackOrder: string
     userMenu: string
     refillCylinder: string
@@ -2333,6 +2334,7 @@ export const translations: Record<Language, Translations> = {
       co2: "CO2",
       recipes: "Recipes",
       contactUs: "Contact Us",
+      offers: "Offers",
       trackOrder: "Track Order",
       userMenu: "User Menu",
       refillCylinder: "Refill Cylinder",
@@ -4948,6 +4950,7 @@ export const translations: Record<Language, Translations> = {
       co2: "ثاني أكسيد الكربون",
       recipes: "الوصفات",
       contactUs: "اتصل بنا",
+      offers: "عروض",
       trackOrder: "تتبع الطلب",
       userMenu: "قائمة المستخدم",
       refillCylinder: "إعادة تعبئة الأسطوانة",

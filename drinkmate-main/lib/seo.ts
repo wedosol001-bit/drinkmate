@@ -232,9 +232,10 @@ export function generateStructuredData({
         url: baseUrl,
         logo: `${baseUrl}/logo.png`,
         sameAs: [
-          'https://facebook.com/drinkmate',
-          'https://twitter.com/drinkmate',
-          'https://instagram.com/drinkmate',
+          'https://www.facebook.com/drinkmateksa',
+          'https://x.com/Drinkmatesa',
+          'https://www.instagram.com/drinkmatesa/',
+          'https://www.tiktok.com/@drinkmatesa',
           'https://youtube.com/drinkmate',
         ],
         contactPoint: {

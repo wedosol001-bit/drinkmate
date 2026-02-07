@@ -174,7 +174,7 @@ export default function ProductCard({
     <div
       dir={dir}
       className={cn(
-        "bg-white rounded-3xl overflow-hidden flex flex-col border border-gray-100",
+        "bg-white rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col border border-gray-100",
         "hover:border-gray-200 transform hover:-translate-y-1 transition-all duration-300",
         className
       )}
@@ -185,7 +185,7 @@ export default function ProductCard({
     >
       {/* Image Container - Covering Upper Side */}
       <Link href={getProductUrl(product)} className="block">
-        <div className={`relative h-80 bg-gray-50 overflow-hidden mb-6 ${styles.productImageContainer}`}>
+        <div className={`relative h-44 sm:h-80 bg-gray-50 overflow-hidden mb-4 sm:mb-6 ${styles.productImageContainer}`}>
           {(() => {
             // Use the improved image selection logic
             const imageUrl = activeImage;
@@ -278,15 +278,15 @@ export default function ProductCard({
       </Link>
 
       {/* Content Section */}
-      <div className="p-6 flex flex-col">
+      <div className="p-3 sm:p-6 flex flex-col">
         <Link href={getProductUrl(product)}>
-          <h3 className="text-xl mb-3 hover:text-brand-600 transition-colors leading-tight cursor-pointer">{product.title}</h3>
+          <h3 className="text-base sm:text-xl mb-2 sm:mb-3 hover:text-brand-600 transition-colors leading-tight cursor-pointer line-clamp-2">{product.title}</h3>
         </Link>
 
         {/* Rating & Reviews */}
         {product.rating && (
-          <div className="flex items-center gap-3 mb-0">
-            <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 sm:gap-3 mb-0">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               {Array.from({ length: 5 }).map((_, i) => {
                 const ratingValue = typeof product.rating === 'number' 
                   ? product.rating 
@@ -296,7 +296,7 @@ export default function ProductCard({
                   <Star
                     key={i}
                     className={cn(
-                      "w-3.5 h-3.5",
+                      "w-3 h-3 sm:w-3.5 sm:h-3.5",
                       i < Math.floor(ratingValue)
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-gray-300"
@@ -306,7 +306,7 @@ export default function ProductCard({
               })}
             </div>
             {product.reviewCount && (
-              <span className="text-sm text-gray-600">({product.reviewCount} {isRTL ? 'مراجعات' : 'Reviews'})</span>
+              <span className="text-xs sm:text-sm text-gray-600">({product.reviewCount} {isRTL ? 'مراجعات' : 'Reviews'})</span>
             )}
           </div>
         )}
@@ -328,30 +328,30 @@ export default function ProductCard({
           </div>
 
           {/* Main price and add to cart */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
             <div className="flex items-center gap-1">
               {priceRange && priceRange.min !== priceRange.max ? (
-                <span className="text-xl text-gray-900">
-                  <Price value={priceRange.min} size="md" /> - <Price value={priceRange.max} size="md" />
+                <span className="text-gray-900">
+                  <Price value={priceRange.min} size="responsive" /> - <Price value={priceRange.max} size="responsive" />
                 </span>
               ) : (
-                <span className="text-xl text-gray-900">
-                  <Price value={finalPrice} size="md" />
+                <span className="text-gray-900">
+                  <Price value={finalPrice} size="responsive" />
                 </span>
               )}
             </div>
             <Button
               onClick={onAdd}
               disabled={!isInStock}
-              className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-white rounded-full w-full sm:w-auto justify-center px-4 sm:px-6 py-2 h-10 text-xs sm:text-sm transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-white rounded-full w-full sm:w-auto justify-center px-1.5 sm:px-6 py-1 sm:py-2 h-6 sm:h-10 text-[9px] sm:text-sm transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-0.5 sm:gap-2"
             >
               {hasVariants && !selected ? (
                 <>
-                  <span>{t("shop.products.selectOptions")}</span>
+                  <span className="truncate">{t("shop.products.selectOptions")}</span>
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="w-4 h-4" />
+                  <ShoppingCart className="w-2.5 h-2.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   {!isInStock ? t("shop.products.outOfStock") : t("shop.products.addToCart")}
                 </>
               )}
