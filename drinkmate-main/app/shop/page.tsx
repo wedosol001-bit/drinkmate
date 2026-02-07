@@ -49,7 +49,7 @@ import { toast } from 'sonner'
 // Dynamic export to prevent static optimization ok
 export const dynamic = "force-dynamic"
 
-function ShopPageContent() {
+function ShopPageContentInner() {
   const { t, isRTL, language } = useTranslation()
   const localePrefix = language === 'AR' ? '/ar' : ''
   const { addItem, state } = useCart()
@@ -1510,6 +1510,14 @@ function ShopPageContent() {
         comparisonList={comparisonList}
       />
     </PageLayout>
+  )
+}
+
+function ShopPageContent() {
+  return (
+    <Suspense fallback={null}>
+      <ShopPageContentInner />
+    </Suspense>
   )
 }
 

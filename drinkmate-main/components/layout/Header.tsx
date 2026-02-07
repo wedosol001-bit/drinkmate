@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, User, Menu, X, ChevronDown, LogOut, ArrowLeft, LayoutDashboard, Loader2 } from "lucide-react"
 import { useTranslation } from "@/lib/contexts/translation-context"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useCart } from "@/lib/contexts/cart-context"
 import { useAuth } from "@/lib/contexts/auth-context"
 import Link from "next/link"
@@ -16,7 +16,7 @@ interface HeaderProps {
   currentPage?: string
 }
 
-export default function Header({ currentPage }: HeaderProps) {
+function HeaderInner({ currentPage }: HeaderProps) {
   const { language, setLanguage, t, isRTL } = useTranslation()
   const { state } = useCart()
   const { user, isAuthenticated, logout } = useAuth()
@@ -672,5 +672,13 @@ export default function Header({ currentPage }: HeaderProps) {
         )}
       </div>
     </header>
+  )
+}
+
+export default function Header(props: HeaderProps) {
+  return (
+    <Suspense fallback={null}>
+      <HeaderInner {...props} />
+    </Suspense>
   )
 }
