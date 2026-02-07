@@ -579,8 +579,11 @@ export default function SodamakersPage() {
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {/* Top banner - soda maker (image only, no text/overlay), language-aware */}
         <div
-          className="relative w-full h-[220px] sm:h-[280px] md:h-[320px] rounded-2xl overflow-hidden shadow-xl mb-6 sm:mb-8 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getBannerSrc("sodamaker", { lang: language })})` }}
+          className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] overflow-hidden shadow-xl mb-6 sm:mb-8 bg-no-repeat bg-center bg-contain sm:bg-cover"
+          style={{
+            backgroundImage: `url(${getBannerSrc("sodamaker", { lang: language })})`,
+            backgroundRepeat: 'no-repeat',
+          }}
           role="img"
           aria-label={t("shop.categoryPages.sodamakers.title")}
         />

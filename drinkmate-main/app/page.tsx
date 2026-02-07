@@ -639,25 +639,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2nd section - shop variant banners slider (same as shop index), language-aware, clickable */}
-      <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
-        <div className="w-full max-w-7xl mx-auto">
+      {/* 2nd section - shop variant banners slider; same width as hero; tight gap from section 1 */}
+      <section className="pt-3 pb-6 lg:pb-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
+        <div className="w-full max-w-full">
           <QualitySlideshow
             items={[
               {
                 id: 1,
+                src: getBannerSrc("refill", { lang: language, variant: "shop" }),
+                alt: t("home.refill.title"),
+                href: (language === "AR" ? "/ar" : "") + "/refill-cylinder",
+              },
+              {
+                id: 2,
                 src: getBannerSrc("shop", { lang: language, variant: "shop" }),
                 alt: t("shop.categoryPages.shopAllProducts"),
                 href: (language === "AR" ? "/ar" : "") + "/shop",
               },
               {
-                id: 2,
+                id: 3,
                 src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
                 alt: t("shop.categoryPages.accessories.title"),
                 href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
               },
               {
-                id: 3,
+                id: 4,
                 src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
                 alt: t("shop.categoryPages.flavors.title"),
                 href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
@@ -665,8 +671,9 @@ export default function Home() {
             ]}
             autoPlay={true}
             autoPlayInterval={5000}
-            className="w-full rounded-2xl overflow-hidden shadow-xl"
-            containerHeight="h-[280px] sm:h-[320px] md:h-[360px] lg:h-[400px]"
+            className="w-full overflow-hidden shadow-xl"
+            containerHeight="min-h-[140px] aspect-[3/1] sm:aspect-auto sm:min-h-[240px] sm:h-[300px] md:h-[340px] lg:h-[380px] max-h-[400px]"
+            mobileContain={true}
           />
         </div>
       </section>
@@ -1251,7 +1258,7 @@ export default function Home() {
           ]}
           autoPlay={true}
           autoPlayInterval={5000}
-          className="w-full rounded-xl overflow-hidden"
+          className="w-full overflow-hidden"
           containerHeight="h-[340px] sm:h-[400px] md:h-[450px] lg:h-[520px]"
         />
       </section>
@@ -1265,30 +1272,32 @@ export default function Home() {
         <div className="w-full bg-white rounded-2xl relative overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 py-12">
             {/* How to Use */}
-            <div
-              className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up"
-              dir={isRTL ? "rtl" : "ltr"}
-            >
-              <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
-                <Image
-                  src="/images/how-to-use-drinkmate.png"
-                  alt="How to Use Drinkmate"
-                  width={280}
-                  height={200}
-                  className="object-contain rounded-2xl w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
+            <Link href="/recipes/drinkmate-diet-fizzy-lemonade" className="block">
+              <div
+                className="text-center group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 animate-slide-in-up"
+                dir={isRTL ? "rtl" : "ltr"}
+              >
+                <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
+                  <Image
+                    src="/images/how-to-use-drinkmate.png"
+                    alt="How to Use Drinkmate"
+                    width={280}
+                    height={200}
+                    className="object-contain rounded-2xl w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3
+                  className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
+                >
+                  {t("home.additionalSections.howToUse.title")}
+                </h3>
+                <p
+                  className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
+                >
+                  {t("home.additionalSections.howToUse.description")}
+                </p>
               </div>
-              <h3
-                className={`text-lg md:text-xl font-medium text-gray-800 mt-6 ${isRTL ? "font-cairo text-right" : "font-montserrat"} group-hover:text-[#12d6fa] transition-colors duration-300`}
-              >
-                {t("home.additionalSections.howToUse.title")}
-              </h3>
-              <p
-                className={`text-gray-600 text-sm px-2 ${isRTL ? "font-noto-arabic text-right" : "font-noto-sans"} group-hover:text-gray-700 transition-colors duration-300`}
-              >
-                {t("home.additionalSections.howToUse.description")}
-              </p>
-            </div>
+            </Link>
 
             {/* Recipes */}
             <Link href="/recipes" className="block">

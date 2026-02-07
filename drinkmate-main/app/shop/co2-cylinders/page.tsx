@@ -99,8 +99,11 @@ export default function CO2() {
       {/* CO2 banner - simple image only, language-aware from bannerNew */}
       <section className="relative w-full bg-white overflow-hidden">
         <div
-          className="relative w-full h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getBannerSrc("co2", { lang: language })})` }}
+          className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px] bg-no-repeat bg-center bg-contain sm:bg-cover overflow-hidden"
+          style={{
+            backgroundImage: `url(${getBannerSrc("co2", { lang: language })})`,
+            backgroundRepeat: 'no-repeat',
+          }}
           role="img"
           aria-label={t("shop.co2BannerHeading")}
         />

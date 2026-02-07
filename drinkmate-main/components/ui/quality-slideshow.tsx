@@ -20,7 +20,9 @@ interface QualitySlideshowProps {
   autoPlay?: boolean
   autoPlayInterval?: number
   className?: string
-  containerHeight?: string // e.g., "h-[300px] md:h-[400px] lg:h-[450px]"
+  containerHeight?: string // e.g., "h-[300px] md:h-[400px]" or "min-h-[120px] aspect-[3/1] sm:aspect-auto sm:h-[260px]"
+  /** On mobile use object-contain (full image visible); sm+ use object-cover. Matches category banner mobile style. */
+  mobileContain?: boolean
 }
 
 export default function QualitySlideshow({ 
@@ -28,7 +30,8 @@ export default function QualitySlideshow({
   autoPlay = true, 
   autoPlayInterval = 5000,
   className = "",
-  containerHeight = "h-[300px] md:h-[400px] lg:h-[450px]"
+  containerHeight = "h-[300px] md:h-[400px] lg:h-[450px]",
+  mobileContain = false,
 }: QualitySlideshowProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -94,12 +97,12 @@ export default function QualitySlideshow({
           const slideContent = (
             <>
               {/* Main image: full width, fills slide like div bg; buttons sit over it */}
-              <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden bg-gray-100">
                 <Image
                   src={item.src}
                   alt={item.alt}
                   fill
-                  className="object-cover object-center"
+                  className={mobileContain ? "object-contain object-center sm:object-cover" : "object-cover object-center"}
                   priority={index === 0}
                   quality={95}
                   sizes="100vw"
@@ -107,12 +110,12 @@ export default function QualitySlideshow({
               </div>
               {/* Mobile Image (if provided) */}
               {item.mobileSrc && (
-                <div className="absolute inset-0 overflow-hidden md:hidden">
+                <div className="absolute inset-0 overflow-hidden bg-gray-100 md:hidden">
                   <Image
                     src={item.mobileSrc}
                     alt={item.mobileAlt || item.alt}
                     fill
-                    className="object-cover object-center"
+                    className={mobileContain ? "object-contain object-center sm:object-cover" : "object-cover object-center"}
                     priority={index === 0}
                     quality={95}
                     sizes="100vw"

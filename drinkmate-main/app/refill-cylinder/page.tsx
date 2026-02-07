@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { ChevronLeft, ChevronRight, Plus, Minus, ChevronDown, Star, ShoppingCart, Info, Truck, Shield, RotateCcw, CheckCircle, ArrowRight, Gift } from "lucide-react"
+import { Plus, Minus, ChevronDown, Star, ShoppingCart, Info, Truck, Shield, RotateCcw, CheckCircle, ArrowRight, Gift } from "lucide-react"
 import PageLayout from "@/components/layout/PageLayout"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { useState, useEffect } from "react"
@@ -18,50 +18,12 @@ import QuantityControl from "@/components/refill/QuantityControl"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { toast } from "sonner"
 import styles from "./refill-cylinder.module.css"
-
-// Type definition for refill slides
-interface RefillSlide {
-  headline: string;
-  description: string;
-  buttonText: string;
-  offerText: string;
-  image?: string; // Optional image URL
-}
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 export default function CO2() {
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, language } = useTranslation()
   const { addItem } = useCart()
 
-  // Slideshow state (same as shop page)
-  const refillSlides: RefillSlide[] = [
-    {
-      headline: t("home.refill.title"),
-      description: t("home.refill.description"),
-      buttonText: t("home.refill.buttonText"),
-      offerText: t("home.refill.offerText"),
-    },
-    {
-      headline: t("banner.messages.colaFlavors"),
-      description: "Enjoy authentic taste with our new collection of premium Italian flavors.",
-      buttonText: "",
-      offerText: "",
-    },
-    {
-      headline: t("banner.messages.firstOrderDiscount"),
-      description: "Want to get into the bubble game? Enjoy 5% off your first order with Drinkmate.",
-      buttonText: "",
-      offerText: "",
-    },
-    {
-      headline: "",
-      description: "",
-      buttonText: "",
-      offerText: "",
-      image: "/images/banner/Web--Cylinder--Page (1).png",
-    },
-  ]
-
-  const [currentRefillSlide, setCurrentRefillSlide] = useState(0)
   const [selectedCylinder, setSelectedCylinder] = useState("drinkmate")
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState("faqs")
@@ -73,23 +35,6 @@ export default function CO2() {
   const [nonDrinkmateBrand, setNonDrinkmateBrand] = useState("")
   const [threadType, setThreadType] = useState<"standard-threaded" | "quick-connect" | "">("") // Thread type for non-drinkmate
   const [customBrandName, setCustomBrandName] = useState("") // Custom brand name for standard threaded
-
-  // Slideshow navigation - reverse for RTL
-  const nextRefillSlide = () => {
-    if (isRTL) {
-      setCurrentRefillSlide((prev) => (prev === 0 ? refillSlides.length - 1 : prev - 1))
-    } else {
-      setCurrentRefillSlide((prev) => (prev === refillSlides.length - 1 ? 0 : prev + 1))
-    }
-  }
-
-  const prevRefillSlide = () => {
-    if (isRTL) {
-      setCurrentRefillSlide((prev) => (prev === refillSlides.length - 1 ? 0 : prev + 1))
-    } else {
-      setCurrentRefillSlide((prev) => (prev === 0 ? refillSlides.length - 1 : prev - 1))
-    }
-  }
 
   // State for cylinders from API
   const [cylinderBrands, setCylinderBrands] = useState<any[]>([])
@@ -474,99 +419,18 @@ export default function CO2() {
 
   return (
     <PageLayout currentPage="refill-cylinder">
-      {/* Enhanced Refill Section Carousel */}
-      <section className="py-8 md:py-16">
-        <div className="max-w-7xl mx-auto bg-white border border-gray-200 rounded-3xl relative h-[280px] md:h-[320px] flex items-center justify-between px-4 md:px-6 overflow-hidden shadow-sm">
-          {/* Enhanced Left Navigation Button */}
-          <Button
-            className="rounded-full w-12 h-12 flex items-center justify-center border-2 border-white bg-white/90 text-gray-700 shadow-sm z-10 hover:bg-white hover:border-[#12d6fa] hover:scale-110 transition-all duration-300 backdrop-blur-sm"
-            onClick={prevRefillSlide}
-          >
-            {isRTL ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
-          </Button>
-
-          {/* Enhanced Main Content Area */}
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full px-0">
-            {refillSlides[currentRefillSlide].image ? (
-              // Image slide
-              <div className="w-full h-full flex items-center justify-center">
-                <Image
-                  src={refillSlides[currentRefillSlide].image!}
-                  alt="Banner image"
-                  width={800}
-                  height={320}
-                  className="object-cover w-full h-full"
-                  priority
-                />
-              </div>
-            ) : (
-              // Text content slide
-              <div className="h-full flex flex-col items-center justify-center text-center space-y-4 sm:space-y-6 px-4 sm:px-8">
-                <div className="space-y-4">
-                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 leading-tight">
-                    {refillSlides[currentRefillSlide].headline}
-                  </h2>
-                  <p className="text-gray-700 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
-                    {refillSlides[currentRefillSlide].headline === t("home.refill.title") ? (
-                      <>
-                        {t('refill.carouselDescription.refill4').split('{amount}').map((part, i, arr) =>
-                          i === arr.length - 1 ? part : (
-                            <span key={i}>
-                              <SaudiRiyal amount={55} size="sm" className="font-bold text-[#12d6fa]" />
-                              {part}
-                            </span>
-                          )
-                        )}
-                      </>
-                    ) : (
-                      refillSlides[currentRefillSlide].description
-                    )}
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                  {refillSlides[currentRefillSlide].buttonText && (
-                    <Button
-                      onClick={() => window.location.href = refillSlides[currentRefillSlide].buttonText === "Shop Now" ? "/co2" : "/shop"}
-                      className="bg-[#12d6fa] hover:bg-[#0bc4e8] text-white font-bold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg py-4 rounded-full text-lg shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300"
-                    >
-                      {refillSlides[currentRefillSlide].buttonText}
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  )}
-                  {refillSlides[currentRefillSlide].offerText && (
-                    <span className="text-sm text-gray-600 bg-white/80 px-4 py-2 rounded-full border border-gray-200 backdrop-blur-sm">
-                      {refillSlides[currentRefillSlide].offerText}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-
-          {/* Enhanced Right Navigation Button */}
-          <Button
-            className="rounded-full w-12 h-12 flex items-center justify-center border-2 border-white bg-white/90 text-gray-700 shadow-sm z-10 hover:bg-white hover:border-[#12d6fa] hover:scale-110 transition-all duration-300 backdrop-blur-sm"
-            onClick={nextRefillSlide}
-          >
-            {isRTL ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
-          </Button>
-
-          {/* Enhanced Slideshow Dots */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
-            {refillSlides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentRefillSlide(index)}
-                className={`w-4 h-4 rounded-full transition-all duration-300 ${index === currentRefillSlide
-                  ? "bg-[#12d6fa] scale-125 shadow-sm"
-                  : "bg-white/60 hover:bg-white/80 hover:scale-110"
-                  }`}
-                aria-label={`${t('refill.carousel.goTo')} ${index + 1}`}
-                title={`${t('refill.carousel.goTo')} ${index + 1}`}
-              />
-            ))}
-          </div>
+      {/* Refill banner - refill.png, one version; containerized like other category pages */}
+      <section className="py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+          <div
+            className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+            style={{
+              backgroundImage: `url(${getBannerSrc("refill", { lang: language })})`,
+              backgroundRepeat: 'no-repeat',
+            }}
+            role="img"
+            aria-label={t("home.refill.title")}
+          />
         </div>
       </section>
 

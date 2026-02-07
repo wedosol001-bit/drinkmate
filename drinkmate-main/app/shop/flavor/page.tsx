@@ -450,10 +450,13 @@ export default function FlavorPage() {
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
 
-        {/* Flavors / Italian Syrups banner - simple image only, no overlay, language-aware */}
+        {/* Flavors / Italian Syrups banner - simple image only, no overlay, language-aware; height consistent with other category pages */}
         <div
-          className="w-full h-[220px] sm:h-[280px] md:h-[320px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-xl bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getBannerSrc("italianSyrup", { lang: language })})` }}
+          className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+          style={{
+            backgroundImage: `url(${getBannerSrc("italianSyrup", { lang: language })})`,
+            backgroundRepeat: 'no-repeat',
+          }}
           role="img"
           aria-label={t("shop.categoryPages.flavors.title")}
         />

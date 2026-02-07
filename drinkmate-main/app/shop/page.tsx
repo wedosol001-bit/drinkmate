@@ -1095,7 +1095,7 @@ function ShopPageContent() {
             ]}
             autoPlay={true}
             autoPlayInterval={5000}
-            className="w-full rounded-xl overflow-hidden"
+            className="w-full overflow-hidden"
             containerHeight="h-[260px] sm:h-[300px] md:h-[340px] lg:h-[380px]"
           />
         </div>

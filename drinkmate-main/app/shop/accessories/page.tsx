@@ -483,8 +483,11 @@ export default function AccessoriesPage() {
 
         {/* Accessories banner - simple image, language-aware from bannerNew */}
         <div
-          className="w-full h-[220px] sm:h-[280px] md:h-[320px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-xl bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getBannerSrc("accessories", { lang: language })})` }}
+          className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+          style={{
+            backgroundImage: `url(${getBannerSrc("accessories", { lang: language })})`,
+            backgroundRepeat: 'no-repeat',
+          }}
           role="img"
           aria-label={t("shop.categoryPages.accessories.title")}
         />
