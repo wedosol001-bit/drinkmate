@@ -1970,7 +1970,7 @@ export default function BundleDetailPage() {
                 </h2>
 
                 {loadingRelated ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[1, 2, 3, 4].map((i) => (
                       <Card key={i} className="h-full">
                         <CardContent className="p-4">
@@ -1983,7 +1983,7 @@ export default function BundleDetailPage() {
                     ))}
                   </div>
                 ) : relatedProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {relatedProducts.map((relatedProduct) => (
                       <Link key={relatedProduct._id} href={`/shop/flavor/bundles/${relatedProduct.slug}`} className="block group">
                         <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1 h-full">

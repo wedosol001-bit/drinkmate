@@ -10,7 +10,7 @@ interface PriceProps {
   compareAt?: number
   className?: string
   showSavings?: boolean
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'responsive'
 }
 
 export function Price({ 
@@ -28,6 +28,12 @@ export function Price({
     sm: {
       icon: "w-3 h-3",
       price: "text-sm",
+      compare: "text-xs",
+      savings: "text-xs"
+    },
+    responsive: {
+      icon: "w-3 h-3 sm:w-[14px] sm:h-[14px]",
+      price: "text-sm sm:text-lg",
       compare: "text-xs",
       savings: "text-xs"
     },

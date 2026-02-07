@@ -9,7 +9,7 @@ import { useCart } from "@/lib/contexts/cart-context"
 import { useAuth } from "@/lib/contexts/auth-context"
 import Link from "next/link"
 import { LoadingLink } from "@/components/ui/LoadingLink"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import ShopMegaMenu from "./ShopMegaMenu"
 
 interface HeaderProps {
@@ -22,7 +22,12 @@ export default function Header({ currentPage }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
-  const isShopActive = pathname?.startsWith("/shop") || pathname?.startsWith("/ar/shop") || false
+  const searchParams = useSearchParams()
+  const isOnShopPage = pathname?.startsWith("/shop") || pathname?.startsWith("/ar/shop") || false
+  const isOffersActive = isOnShopPage && searchParams?.get("cat") === "offers"
+  // When Offers is active, Shop nav should not show active (avoid both highlighted)
+  const isShopActive = isOnShopPage && !isOffersActive
+  const offersHref = language === "AR" ? "/ar/shop?cat=offers" : "/shop?cat=offers"
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false)
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
@@ -190,6 +195,19 @@ export default function Header({ currentPage }: HeaderProps) {
             >
               {t("header.contactUs")}
               {currentPage === "contact" && (
+                <span
+                  className={`absolute -bottom-1 w-full h-0.5 bg-[#12d6fa] hover:bg-[#0bc4e8] rounded-full ${isRTL ? "right-0" : "left-0"}`}
+                ></span>
+              )}
+            </Link>
+            <Link
+              href={offersHref}
+              className={`text-sm font-semibold tracking-wide transition-all duration-300 relative group cursor-pointer ${isRTL ? "font-cairo px-2" : "font-montserrat px-2"} ${
+                isOffersActive ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              {t("header.offers")}
+              {isOffersActive && (
                 <span
                   className={`absolute -bottom-1 w-full h-0.5 bg-[#12d6fa] hover:bg-[#0bc4e8] rounded-full ${isRTL ? "right-0" : "left-0"}`}
                 ></span>
@@ -558,6 +576,17 @@ export default function Header({ currentPage }: HeaderProps) {
                   }`}
                 >
                   {t("header.contactUs")}
+                </Link>
+                <Link
+                  href={offersHref}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`text-sm font-medium px-5 py-3 ${isRTL ? "text-right" : "text-left"} transition-all duration-200 cursor-pointer ${isRTL ? "font-cairo" : "font-montserrat"} ${
+                    isOffersActive
+                      ? `text-slate-900 bg-slate-100 ${isRTL ? "border-r-4" : "border-l-4"} border-[#12d6fa]`
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  }`}
+                >
+                  {t("header.offers")}
                 </Link>
                 {/* <Link
                   href="/track-order"

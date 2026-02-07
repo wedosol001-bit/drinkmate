@@ -43,8 +43,8 @@ const MAP: Record<
     shop: { EN: "italianSyrupShop.png", AR: "italianSyrupShopArabic.png" },
   },
   refill: {
-    default: { EN: "refillBanner.png", AR: "refillArabic.png" },
-    shop: { EN: "refillBanner.png", AR: "refillArabicShop.png" },
+    default: { EN: "refill.png", AR: "refill.png" },
+    shop: { EN: "refillShop.png", AR: "refillShop.png" },
   },
   sodamaker: {
     default: { EN: "sodaMakerBanner.png", AR: "sodamakerArabic.png" },
@@ -58,7 +58,7 @@ const MAP: Record<
     default: { EN: "flavour.png", AR: "flavourArabic.png" },
   },
   recipes: {
-    default: { EN: "recipies.png", AR: "recipies.png" },
+    default: { EN: "recipes.png", AR: "recipes.png" },
   },
   co2Banner: {
     default: { EN: "co2Banner.png", AR: "co2Banner.png" },

@@ -2231,7 +2231,7 @@ export default function ShopProductDetail() {
                 </h2>
 
                 {loadingRelated ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                     {[1, 2, 3, 4].map((i) => (
                       <div key={i} className="bg-white rounded-3xl overflow-hidden border border-gray-100/80 min-h-[500px] animate-pulse">
                         <div className="h-[280px] bg-gray-200"></div>
@@ -2244,7 +2244,7 @@ export default function ShopProductDetail() {
                     ))}
                   </div>
                 ) : relatedProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
                     {relatedProducts.map((relatedProduct, index) => {
                       // Handler for add to cart - same logic as ProductGrid
                       const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {

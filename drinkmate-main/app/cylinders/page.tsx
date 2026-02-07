@@ -7,6 +7,8 @@ import PageLayout from "@/components/layout/PageLayout"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { ArrowRight } from "lucide-react"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
+import QualitySlideshow from "@/components/ui/quality-slideshow"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 
 /** Asset paths for the cylinders mediator page - all under public/images/madiaterPage */
 const ASSETS = {
@@ -25,21 +27,30 @@ export default function CylindersMediatorPage() {
 
   return (
     <PageLayout>
-      {/* Top Banner - Placeholder (to be replaced with actual banner later) */}
+      {/* Top Banner - Slider: refill (shop) + co2 (shop, EN/AR) */}
       <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
-          <div className="w-full max-w-[1180px] mx-auto h-[200px] md:h-[270px] rounded-2xl border-2 border-gray-200 bg-gray-50 flex flex-col items-center justify-center text-center px-6">
-            <h1
-              className={`text-2xl md:text-4xl font-bold text-gray-900 mb-2 ${isRTL ? "font-cairo" : "font-montserrat"}`}
-            >
-              {t("cylinders.banner.title")}
-            </h1>
-            <p
-              className={`text-sm md:text-base text-gray-700 max-w-xl ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}
-            >
-              {t("cylinders.banner.subtitle")}
-            </p>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
+          <QualitySlideshow
+            items={[
+              {
+                id: 1,
+                src: getBannerSrc("refill", { lang: language, variant: "shop" }),
+                alt: t("cylinders.banner.title"),
+                href: `${prefix}/refill-cylinder`,
+              },
+              {
+                id: 2,
+                src: getBannerSrc("co2", { lang: language, variant: "shop" }),
+                alt: t("cylinders.cardNew.title"),
+                href: `${prefix}/shop/co2-cylinders`,
+              },
+            ]}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            className="w-full overflow-hidden shadow-xl"
+            containerHeight="min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px]"
+            mobileContain={true}
+          />
         </div>
       </section>
 

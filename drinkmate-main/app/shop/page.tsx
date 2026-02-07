@@ -998,7 +998,7 @@ function ShopPageContent() {
 
               {/* Product Grid Skeleton */}
               <div className="flex-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div key={i} className="animate-pulse">
                       <div className="bg-white rounded-3xl border border-gray-100/80 overflow-hidden h-[500px] sm:h-[540px] lg:h-[580px] flex flex-col">
@@ -1069,7 +1069,7 @@ function ShopPageContent() {
 
   return (
     <PageLayout>
-      {/* Shop banner slider - contained in layout (max-w-7xl), taller, all shop variants; buttons over images */}
+      {/* Shop banner slider - contained mobile style (aspect + contain) like other banner sections */}
       <section className="relative overflow-hidden w-full">
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
           <QualitySlideshow
@@ -1095,8 +1095,9 @@ function ShopPageContent() {
             ]}
             autoPlay={true}
             autoPlayInterval={5000}
-            className="w-full rounded-xl overflow-hidden"
-            containerHeight="h-[260px] sm:h-[300px] md:h-[340px] lg:h-[380px]"
+            className="w-full overflow-hidden"
+            containerHeight="min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px]"
+            mobileContain={true}
           />
         </div>
       </section>

@@ -408,7 +408,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
             {getSectionDescription()}
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <SkeletonCard key={i} />
           ))}
@@ -447,7 +447,7 @@ export function CylindersShopSection({ type = 'all' }: CylindersShopSectionProps
           <p className="text-gray-500">{isRTL ? 'لا توجد منتجات متاحة حالياً' : 'No products available at the moment'}</p>
         </div>
       ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
         {/* Render catalog products - these are the main products from cylinder subcategory */}
         {products.map((product) => {
           const productImage = product.image || (product.images && Array.isArray(product.images) && product.images.length > 0 

@@ -5,7 +5,7 @@ import RiyalIcon from '@/components/icons/RiyalIcon';
 
 interface SaudiRiyalProps {
   amount: number | undefined | null;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'responsive';
   className?: string;
   showSymbol?: boolean;
   language?: 'EN' | 'AR';
@@ -47,6 +47,11 @@ const SaudiRiyal: React.FC<SaudiRiyalProps> = ({
         return {
           text: 'text-sm',
           icon: 'w-3 h-3'
+        };
+      case 'responsive':
+        return {
+          text: 'text-sm sm:text-lg',
+          icon: 'w-3 h-3 sm:w-4 sm:h-4'
         };
       case 'lg': 
         return {

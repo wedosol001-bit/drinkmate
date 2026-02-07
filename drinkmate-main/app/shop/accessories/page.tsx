@@ -483,8 +483,11 @@ export default function AccessoriesPage() {
 
         {/* Accessories banner - simple image, language-aware from bannerNew */}
         <div
-          className="w-full h-[220px] sm:h-[280px] md:h-[320px] mb-8 sm:mb-12 relative overflow-hidden rounded-2xl shadow-xl bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getBannerSrc("accessories", { lang: language })})` }}
+          className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+          style={{
+            backgroundImage: `url(${getBannerSrc("accessories", { lang: language })})`,
+            backgroundRepeat: 'no-repeat',
+          }}
           role="img"
           aria-label={t("shop.categoryPages.accessories.title")}
         />
@@ -516,7 +519,7 @@ export default function AccessoriesPage() {
                       <h3 className="text-base sm:text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
                         {section.name}
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                         {section.bundles.map((bundle) => {
                           return (
                           <BundleStyleProductCard
@@ -586,7 +589,7 @@ export default function AccessoriesPage() {
             {subcategorySections.filter(section => section.products.length > 0).map((section) => (
               <div key={section._id} className="mb-12 sm:mb-16">
                 <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{section.name}</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                   {section.products.map((product) => renderProductCard(product))}
                 </div>
               </div>

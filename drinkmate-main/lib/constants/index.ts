@@ -348,11 +348,12 @@ export const FEATURES = {
   ENABLE_ANALYTICS: true,
 } as const
 
-// Social Media Links
+// Social Media Links (DrinkMate KSA)
 export const SOCIAL_LINKS = {
-  FACEBOOK: 'https://facebook.com/drinkmate',
-  TWITTER: 'https://twitter.com/drinkmate',
-  INSTAGRAM: 'https://instagram.com/drinkmate',
+  FACEBOOK: 'https://www.facebook.com/drinkmateksa',
+  TWITTER: 'https://x.com/Drinkmatesa',
+  INSTAGRAM: 'https://www.instagram.com/drinkmatesa/',
+  TIKTOK: 'https://www.tiktok.com/@drinkmatesa',
   YOUTUBE: 'https://youtube.com/drinkmate',
   LINKEDIN: 'https://linkedin.com/company/drinkmate',
 } as const

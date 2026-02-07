@@ -161,9 +161,9 @@ export default function BundleStyleProductCard({
     <div
       dir={dir}
       className={cn(
-        "group bg-white rounded-3xl overflow-hidden flex flex-col border border-gray-100/80",
-        "hover:border-cyan-200/60 transform hover:-translate-y-2 transition-all duration-500 ease-out",
-        "min-h-[500px] sm:min-h-[540px] lg:min-h-[580px] shadow-lg hover:shadow-2xl hover:shadow-cyan-500/20",
+        "group bg-white rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col border border-gray-100/80",
+        "hover:border-cyan-200/60 transform hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-500 ease-out",
+        "min-h-0 sm:min-h-[540px] lg:min-h-[580px] shadow-md sm:shadow-lg hover:shadow-xl sm:hover:shadow-2xl hover:shadow-cyan-500/20",
         "relative",
         className
       )}
@@ -184,7 +184,7 @@ export default function BundleStyleProductCard({
       {/* Image Container */}
       <div className="relative">
         <Link href={getProductUrl(product)} className="block">
-          <div className={`relative h-[220px] sm:h-[260px] lg:h-[280px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden p-3 sm:p-4 ${styles.productImageContainer}`}>
+          <div className={`relative h-[120px] sm:h-[260px] lg:h-[280px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden p-2 sm:p-4 ${styles.productImageContainer}`}>
             <Image
               src={getBestImage()}
               alt={product.title || product.name || 'Product image'}
@@ -200,7 +200,7 @@ export default function BundleStyleProductCard({
             
             {/* Product Badges */}
             {product.badges && product.badges.length > 0 && (
-              <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-col gap-1 sm:gap-2">
                 {product.badges.map((badge, index) => {
                   const getBadgeStyle = (badgeText: string) => {
                     const lowerBadge = badgeText.toLowerCase()
@@ -253,12 +253,12 @@ export default function BundleStyleProductCard({
                     <div
                       key={index}
                       className={cn(
-                        "rounded-full text-white text-xs px-3 py-1.5 font-bold shadow-xl backdrop-blur-sm border border-white/20 flex items-center gap-1",
+                        "rounded-full text-white text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 font-bold shadow-lg sm:shadow-xl backdrop-blur-sm border border-white/20 flex items-center gap-0.5 sm:gap-1",
                         badgeStyle.bg
                       )}
                     >
                       {badgeStyle.icon}
-                      {badge}
+                      <span className="truncate">{badge}</span>
                     </div>
                   )
                 })}
@@ -277,50 +277,44 @@ export default function BundleStyleProductCard({
           <Button
             size="sm"
             variant="secondary"
-            className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+            className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-1.5 sm:p-3 shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 min-w-0 h-8 w-8 sm:h-10 sm:w-10 sm:min-w-[2.5rem]"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               onAddToWishlist?.(product as Product)
             }}
           >
-            <Heart className={cn("w-5 h-5", isInWishlist ? "fill-red-500 text-red-500" : "text-gray-700")} />
+            <Heart className={cn("w-3.5 h-3.5 sm:w-5 sm:h-5", isInWishlist ? "fill-red-500 text-red-500" : "text-gray-700")} />
           </Button>
           <Button
             size="sm"
             variant="secondary"
-            className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+            className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-1.5 sm:p-3 shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 min-w-0 h-8 w-8 sm:h-10 sm:w-10 sm:min-w-[2.5rem]"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               onProductView?.(product as Product)
             }}
           >
-            <Eye className="w-5 h-5 text-gray-700" />
+            <Eye className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-gray-700" />
           </Button>
         </div>
       </div>
 
       {/* Product Information */}
-      <div className="p-4 sm:p-6 flex-1 flex flex-col relative z-10 min-h-0 pb-4 sm:pb-6">
+      <div className="p-3 sm:p-6 flex-1 flex flex-col relative z-10 min-h-0 pb-3 sm:pb-6">
         {/* Product Name */}
-        <Link href={getProductUrl(product)} className="block mb-3 group">
+        <Link href={getProductUrl(product)} className="block mb-2 sm:mb-3 group">
           <h3 
             id={`product-title-${product.id}`}
-            className={`font-bold text-xl text-gray-900 group-hover:text-cyan-600 transition-colors leading-tight tracking-tight ${dir === "rtl" ? "font-cairo" : "text-left font-montserrat"}`}
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden'
-            }}
+            className={`font-bold text-sm sm:text-xl text-gray-900 group-hover:text-cyan-600 transition-colors leading-tight tracking-tight line-clamp-2 ${dir === "rtl" ? "font-cairo" : "text-left font-montserrat"}`}
           >
             {displayName}
           </h3>
         </Link>
 
         {/* Rating and Reviews */}
-        <div className="flex items-center gap-3 mb-3 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-3 mb-2 sm:mb-3 flex-wrap">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => {
               const rating = typeof product.rating === 'number' ? product.rating : 
@@ -329,7 +323,7 @@ export default function BundleStyleProductCard({
                 <Star
                   key={i}
                   className={cn(
-                    "w-4 h-4 transition-colors duration-200",
+                    "w-3 h-3 sm:w-4 sm:h-4 transition-colors duration-200",
                     i < Math.floor(rating)
                       ? "fill-yellow-400 text-yellow-400"
                       : "text-gray-300"
@@ -338,11 +332,11 @@ export default function BundleStyleProductCard({
               )
             })}
           </div>
-          <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+          <span className="text-xs sm:text-sm text-gray-600 font-medium whitespace-nowrap">
             ({product.reviewCount || 0} {isRTL ? 'مراجعات' : 'Reviews'})
           </span>
-          <div className="flex items-center gap-1 text-xs text-cyan-600 font-semibold whitespace-nowrap">
-            <Zap className="w-3 h-3" />
+          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-cyan-600 font-semibold whitespace-nowrap">
+            <Zap className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
             {isRTL ? 'مميز' : 'Premium'}
           </div>
         </div>
@@ -350,25 +344,19 @@ export default function BundleStyleProductCard({
         {/* Description/Tagline */}
         {product.description && (
           <p 
-            className="text-sm text-gray-600 mb-3 leading-relaxed"
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden'
-            }}
+            className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 leading-snug sm:leading-relaxed line-clamp-2"
           >
             {product.description}
           </p>
         )}
 
         {/* Spacer to distribute gaps */}
-        <div className="flex-1 min-h-[20px]"></div>
+        <div className="flex-1 min-h-[8px] sm:min-h-[20px]"></div>
 
                     {/* Pricing and Add Button - Fixed position with distributed spacing */}
-                    <div className="pt-2">
+                    <div className="pt-1 sm:pt-2">
                       {/* Price Section */}
-                      <div className="flex items-center gap-3 mb-4 flex-wrap">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4 flex-wrap">
                         {!hasVariants && product.compareAtPrice && (
                           <>
                             <span className="text-gray-400 text-sm line-through font-medium whitespace-nowrap">
@@ -384,23 +372,23 @@ export default function BundleStyleProductCard({
                       </div>
 
           {/* Current Price and Add Button */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
               {hasVariants ? (
-                <span className="font-bold text-2xl text-gray-900 tracking-tight">
+                <span className="font-bold text-gray-900 tracking-tight">
                   {minVariantPrice !== undefined && maxVariantPrice !== undefined && minVariantPrice !== maxVariantPrice ? (
                     <>
-                      <SaudiRiyal amount={minVariantPrice} size="lg" />
-                      <span className="mx-1">-</span>
-                      <SaudiRiyal amount={maxVariantPrice} size="lg" />
+                      <SaudiRiyal amount={minVariantPrice} size="responsive" />
+                      <span className="mx-0.5 sm:mx-1">-</span>
+                      <SaudiRiyal amount={maxVariantPrice} size="responsive" />
                     </>
                   ) : (
-                    <SaudiRiyal amount={minVariantPrice ?? 0} size="lg" />
+                    <SaudiRiyal amount={minVariantPrice ?? 0} size="responsive" />
                   )}
                 </span>
               ) : (
-                <span className="font-bold text-2xl text-gray-900 tracking-tight">
-                  <SaudiRiyal amount={product.price} size="lg" />
+                <span className="font-bold text-gray-900 tracking-tight">
+                  <SaudiRiyal amount={product.price} size="responsive" />
                 </span>
               )}
             </div>
@@ -410,26 +398,26 @@ export default function BundleStyleProductCard({
               disabled={!isInStock || isAddingToCart}
               className={cn(
                 "bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-500 hover:from-cyan-600 hover:via-cyan-500 hover:to-cyan-600",
-                "text-white rounded-full px-5 sm:px-6 py-2.5 sm:py-3 h-11 sm:h-12 text-xs font-bold",
+                "text-white rounded-full px-1.5 sm:px-6 py-1 sm:py-3 h-6 sm:h-12 text-[9px] sm:text-xs font-bold",
                 "transition-all duration-300 transform hover:scale-105 hover:shadow-xl",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none",
-                "flex items-center gap-1.5 shadow-lg border border-cyan-300/20",
-                "relative overflow-hidden whitespace-nowrap min-w-[120px] sm:min-w-[130px] flex-shrink-0",
+                "flex items-center justify-center gap-0.5 sm:gap-1.5 shadow-md sm:shadow-lg border border-cyan-300/20",
+                "relative overflow-hidden whitespace-nowrap min-w-0 sm:min-w-[130px] flex-shrink-0 max-w-full",
                 "cursor-pointer",
                 buttonClassName
               )}
             >
               {hasVariants ? (
-                <span>{isRTL ? 'عرض الخيارات' : 'View Options'}</span>
+                <span className="truncate">{isRTL ? 'عرض الخيارات' : 'View Options'}</span>
               ) : isAddingToCart ? (
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>{isRTL ? 'جاري الإضافة...' : 'Adding...'}</span>
+                <div className="flex items-center gap-0.5 sm:gap-1.5">
+                  <div className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
+                  <span className="truncate">{isRTL ? 'جاري الإضافة...' : 'Adding...'}</span>
                 </div>
               ) : (
                 <>
-                  <ShoppingCart className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>{isRTL ? 'أضف إلى السلة' : 'Add to Cart'}</span>
+                  <ShoppingCart className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                  <span className="truncate">{isRTL ? 'أضف إلى السلة' : 'Add to Cart'}</span>
                 </>
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />

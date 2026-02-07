@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import Image from "next/image"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import PageLayout from "@/components/layout/PageLayout"
+import { getBannerSrc } from "@/lib/utils/banner-paths"
 import RecipeCard from "@/components/recipes/RecipeCard"
 import RecipeCardSkeleton from "@/components/recipes/RecipeCardSkeleton"
 import FilterBar from "@/components/recipes/FilterBar"
@@ -128,7 +129,7 @@ const mockRecipes: Recipe[] = [
 ]
 
 export default function Recipes() {
-  const { t, isRTL, isHydrated } = useTranslation()
+  const { t, isRTL, isHydrated, language } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("popular")
@@ -289,34 +290,17 @@ export default function Recipes() {
   return (
     <PageLayout currentPage="recipes">
       <div dir={isRTL ? "rtl" : "ltr"}>
-        {/* Hero Section */}
-        <section className="relative py-12 md:py-16 overflow-hidden">
-          {/* Background Image */}
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1757151071/water-366586_bd4us9.jpg"
-              alt="Recipes background"
-              fill
-              className="object-cover"
-              priority
-            />
-            {/* Overlay with opacity */}
-            <div className="absolute inset-0 bg-black/40"></div>
-            {/* Gradient overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/50"></div>
-          </div>
-          
-          {/* Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat'} tracking-tight`}>
-                {isRTL ? "الوصفات" : "Recipes"}
-              </h1>
-              <p className={`text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat'}`}>
-                {isRTL ? "اكتشف وصفات المشروبات اللذيذة مع شراباتنا الممتازة." : "Discover delicious drink recipes with our premium Italian syrups."}
-              </p>
-            </div>
-          </div>
+        {/* Recipes banner - same styling as flavor / category pages */}
+        <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+          <div
+            className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+            style={{
+              backgroundImage: `url(${getBannerSrc("flavour", { lang: language })})`,
+              backgroundRepeat: "no-repeat",
+            }}
+            role="img"
+            aria-label={isRTL ? "الوصفات" : "Recipes"}
+          />
         </section>
 
         {/* Featured Recipe Section - Temporarily disabled */}
