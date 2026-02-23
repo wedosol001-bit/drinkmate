@@ -1,116 +1,412 @@
-import { Metadata } from "next"
+"use client"
 
-export const metadata: Metadata = {
-  title: "Exchange and Return Policy | DrinkMates",
-  description: "Learn about our exchange and return policy for flavors, CO2 cylinders, and related beverage products.",
-}
+import PageLayout from "@/components/layout/PageLayout"
+import { useTranslation } from "@/lib/contexts/translation-context"
+import {
+  FileText,
+  BookOpen,
+  Scale,
+  UserCheck,
+  Users,
+  ShoppingCart,
+  CreditCard,
+  Truck,
+  RefreshCw,
+  Key,
+  Shield,
+  Palette,
+  AlertTriangle,
+  HandCoins,
+  Link2,
+  Clock,
+  ArrowRightLeft,
+  Gavel,
+  FileEdit,
+  Languages,
+  FileCheck,
+  Lock,
+} from "lucide-react"
 
 export default function ExchangeAndReturnPolicyPage() {
+  const { t, getValue, isRTL } = useTranslation()
+
+  const sectionClass = "bg-white rounded-2xl p-8 shadow-lg"
+  const headingClass = `text-2xl font-bold text-gray-900 mb-4 flex items-center ${isRTL ? "font-cairo" : "font-montserrat"}`
+  const proseClass = `prose prose-lg text-gray-600 ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`
+  const iconClass = "w-6 h-6 text-[#12d6fa] mr-3"
+
+  const defItems = (getValue("exchangeAndReturnPolicy.sections.definitions.items") as string[] | undefined) ?? []
+  const legalLimitsItems = (getValue("exchangeAndReturnPolicy.sections.legalLimits.items") as string[] | undefined) ?? []
+  const legalCapacityItems = (getValue("exchangeAndReturnPolicy.sections.legalCapacity.items") as string[] | undefined) ?? []
+  const membershipItems = (getValue("exchangeAndReturnPolicy.sections.membershipPolicy.items") as string[] | undefined) ?? []
+  const membershipItems2 = (getValue("exchangeAndReturnPolicy.sections.membershipPolicy.items2") as string[] | undefined) ?? []
+  const purchaseItems = (getValue("exchangeAndReturnPolicy.sections.purchasePolicy.items") as string[] | undefined) ?? []
+  const purchaseSubItems = (getValue("exchangeAndReturnPolicy.sections.purchasePolicy.subItems") as string[] | undefined) ?? []
+  const pricesItems = (getValue("exchangeAndReturnPolicy.sections.pricesAndTaxes.items") as string[] | undefined) ?? []
+  const paymentItems = (getValue("exchangeAndReturnPolicy.sections.paymentPolicy.items") as string[] | undefined) ?? []
+  const shippingItems = (getValue("exchangeAndReturnPolicy.sections.shippingPolicy.items") as string[] | undefined) ?? []
+  const cancellationItems = (getValue("exchangeAndReturnPolicy.sections.cancellationAndReturns.items") as string[] | undefined) ?? []
+  const useLicensesItems = (getValue("exchangeAndReturnPolicy.sections.useLicenses.items") as string[] | undefined) ?? []
+  const useLicensesItemsNot = (getValue("exchangeAndReturnPolicy.sections.useLicenses.itemsNot") as string[] | undefined) ?? []
+  const securityItems = (getValue("exchangeAndReturnPolicy.sections.securityProtection.items") as string[] | undefined) ?? []
+  const disclaimerItems = (getValue("exchangeAndReturnPolicy.sections.disclaimer.items") as string[] | undefined) ?? []
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Exchange and Return Policy</h1>
-          
-          <div className="prose prose-lg max-w-none">
-            <p className="text-sm text-gray-600 mb-8">
-              <strong>Effective Date:</strong> September 2022
+    <PageLayout currentPage="exchange-and-return-policy">
+      <div className="min-h-screen bg-gradient-to-b from-white to-[#f3f3f3] py-16" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-[#12d6fa] rounded-full mb-6">
+              <FileText className="w-10 h-10 text-white" />
+            </div>
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-900 mb-4 ${isRTL ? "font-cairo" : "font-montserrat"}`}>
+              {t("exchangeAndReturnPolicy.hero.title")}
+            </h1>
+            <p className={`text-xl text-gray-600 max-w-2xl mx-auto ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
+              {t("exchangeAndReturnPolicy.hero.subtitle")}
             </p>
+            <div className="w-24 h-1 bg-[#a8f387] mx-auto mt-6 rounded-full" />
+          </div>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">The Introduction</h2>
-              <p className="text-gray-700 mb-4">
-                Please read these terms carefully to ensure that you understand each clause before using the "Aqualine" platform, as they affect your legal rights.
-              </p>
-              <p className="text-gray-700 mb-4">
-                These Terms of Use together with the Privacy Policy (collectively "Terms and Conditions") govern your access to and use of the Aqualine Platform, its features, and services.
-              </p>
-              <p className="text-gray-700 mb-4">
-                By registering an account or using the "Aqualine" platform, you confirm to us that you have read and understood these terms and agree to abide by them. If you do not agree to these terms, please do not use the platform.
-              </p>
-            </section>
+          <div className="bg-white rounded-2xl p-6 shadow-lg mb-12">
+            <div className="flex items-center space-x-3 text-gray-600">
+              <Lock className="w-5 h-5" />
+              <span className={`font-medium ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
+                {t("exchangeAndReturnPolicy.hero.lastUpdated")}
+              </span>
+            </div>
+          </div>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Cancellation and Returns Policy</h2>
-              
-              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-                <p className="text-blue-800 font-semibold">
-                  "Aqualine" platform reserves the exclusive right to refuse or cancel any order for flavors, CO2 cylinders, and related beverage products listed at an incorrect or unavailable price, regardless of order confirmation or payment confirmation. In such cases, if the payment is processed, the amount will be refunded to the consumer in the same original payment method.
-                </p>
+          <div className="space-y-12">
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <BookOpen className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.introduction.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.introduction.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.introduction.p2")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.introduction.p3")}</p>
               </div>
+            </div>
 
-              <ul className="list-disc list-inside space-y-3 text-gray-700">
-                <li>The consumer can cancel the order unless it is accepted or processed by the service provider.</li>
-                <li>
-                  The "Aqualine" platform does not provide or sell any products to the consumer, but rather the products are provided by service providers, who are completely independent in performing their work, and therefore the return and exchange policy of service providers will apply, and the consumer acknowledges and agrees that it may differ from one service provider to another.
-                </li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Purchase Policy</h2>
-              <ul className="list-disc list-inside space-y-3 text-gray-700">
-                <li>People who can legally enter into contracts online in accordance with the laws of the Kingdom of Saudi Arabia can purchase products through the "Aqualine" platform.</li>
-                <li>All product data, including prices, availability, and images, is provided and updated directly from the service providers (suppliers and distributors).</li>
-                <li>The offered products must be compatible with health and safety standards, authorized to be traded and sold in the Kingdom of Saudi Arabia, and guaranteed to be free of any harmful causes.</li>
-                <li>The products must be healthy and usable, and the service provider must explain all their characteristics and suitability for use.</li>
-                <li>Some products may have limited quantities.</li>
-                <li>Some errors may occur during the process of providing products or providing detailed information about prices on the platform by service providers, so we do not bear responsibility for any errors you find while completing the order, and the platform will send a notification to the service provider to correct the errors.</li>
-                <li>The Consumer agrees to pay for the Products as stated during the order process, along with any shipping costs or other fees applicable to such order.</li>
-                <li>In some cases, a consumer's order may not be accepted for the following reasons:
-                  <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
-                    <li>Product unavailability.</li>
-                    <li>Stolen payments or payment fraud.</li>
-                    <li>If there is an error in the images, price or description of the product on the platform.</li>
-                    <li>If there was an error when listing a product in a sale or promotion.</li>
-                  </ul>
-                </li>
-                <li>It is the consumer's responsibility to monitor the status of your order.</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Shipping Policy</h2>
-              <ul className="list-disc list-inside space-y-3 text-gray-700">
-                <li>Orders are shipped to the consumer's specified address within 3 business days after confirmation by the seller.</li>
-                <li>The consumer bears the order delivery fees in addition to the price of the products.</li>
-                <li>The shipping process may be delayed for reasons related to force majeure or circumstances beyond our control. In this case, we will not bear any responsibilities as a result of delayed delivery of the order. You will be notified of the delay via email or phone by the seller.</li>
-                <li>Please see the list of cities that are shipped to through approved shipping companies.</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Prices and Taxes Policy</h2>
-              <ul className="list-disc list-inside space-y-3 text-gray-700">
-                <li>All prices of products displayed on the "Aqualine" platform are in the local currency (Saudi Riyal).</li>
-                <li>Prices are subject to modification and updating by the service provider.</li>
-                <li>Prices include 15% VAT on purchase orders. Any change in the applicable VAT rate will be automatically reflected in the product price.</li>
-              </ul>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Contact Information</h2>
-              <p className="text-gray-700 mb-4">
-                If you have any questions about our exchange and return policy, please contact us:
-              </p>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-700">
-                  <strong>Email:</strong> support@drinkmates.com<br />
-                  <strong>Phone:</strong> +966544671166<br />
-                  <strong>TOLL FREE NUMBER: 920016893</strong><br />
-                  <strong>Address:</strong> Kingdom of Saudi Arabia
-                </p>
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <FileText className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.definitions.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.definitions.intro")}</p>
+                <ul className="list-disc pl-6 space-y-2">
+                  {defItems.map((item, i) => (
+                    <li key={i} className="whitespace-pre-wrap">{item.replace(/\*\*/g, "")}</li>
+                  ))}
+                </ul>
               </div>
-            </section>
+            </div>
 
-            <div className="border-t border-gray-200 pt-6 mt-8">
-              <p className="text-sm text-gray-500">
-                All rights reserved to Aqualine 2025.
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Scale className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.legalLimits.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.legalLimits.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.legalLimits.p2")}</p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  {legalLimitsItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.legalLimits.p3")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.legalLimits.p4")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.legalLimits.p5")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <UserCheck className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.legalCapacity.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.legalCapacity.p1")}</p>
+                <ul className="list-disc pl-6 space-y-2">
+                  {legalCapacityItems.map((item, i) => (
+                    <li key={i}>{item.replace(/\*\*/g, "")}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Users className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.membershipPolicy.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.membershipPolicy.p1")}</p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  {membershipItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.membershipPolicy.p2")}</p>
+                <ul className="list-disc pl-6 space-y-2">
+                  {membershipItems2.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <ShoppingCart className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.purchasePolicy.title")}
+              </h2>
+              <div className={proseClass}>
+                <ul className="list-disc pl-6 space-y-2">
+                  {purchaseItems.map((item, i) => (
+                    <li key={i}>
+                      {item}
+                      {item.includes("may not be accepted for the following reasons") && (
+                        <ul className="list-disc pl-6 mt-2 space-y-1">
+                          {purchaseSubItems.map((sub, j) => (
+                            <li key={j}>{sub}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <CreditCard className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.pricesAndTaxes.title")}
+              </h2>
+              <div className={proseClass}>
+                <ul className="list-disc pl-6 space-y-2">
+                  {pricesItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <CreditCard className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.paymentPolicy.title")}
+              </h2>
+              <div className={proseClass}>
+                <ul className="list-disc pl-6 space-y-2">
+                  {paymentItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Truck className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.shippingPolicy.title")}
+              </h2>
+              <div className={proseClass}>
+                <ul className="list-disc pl-6 space-y-2">
+                  {shippingItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <RefreshCw className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.cancellationAndReturns.title")}
+              </h2>
+              <div className={proseClass}>
+                <ul className="list-disc pl-6 space-y-2">
+                  {cancellationItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Key className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.useLicenses.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.useLicenses.p1")}</p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  {useLicensesItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+                <p className="mb-2 font-semibold">You may not:</p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  {useLicensesItemsNot.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.useLicenses.p2")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Shield className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.securityProtection.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.securityProtection.p1")}</p>
+                <ul className="list-disc pl-6 space-y-2">
+                  {securityItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Palette className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.intellectualProperty.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.intellectualProperty.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.intellectualProperty.p2")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.intellectualProperty.p3")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <AlertTriangle className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.disclaimer.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p2")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p3")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p4")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p5")}</p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  {disclaimerItems.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p6")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.disclaimer.p7")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <HandCoins className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.compensation.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.compensation.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.compensation.p2")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Link2 className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.linksToSites.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.linksToSites.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.linksToSites.p2")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.linksToSites.p3")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Clock className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.termAndTermination.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.termAndTermination.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.termAndTermination.p2")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.termAndTermination.p3")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <ArrowRightLeft className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.transferOfRights.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.transferOfRights.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.transferOfRights.p2")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Gavel className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.applicableLaw.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.applicableLaw.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.applicableLaw.p2")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <FileEdit className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.modifications.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.modifications.p1")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.modifications.p2")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.modifications.p3")}</p>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.modifications.p4")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <Languages className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.theLanguage.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.theLanguage.p1")}</p>
+              </div>
+            </div>
+
+            <div className={sectionClass}>
+              <h2 className={headingClass}>
+                <FileCheck className={iconClass} />
+                {t("exchangeAndReturnPolicy.sections.fullAgreement.title")}
+              </h2>
+              <div className={proseClass}>
+                <p className="mb-4">{t("exchangeAndReturnPolicy.sections.fullAgreement.p1")}</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-t border-gray-100">
+              <p className={`text-sm text-gray-500 italic ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
+                {t("exchangeAndReturnPolicy.sections.rightsReserved")}
               </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

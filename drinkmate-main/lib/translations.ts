@@ -1447,82 +1447,75 @@ export interface Translations {
       lastUpdated: string
     }
     sections: {
-      informationWeCollect: {
+      introduction: {
         title: string
-        description: string
-        personalInfo: string
-        usageData: string
-        cookies: string
+        p1: string
+        p2: string
+        p3: string
       }
-      howWeUseInformation: {
+      dataCollection: {
         title: string
-        description: string
-        purposes: string[]
+        intro: string
+        items: string[]
+        note: string
       }
-      informationSharing: {
+      limitsOnUse: {
         title: string
-        description: string
-        exceptions: string[]
+        intro: string
+        items: string[]
       }
-      dataSecurity: {
+      dataSharing: {
         title: string
-        description: string
-        measures: string[]
+        intro: string
+        items: string[]
       }
-      yourRights: {
+      dataStorage: {
         title: string
-        description: string
-        rights: string[]
+        p1: string
+      }
+      dataProtection: {
+        title: string
+        intro: string
+        items: string[]
+        note: string
+      }
+      compliance: {
+        title: string
+        p1: string
+      }
+      yourResponsibilities: {
+        title: string
+        p1: string
+        p2: string
+      }
+      thirdPartyLinks: {
+        title: string
+        p1: string
+        p2: string
+        p3: string
+        p4: string
+      }
+      childrenPrivacy: {
+        title: string
+        p1: string
+        p2: string
+      }
+      modifications: {
+        title: string
+        p1: string
+        p2: string
+        p3: string
       }
       contactUs: {
         title: string
-        description: string
+        intro: string
+        emailLabel: string
+        phoneLabel: string
         email: string
         phone: string
+        acknowledgment: string
+        rightsReserved: string
       }
-      personalInfoDetails: {
-        nameContact: string
-        paymentBilling: string
-        orderHistory: string
-        customerService: string
-      }
-      usageDataDetails: {
-        ipDevice: string
-        websiteUsage: string
-        browserOS: string
-      }
-      cookiesDetails: {
-        trackingTech: string
-        sessionData: string
-        thirdPartyAnalytics: string
-      }
-      purposesDetails: {
-        processOrders: string
-        customerSupport: string
-        updatesMarketing: string
-        improveServices: string
-        securityFraud: string
-      }
-      exceptionsDetails: {
-        explicitConsent: string
-        legalObligations: string
-        protectRights: string
-        trustedProviders: string
-      }
-      securityDetails: {
-        encryption: string
-        securityAssessments: string
-        accessControls: string
-        secureTransmission: string
-      }
-      rightsDetails: {
-        accessData: string
-        correctInfo: string
-        deleteData: string
-        optOutMarketing: string
-        dataPortability: string
-      }
-      address: string
     }
   }
 
@@ -1633,6 +1626,40 @@ export interface Translations {
         serviceAbuse: string
       }
       address: string
+    }
+  }
+
+  // Exchange and Return Policy (Terms and Conditions)
+  exchangeAndReturnPolicy: {
+    hero: {
+      title: string
+      subtitle: string
+      lastUpdated: string
+    }
+    sections: {
+      introduction: { title: string; p1: string; p2: string; p3: string }
+      definitions: { title: string; intro: string; items: string[] }
+      legalLimits: { title: string; p1: string; p2: string; items: string[]; p3: string; p4: string; p5: string }
+      legalCapacity: { title: string; p1: string; items: string[]; p2: string }
+      membershipPolicy: { title: string; p1: string; items: string[]; p2: string; items2: string[] }
+      purchasePolicy: { title: string; items: string[]; subItems: string[] }
+      pricesAndTaxes: { title: string; items: string[] }
+      paymentPolicy: { title: string; items: string[] }
+      shippingPolicy: { title: string; items: string[] }
+      cancellationAndReturns: { title: string; items: string[] }
+      useLicenses: { title: string; p1: string; items: string[]; itemsNot: string[]; p2: string }
+      securityProtection: { title: string; p1: string; items: string[] }
+      intellectualProperty: { title: string; p1: string; p2: string; p3: string }
+      disclaimer: { title: string; p1: string; p2: string; p3: string; p4: string; p5: string; items: string[]; p6: string; p7: string }
+      compensation: { title: string; p1: string; p2: string }
+      linksToSites: { title: string; p1: string; p2: string; p3: string }
+      termAndTermination: { title: string; p1: string; p2: string; p3: string }
+      transferOfRights: { title: string; p1: string; p2: string }
+      applicableLaw: { title: string; p1: string; p2: string }
+      modifications: { title: string; p1: string; p2: string; p3: string; p4: string }
+      theLanguage: { title: string; p1: string }
+      fullAgreement: { title: string; p1: string; p2: string }
+      rightsReserved: string
     }
   }
 
@@ -3767,107 +3794,110 @@ export const translations: Record<Language, Translations> = {
       hero: {
         title: "Privacy Policy",
         subtitle: "How we protect your information",
-        lastUpdated: "Last updated: January 2024"
+        lastUpdated: "Effective date: September 2022"
       },
       sections: {
-        informationWeCollect: {
-          title: "Information We Collect",
-          description: "We collect information to provide better services to our customers.",
-          personalInfo: "Personal Information",
-          usageData: "Usage Data",
-          cookies: "Cookies and Tracking Technologies"
+        introduction: {
+          title: "Introduction",
+          p1: "Please read this Privacy Policy carefully before accessing and using the \"Drinkmate\" Platform. We appreciate your interest and concerns about the privacy of your data online, so we have prepared this policy to help you understand the nature of the collection, use and sharing of personal data and how to handle it when you visit the \"Drinkmate\" platform.",
+          p2: "This policy applies to all of your uses of the \"Drinkmate\" platform, including information, data, services, tools, and all other pages and activities that we provide on or through the platform or when you otherwise interact with us. This policy does not apply to any other third-party sites, applications, or services that link to the \"Drinkmate\" platform.",
+          p3: "You acknowledge that your use of the \"Drinkmate\" platform means that you have read and understood this policy and are familiar with all of the provisions and practices stated in it."
         },
-        howWeUseInformation: {
-          title: "How We Use Your Information",
-          description: "We use the information we collect to provide, maintain, and improve our services.",
-          purposes: [
-            "Process and fulfill your orders",
-            "Provide customer support",
-            "Send you updates and marketing communications",
-            "Improve our products and services",
-            "Ensure security and prevent fraud"
+        dataCollection: {
+          title: "Data Collection",
+          intro: "We may collect certain data about you, which includes, for example:",
+          items: [
+            "Account data, such as name, mobile number, and email address.",
+            "Account login data: such as login ID, password, or other security codes.",
+            "Payment data: such as your credit card number, cardholder name, expiration date, authentication code, and billing address.",
+            "Technical data includes the IP addresses used to connect your device to the Internet, the name and location of the device, operating system type, mobile network data including mobile number and device identifiers, version and language preferences, information you search for on the platform, access times, dates and other statistics.",
+            "Log Data: Diagnostic, technical, operational error, and usage information such as the timing and duration of your use of the Services, any data stored in cookies you set on your devices, and the pages you visited before or after navigating to the Platform.",
+            "Contact data, such as name, email, mobile number, message title, and subject.",
+            "Feedback, opinions, and comments provided on the platform.",
+            "Any other data you voluntarily decide to share with us, including, but not limited to, address, gender, country, and other similar data.",
+            "Data you provided to us by filling out the forms available on the platform or any other means."
+          ],
+          note: "You must commit to providing complete, correct and accurate information and to maintain the confidentiality of your account information, and to specify the persons allowed to access and use your account, otherwise you will be responsible for any damages resulting from the inaccuracy of this information and data or failure to update it once it is changed. We may share said information with third parties for the purpose of designing, analyzing, managing, reporting, and improving advertising on the Platform."
+        },
+        limitsOnUse: {
+          title: "Limits on the use of your data",
+          intro: "We are always committed to protecting your privacy, and therefore we use your personal data for the following purposes:",
+          items: [
+            "To register and manage your account and send an email to confirm your registration on the platform.",
+            "To identify you when you use the Platform and provide you with a personalized experience.",
+            "To process billing and payment, and share data with payment gateways.",
+            "To provide better service, as well as improve our services and the platform.",
+            "To improve the quality of customer service. Your information helps us more easily respond to your directed requests and improve your customer service and support needs more effectively.",
+            "To communicate with you, send emails periodically, and respond to inquiries.",
+            "To prevent prohibited or illegal activities, comply with applicable law, enforce our Terms of Service and any other purposes disclosed to you at the time we collect your information or pursuant to your consent.",
+            "To protect your identity and financial information, and provide you with the best possible fraud protection.",
+            "To make suggestions and recommendations to you and other users about services that may be of interest to you, which may be based on your activity on the Platform.",
+            "For statistical, research, analytical, marketing, promotional and survey purposes."
           ]
         },
-        informationSharing: {
-          title: "Information Sharing",
-          description: "We do not sell, trade, or otherwise transfer your personal information to third parties.",
-          exceptions: [
-            "With your explicit consent",
-            "To comply with legal obligations",
-            "To protect our rights and safety",
-            "With trusted service providers"
+        dataSharing: {
+          title: "Data Sharing",
+          intro: "We share personal data collected in accordance with this Policy with our affiliates and with other third parties that may be necessary to achieve the purposes set out in Section [3] of this Policy, and you acknowledge and agree that we may share your personal data as follows:",
+          items: [
+            "To comply with legal process or to comply with lawful or enforceable subpoenas or court orders.",
+            "To respond to requests from public and governmental authorities.",
+            "To enforce our Terms of Use and Privacy Policy.",
+            "To protect our rights, privacy, safety, or property, and/or the rights of you or others.",
+            "We may share information with third-party vendors who provide services or functions on our behalf, including business analytics, payment processing, customer service, marketing, public relations, survey distribution, and fraud prevention. We may also authorize third-party vendors to collect information on our behalf, including, for example, as necessary to operate features of the Platform or to facilitate the delivery of online advertising tailored to your interests. Third-party vendors have access to and may collect information only as needed to perform their functions.",
+            "We may also share information with a third party in connection with any reorganization, merger, sale, joint venture, assignment, transfer, or other disposition of all or a portion of our business or assets during negotiations."
           ]
         },
-        dataSecurity: {
-          title: "Data Security",
-          description: "We implement appropriate security measures to protect your personal information.",
-          measures: [
-            "Encryption of sensitive data",
-            "Regular security assessments",
-            "Access controls and authentication",
-            "Secure data transmission"
-          ]
+        dataStorage: {
+          title: "Data Storage",
+          p1: "We at the \"Drinkmate\" platform only store your personal data as long as it is necessary to achieve the purposes specified in Section [3]. We also reserve the right to reconsider the current privacy terms, and you should review this policy from time to time."
         },
-        yourRights: {
-          title: "Your Rights",
-          description: "You have certain rights regarding your personal information.",
-          rights: [
-            "Access your personal data",
-            "Correct inaccurate information",
-            "Request deletion of your data",
-            "Opt-out of marketing communications",
-            "Data portability"
-          ]
+        dataProtection: {
+          title: "Data protection and security",
+          intro: "We take technical and organizational security measures to protect your data from loss, misuse, unauthorized access, disclosure, alteration or destruction. These include some of the preventive measures that:",
+          items: [
+            "We use firewalls, data encryption, physical access controls to our data centers and data access permission controls.",
+            "We will not rent or sell your data to any third parties, and we will not allow others to use it for direct or indirect marketing purposes without obtaining your consent.",
+            "We may collect, use, store and share your information if we believe it is necessary to: respond to applicable laws, regulations, legal process, or governmental requests; enforce our Terms and any other applicable terms and policies, including for the purposes of investigations of potential violations; detect and prevent cases of fraud, security and legal issues, and technical malfunctions, in addition to dealing with and investigating them; protect the rights, property, or safety of our users or the Drinkmate Platform."
+          ],
+          note: "This level of protection may not be 100% effective unless you follow your own security policies. You should not share your account data with anyone, and if you are concerned that any of your personal data has been exposed, you should change it immediately after logging in to your account."
+        },
+        compliance: {
+          title: "Compliance and cooperation with regulators",
+          p1: "We regularly review our compliance with our Privacy Policy, and when we receive formal written complaints, we contact the person who made the complaint to follow up, and we also work with the relevant regulators, including local data protection authorities, to resolve any complaints regarding the transfer of personal data that we cannot resolve with our users directly."
+        },
+        yourResponsibilities: {
+          title: "Your responsibilities",
+          p1: "You are responsible for ensuring that the data you provide to us is accurate, complete and up-to-date.",
+          p2: "If you share any data relating to other people with us, you are responsible for that data in accordance with legal requirements, and you must inform those people whose data you provide to us about the content of this policy and obtain their prior consent."
+        },
+        thirdPartyLinks: {
+          title: "Third Party Links",
+          p1: "The \"Drinkmate\" platform may contain links that refer the user or visitor to external applications, links or websites that may collect and disclose information about you in a manner different from the platform.",
+          p2: "\"Drinkmate\" platform does not control the privacy practices of external applications and websites, and we are not responsible for the content or privacy policies of those external applications and websites.",
+          p3: "You should review the third party's privacy policy and terms of use when visiting any such third-party applications or websites.",
+          p4: "We are not responsible for the collection, use or disclosure of any information from third parties that have a link to the \"Drinkmate\" platform."
+        },
+        childrenPrivacy: {
+          title: "Children's privacy",
+          p1: "Your guidance and participation are essential to help ensure children have a safe online experience. We encourage you to stay involved and see what your child is doing online. Your efforts will help direct your children to age-appropriate sites.",
+          p2: "Drinkmate takes children's privacy seriously. We do not knowingly collect personal information from children through the Platform. If you are a minor under the law, please do not submit any personal information without the express consent and involvement of a parent or legal guardian."
+        },
+        modifications: {
+          title: "Modifications",
+          p1: "The \"Drinkmate\" platform reserves the full right to make any amendment, change, addition, or deletion to this policy in the manner and time it deems appropriate, so we advise you to review this page periodically and read it regularly, and when any important changes are published, they will be published on this page.",
+          p2: "We have the right to modify our Privacy Policy at any time, and we will publish a general notice on the platform of new amendments, and we will also update the \"last updated date\" at the top of this document.",
+          p3: "Your continued use of the Platform after updating this Policy constitutes your express acceptance of these amendments and your legal acceptance of the new practices and terms. If you do not agree to the new modifications and updates, you must immediately stop using the platform."
         },
         contactUs: {
-          title: "Contact Us",
-          description: "If you have questions about this Privacy Policy, please contact us.",
-          email: "privacy@aqualine.sa.com",
-          phone: "+966544671166"
-        },
-        personalInfoDetails: {
-          nameContact: "Name and contact information (email, phone, address)",
-          paymentBilling: "Payment and billing information",
-          orderHistory: "Order history and preferences",
-          customerService: "Customer service communications"
-        },
-        usageDataDetails: {
-          ipDevice: "IP address and device information",
-          websiteUsage: "Website usage data and analytics",
-          browserOS: "Browser type and operating system"
-        },
-        cookiesDetails: {
-          trackingTech: "Cookies and tracking technologies",
-          sessionData: "Session data and preferences",
-          thirdPartyAnalytics: "Third-party analytics"
-        },
-        purposesDetails: {
-          processOrders: "Process and fulfill your orders",
-          customerSupport: "Provide customer support",
-          updatesMarketing: "Send you updates and marketing communications",
-          improveServices: "Improve our products and services",
-          securityFraud: "Ensure security and prevent fraud"
-        },
-        exceptionsDetails: {
-          explicitConsent: "With your explicit consent",
-          legalObligations: "To comply with legal obligations",
-          protectRights: "To protect our rights and safety",
-          trustedProviders: "With trusted service providers"
-        },
-        securityDetails: {
-          encryption: "Encryption of sensitive data",
-          securityAssessments: "Regular security assessments",
-          accessControls: "Access controls and authentication",
-          secureTransmission: "Secure data transmission"
-        },
-        rightsDetails: {
-          accessData: "Access your personal data",
-          correctInfo: "Correct inaccurate information",
-          deleteData: "Request deletion of your data",
-          optOutMarketing: "Opt-out of marketing communications",
-          dataPortability: "Data portability"
-        },
-        address: "Riyadh, Saudi Arabia"
+          title: "Contact us",
+          intro: "You can contact us at any time through:",
+          emailLabel: "Email:",
+          phoneLabel: "Phone number:",
+          email: "cs@aqualine.sa.com",
+          phone: "+966544671166",
+          acknowledgment: "You acknowledge that you have read this Privacy Policy and agree to all of its terms and conditions.",
+          rightsReserved: "All rights reserved to the Drinkmate platform 2025"
+        }
       }
     },
     termsOfService: {
@@ -4016,6 +4046,227 @@ export const translations: Record<Language, Translations> = {
           serviceAbuse: "Abuse of services"
         },
         address: "Riyadh, Saudi Arabia"
+      }
+    },
+    exchangeAndReturnPolicy: {
+      hero: {
+        title: "Exchange and Return Policy",
+        subtitle: "Terms and conditions for using the platform",
+        lastUpdated: "Effective Date: September 2022"
+      },
+      sections: {
+        introduction: {
+          title: "The Introduction",
+          p1: "Please read these terms carefully to ensure that you understand each clause before using the \"Drinkmate\" platform, as they affect your legal rights.",
+          p2: "These Terms of Use together with the Privacy Policy (collectively \"Terms and Conditions\") govern your access to and use of the Drinkmate Platform, its features, and services.",
+          p3: "By registering an account or using the \"Drinkmate\" platform, you confirm to us that you have read and understood these terms and agree to abide by them. If you do not agree to these terms, please do not use the platform."
+        },
+        definitions: {
+          title: "Definitions",
+          intro: "In these terms, unless the context otherwise requires, the following terms have the meanings indicated:",
+          items: [
+            "**\"The platform\", \"we\", \"us\" or \"our\":** refers to the \"Drinkmate\" platform.",
+            "**\"User\", \"you\" or \"your\":** refers to each person who creates an Account, visits the Platform or uses the Services.",
+            "**\"Service Provider\":** refers to every supplier and distributor who registers an account on the \"Drinkmate\" platform for the purpose of selling its products.",
+            "**\"Consumer\":** refers to anyone who registers an account on the \"Drinkmate\" platform for the purpose of purchasing products.",
+            "**\"Products\":** refers to flavors, CO2 cylinders, and related beverage products and accessories.",
+            "**\"Order\":** refers to the request to purchase products through the \"Drinkmate\" platform.",
+            "**\"Laws\":** refers to the laws and regulations in force in the Kingdom of Saudi Arabia.",
+            "**\"Terms and Conditions\", \"Agreement\":** refers to these Terms together with the Privacy Policy and all other policies and terms."
+          ]
+        },
+        legalLimits: {
+          title: "Legal Limits of Our Services",
+          p1: "Drinkmate is an electronic platform that acts as an online intermediary between product service providers and consumers who request flavors, CO2 cylinders, and related beverage products and accessories at reasonable prices and delivered to all regions of the Kingdom of Saudi Arabia.",
+          p2: "The user knows and agrees that the role of the \"Drinkmate\" platform is limited to connecting the service provider and the consumer, and the platform provides the following:",
+          items: [
+            "Register a free account on the platform.",
+            "Technical infrastructure such as a call center, a control panel for service providers to manage orders, etc.",
+            "Display products on the platform.",
+            "Different payment methods that suit everyone.",
+            "Technical support and communication between parties."
+          ],
+          p3: "When a consumer contracts with a service provider through the platform, the two parties enter into a direct and legally binding relationship, and our role is limited only to connecting the service provider and the consumer.",
+          p4: "The user agrees that the \"Drinkmate\" platform collects and processes transaction fees between the parties.",
+          p5: "We have the right, at our sole discretion, to modify or update the current services of the platform, without any liability to any user."
+        },
+        legalCapacity: {
+          title: "Legal Capacity",
+          p1: "We want to ensure that every user is able to form legally binding contracts online; therefore, the user acknowledges that he has the legal capacity necessary to conclude and accept these terms, and that he has full unrestricted legal powers according to the following:",
+          items: [
+            "**Legal capacity of a natural person:** The user of the \"Drinkmate\" platform is required to be 18 years of age or older and to have the necessary legal capacity to conclude contracts. If you are under 18 years of age, you must obtain the approval of a parent or legal guardian, and their acceptance of these Terms and their agreement to accept responsibility for your actions, and any fees associated with your use of the Services.",
+            "**Legal Status of a Business Entity:** If you are registering as a service provider, you acknowledge that you have the authority to bind that entity to these Terms, and that you and the business entity will be subject to all applicable laws relating to online trading.",
+            "The user agrees that if he violates this clause, he will bear the consequences of this violation before others."
+          ],
+          p2: ""
+        },
+        membershipPolicy: {
+          title: "Membership Policy",
+          p1: "To benefit from the \"Drinkmate\" platform, you must register a valid account as required by the registration form and agree to the terms and conditions. When you become a member, you agree to:",
+          items: [
+            "Provide true, accurate and complete data as required in the registration form on the platform.",
+            "Maintain the confidentiality of your account data, and restrict others from using the account.",
+            "Accept responsibility for activities that occur under your account.",
+            "Notify us immediately if the account is hacked or stolen, or if any illegal use of your account on the platform is discovered, so that we can take the necessary technical measures to maintain the account."
+          ],
+          p2: "We reserve the right to cancel accounts that have not been confirmed or have been inactive for a long period.",
+          items2: [
+            "Membership in the \"Drinkmate\" platform is provided with a licensing system to use the platform, and therefore we have the right to withdraw this license and terminate your membership in the following cases:",
+            "If you do not comply with the terms, policies, rules and guidelines relating to the platform.",
+            "If we are unable to confirm or verify any information provided by you.",
+            "If we determine in our sole discretion that any of your actions may cause harm to us.",
+            "If at any time we see fit to suspend any violating account."
+          ]
+        },
+        purchasePolicy: {
+          title: "Purchase Policy",
+          items: [
+            "People who can legally enter into contracts online in accordance with the laws of the Kingdom of Saudi Arabia can purchase products through the \"Drinkmate\" platform.",
+            "All product data, including prices, availability, and images, is provided and updated directly from the service providers (suppliers and distributors).",
+            "The offered products must be compatible with health and safety standards, authorized to be traded and sold in the Kingdom of Saudi Arabia, and guaranteed to be free of any harmful causes.",
+            "The products must be healthy and usable, and the service provider must explain all their characteristics and suitability for use.",
+            "Some products may have limited quantities.",
+            "Some errors may occur during the process of providing products or providing detailed information about prices on the platform by service providers, so we do not bear responsibility for any errors you find while completing the order, and the platform will send a notification to the service provider to correct the errors.",
+            "The Consumer agrees to pay for the Products as stated during the order process, along with any shipping costs or other fees applicable to such order.",
+            "In some cases, a consumer's order may not be accepted for the following reasons:",
+            "It is the consumer's responsibility to monitor the status of your order."
+          ],
+          subItems: [
+            "Product unavailability.",
+            "Stolen payments or payment fraud.",
+            "If there is an error in the images, price or description of the product on the platform.",
+            "If there was an error when listing a product in a sale or promotion."
+          ]
+        },
+        pricesAndTaxes: {
+          title: "Prices and Taxes Policy",
+          items: [
+            "All prices of products displayed on the \"Drinkmate\" platform are in the local currency (Saudi Riyal).",
+            "Prices are subject to modification and updating by the service provider.",
+            "Prices include 15% VAT on purchase orders. Any change in the applicable VAT rate will be automatically reflected in the product price."
+          ]
+        },
+        paymentPolicy: {
+          title: "Payment Policy",
+          items: [
+            "The \"Drinkmate\" platform provides payment through electronic payment gateways by credit cards, Mada, and bank transfer.",
+            "You must ensure that the data you enter during the payment process is correct, accurate and valid.",
+            "The user must use his bank cards and ensure that the information he enters is correct and accurate before completing the payment. If he uses one of the cards for another party, he must have an authorization or permission to use it, and thus the \"Drinkmate\" platform is not responsible for this.",
+            "We do not store credit card numbers on our systems, and payment details are protected before being transmitted using the latest electronic protection technologies that follow the highest security standards.",
+            "We have the right to amend this policy by adding new payment methods in the future or canceling any current method, and you will be notified if we implement this."
+          ]
+        },
+        shippingPolicy: {
+          title: "Shipping Policy",
+          items: [
+            "Orders are shipped to the consumer's specified address within 3 business days after confirmation by the seller.",
+            "The consumer bears the order delivery fees in addition to the price of the products.",
+            "The shipping process may be delayed for reasons related to force majeure or circumstances beyond our control. In this case, we will not bear any responsibilities as a result of delayed delivery of the order. You will be notified of the delay via email or phone by the seller.",
+            "Please see the list of cities that are shipped to through approved shipping companies."
+          ]
+        },
+        cancellationAndReturns: {
+          title: "Cancellation and Returns Policy",
+          items: [
+            "\"Drinkmate\" platform reserves the exclusive right to refuse or cancel any order for flavors, CO2 cylinders, and related beverage products listed at an incorrect or unavailable price, regardless of order confirmation or payment confirmation. In such cases, if the payment is processed, the amount will be refunded to the consumer in the same original payment method.",
+            "The consumer can cancel the order unless it is accepted or processed by the service provider.",
+            "The \"Drinkmate\" platform does not provide or sell any products to the consumer, but rather the products are provided by service providers, who are completely independent in performing their work, and therefore the return and exchange policy of service providers will apply, and the consumer acknowledges and agrees that it may differ from one service provider to another."
+          ]
+        },
+        useLicenses: {
+          title: "Use Licenses",
+          p1: "In consideration of your agreement to be bound by these Terms, we hereby grant you a non-exclusive, non-transferable, revocable right and license to:",
+          items: [
+            "Access and use our Services in accordance with these Terms.",
+            "Access and use any content, information or related materials that may be available through our Services solely for your personal, non-commercial use, and as set forth in these Terms."
+          ],
+          itemsNot: [
+            "Modify any content you have printed or downloaded in any way.",
+            "Violate any copyright, trademark, patent, advertising or database laws or any other intellectual property rights belonging to us or licensed to us or to others.",
+            "Access or attempt to access any aspect of our Services or any Content that you are not authorized to access under these Terms or as expressly specified by us."
+          ],
+          p2: "The license granted to the user does not include any ownership rights in the platform or part of it, nor does this license indicate, directly or indirectly, the existence of a partnership of any kind between us and any user."
+        },
+        securityProtection: {
+          title: "Security Protection of the Platform",
+          p1: "You may use our Services and the content we provide only in accordance with these Terms. You agree to the following:",
+          items: [
+            "You may never violate or attempt to violate the security protection of the platform.",
+            "You may not license, sell, rent, transfer, assign, distribute, host or exploit the Service.",
+            "It is not permissible to attempt to explore or test the capacity of the platform or network, or to attempt to penetrate the security system or levels of protection without being authorized to do so.",
+            "You may not modify, translate, adapt, merge or make derivative works of any part of the Platform.",
+            "You may not access the Platform in order to create similar or competing services or sites.",
+            "No part of the Platform may be copied, reproduced, distributed, republished, downloaded, displayed, posted or transmitted in any form or by any means.",
+            "You may not remove or destroy any logos or proprietary marks on the Platform."
+          ]
+        },
+        intellectualProperty: {
+          title: "Intellectual Property Rights",
+          p1: "All legal rights, intellectual property rights, and trademarks in the \"Drinkmate\" platform, and all copyrights, trade dress, designs, logos, icons, and other intellectual properties, materials, and other rights, including software rights, the HTML code, and other codes it contains, including content and texts, fonts, images, software, audio, music, video, digital materials, documents, data and figures, are the property of us or our licensors.",
+          p2: "All trademarks, service marks and trade names are owned, registered and/or licensed by us. You are not permitted to use any of our trademarks, service marks or trade names in any media or advertising without our written permission.",
+          p3: "You may not copy, reproduce, distribute or commercially exploit any of our Services, including our Content, except with our express written permission."
+        },
+        disclaimer: {
+          title: "Disclaimer",
+          p1: "The services and contents of the \"Drinkmate\" platform are provided on an \"as is\" and \"as available\" basis without any guarantees or warranties of any kind, whether express or implied.",
+          p2: "We make no other representations regarding our Services, or other products, services, or information obtained through the Platform, including its reliability, accuracy, quality, availability, timeliness, security or ability to meet your needs.",
+          p3: "We are not responsible for the accuracy or reliability of any information or content transmitted or posted via our Services.",
+          p4: "The user agrees that all information he provides to us (including registration) is true, accurate and up-to-date in all respects and that it does not violate any proprietary rights or encourage terrorism and hatred or contain material or information that is offensive to others or pornographic images, and at his own risk.",
+          p5: "The user agrees to bear full responsibility for his use of the \"Drinkmate\" platform. We will not be liable for losses or damages, whether direct, indirect, consequential or incidental, arising from, including but not limited to:",
+          items: [
+            "Information related to products.",
+            "Any failure, error, omission, malfunction, or interruption in the operation of the platform.",
+            "Interruption in service due to regular maintenance work, repair of technical problems, or the like.",
+            "The user fails to maintain the security, confidentiality and privacy of his account data.",
+            "Circumstances beyond control, force majeure or emergency circumstances."
+          ],
+          p6: "We do not warrant that advertisements, their content, or images will be accurate, complete, reliable, or error-free.",
+          p7: "We do our best to ensure that the Platform is available for use around the clock, but we do not guarantee that the Platform will be completely and safely available at the specified time, as the Platform may be unavailable from time to time during repair, maintenance or development work."
+        },
+        compensation: {
+          title: "Compensation",
+          p1: "You agree to hold us harmless, release and indemnify us against any and all claims, expenses, costs, actions, demands, liabilities, judgments and settlements (including appropriate legal fees) resulting or alleged to result from your use of the Services and Content and/or any breach of these Terms, and/or misuse or abuse or illegal use of the platform, regardless of its type.",
+          p2: "You are obligated to compensate us for any losses or damages that may be caused to the platform as a result of any illegal or unauthorized use by you."
+        },
+        linksToSites: {
+          title: "Links to Associated Sites",
+          p1: "Please note that if you link, or are redirected, to third-party external sites when you use our Services, those other third-party sites may have different terms of use and privacy that you must adhere to and agree to before you are granted access to them.",
+          p2: "We are not responsible for and do not make any representations about (or endorse in any way) any materials or services available on or from such external sites (this includes login or registration access).",
+          p3: "We do not warrant in any way that these third party owned external sites will be up to date, free from errors, ambiguities or omissions, or fit for any purpose."
+        },
+        termAndTermination: {
+          title: "Term and Termination",
+          p1: "These Terms are effective immediately upon registering an account and acknowledging your acceptance and will remain in effect until terminated by either you or us.",
+          p2: "We may terminate these Terms at any time without notice, if you violate any of these Terms.",
+          p3: "Upon termination, all rights granted to you under these Terms will terminate."
+        },
+        transferOfRights: {
+          title: "Transfer of Rights and Obligations",
+          p1: "We may transfer all or part of our rights, obligations or responsibilities (whether express or assumed) under these Terms to any other entity, and use all reasonable endeavors to notify you of any transfer by posting on the Platform.",
+          p2: "The User may not transfer all or part of his rights or obligations under these Terms to any third party without the prior written consent of the \"Drinkmate\" platform."
+        },
+        applicableLaw: {
+          title: "Applicable Law",
+          p1: "These terms are governed by and construed in accordance with the applicable laws of the Kingdom of Saudi Arabia.",
+          p2: "If any of these terms are deemed unlawful, void, or unenforceable under applicable laws, then that provision will be deemed severable from these terms and will not affect the validity and enforceability of the remaining provisions."
+        },
+        modifications: {
+          title: "Modifications",
+          p1: "We have the right to review and modify these Terms in our absolute discretion at any time we deem appropriate and for any reason. Such modifications will be effective immediately upon posting them on this page, and we will update the effective date.",
+          p2: "The user must review these amendments before continuing to use the \"Drinkmate\" platform.",
+          p3: "Your continued use of the \"Drinkmate\" platform after making any updates to these terms and the privacy policy, whether by addition, deletion, or modification, constitutes your express consent to these updates.",
+          p4: "We have the right to make any modifications or improvements we deem necessary to the \"Drinkmate\" platform to increase its effectiveness. The user is committed to any instructions provided to him by the platform in this regard."
+        },
+        theLanguage: {
+          title: "The Language",
+          p1: "These terms are written in Arabic and English, and the Arabic language will be used for the purpose of interpreting and implementing these terms if the English language conflicts with them."
+        },
+        fullAgreement: {
+          title: "Full Agreement",
+          p1: "These Terms (or as amended from time to time) define all terms of the agreement between you and the \"Drinkmate\" platform, and replace any previous versions of these Terms. In the event that these terms conflict with any previous versions, the current version shall prevail.",
+          p2: ""
+        },
+        rightsReserved: "All rights reserved to Drinkmate 2025."
       }
     },
     cookiePolicy: {
@@ -6177,107 +6428,109 @@ export const translations: Record<Language, Translations> = {
       hero: {
         title: "سياسة الخصوصية",
         subtitle: "كيف نحمي معلوماتك",
-        lastUpdated: "آخر تحديث: يناير 2024"
+        lastUpdated: "تاريخ السريان: سبتمبر 2022"
       },
       sections: {
-        informationWeCollect: {
-          title: "المعلومات التي نجمعها",
-          description: "نجمع المعلومات لتقديم خدمات أفضل لعملائنا.",
-          personalInfo: "المعلومات الشخصية",
-          usageData: "بيانات الاستخدام",
-          cookies: "ملفات تعريف الارتباط وتقنيات التتبع"
+        introduction: {
+          title: "المقدمة",
+          p1: "يرجى قراءة سياسة الخصوصية هذه بعناية قبل دخولك واستخدامك منصة \"Drinkmate\".",
+          p2: "نحن نقدر اهتمامكم ومخاوفكم بشأن خصوصية بياناتكم على شبكة الإنترنت، لذا قمنا بإعداد هذه السياسة لمساعدتكم على فهم طبيعة جمع واستخدام ومشاركة البيانات الشخصية وكيفية التعامل معها عند زيارة منصة \"Drinkmate\". تنطبق هذه السياسة على كافة استخداماتك لمنصة \"Drinkmate\" بما في ذلك المعلومات والبيانات والخدمات والأدوات وجميع الصفحات والأنشطة الأخرى التي نقدمها على المنصة أو من خلالها أو عندما تتفاعل معنا بطريقة أخرى، ولا تنطبق هذه السياسة على أي مواقع أو تطبيقات أو خدمات أخرى لجهات خارجية ترتبط بمنصة \"Drinkmate\".",
+          p3: "أنت تقر بأنّ استخدامك لمنصة \"Drinkmate\" يعني أنك قرأت وفهمت هذه السياسة وملم بكافة الأحكام والممارسات المعلنة فيها."
         },
-        howWeUseInformation: {
-          title: "كيف نستخدم معلوماتك",
-          description: "نستخدم المعلومات التي نجمعها لتقديم وصيانة وتحسين خدماتنا.",
-          purposes: [
-            "معالجة وتنفيذ طلباتك",
-            "تقديم دعم العملاء",
-            "إرسال التحديثات والاتصالات التسويقية",
-            "تحسين منتجاتنا وخدماتنا",
-            "ضمان الأمان ومنع الاحتيال"
+        dataCollection: {
+          title: "جمع البيانات",
+          intro: "قد نقوم بجمع بعض البيانات عنك، والتي تشمل على سبيل المثال:",
+          items: [
+            "بيانات الحساب، مثل الاسم ورقم الجوال وعنوان البريد الإلكتروني.",
+            "بيانات تسجيل الدخول إلى الحساب: مثل معرّف تسجيل الدخول أو كلمة المرور أو رموز الأمان الأخرى.",
+            "بيانات الدفع: مثل رقم بطاقة الائتمان الخاصة بك واسم حامل البطاقة وتاريخ انتهاء الصلاحية ورمز المصادقة وعنوان الفوترة.",
+            "البيانات التقنية وتتضمن عناوين بروتوكول الإنترنت (IP) المستخدم لربط جهازك الخاص بشبكة الإنترنت، واسم وموقع الجهاز، ونوع نظام التشغيل، وبيانات شبكة المحمول بما في ذلك رقم الجوال ومعرفات الجهاز، والإصدار وتفضيلات اللغة والمعلومات التي تبحث عنها في المنصة وأوقات الوصول والتواريخ والإحصاءات الأخرى.",
+            "بيانات السجل: المعلومات التشخيصية، والتقنية، والأخطاء التشغيلية، والاستخدام مثل توقيت استخدامك للخدمات ومدته، وأي بيانات مُخزنة في ملفات تعريف الارتباط التي قمت بتعيينها على أجهزتك، والصفحات التي زُرتها قبل أو بعد الانتقال إلى المنصة.",
+            "بيانات التواصل، مثل الاسم، والبريد الإلكتروني، ورقم الجوال، وعنوان الرسالة، وموضوعها.",
+            "الملاحظات، والآراء، والتعليقات المُقدمة على المنصة.",
+            "أي بيانات أخرى تقرر مشاركتها طوعًا معنا، بما في ذلك، على سبيل المثال لا الحصر، العنوان، الجنس، البلد، وغيرها من البيانات المشابهة.",
+            "البيانات التي زودتنا بها من خلال ملء النماذج المتوفّرة على المنصة أو أي وسيلة أخرى."
+          ],
+          note: "يجب عليك الالتزام بتقديم معلومات كاملة وصحيحة ودقيقة والالتزام بالحفاظ على سرية معلومات حسابك، وتحديد الأشخاص المسموح لهم بالوصول إلى حسابك واستخدامه، وإلا ستكون مسؤولاً عن أي أضرار تنتج عن عدم دقة هذه المعلومات أو عدم تحديثها بمجرد تغييرها. يجوز لنا مشاركة المعلومات المذكورة مع أطراف ثالثة لغرض تصميم الإعلانات وتحليلها وإدارتها وتقديم التقارير وتحسينها على المنصة."
+        },
+        limitsOnUse: {
+          title: "حدود استخدام بياناتك",
+          intro: "نحن ملتزمون دائمًا بحماية خصوصيتك، وبالتالي فنحن نستخدم بياناتك الشخصية للأغراض الآتية:",
+          items: [
+            "لتسجيل وإدارة حسابك وإرسال رسالة عبر البريد الإلكتروني لتأكيد تسجيلك في المنصة.",
+            "لتحديد هويتك عند استخدام المنصة وتزويدك بتجربة مخصصة لك.",
+            "لمعالجة الفواتير والدفع، ومشاركة البيانات مع بوابات الدفع.",
+            "لتقديم خدمة أفضل، وكذلك تحسين خدماتنا والمنصة.",
+            "لتحسين جودة خدمة العملاء، حيث تساعدنا المعلومات الخاصة بك على سهولة الاستجابة لطلباتك الموجهة وتحسين خدمة العملاء واحتياجاتك للدعم بشكل أكثر فاعلية.",
+            "للتواصل معك وإرسال رسائل إلكترونية بشكل دوري، والرد على الاستفسارات.",
+            "لمنع الأنشطة المحظورة أو غير القانونية، والامتثال للقانون المعمول به، وفرض شروط الخدمة وأي أغراض أخرى تم الكشف عنها لك في الوقت الذي نجمع فيه معلوماتك أو وفقاً لموافقتك.",
+            "لحماية هويتك والمعلومات المالية، وتزويدك بأفضل حماية ممكنة من الاحتيال.",
+            "لتقديم مقترحات وتوصيات إليك وإلى المستخدمين الآخرين بشأن الخدمات التي قد تهمكم، والتي قد تعتمد على نشاطكم على المنصة.",
+            "للأغراض الإحصائية والبحثية والتحليلية والتسويقية والترويجية والدراسات الاستقصائية."
           ]
         },
-        informationSharing: {
-          title: "مشاركة المعلومات",
-          description: "نحن لا نبيع أو نتاجر أو ننقل معلوماتك الشخصية إلى أطراف ثالثة.",
-          exceptions: [
-            "مع موافقتك الصريحة",
-            "للامتثال للالتزامات القانونية",
-            "لحماية حقوقنا وسلامتنا",
-            "مع مزودي الخدمات الموثوقين"
+        dataSharing: {
+          title: "مشاركة البيانات",
+          intro: "نشارك البيانات الشخصية المجمعة وفقاً لهذه السياسة مع الشركات التابعة لنا ومع الأطراف الثالثة الأخرى التي قد تكون ضرورية لتحقيق الأغراض المنصوص عليها في القسم 3 من هذه السياسة، وعليه أنت تقر وتوافق بأنه يحق لنا مشاركة بياناتك الشخصية على النحو التالي:",
+          items: [
+            "للامتثال للإجراءات القانونية أو للامتثال لأوامر الاستدعاء الشرعية أو القابلة للتنفيذ أو أوامر المحكمة.",
+            "للاستجابة للطلبات المقدمة من السلطات العامة والحكومية.",
+            "لتنفيذ شروط الاستخدام وسياسة الخصوصية الخاصة بنا.",
+            "لحماية حقوقنا وخصوصيتنا وسلامتنا وممتلكاتنا و/أو حقوقك أو الآخرين.",
+            "يجوز لنا مشاركة المعلومات مع موردي الطرف الثالث الذين يقدمون خدمات أو وظائف نيابة عنا، بما في ذلك تحليلات الأعمال، ومعالجة المدفوعات، وخدمة العملاء، والتسويق، والعلاقات العامة، وتوزيع الاستطلاعات، ومنع الاحتيال. قد نأذن أيضاً لمورّدي الجهات الخارجية بتجميع المعلومات نيابة عنا، بما في ذلك، على سبيل المثال، عند الضرورة لتشغيل ميزات المنصة أو لتسهيل تقديم الإعلانات عبر الإنترنت المصممة خصيصاً لمصالحك. يمتلك موردو الجهات الخارجية حق الوصول إلى المعلومات ويجوز لهم جمعها فقط عند الحاجة لأداء وظائفهم.",
+            "يجوز لنا أيضاً مشاركة المعلومات مع طرف ثالث فيما يتعلق بأي عملية إعادة تنظيم، أو دمج، أو بيع، أو مشروع مشترك، أو تنازل، أو تحويل، أو أي تصرف آخر لكل أو جزء من أعمالنا أو أصولنا أثناء المفاوضات."
           ]
         },
-        dataSecurity: {
-          title: "أمان البيانات",
-          description: "نحن نطبق تدابير أمان مناسبة لحماية معلوماتك الشخصية.",
-          measures: [
-            "تشفير البيانات الحساسة",
-            "تقييمات الأمان المنتظمة",
-            "ضوابط الوصول والمصادقة",
-            "نقل البيانات الآمن"
-          ]
+        dataStorage: {
+          title: "تخزين البيانات",
+          p1: "نحن في منصة \"Drinkmate\" نقوم فقط بتخزين بياناتك الشخصية طالما أنها ضرورية لتحقيق الأغراض المحددة في القسم 3، كما أننا نحتفظ بالحق في إعادة النظر في شروط الخصوصية الحالية، وعليك بمراجعة هذه السياسة من وقت لآخر."
         },
-        yourRights: {
-          title: "حقوقك",
-          description: "لديك حقوق معينة فيما يتعلق بمعلوماتك الشخصية.",
-          rights: [
-            "الوصول إلى بياناتك الشخصية",
-            "تصحيح المعلومات غير الدقيقة",
-            "طلب حذف بياناتك",
-            "الانسحاب من الاتصالات التسويقية",
-            "قابلية نقل البيانات"
-          ]
+        dataProtection: {
+          title: "حماية وأمن البيانات",
+          intro: "نتخذ إجراءات أمنية تقنية وتنظيمية لحماية بياناتك من الضياع وسوء الاستخدام والوصول غير المصرح به أو الكشف أو التغيير أو الإتلاف، وتشمل بعض الإجراءات الوقائية التي نستخدمها جدران الحماية، وتشفير البيانات، وعناصر التحكم في الوصول المادي إلى مراكز البيانات لدينا وعناصر التحكم في إذن الوصول إلى البيانات.",
+          items: [
+            "لن نقوم بتأجير أو بيع بياناتك إلى أي أطراف خارجية، ولن نسمح للغير باستخدامها لأغراض التسويق المباشر أو غير المباشر دون الحصول على موافقتك.",
+            "يجوز لنا جمع معلوماتك واستخدامها وحفظها ومشاركتها إذا رأينا ضرورة في ذلك بهدف: الاستجابة للقوانين، أو للوائح السارية، أو للإجراءات القانونية، أو للطلبات الحكومية؛ تنفيذ شروطنا وأي شروط وسياسات سارية أخرى، بما في ذلك لأغراض التحقيقات في المخالفات المحتملة؛ كشف ومنع حالات التزوير والمسائل الأمنية والقانونية والأعطال التقنية بالإضافة إلى التعامل معها والتحقيق فيها؛ حماية حقوق، أو ملكية، أو أمان مستخدمينا، أو منصة \"Drinkmate\"."
+          ],
+          note: "من الممكن ألا يكون هذا المستوى من الحماية فعال بنسبة 100% إلا إذا كنت تتبع سياسات أمنية خاصة بك. يجب عليك ألا تشارك بيانات حسابك مع أي شخص، وإذا كنت تشعر بالقلق بأن أي من بياناتك الشخصية قد كشفت، يجب عليك تغييرها على الفور بعد تسجيل الدخول على حسابك."
+        },
+        compliance: {
+          title: "الامتثال والتعاون مع الجهات التنظيمية",
+          p1: "نحن نراجع بانتظام التزامنا بسياسة الخصوصية الخاص بنا، وعندما نتلقى شكاوى رسمية مكتوبة، فإننا نتّصل بالشخص الذي قدم الشكوى للمتابعة، وكذلك نعمل مع الجهات التنظيمية المعنيّة، بما فيها جهات حماية البيانات المحلية، لحل أيّ شكاوى تتعلق بنقل البيانات الشخصيّة التي لا يمكننا حلّها مع مستخدمينا مباشرةً."
+        },
+        yourResponsibilities: {
+          title: "مسؤولياتك",
+          p1: "أنت المسؤول عن التأكد من أن البيانات التي تقدمها لنا بيانات دقيقة وكاملة ومحدّثة.",
+          p2: "في حال شاركت أيّ بيانات تخص أشخاص آخرين معنا، فأنت المسؤول عن تلك البيانات طبقاً للمتطلبات القانونية، ويجب عليك إعلام هؤلاء الأشخاص الذين زودتنا ببياناتهم عن محتوى هذه السياسة والحصول على موافقتهم المسبقة."
+        },
+        thirdPartyLinks: {
+          title: "روابط الأطراف الخارجية",
+          p1: "قد تحتوي منصة \"Drinkmate\" على روابط تحيل المستخدم أو الزائر إلى تطبيقات أو روابط أو مواقع إلكترونية خارجية والتي من شأنها أن تقوم بجمع معلومات عنك والإفصاح عنها بطريقة مختلفة عن المنصة.",
+          p2: "لا تتحكم منصة \"Drinkmate\" في ممارسات الخصوصية للتطبيقات والمواقع الخارجية، ولسنا مسؤولين عن المحتوى أو سياسات الخصوصية لتلك التطبيقات والمواقع الخارجية.",
+          p3: "يجب عليك مراجعة سياسة الخصوصية وشروط الاستخدام الخاصة بالطرف الثالث عند زيارة أي من هذه التطبيقات أو المواقع الخارجية.",
+          p4: "نحن غير مسؤولين عن جمع أو استخدام أو الإفصاح عن أية معلومات من الأطراف الخارجية التي لديها رابط في منصة \"Drinkmate\"."
+        },
+        childrenPrivacy: {
+          title: "خصوصية الأطفال",
+          p1: "تعتبر إرشاداتك ومشاركتك ضرورية للمساعدة في ضمان تمتع الأطفال بتجربة آمنة عبر الإنترنت. نحن نشجعك على الاستمرار في المشاركة والاطلاع على ما يقوم به طفلك عبر الإنترنت. وستساعد جهودكم في توجيه أطفالك إلى المواقع التي تناسب أعمارهم.",
+          p2: "تتعامل منصة \"Drinkmate\" مع خصوصية الأطفال بجدية. فنحن لا نجمع عمداً المعلومات الشخصية من الأطفال عبر المنصة. وإذا كنت قاصراً بموجب القانون، يرجى عدم إرسال أي معلومات شخصية بدون موافقة صريحة ومشاركة من أحد الوالدين أو الوصي القانوني."
+        },
+        modifications: {
+          title: "التعديلات",
+          p1: "تحتفظ منصة \"Drinkmate\" بالحق الكامل في إجراء أي تعديل، أو تغيير، أو إضافة، أو حذف على هذه السياسة وبالكيفية والوقت التي تراه مناسباً، لذا ننصحك بمراجعة هذه الصفحة بشكل دوري وقراءتها بانتظام، وعند نشر أي تغييرات مهمة، سيتم نشرها على هذه الصفحة.",
+          p2: "يحق لنا تعديل سياسة الخصوصية الخاصة بنا في أي وقت، وسنقوم بنشر إشعار عام عبر المنصة بالتعديلات الجديدة، كما سنقوم بتحديث \"تاريخ أخر تحديث\" أعلى هذه الوثيقة.",
+          p3: "يعد استمرارك في استخدام المنصة بعد تحديث هذه السياسة موافقة صريحة منك على هذه التعديلات وقبولاً قانونيًا منك بالممارسات والأحكام الجديدة. إذا كنت غير موافق على التعديلات والتحديثات الجديدة يجب عليك التوقف فورًا عن استخدام المنصة."
         },
         contactUs: {
-          title: "اتصل بنا",
-          description: "إذا كان لديك أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا.",
-          email: "privacy@aqualine.sa.com",
-          phone: "+966544671166"
-        },
-        personalInfoDetails: {
-          nameContact: "الاسم ومعلومات الاتصال (البريد الإلكتروني، الهاتف، العنوان)",
-          paymentBilling: "معلومات الدفع والفواتير",
-          orderHistory: "تاريخ الطلبات والتفضيلات",
-          customerService: "اتصالات خدمة العملاء"
-        },
-        usageDataDetails: {
-          ipDevice: "عنوان IP ومعلومات الجهاز",
-          websiteUsage: "بيانات استخدام الموقع والتحليلات",
-          browserOS: "نوع المتصفح ونظام التشغيل"
-        },
-        cookiesDetails: {
-          trackingTech: "ملفات تعريف الارتباط وتقنيات التتبع",
-          sessionData: "بيانات الجلسة والتفضيلات",
-          thirdPartyAnalytics: "التحليلات من الطرف الثالث"
-        },
-        purposesDetails: {
-          processOrders: "معالجة وتنفيذ طلباتك",
-          customerSupport: "تقديم دعم العملاء",
-          updatesMarketing: "إرسال التحديثات والاتصالات التسويقية",
-          improveServices: "تحسين منتجاتنا وخدماتنا",
-          securityFraud: "ضمان الأمان ومنع الاحتيال"
-        },
-        exceptionsDetails: {
-          explicitConsent: "مع موافقتك الصريحة",
-          legalObligations: "للامتثال للالتزامات القانونية",
-          protectRights: "لحماية حقوقنا وسلامتنا",
-          trustedProviders: "مع مزودي الخدمات الموثوقين"
-        },
-        securityDetails: {
-          encryption: "تشفير البيانات الحساسة",
-          securityAssessments: "تقييمات الأمان المنتظمة",
-          accessControls: "ضوابط الوصول والمصادقة",
-          secureTransmission: "نقل البيانات الآمن"
-        },
-        rightsDetails: {
-          accessData: "الوصول إلى بياناتك الشخصية",
-          correctInfo: "تصحيح المعلومات غير الدقيقة",
-          deleteData: "طلب حذف بياناتك",
-          optOutMarketing: "الانسحاب من الاتصالات التسويقية",
-          dataPortability: "قابلية نقل البيانات"
-        },
-        address: "الرياض، المملكة العربية السعودية"
+          title: "الاتصال بنا",
+          intro: "تستطيع في أي وقت الاتصال بنا من خلال:",
+          emailLabel: "البريد الإلكتروني:",
+          phoneLabel: "رقم الهاتف:",
+          email: "cs@drinkmate.sa.com",
+          phone: "0544671166",
+          acknowledgment: "أنت تٌقر بأنك قد قرأت سياسة الخصوصية هذه وتوافق على جميع بنودها وشروطها.",
+          rightsReserved: "جميع الحقوق محفوظة لمنصة Drinkmate 2025"
+        }
       }
     },
     termsOfService: {
@@ -6426,6 +6679,227 @@ export const translations: Record<Language, Translations> = {
           serviceAbuse: "إساءة استخدام الخدمات"
         },
         address: "الرياض، المملكة العربية السعودية"
+      }
+    },
+    exchangeAndReturnPolicy: {
+      hero: {
+        title: "سياسة الاستبدال والاسترجاع والشحن",
+        subtitle: "الشروط والأحكام",
+        lastUpdated: "تاريخ السريان: سبتمبر 2022"
+      },
+      sections: {
+        introduction: {
+          title: "المقدمة",
+          p1: "يرجى قراءة هذه الشروط بعناية تامة للتأكد من فهمك لكل بند قبل استخدام منصّة \"Drinkmate\"، لأنها تؤثر على حقوقك القانونية.",
+          p2: "تحكم شروط الاستخدام إلى جانب سياسة الخصوصية (يشار إليها إجمالاً بـ \"الشروط والأحكام\") وصولك واستخدامك لمنصّة \"Drinkmate\" وخصائصه وخدماته.",
+          p3: "من خلال تسجيل حساب أو استخدام منصّة \"Drinkmate\"، فأنت تؤكد لنا بأنك قرأت وفهمت هذه الشروط وتوافق على الالتزام بها، إذا كنت لا توافق على هذه الشروط، فالرجاء عدم استخدام المنصّة."
+        },
+        definitions: {
+          title: "التعريفات",
+          intro: "في هذه الشروط، وما لم يقتضِ السياق خلاف ذلك يكون للمصطلحات التالية المعاني المشار إليها:",
+          items: [
+            "\"المنصّة\"، \"نحن\"، \"ضمير المتكلم\" أو \"ضمير الملكية\": يشير إلى منصّة \"Drinkmate\".",
+            "\"المستخدم\"، \"أنت\" أو \"ضمير الملكية للمخاطب\": يشير إلى كل شخص يقوم بإنشاء حساب أو يزور المنصّة أو يستخدم الخدمات.",
+            "\"مقدم الخدمة\": يشير إلى كل مورد وموزع يسجل حساب في منصّة \"Drinkmate\" بغرض بيع منتجاتها.",
+            "\"المستهلك\": يشير إلى كل من يسجل حساب في منصّة \"Drinkmate\" بغرض شراء المنتجات.",
+            "\"المنتجات\": تشير إلى النكهات وأسطوانات ثاني أكسيد الكربون والمنتجات والمشروبات والاكسسوارات ذات الصلة.",
+            "\"الطلب\": يشير إلى طلب شراء المنتجات من خلال منصّة \"Drinkmate\".",
+            "\"القوانين\": تشير إلى الأنظمة واللوائح السارية في المملكة العربية السعودية.",
+            "\"الشروط والأحكام\"، \"الاتفاقية\": تشير إلى هذه الشروط بالإضافة إلى سياسة الخصوصية وكافة السياسات والشروط الأخرى."
+          ]
+        },
+        legalLimits: {
+          title: "الحدود القانونية لخدماتنا",
+          p1: "\"Drinkmate\" منصّة إلكترونية تعمل كوسيط عبر الإنترنت بين مقدمي خدمات المنتجات وبين المستهلكين الذين يطلبون النكهات وأسطوانات ثاني أكسيد الكربون والمنتجات والمشروبات ذات الصلة بأسعار مناسبة وتوصيلها لكافة مناطق المملكة العربية السعودية.",
+          p2: "يعلم ويوافق المستخدم أن دور منصّة \"Drinkmate\" يقتصر على الربط بين مقدم الخدمة والمستهلك، وتوفر المنصّة الآتي:",
+          items: [
+            "تسجيل حساب مجاني في المنصّة.",
+            "البنية التحتية التقنية مثل مركز الاتصال، ولوحة تحكم لمقدمي الخدمات لإدارة الطلبات، وما إلى ذلك.",
+            "عرض المنتجات على المنصّة.",
+            "وسائل الدفع المختلفة التي تتناسب مع الجميع.",
+            "الدعم الفني والاتصال بين الأطراف."
+          ],
+          p3: "عند تعاقد المستهلك مع مقدم الخدمة من خلال المنصّة، يدخل الطرفان في علاقة مباشرة وملزمة قانونًا، ويقتصر دورنا فقط على الربط بين مقدم الخدمة والمستهلك.",
+          p4: "يوافق المستخدم على أن منصّة \"Drinkmate\" تقوم بتحصيل ومعالجة رسوم المعاملات بين الأطراف.",
+          p5: "يحق لنا وفقاً لتقديرنا الخاص بتعديل أو تحديث الخدمات الحالية للمنصة، دون أية مسؤولية تجاه أي مستخدم."
+        },
+        legalCapacity: {
+          title: "الأهلية القانونية",
+          p1: "نرغب في التأكد من قدرة كل مستخدم على إبرام عقود قانونية ملزمة على الإنترنت؛ لذا يقر المستخدم بأنه يتمتع بالأهلية القانونية اللازمة لإبرام وقبول هذه الشروط، وأن لديه كامل الصلاحيات القانونية غير المقيدة وفقاً لما يلي:",
+          items: [
+            "الأهلية القانونية للشخص الطبيعي: يشترط في مُستخدِم منصّة \"Drinkmate\" أن يكون بلغ من العمر 18 عامًا فأكثر وأن يتوفر فيه الأهلية القانونية اللازمة لإبرام العقود، فإذا كان عمرك أقل من 18 عامًا، يجب عليك الحصول على موافقة أحد الوالدين أو الوصي القانوني، وقبولهم لهذه الشروط وموافقتهم على تحمل المسؤولية عن أفعالك، وأي رسوم مرتبطة باستخدامك للخدمات.",
+            "الصفة القانونية للكيان التجاري: إذا كنت تسجل كمقدم خدمات، فأنت تقر بأن لديك سلطة إلزام هذا الكيان بهذه الشروط، وأنك والكيان التجاري سوف تخضعون لجميع القوانين السارية المتعلقة بالتداول عبر شبكة الإنترنت.",
+            "يوافق المستخدم بأنه في حال مخالفته لهذا البند، فإنه يتحمّل تبعات هذه المخالفة أمام الغير."
+          ],
+          p2: ""
+        },
+        membershipPolicy: {
+          title: "سياسة العضوية",
+          p1: "للاستفادة من منصّة \"Drinkmate\"، يجب عليك تسجيل حساب صحيح كما هو مطلوب في نموذج التسجيل والموافقة على الشروط والأحكام، وعندما تصبح عضوًا، فأنت توافق على:",
+          items: [
+            "تقديم بيانات صحيحة ودقيقة وكاملة كما هو مطلوب في نموذج التسجيل على المنصّة.",
+            "الحفاظ على سرية بيانات حسابك، وتقييد الغير من استخدام الحساب.",
+            "تحمل المسؤولية عن الأنشطة التي تحدث من خلال حسابك.",
+            "إبلاغنا فورًا في حالة اختراق أو سرقة الحساب أو اكتشاف أي استخدام غير قانوني لحسابك بالمنصّة، وذلك حتى نستطيع اتخاذ الإجراءات التقنية اللازمة للمحافظة على الحساب."
+          ],
+          p2: "نحتفظ بالحق في إلغاء الحسابات التي لم يتم تأكيدها أو غير النشطة لفترة طويلة.",
+          items2: [
+            "تقدم العضوية في منصّة \"Drinkmate\" بنظام الترخيص لاستخدام المنصّة، وبالتالي يحق لنا سحب هذا الترخيص وإنهاء عضويتك في الحالات التالية:",
+            "إذا لم تلتزم بالشروط والسياسات والقواعد والإرشادات التي تتعلق بالمنصّة.",
+            "إذا لم نتمكن من التأكد أو التحقق من أي معلومات مقدمة من قبلك.",
+            "إذا قررنا وفقًا لتقديرنا الخاص أن أي من تصرفاتك قد تسبب أضراراً لنا.",
+            "إذا رأينا في أي وقت وفقاً لما يراه مناسبًا لتعليق أي حساب مخالف."
+          ]
+        },
+        purchasePolicy: {
+          title: "سياسة الشراء",
+          items: [
+            "يمكن للأشخاص الذين يمكنهم إبرام عقود عبر الإنترنت بشكل قانوني وفقًا لقوانين المملكة العربية السعودية شراء المنتجات من خلال منصّة \"Drinkmate\".",
+            "جميع بيانات المنتجات بما فيها الأسعار والتوفر والصور يتم توفيرها وتحديثها مباشرة من مقدمي الخدمات (الموردين والموزعين).",
+            "يجب أن تكون المنتجات المعروضة متوافقة مع معايير الصحة والسلامة ومصرح بتداولها وبيعها بالمملكة العربية السعودية، وأن تضمن خلوها من أي مسببات للأضرار.",
+            "يجب أن تكون المنتجات صحية وصالحة للاستخدام، وأن يوضح مقدم الخدمة كافة خصائصها وصلاحية استخدامها.",
+            "قد تكون بعض المنتجات ذات كميات محدودة.",
+            "قد تحدث بعض الأخطاء خلال عملية توفير المنتجات أو توفير المعلومات التفصيلية عن الأسعار على المنصة من قبل مقدمي الخدمات، لذا نحن لا نتحمل المسؤولية عن أي أخطاء تجدها أثناء إتمام الطلب، وستقوم المنصّة بإرسال إشعار لمقدم الخدمة بتصحيح الأخطاء.",
+            "يوافق المستهلك على دفع قيمة المنتجات كما هو موضح أثناء عملية الطلب، إلى جانب أي تكاليف شحن أو رسوم أخرى تطبق على هذا الطلب.",
+            "في بعض الحالات، قد لا يقبل طلب المستهلك للأسباب التالية:",
+            "يتحمل المستهلك مسؤولية متابعة حالة طلبك."
+          ],
+          subItems: [
+            "عدم توافر المنتج.",
+            "تقديم بطاقة ائتمان مسروقة أو الاحتيال في الدفع.",
+            "إذا كان هناك خطأ في الصور أو السعر أو وصف المنتج على المنصة.",
+            "إذا كان هناك خطأ عند إدراج أحد المنتجات في عملية البيع أو الترويج."
+          ]
+        },
+        pricesAndTaxes: {
+          title: "سياسة الأسعار والضرائب",
+          items: [
+            "جميع أسعار المنتجات المعروضة على منصّة \"Drinkmate\" بالعملة المحلية (الريال السعودي).",
+            "تخضع الأسعار للتعديل والتحديث من قبل مقدم الخدمة.",
+            "تشمل الأسعار ضريبة القيمة المضافة بنسبة 15% على طلبات الشراء، أيّ تغيير في نسبة ضريبة القيمة المضافة المعمول بها سينعكس تلقائياً على سعر المنتج."
+          ]
+        },
+        paymentPolicy: {
+          title: "سياسة الدفع",
+          items: [
+            "توفر منصّة \"Drinkmate\" الدفع من خلال بوابات الدفع الإلكتروني بالبطاقات الائتمانية ومدى والتحويل البنكي.",
+            "يجب عليك التأكد من أنّ البيانات التي تدخلها أثناء عملية الدفع صحيحة ودقيقة وسارية المفعول.",
+            "يجب على المستخدم استخدام بطاقاته البنكية والتأكد من صحة ودقة المعلومات التي يدخلها قبل إتمام الدفع، وفي حال استخدم إحدى البطاقات لطرف آخر يجب أن يكون لديه تفويض أو إذن باستخدامها، وبالتالي تخلي مسؤولية منصّة \"Drinkmate\" نتيجة ذلك.",
+            "لا نخزن أرقام بطاقة الائتمان على أنظمتنا، كما يتم حماية تفاصيل الدفع قبل نقلها باستخدام أحدث تقنيات الحماية الالكتروني التي تتبع أعلى معايير الأمان.",
+            "يحق لنا تعديل هذه السياسة من خلال إضافة وسائل دفع جديدة مستقبلاً أو إلغاء أي وسيلة حالية، وسيتم إفادتك في حال طبقنا ذلك."
+          ]
+        },
+        shippingPolicy: {
+          title: "سياسة الشحن",
+          items: [
+            "يتم شحن الطلبات إلى العنوان المحدد من المستهلك في غضون 3 أيام عمل بعد تأكيد البائع.",
+            "يتحمل المستهلك رسوم توصيل الطلب بالإضافة إلى ثمن المنتجات.",
+            "قد تتأخر عملية الشحن لأسباب تتعلق بالقوة القاهرة أو الظروف الخارجة عن الإرادة، وفي هذه الحالة لن نتحمل أيّ مسؤوليات نتيجة تأخر توصيل الطلب، وسيتم إعلامك بحالة التأخير عبر البريد الإلكتروني أو الهاتف من قبل البائع.",
+            "يرجى الاطلاع على قائمة المدن التي يتم الشحن اليها من خلال شركات الشحن المعتمدة."
+          ]
+        },
+        cancellationAndReturns: {
+          title: "سياسة الإلغاء والإرجاع",
+          items: [
+            "تحتفظ منصّة \"Drinkmate\" بالحق الحصري في رفض أو إلغاء أي طلب للنكهات وأسطوانات ثاني أكسيد الكربون والمنتجات والمشروبات ذات الصلة المدرجة بسعر غير صحيح أو غير متوفر، بغض النظر عن تأكيد الطلب أو تأكيد الدفع. وفي مثل هذه الحالات، إذا تمت معالجة الدفع، فسيتم رد المبلغ إلى المستهلك بنفس طريقة الدفع الأصلية.",
+            "يمكن للمستهلك إلغاء الطلب ما لم يتم قبوله أو معالجته من قبل مقدم الخدمة.",
+            "لا تقدم أو تبيع منصّة \"Drinkmate\" أي منتجات للمستهلك، وإنما يتم توفير المنتجات من قبل مقدمي الخدمات، وهم مستقلون تمامًا في أداء عملهم، وبالتالي ستطبق سياسة الإرجاع والاستبدال لمقدمي الخدمات، ويقر ويوافق المستهلك بأنها قد تختلف من مقدم خدمة لآخر."
+          ]
+        },
+        useLicenses: {
+          title: "تراخيص الاستخدام",
+          p1: "بالنظر إلى موافقتك على الالتزام بهذه الشروط، فإننا نمنحك بموجب هذا حقًا وترخيصًا غير حصري وغير قابل للتحويل وقابل للإلغاء من أجل:",
+          items: [
+            "الوصول إلى خدماتنا واستخدامها وفقاً لهذه الشروط.",
+            "الوصول إلى واستخدام أي محتوى أو معلومات أو مواد ذات صلة قد تكون متاحة من خلال خدماتنا فقط للاستخدام الشخصي غير التجاري، ووفقاً لما هو منصوص عليه في هذه الشروط."
+          ],
+          itemsNot: [
+            "لا يحق لك تعديل أي محتوى طبعته أو نزّلته بأي شكل من الأشكال.",
+            "لا يحق لك انتهاك قوانين حقوق النشر، أو العلامة التجارية، أو براءة الاختراع، أو الإعلان، أو قواعد قواعد البيانات، أو أي من حقوق الملكية الفكرية التي تتعلق بنا أو المرخصّة لنا أو التي تتعلق بالغير.",
+            "لا يحق لك الوصول أو محاولة الوصول إلى أي من جوانب خدماتنا أو أي محتوى غير مصرّح لك بالوصول إليه بموجب هذه الشروط أو كما حددناه بوضوح."
+          ],
+          p2: "لا يشمل الترخيص الممنوح للمستخدم أيّ حقوق ملكية في المنصّة أو جزء منه، كما لا يشير هذا الترخيص بشكل مباشر أو غير مباشر بوجود شراكة من أيّ نوع بيننا وبين أي مستخدم."
+        },
+        securityProtection: {
+          title: "الحماية الأمنية للمنصّة",
+          p1: "يجوز لك استخدام خدماتنا والمحتوى الذي نقدمه وفقاً لهذه الشروط فقط: أنت توافق على الآتي:",
+          items: [
+            "لا يجوز لك بتاتاً أن تنتهك أو تحاول انتهاك الحماية الأمنية للمنصّة.",
+            "لا يجوز لك ترخيص، أو بيع، أو تأجير، أو نقل، أو تخصيص، أو توزيع، أو استضافة، أو استغلال الخدمة.",
+            "لا يجوز محاولة استكشاف أو اختبار مدى قدرة المنصة أو الشبكة أو محاولة اختراق النظام الأمني أو مستويات الحماية دون أن تكون مخولاً بذلك.",
+            "لا يجوز لك تعديل، أو ترجمة، أو تكييف، أو دمج، أو إجراء أعمال مشتقة لأي جزء من المنصّة.",
+            "لا يجوز لك الوصول إلى المنصّة من أجل إنشاء خدمات أو مواقع مماثلة أو منافسة.",
+            "لا يجوز نسخ أي جزء من المنصّة، أو إعادة إنتاجه، أو توزيعه، أو إعادة نشره، أو تنزيله، أو عرضه، أو إرساله، أو نقله بأي شكل من الأشكال أو بأي وسيلة.",
+            "لا يجوز لك إزالة أو إتلاف أي شعارات أو علامات ملكية في المنصّة."
+          ]
+        },
+        intellectualProperty: {
+          title: "حقوق الملكيّة الفكرية",
+          p1: "كافة الحقوق القانونية وحقوق الملكية الفكرية والعلامات التجارية في منصّة \"Drinkmate\" وكافة حقوق النشر والمظهر التجاري والتصاميم والشعارات والأيقونات، وغير ذلك من الملكيات الفكرية والمواد والحقوق الأخرى بما فيها الحقوق البرمجية ورمز الـ(HTML) وغيرها من الرموز التي يحتوي عليها بما في ذلك المحتوى والنصوص والخطوط والصور والبرامج وملفات الصوت والموسيقى والفيديو والمواد الرقمية، والوثائق والبيانات والأشكال، هي ملك لنا أو المرخصين لنا.",
+          p2: "نملك جميع العلامات التجارية وعلامات الخدمة والأسماء التجارية و/أو مسجلة و/أو مرخصة من قبلنا. ولا يُسمح لك باستخدام أي من العلامات التجارية أو علامات الخدمات أو الأسماء التجارية الخاصة بنا في أي وسيلة إعلامية أو إعلانية دون إذن كتابي منا.",
+          p3: "لا يحق لك نسخ أو إعادة إنتاج أي من خدماتنا أو توزيعها أو استغلالها تجارياً، ويشمل ذلك المحتوى الخاص بنا، إلا بعد إذن خطي صريح منا."
+        },
+        disclaimer: {
+          title: "إخلاء المسؤولية",
+          p1: "تقدم خدمات ومحتويات منصّة \"Drinkmate\" وفقاً لقاعدة \"كما هي\" و \"كما هو متاح\" دون أي ضمانات أو كفالات من أي نوع سواء صريحة أو ضمنية.",
+          p2: "لا نلتزم بأي تعهدات أخرى متعلقة بخدماتنا، أو بمنتجات، أو خدمات، أو معلومات أخرى حصلت عليها من خلال المنصّة، ويشمل ذلك موثوقيتها أو دقتها أو جودتها أو توفرها أو توقيتها أو أمانها أو قدرتها على تلبية احتياجاتك.",
+          p3: "نحن لسنا مسؤولين عن دقة أو موثوقية أي معلومات أو محتوى يرسل أو ينشر عبر خدماتنا.",
+          p4: "يوافق المستخدم على أن جميع المعلومات التي يقدمها لنا (بما في ذلك التسجيل) صحيحة ودقيقة ومحدثة من جميع النواحي وأنها لا تنتهك أي حقوق ملكية أو تشجع على الإرهاب والكراهية أو تحتوي على مواد أو معلومات مسيئة للغير أو صور إباحية، وعلى مسؤوليته الشخصية.",
+          p5: "يوافق المستخدم على تحمل المسؤولية الكاملة عن استخدامه لمنصّة \"Drinkmate\". لن نتحمل المسؤولية عن الخسائر، أو الأضرار سواء المباشرة، أو غير المباشرة، أو التبعية، أو العرضية التي تنشأ عن بما في ذلك على سبيل المثال لا الحصر:",
+          items: [
+            "المعلومات التي تتعلق بالمنتجات.",
+            "أيّ فشل، أو خطأ، أو سهو، أو أعطال، أو توقف في تشغيل المنصّة.",
+            "الانقطاع في الخدمة بسبب أعمال الصيانة الدورية أو إصلاح المشكلات الفنية أو ما شابه.",
+            "فشل المستخدم في الحفاظ على أمان وسرية وخصوصية بيانات حسابه.",
+            "الظروف خارجة عن الإرادة أو القوة القاهرة أو الظروف الطارئة."
+          ],
+          p6: "لا نضمن أن تكون الإعلانات أو المحتوى الخاص بها أو الصور ستكون دقيقة أو كاملة أو موثوقاً بها أو خالية من الأخطاء.",
+          p7: "نبذل قصارى جهدنا لضمان توافر المنصّة للاستخدام على مدار الساعة، ولكن لا نضمن أن المنصّة ستكون متاحة بشكل تام وآمن في الوقت المحدد، فقد تكون المنصّة غير متاحة من وقت لآخر أثناء الإصلاح أو الصيانة أو تطوير العمل."
+        },
+        compensation: {
+          title: "التعويض",
+          p1: "أنت توافق على تبرئة ذمتنا وإعفائنا وتعويضنا ضد أي وجميع المطالبات، والنفقات والتكاليف والإجراءات والطلبات والمسؤوليات والأحكام والتسويات (ويشمل ذلك الرسوم القانونية المناسبة) الناتجة أو المزعوم أنها ناتجة عن استخدامك للخدمات والمحتوى و /أو أي خرق لهذه الشروط، و/أو إساءة الاستخدام أو الاستخدام غير القانوني للمنصّة مهما كان نوعه.",
+          p2: "أنت ملزم بتعويضنا عن أي خسائر أو أضرار قد تلحق بالمنصّة نتيجة أي استخدام غير شرعي أو غير مفوض من قِبلك."
+        },
+        linksToSites: {
+          title: "روابط المواقع المرتبطة",
+          p1: "يرجى العلم إنك إن وصلت، أو أعيد تحويلك، إلى مواقع خارجية خاصة بأطراف أخرى عند استخدامك لخدماتنا، فربما يكون لتلك المواقع الخارجية الأخرى شروط استخدام وخصوصية مختلفة يجب الالتزام بها والموافقة عليها قبل منحك حق الوصول إليها.",
+          p2: "نحن لسنا مسؤولين ولا نقدم أي تعهدات (أو ندعم بأي شكل من الأشكال) أي مواد أو خدمات متاحة في أو من هذه المواقع الخارجية (ويشمل ذلك الوصول إلى تسجيل الدخول أو التسجيل).",
+          p3: "لا نضمن بأي شكل من الأشكال أن تكون هذه المواقع الخارجية التي يملكها طرف ثالث محدّثة وخالية من أي أخطاء أو غموض أو سهو أو أن تكون مناسبة لأي غرض من الأغراض."
+        },
+        termAndTermination: {
+          title: "المدة والإنهاء",
+          p1: "تسري هذه الشروط فور تسجيل حساب، والإقرار بقبولك وستظل سارية المفعول حتى يتم إنهاؤها من قبلك أو من قبلنا.",
+          p2: "يجوز لنا إنهاء هذه الشروط في أي وقت دون إشعار، في حال انتهكت أيًا من هذه الشروط.",
+          p3: "عند الإنهاء، سيتم إنهاء جميع الحقوق الممنوحة لك بموجب هذه الشروط."
+        },
+        transferOfRights: {
+          title: "نقل الحقوق والالتزامات",
+          p1: "يحق لنا نقل كل أو جزء من حقوقنا أو التزاماتنا أو مسؤولياتنا (سواء الصريحة أو المفترضة) بموجب هذه الشروط إلى أي كيان آخر، واستخدام كل المساعي المتاحة لإعلامك بأي تحويل عن طريق النشر على المنصّة.",
+          p2: "لا يجوز للمستخدم نقل كل أو جزء من حقوقه أو التزاماته بموجب هذه الشروط إلى أي طرف ثالث دون موافقة كتابية مسبقة من منصّة \"Drinkmate\"."
+        },
+        applicableLaw: {
+          title: "النظام الواجب التطبيق",
+          p1: "تخضع هذه الشروط وتُفسر وفقًا للأنظمة المعمول بها في المملكة العربية السعودية.",
+          p2: "إذا اعتبر أي من هذه الشروط غير قانوني أو باطل أو غير قابل للتنفيذ بموجب القوانين المعمول بها، فسيعتبر هذا الشرط مفصولاً عن هذه الشروط، ولا يؤثر على صحة ونفاذ باقي الأحكام."
+        },
+        modifications: {
+          title: "التعديلات",
+          p1: "يحق لنا مراجعة وتعديل هذه الشروط وفقاً لتقديرنا المطلق في أي وقت نراه مناسباً ولأي سبب، وستكون هذه التعديلات سارية المفعول فور نشرها على هذه الصفحة، وسنقوم بتحديث تاريخ السريان.",
+          p2: "يجب على المستخدم الاطلاع على هذه التعديلات قبل الاستمرار في استخدام منصّة \"Drinkmate\".",
+          p3: "يعد استمرارك في استخدام منصّة \"Drinkmate\" بعد إجراء أي تحديثات على هذه الشروط وسياسة الخصوصية سواء بالإضافة أو الحذف أو التعديل موافقة صريحة منك على هذه التحديثات.",
+          p4: "يحق لنا إجراء أية تعديلات أو تحسينات نراها ضرورية على منصّة \"Drinkmate\" لزيادة فاعليته، ويلتزم المستخدم بأية تعليمات تقدمها المنصّة إليه في هذا الخصوص."
+        },
+        theLanguage: {
+          title: "اللغة",
+          p1: "كتبت هذه الشروط باللغتين العربية والإنجليزية، وستعتمد اللغة العربية لغرض تفسير وتنفيذ هذه الشروط إذا تعارضت اللغة الإنجليزية معها."
+        },
+        fullAgreement: {
+          title: "الاتفاق الكامل",
+          p1: "تحدد هذه الشروط (أو بصيغتها المُعدلة من حين لآخر) كل بنود الاتفاق بينك وبين منصّة \"Drinkmate\"، وتحل محل أيّ إصدارات سابقة من هذه الشروط. وفي حال تعارضت هذه الشروط مع أيّ من إصدارات سابقة لها، فإنّ النسخة الحالية تكون هي السائدة.",
+          p2: ""
+        },
+        rightsReserved: "جميع الحقوق محفوظة لـ Drinkmate 2025."
       }
     },
     cookiePolicy: {

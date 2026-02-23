@@ -7,6 +7,7 @@ interface TranslationContextType {
   language: Language
   setLanguage: (lang: Language) => void
   t: (key: string) => string
+  getValue: (key: string) => unknown
   isRTL: boolean
   isHydrated: boolean
 }
@@ -90,8 +91,31 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
     return ''
   }
 
+  const getValue = (key: string): unknown => {
+    const keys = key.split('.')
+    let current: any = translations[language]
+    for (const k of keys) {
+      if (current && typeof current === 'object' && k in current) {
+        current = current[k]
+      } else {
+        current = undefined
+        break
+      }
+    }
+    if (current !== undefined) return current
+    let fallback: any = translations.EN
+    for (const k of keys) {
+      if (fallback && typeof fallback === 'object' && k in fallback) {
+        fallback = fallback[k]
+      } else {
+        return undefined
+      }
+    }
+    return fallback
+  }
+
   return (
-    <TranslationContext.Provider value={{ language, setLanguage, t, isRTL, isHydrated }}>
+    <TranslationContext.Provider value={{ language, setLanguage, t, getValue, isRTL, isHydrated }}>
       {children}
     </TranslationContext.Provider>
   )
