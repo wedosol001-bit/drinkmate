@@ -729,36 +729,26 @@ function ContactPageContent() {
       <Header currentPage="contact" />
       
       <main className="min-h-screen bg-surface-50">
-        {/* Premium Hero Section */}
-        <section className="relative py-12 md:py-16 overflow-hidden">
-          {/* Background Image with Parallax Effect */}
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1757238970/background-6556413_1920_rlwos5.jpg"
-              alt="Contact us background"
-              fill
-              className="object-cover scale-105"
-              priority
-            />
-            {/* Clean Overlay */}
-            <div className="absolute inset-0 bg-black/50"></div>
-          </div>
-          
-          {/* Premium Content with Animations */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center space-y-8">
-              
-              {/* Main Heading with Premium Typography */}
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+        {/* Top banner - containerized like refill, co2-cylinders and other routes */}
+        <section className="py-6 sm:py-8">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4">
+            <div className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px] overflow-hidden shadow-xl bg-no-repeat bg-center bg-cover">
+              <Image
+                src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1757238970/background-6556413_1920_rlwos5.jpg"
+                alt="Contact us background"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/50" />
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                   {t('shop.contact.hero.title')}
                 </h1>
+                <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-white/90 max-w-3xl leading-relaxed">
+                  {t('shop.contact.hero.subtitle')}
+                </p>
               </div>
-              
-              {/* Description */}
-              <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                {t('shop.contact.hero.subtitle')}
-              </p>
             </div>
           </div>
         </section>

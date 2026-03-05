@@ -11,6 +11,7 @@ import Link from "next/link"
 import { LoadingLink } from "@/components/ui/LoadingLink"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import ShopMegaMenu from "./ShopMegaMenu"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
 interface HeaderProps {
   currentPage?: string
@@ -142,7 +143,7 @@ function HeaderInner({ currentPage }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center group transition-transform duration-200 hover:scale-105">
             <Image
-              src="/images/drinkmate-logo.png"
+              src={getAppImageUrl("/images/drinkmate-logo.png")}
               alt="Drinkmate"
               width={120}
               height={40}
@@ -240,7 +241,7 @@ function HeaderInner({ currentPage }: HeaderProps) {
               className={`flex items-center ${isRTL ? "space-x-reverse space-x-2" : "space-x-2"} px-3 py-2 rounded-lg hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Image
-                src={language === "EN" ? "/images/us-flag.png" : "/images/saudi-arabia-flag.png"}
+                src={getAppImageUrl(language === "EN" ? "/images/us-flag.png" : "/images/saudi-arabia-flag.png")}
                 alt={language === "EN" ? "US Flag" : "Saudi Arabia Flag"}
                 width={24}
                 height={16}

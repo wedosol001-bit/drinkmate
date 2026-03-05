@@ -19,6 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { toast } from "sonner"
 import styles from "./refill-cylinder.module.css"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
 export default function CO2() {
   const { t, isRTL, language } = useTranslation()
@@ -444,7 +445,7 @@ export default function CO2() {
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="relative w-full aspect-[4/3] min-h-[280px] flex items-center justify-center bg-slate-50 overflow-hidden">
                   <Image
-                    src={mainImageSrc}
+                    src={getAppImageUrl(mainImageSrc)}
                     alt="CO2 Refill / Exchange"
                     width={560}
                     height={420}
@@ -519,7 +520,7 @@ export default function CO2() {
                   className={`rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:shadow-md flex flex-col items-center overflow-hidden ${cylinderType === "drinkmate" ? "border-[#12d6fa] bg-[#12d6fa]/5 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
                 >
                   <div className="w-14 h-14 mb-2 flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-slate-50 [&_img]:max-w-[56px] [&_img]:max-h-[56px] [&_img]:object-contain">
-                    <Image src="/images/refillPage/drinkmateCard.svg" alt="Drinkmate" width={56} height={56} className="object-contain" />
+                    <Image src={getAppImageUrl("/images/refillPage/drinkmateCard.svg")} alt="Drinkmate" width={56} height={56} className="object-contain" />
                   </div>
                   <span className="font-bold text-gray-900 text-sm">{t('refill.choose.drinkmate')}</span>
                   <span className="text-sm font-semibold text-[#12d6fa] mt-0.5">65.00 SAR</span>
@@ -530,7 +531,7 @@ export default function CO2() {
                   className={`rounded-2xl border-2 p-4 text-left transition-all duration-200 hover:shadow-md flex flex-col items-center overflow-hidden ${cylinderType === "non-drinkmate" ? "border-[#12d6fa] bg-[#12d6fa]/5 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
                 >
                   <div className="w-14 h-14 mb-2 flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-slate-50 [&_img]:max-w-[56px] [&_img]:max-h-[56px] [&_img]:object-contain">
-                    <Image src="/images/refillPage/nonDrinkmateCard.svg" alt="Non-Drinkmate" width={56} height={56} className="object-contain" />
+                    <Image src={getAppImageUrl("/images/refillPage/nonDrinkmateCard.svg")} alt="Non-Drinkmate" width={56} height={56} className="object-contain" />
                   </div>
                   <span className="font-bold text-gray-900 text-sm">{t('refill.choose.nonDrinkmate')}</span>
                   <span className="text-sm font-semibold text-[#12d6fa] mt-0.5">
@@ -938,7 +939,7 @@ export default function CO2() {
                       <div className="flex items-center justify-center">
                         <div className="bg-gray-50 rounded-2xl p-8 w-full">
                           <Image
-                            src="/images/food-grade-co2-text.png"
+                            src={getAppImageUrl("/images/food-grade-co2-text.png")}
                             alt="CO2 Cylinder Description"
                             width={300}
                             height={400}

@@ -7,6 +7,7 @@ import Link from "next/link"
 import { LoadingLink } from "@/components/ui/LoadingLink"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { FaFacebook, FaTwitter, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
 export default function Footer() {
   const { t, isRTL, isHydrated, language } = useTranslation()
@@ -131,7 +132,7 @@ export default function Footer() {
           {/* Brand + contact */}
           <section className="md:col-span-4" itemScope itemType="https://schema.org/Organization">
             <Image
-              src="/images/drinkmate-logo.png"
+              src={getAppImageUrl("/images/drinkmate-logo.png")}
               alt="Drinkmate"
               width={140}
               height={40}
@@ -405,7 +406,7 @@ export default function Footer() {
             <span>Payment:</span>
             <div className="flex items-center gap-2">
               <Image
-                src="/images/payment-logos/Mada Logo Vector.svg"
+                src={getAppImageUrl("/images/payment-logos/Mada Logo Vector.svg")}
                 alt="Mada"
                 width={250}
                 height={250}
@@ -413,7 +414,7 @@ export default function Footer() {
                 loading="lazy"
               />
               <Image
-                src="/images/payment-logos/visa.png"
+                src={getAppImageUrl("/images/payment-logos/visa.png")}
                 alt="VISA"
                 width={250}
                 height={250}
@@ -421,7 +422,7 @@ export default function Footer() {
                 loading="lazy"
               />
               <Image
-                src="/images/payment-logos/mastercard.png"
+                src={getAppImageUrl("/images/payment-logos/mastercard.png")}
                 alt="Mastercard"
                 width={250}
                 height={250}
@@ -429,7 +430,7 @@ export default function Footer() {
                 loading="lazy"
               />
               <Image
-                src="/images/payment-logos/american-express.png"
+                src={getAppImageUrl("/images/payment-logos/american-express.png")}
                 alt="American Express"
                 width={250}
                 height={250}
@@ -437,7 +438,7 @@ export default function Footer() {
                 loading="lazy"
               />
               <Image
-                src="/images/payment-logos/tabby.png"
+                src={getAppImageUrl("/images/payment-logos/tabby.png")}
                 alt="Tabby"
                 width={80}
                 height={24}
@@ -447,7 +448,7 @@ export default function Footer() {
             </div>
             <span className="md:ml-6">Delivery partner:</span>
             <Image
-              src="/images/delivery-logos/aramex-seeklogo.png"
+              src={getAppImageUrl("/images/delivery-logos/aramex-seeklogo.png")}
               alt="Aramex"
               width={250}
               height={250}

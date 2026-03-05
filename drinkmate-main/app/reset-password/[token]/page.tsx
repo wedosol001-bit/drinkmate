@@ -24,6 +24,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
+import { getAppImageUrl } from "@/lib/utils/app-images";
 
 export default function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
   const [password, setPassword] = useState("");
@@ -165,7 +166,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
           <CardHeader className="space-y-2 pb-6">
             <div className="mx-auto mb-2">
               <Image 
-                src="/images/drinkmate-logo.png"
+                src={getAppImageUrl("/images/drinkmate-logo.png")}
                 style={{ width: "auto", height: "auto" }} 
                 alt="Drinkmate" 
                 width={150} 

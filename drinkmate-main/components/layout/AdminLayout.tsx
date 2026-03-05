@@ -7,6 +7,7 @@ import { LoadingLink } from "@/components/ui/LoadingLink"
 import Image from "next/image"
 import { useAuth } from "@/lib/contexts/auth-context"
 import { useTranslation } from "@/lib/contexts/translation-context"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 import { useAdminTranslation } from "@/lib/use-admin-translation"
 import { NavigationProvider } from "@/lib/contexts/navigation-context"
 import { NavigationLoader } from "@/components/ui/NavigationLoader"
@@ -332,7 +333,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <LoadingLink href="/admin" className={`flex items-center ${!isSidebarOpen && "justify-center"}`}>
               {isSidebarOpen ? (
                 <Image
-                  src="/images/drinkmate-logo.png"
+                  src={getAppImageUrl("/images/drinkmate-logo.png")}
                   alt="Drinkmate"
                   width={120}
                   height={40}
@@ -692,7 +693,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex items-center justify-between h-16 px-4 border-b border-white/20">
             <LoadingLink href="/admin" className="flex items-center">
               <Image
-                src="/images/drinkmate-logo.png"
+                src={getAppImageUrl("/images/drinkmate-logo.png")}
                 alt="Drinkmate"
                 width={120}
                 height={40}

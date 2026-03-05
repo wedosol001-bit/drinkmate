@@ -9,7 +9,9 @@
     "start": "next start -p 3001",
     "analyze": "cross-env ANALYZE=true npm run build",
     "build:analyze": "cross-env ANALYZE=true next build",
-    "bundle-size": "npm run build && npx next-bundle-analyzer"
+    "bundle-size": "npm run build && npx next-bundle-analyzer",
+    "image:audit": "node scripts/image-audit.cjs",
+    "image:upload": "node scripts/upload-images-to-cloudinary.cjs"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.16",

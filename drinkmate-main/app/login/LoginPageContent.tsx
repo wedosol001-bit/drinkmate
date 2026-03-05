@@ -19,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, Mail, Lock, AlertCircle, CheckCircle2, Info, AlertTriangle } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { toast } from "sonner";
+import { getAppImageUrl } from "@/lib/utils/app-images";
 
 export default function LoginPageContent() {
   const [email, setEmail] = useState("");
@@ -166,7 +167,7 @@ export default function LoginPageContent() {
           <CardHeader className="space-y-2 pb-6">
             <div className="mx-auto mb-2">
               <Image 
-                src="/images/drinkmate-logo.png"
+                src={getAppImageUrl("/images/drinkmate-logo.png")}
                 style={{ width: "auto", height: "auto" }} 
                 alt="Drinkmate" 
                 width={150} 
@@ -253,7 +254,7 @@ export default function LoginPageContent() {
                       title={showPassword ? "Hide password" : "Show password"}
                     >
                       <Image
-                        src={showPassword ? "/images/miscellaneous/hide.png" : "/images/miscellaneous/view.png"}
+                        src={showPassword ? getAppImageUrl("/images/miscellaneous/hide.png") : getAppImageUrl("/images/miscellaneous/view.png")}
                         alt={showPassword ? "Hide password" : "Show password"}
                         width={20}
                         height={20}
