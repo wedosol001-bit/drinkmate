@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Home, ArrowLeft, Search, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 import PageLayout from "@/components/layout/PageLayout"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
 export default function NotFound() {
   return (
@@ -32,7 +33,7 @@ export default function NotFound() {
           <div className="mb-8 md:mb-12 flex justify-center">
             <div className="relative">
               <Image
-                src="/images/drinkmate-machine.png"
+                src={getAppImageUrl("/images/drinkmate-machine.png")}
                 alt="Drinkmate Machine"
                 width={200}
                 height={300}

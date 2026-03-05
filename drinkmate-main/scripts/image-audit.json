@@ -1,0 +1,1398 @@
+{
+  "generatedAt": "2026-03-05T17:10:14.362Z",
+  "publicImagesRoot": "/images",
+  "referencedPaths": {
+    "/images/placeholder-product.jpg": [
+      {
+        "file": "app/account/orders/[id]/page.tsx",
+        "line": 74,
+        "snippet": "image: item.image || '/images/placeholder-product.jpg'"
+      }
+    ],
+    "/images/italian-strawberry-lemon-syrup.png": [
+      {
+        "file": "app/admin/cart-settings/page.tsx",
+        "line": 179,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "app/admin/cart-settings/page.tsx",
+        "line": 186,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "app/admin/cart-settings/page.tsx",
+        "line": 193,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 49,
+        "snippet": "avatar: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "components/cart/FreeGift.tsx",
+        "line": 36,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "components/cart/FreeGift.tsx",
+        "line": 43,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "components/cart/FreeGift.tsx",
+        "line": 50,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "lib/freeGift.ts",
+        "line": 41,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "lib/freeGift.ts",
+        "line": 48,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      },
+      {
+        "file": "lib/freeGift.ts",
+        "line": 55,
+        "snippet": "image: \"/images/italian-strawberry-lemon-syrup.png\","
+      }
+    ],
+    "/images/placeholder.jpg": [
+      {
+        "file": "app/admin/exchange-cylinders/page.tsx",
+        "line": 387,
+        "snippet": "imagesArray = [\"/images/placeholder.jpg\"];"
+      },
+      {
+        "file": "app/admin/exchange-cylinders/page.tsx",
+        "line": 634,
+        "snippet": "image: \"/images/placeholder.jpg\","
+      },
+      {
+        "file": "app/admin/exchange-cylinders/page.tsx",
+        "line": 635,
+        "snippet": "images: [\"/images/placeholder.jpg\"],"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 107,
+        "snippet": "src={blog.image || \"/images/placeholder.jpg\"}"
+      },
+      {
+        "file": "components/product/HowToUseSection.tsx",
+        "line": 32,
+        "snippet": "src={step.image || \"/images/placeholder.jpg\"}"
+      },
+      {
+        "file": "components/product/ProductOverview.tsx",
+        "line": 44,
+        "snippet": "src={activeImage || (product.images && product.images.length > 0 ? product.images[0].url : \"/images/placeholder.jpg\")}"
+      },
+      {
+        "file": "components/ui/cloudinary-image-upload.tsx",
+        "line": 482,
+        "snippet": "fallbackSrc=\"/images/placeholder.jpg\""
+      }
+    ],
+    "/images/${categoryName}.png": [
+      {
+        "file": "app/admin/products/page.tsx",
+        "line": 187,
+        "snippet": "image: `/images/${categoryName}.png`"
+      }
+    ],
+    "/images/co2-refill-standard.jpg": [
+      {
+        "file": "app/admin/refill-cylinders/page.tsx",
+        "line": 202,
+        "snippet": "image: \"/images/co2-refill-standard.jpg\","
+      }
+    ],
+    "/images/co2-refill-premium.jpg": [
+      {
+        "file": "app/admin/refill-cylinders/page.tsx",
+        "line": 223,
+        "snippet": "image: \"/images/co2-refill-premium.jpg\","
+      }
+    ],
+    "/images/payment-logos/arb-payment.png": [
+      {
+        "file": "app/checkout/page.tsx",
+        "line": 456,
+        "snippet": "logo: \"/images/payment-logos/arb-payment.png\","
+      }
+    ],
+    "/images/payment-logos/tabby.png": [
+      {
+        "file": "app/checkout/page.tsx",
+        "line": 463,
+        "snippet": "logo: \"/images/payment-logos/tabby.png\","
+      },
+      {
+        "file": "components/layout/Footer.tsx",
+        "line": 440,
+        "snippet": "src=\"/images/payment-logos/tabby.png\""
+      }
+    ],
+    "/images/payment-logos/mada.svg": [
+      {
+        "file": "app/checkout/page.tsx",
+        "line": 1342,
+        "snippet": "src=\"/images/payment-logos/mada.svg\""
+      },
+      {
+        "file": "components/checkout/TabbyInfoDialog.tsx",
+        "line": 125,
+        "snippet": "src=\"/images/payment-logos/mada.svg\""
+      }
+    ],
+    "/images/payment-logos/visa.png": [
+      {
+        "file": "app/checkout/page.tsx",
+        "line": 1351,
+        "snippet": "src=\"/images/payment-logos/visa.png\""
+      },
+      {
+        "file": "components/layout/Footer.tsx",
+        "line": 416,
+        "snippet": "src=\"/images/payment-logos/visa.png\""
+      }
+    ],
+    "/images/payment-logos/mastercard.png": [
+      {
+        "file": "app/checkout/page.tsx",
+        "line": 1360,
+        "snippet": "src=\"/images/payment-logos/mastercard.png\""
+      },
+      {
+        "file": "components/layout/Footer.tsx",
+        "line": 424,
+        "snippet": "src=\"/images/payment-logos/mastercard.png\""
+      }
+    ],
+    "/images/payment-logos/urways-logo.svg": [
+      {
+        "file": "app/checkout-test/page.tsx",
+        "line": 444,
+        "snippet": "src=\"/images/payment-logos/urways-logo.svg\""
+      }
+    ],
+    "/images/payment-logos/tap-logo.svg": [
+      {
+        "file": "app/checkout-test/page.tsx",
+        "line": 488,
+        "snippet": "src=\"/images/payment-logos/tap-logo.svg\""
+      }
+    ],
+    "/images/madiaterPage/newSelenders.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 15,
+        "snippet": "newCylinders: \"/images/madiaterPage/newSelenders.svg\","
+      }
+    ],
+    "/images/madiaterPage/refillSelenders.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 16,
+        "snippet": "refillCylinders: \"/images/madiaterPage/refillSelenders.svg\","
+      }
+    ],
+    "/images/madiaterPage/clockIcon.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 17,
+        "snippet": "clockIcon: \"/images/madiaterPage/clockIcon.svg\","
+      }
+    ],
+    "/images/madiaterPage/bottelIcon.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 18,
+        "snippet": "bottleIcon: \"/images/madiaterPage/bottelIcon.svg\","
+      }
+    ],
+    "/images/madiaterPage/verifiedIcon.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 19,
+        "snippet": "verifiedIcon: \"/images/madiaterPage/verifiedIcon.svg\","
+      }
+    ],
+    "/images/madiaterPage/recycleIcon.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 20,
+        "snippet": "recycleIcon: \"/images/madiaterPage/recycleIcon.svg\","
+      }
+    ],
+    "/images/madiaterPage/exchangeBottels.svg": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 21,
+        "snippet": "exchangeBottles: \"/images/madiaterPage/exchangeBottels.svg\","
+      }
+    ],
+    "/images/drinkmate-logo.png": [
+      {
+        "file": "app/forgot-password/page.tsx",
+        "line": 72,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "app/login/LoginPageContent.tsx",
+        "line": 169,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "app/register/page.tsx",
+        "line": 227,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "app/reset-password/[token]/page.tsx",
+        "line": 168,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "components/layout/AdminLayout.tsx",
+        "line": 335,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "components/layout/AdminLayout.tsx",
+        "line": 695,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "components/layout/Footer.tsx",
+        "line": 134,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "components/layout/Header.tsx",
+        "line": 145,
+        "snippet": "src=\"/images/drinkmate-logo.png\""
+      },
+      {
+        "file": "lib/performance.ts",
+        "line": 106,
+        "snippet": "'/images/drinkmate-logo.png',"
+      },
+      {
+        "file": "public/sw.js",
+        "line": 13,
+        "snippet": "'/images/drinkmate-logo.png',"
+      }
+    ],
+    "/images/drinkmate-og-image.jpg": [
+      {
+        "file": "app/layout.tsx",
+        "line": 106,
+        "snippet": "url: '/images/drinkmate-og-image.jpg',"
+      },
+      {
+        "file": "components/SEO.tsx",
+        "line": 27,
+        "snippet": "ogImage = '/images/drinkmate-og-image.jpg',"
+      },
+      {
+        "file": "lib/performance.ts",
+        "line": 107,
+        "snippet": "'/images/drinkmate-og-image.jpg',"
+      },
+      {
+        "file": "lib/seo.ts",
+        "line": 26,
+        "snippet": "image = '/images/drinkmate-og-image.jpg',"
+      },
+      {
+        "file": "public/sw.js",
+        "line": 14,
+        "snippet": "'/images/drinkmate-og-image.jpg',"
+      }
+    ],
+    "/images/drinkmate-twitter-image.jpg": [
+      {
+        "file": "app/layout.tsx",
+        "line": 118,
+        "snippet": "images: ['/images/drinkmate-twitter-image.jpg'],"
+      }
+    ],
+    "/images/miscellaneous/hide.png": [
+      {
+        "file": "app/login/LoginPageContent.tsx",
+        "line": 256,
+        "snippet": "src={showPassword ? \"/images/miscellaneous/hide.png\" : \"/images/miscellaneous/view.png\"}"
+      }
+    ],
+    "/images/miscellaneous/view.png": [
+      {
+        "file": "app/login/LoginPageContent.tsx",
+        "line": 256,
+        "snippet": "src={showPassword ? \"/images/miscellaneous/hide.png\" : \"/images/miscellaneous/view.png\"}"
+      }
+    ],
+    "/images/drinkmate-machine.png": [
+      {
+        "file": "app/not-found.tsx",
+        "line": 35,
+        "snippet": "src=\"/images/drinkmate-machine.png\""
+      }
+    ],
+    "/images/food-grade-co2-text.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1002,
+        "snippet": "src=\"/images/food-grade-co2-text.png\""
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1090,
+        "snippet": "src=\"/images/food-grade-co2-text.png\""
+      },
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 941,
+        "snippet": "src=\"/images/food-grade-co2-text.png\""
+      }
+    ],
+    "/images/how-to-use-drinkmate.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1284,
+        "snippet": "src=\"/images/how-to-use-drinkmate.png\""
+      }
+    ],
+    "/images/drink-recipes.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1312,
+        "snippet": "src=\"/images/drink-recipes.png\""
+      }
+    ],
+    "/images/premium-italian-flavors.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1340,
+        "snippet": "src=\"/images/premium-italian-flavors.png\""
+      }
+    ],
+    "/images/plastic-impact.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1415,
+        "snippet": "src=\"/images/plastic-impact.png\""
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1493,
+        "snippet": "src=\"/images/plastic-impact.png\""
+      }
+    ],
+    "/images/natural-flavors.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1436,
+        "snippet": "src=\"/images/natural-flavors.png\""
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1514,
+        "snippet": "src=\"/images/natural-flavors.png\""
+      }
+    ],
+    "/images/health-benefits.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 1458,
+        "snippet": "src=\"/images/health-benefits.png\""
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1536,
+        "snippet": "src=\"/images/health-benefits.png\""
+      }
+    ],
+    "/images/placeholder-recipe.jpg": [
+      {
+        "file": "app/recipes/page.tsx",
+        "line": 314,
+        "snippet": "src={currentRecipe?.image || '/images/placeholder-recipe.jpg'}"
+      }
+    ],
+    "/images/refillPage/drinkmateRefill.svg": [
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 262,
+        "snippet": "drinkmate: \"/images/refillPage/drinkmateRefill.svg\","
+      }
+    ],
+    "/images/refillPage/quick-co2.png": [
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 263,
+        "snippet": "quickConnect: \"/images/refillPage/quick-co2.png\","
+      }
+    ],
+    "/images/refillPage/screw-co2.png": [
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 264,
+        "snippet": "standardThreaded: \"/images/refillPage/screw-co2.png\","
+      }
+    ],
+    "/images/co2-cylinder-single.png": [
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 329,
+        "snippet": "image: selectedCylinderData.image || \"/images/co2-cylinder-single.png\","
+      },
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 39,
+        "snippet": "avatar: \"/images/co2-cylinder-single.png\","
+      }
+    ],
+    "/images/refillPage/drinkmateCard.svg": [
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 522,
+        "snippet": "<Image src=\"/images/refillPage/drinkmateCard.svg\" alt=\"Drinkmate\" width={56} height={56} className=\"object-contain\" />"
+      }
+    ],
+    "/images/refillPage/nonDrinkmateCard.svg": [
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 533,
+        "snippet": "<Image src=\"/images/refillPage/nonDrinkmateCard.svg\" alt=\"Non-Drinkmate\" width={56} height={56} className=\"object-contai"
+      }
+    ],
+    "/images/products/accessories-bundle-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 359,
+        "snippet": "image: '/images/products/accessories-bundle-1.jpg',"
+      },
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 361,
+        "snippet": "{ url: '/images/products/accessories-bundle-1.jpg', alt: 'Premium Accessories Bundle - Complete Set', isPrimary: true },"
+      }
+    ],
+    "/images/products/accessories-bundle-2.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 362,
+        "snippet": "{ url: '/images/products/accessories-bundle-2.jpg', alt: 'Premium Accessories Bundle - Individual Items', isPrimary: fal"
+      }
+    ],
+    "/images/products/bottle-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 393,
+        "snippet": "{ product: 'carbonation-bottle-1', name: 'Premium Carbonation Bottle (500ml)', price: 25.00, image: '/images/products/bo"
+      }
+    ],
+    "/images/products/bottle-2.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 394,
+        "snippet": "{ product: 'carbonation-bottle-2', name: 'Premium Carbonation Bottle (1L)', price: 30.00, image: '/images/products/bottl"
+      }
+    ],
+    "/images/products/cap-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 395,
+        "snippet": "{ product: 'carbonation-cap', name: 'Universal Carbonation Cap', price: 15.00, image: '/images/products/cap-1.jpg' },"
+      }
+    ],
+    "/images/products/brush-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 396,
+        "snippet": "{ product: 'cleaning-brush', name: 'Professional Cleaning Brush Set', price: 12.00, image: '/images/products/brush-1.jpg"
+      }
+    ],
+    "/images/products/measure-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 397,
+        "snippet": "{ product: 'measuring-tool', name: 'Precision Measuring Tools', price: 8.00, image: '/images/products/measure-1.jpg' },"
+      }
+    ],
+    "/images/products/storage-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 398,
+        "snippet": "{ product: 'storage-container', name: 'Accessory Storage Container', price: 18.00, image: '/images/products/storage-1.jp"
+      }
+    ],
+    "/images/products/dispenser-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 399,
+        "snippet": "{ product: 'flavor-dispenser', name: 'Flavor Concentrate Dispenser', price: 22.00, image: '/images/products/dispenser-1."
+      }
+    ],
+    "/images/products/maintenance-1.jpg": [
+      {
+        "file": "app/shop/accessories/bundles/[slug]/page.tsx",
+        "line": 400,
+        "snippet": "{ product: 'maintenance-kit', name: 'Maintenance and Care Kit', price: 20.00, image: '/images/products/maintenance-1.jpg"
+      }
+    ],
+    "/images/empty-drinkmate-bottle.png": [
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 111,
+        "snippet": "return \"/images/empty-drinkmate-bottle.png\""
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 218,
+        "snippet": "if (!imgs || imgs.length === 0) return \"/images/empty-drinkmate-bottle.png\""
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 221,
+        "snippet": "return (imgs.find((img: any) => img.isPrimary)?.url) || first.url || \"/images/empty-drinkmate-bottle.png\""
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 296,
+        "snippet": "image: \"/images/empty-drinkmate-bottle.png\","
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 309,
+        "snippet": "image: \"/images/empty-drinkmate-bottle.png\","
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 325,
+        "snippet": "image: \"/images/empty-drinkmate-bottle.png\","
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 339,
+        "snippet": "image: \"/images/empty-drinkmate-bottle.png\","
+      }
+    ],
+    "/images/drinkmate-machine-hero.png": [
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 19,
+        "snippet": "avatar: \"/images/drinkmate-machine-hero.png\","
+      }
+    ],
+    "/images/drinkmate-machine-blue.png": [
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 29,
+        "snippet": "avatar: \"/images/drinkmate-machine-blue.png\","
+      },
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 79,
+        "snippet": "avatar: \"/images/drinkmate-machine-blue.png\","
+      }
+    ],
+    "/images/drinkmate-machine-black-small.png": [
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 59,
+        "snippet": "avatar: \"/images/drinkmate-machine-black-small.png\","
+      }
+    ],
+    "/images/drinkmate-machine-red.png": [
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 69,
+        "snippet": "avatar: \"/images/drinkmate-machine-red.png\","
+      }
+    ],
+    "/images/co2-cylinder.png": [
+      {
+        "file": "app/testimonials/page.tsx",
+        "line": 89,
+        "snippet": "avatar: \"/images/co2-cylinder.png\","
+      }
+    ],
+    "/images/payment-logos/visa.svg": [
+      {
+        "file": "components/checkout/TabbyInfoDialog.tsx",
+        "line": 107,
+        "snippet": "src=\"/images/payment-logos/visa.svg\""
+      }
+    ],
+    "/images/payment-logos/mastercard.svg": [
+      {
+        "file": "components/checkout/TabbyInfoDialog.tsx",
+        "line": 116,
+        "snippet": "src=\"/images/payment-logos/mastercard.svg\""
+      }
+    ],
+    "/images/payment-logos/apple-pay.svg": [
+      {
+        "file": "components/checkout/TabbyInfoDialog.tsx",
+        "line": 134,
+        "snippet": "src=\"/images/payment-logos/apple-pay.svg\""
+      }
+    ],
+    "/images/payment-logos/american-express.png": [
+      {
+        "file": "components/layout/Footer.tsx",
+        "line": 432,
+        "snippet": "src=\"/images/payment-logos/american-express.png\""
+      }
+    ],
+    "/images/delivery-logos/aramex-seeklogo.png": [
+      {
+        "file": "components/layout/Footer.tsx",
+        "line": 450,
+        "snippet": "src=\"/images/delivery-logos/aramex-seeklogo.png\""
+      }
+    ],
+    "/images/us-flag.png": [
+      {
+        "file": "components/layout/Header.tsx",
+        "line": 243,
+        "snippet": "src={language === \"EN\" ? \"/images/us-flag.png\" : \"/images/saudi-arabia-flag.png\"}"
+      }
+    ],
+    "/images/saudi-arabia-flag.png": [
+      {
+        "file": "components/layout/Header.tsx",
+        "line": 243,
+        "snippet": "src={language === \"EN\" ? \"/images/us-flag.png\" : \"/images/saudi-arabia-flag.png\"}"
+      }
+    ],
+    "/images/placeholder.png": [
+      {
+        "file": "components/product/ProductImageGallery.tsx",
+        "line": 16,
+        "snippet": "images = [\"/images/placeholder.png\"],"
+      }
+    ],
+    "/images/cylinders/drinkmate-60l.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 9,
+        "snippet": "image: '/images/cylinders/drinkmate-60l.png',"
+      }
+    ],
+    "/images/cylinders/drinkmate-130l.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 22,
+        "snippet": "image: '/images/cylinders/drinkmate-130l.png',"
+      }
+    ],
+    "/images/cylinders/universal-60l.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 35,
+        "snippet": "image: '/images/cylinders/universal-60l.png',"
+      }
+    ],
+    "/images/flavors/strawberry.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 52,
+        "snippet": "image: '/images/flavors/strawberry.png',"
+      }
+    ],
+    "/images/flavors/cola.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 60,
+        "snippet": "image: '/images/flavors/cola.png',"
+      }
+    ],
+    "/images/flavors/lemon-lime.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 68,
+        "snippet": "image: '/images/flavors/lemon-lime.png',"
+      }
+    ],
+    "/images/products/drinkmate-carbonator.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 80,
+        "snippet": "image: '/images/products/drinkmate-carbonator.png',"
+      }
+    ],
+    "/images/products/glass-bottle.png": [
+      {
+        "file": "lib/fallback-data.ts",
+        "line": 90,
+        "snippet": "image: '/images/products/glass-bottle.png',"
+      }
+    ],
+    "/images/bannerNew": [
+      {
+        "file": "lib/utils/banner-paths.ts",
+        "line": 8,
+        "snippet": "const BASE = \"/images/bannerNew\""
+      }
+    ],
+    "/images/default-product.jpg": [
+      {
+        "file": "lib/utils/seo-utils.ts",
+        "line": 60,
+        "snippet": "ogImage: images[0] || '/images/default-product.jpg',"
+      }
+    ],
+    "/images/default-blog.jpg": [
+      {
+        "file": "lib/utils/seo-utils.ts",
+        "line": 117,
+        "snippet": "ogImage: image || '/images/default-blog.jpg',"
+      }
+    ],
+    "/images/screenshot-desktop.png": [
+      {
+        "file": "public/manifest.json",
+        "line": 45,
+        "snippet": "\"src\": \"/images/screenshot-desktop.png\","
+      }
+    ],
+    "/images/screenshot-mobile.png": [
+      {
+        "file": "public/manifest.json",
+        "line": 52,
+        "snippet": "\"src\": \"/images/screenshot-mobile.png\","
+      }
+    ],
+    "/images/bannerNew/refill.png": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 37,
+        "snippet": "getBannerSrc(\"refill\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 651,
+        "snippet": "getBannerSrc(\"refill\", ...)"
+      },
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 428,
+        "snippet": "getBannerSrc(\"refill\", ...)"
+      }
+    ],
+    "/images/bannerNew/refillShop.png": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 37,
+        "snippet": "getBannerSrc(\"refill\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 651,
+        "snippet": "getBannerSrc(\"refill\", ...)"
+      },
+      {
+        "file": "app/refill-cylinder/page.tsx",
+        "line": 428,
+        "snippet": "getBannerSrc(\"refill\", ...)"
+      }
+    ],
+    "/images/bannerNew/co2.png": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 43,
+        "snippet": "getBannerSrc(\"co2\", ...)"
+      },
+      {
+        "file": "app/shop/co2-cylinders/page.tsx",
+        "line": 105,
+        "snippet": "getBannerSrc(\"co2\", ...)"
+      }
+    ],
+    "/images/bannerNew/co2Arabic.png": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 43,
+        "snippet": "getBannerSrc(\"co2\", ...)"
+      },
+      {
+        "file": "app/shop/co2-cylinders/page.tsx",
+        "line": 105,
+        "snippet": "getBannerSrc(\"co2\", ...)"
+      }
+    ],
+    "/images/bannerNew/shop.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 657,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1244,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1079,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      }
+    ],
+    "/images/bannerNew/shopArbaic.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 657,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1244,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1079,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      }
+    ],
+    "/images/bannerNew/shopShop.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 657,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1244,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1079,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      }
+    ],
+    "/images/bannerNew/shopArabicShop.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 657,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1244,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1079,
+        "snippet": "getBannerSrc(\"shop\", ...)"
+      }
+    ],
+    "/images/bannerNew/accessorice.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 663,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1250,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 488,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1085,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      }
+    ],
+    "/images/bannerNew/accessoriceArabic.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 663,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1250,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 488,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1085,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      }
+    ],
+    "/images/bannerNew/accessoriceShop.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 663,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1250,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 488,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1085,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      }
+    ],
+    "/images/bannerNew/accessoriceArabicshop.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 663,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1250,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/accessories/page.tsx",
+        "line": 488,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1085,
+        "snippet": "getBannerSrc(\"accessories\", ...)"
+      }
+    ],
+    "/images/bannerNew/italianSyrup.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 669,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1256,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/flavor/page.tsx",
+        "line": 457,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1091,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      }
+    ],
+    "/images/bannerNew/italianSyrpArabic.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 669,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1256,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/flavor/page.tsx",
+        "line": 457,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1091,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      }
+    ],
+    "/images/bannerNew/italianSyrupShop.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 669,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1256,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/flavor/page.tsx",
+        "line": 457,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1091,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      }
+    ],
+    "/images/bannerNew/italianSyrupShopArabic.png": [
+      {
+        "file": "app/page.tsx",
+        "line": 669,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/page.tsx",
+        "line": 1256,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/flavor/page.tsx",
+        "line": 457,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      },
+      {
+        "file": "app/shop/page.tsx",
+        "line": 1091,
+        "snippet": "getBannerSrc(\"italianSyrup\", ...)"
+      }
+    ],
+    "/images/bannerNew/flavour.png": [
+      {
+        "file": "app/recipes/page.tsx",
+        "line": 298,
+        "snippet": "getBannerSrc(\"flavour\", ...)"
+      }
+    ],
+    "/images/bannerNew/flavourArabic.png": [
+      {
+        "file": "app/recipes/page.tsx",
+        "line": 298,
+        "snippet": "getBannerSrc(\"flavour\", ...)"
+      }
+    ],
+    "/images/bannerNew/sodaMakerBanner.png": [
+      {
+        "file": "app/shop/sodamakers/page.tsx",
+        "line": 584,
+        "snippet": "getBannerSrc(\"sodamaker\", ...)"
+      }
+    ],
+    "/images/bannerNew/sodamakerArabic.png": [
+      {
+        "file": "app/shop/sodamakers/page.tsx",
+        "line": 584,
+        "snippet": "getBannerSrc(\"sodamaker\", ...)"
+      }
+    ],
+    "/images/bannerNew/sodamaker.png": [
+      {
+        "file": "app/shop/sodamakers/page.tsx",
+        "line": 584,
+        "snippet": "getBannerSrc(\"sodamaker\", ...)"
+      }
+    ]
+  },
+  "referencedPathList": [
+    "/images/${categoryName}.png",
+    "/images/bannerNew",
+    "/images/bannerNew/accessorice.png",
+    "/images/bannerNew/accessoriceArabic.png",
+    "/images/bannerNew/accessoriceArabicshop.png",
+    "/images/bannerNew/accessoriceShop.png",
+    "/images/bannerNew/co2.png",
+    "/images/bannerNew/co2Arabic.png",
+    "/images/bannerNew/flavour.png",
+    "/images/bannerNew/flavourArabic.png",
+    "/images/bannerNew/italianSyrpArabic.png",
+    "/images/bannerNew/italianSyrup.png",
+    "/images/bannerNew/italianSyrupShop.png",
+    "/images/bannerNew/italianSyrupShopArabic.png",
+    "/images/bannerNew/refill.png",
+    "/images/bannerNew/refillShop.png",
+    "/images/bannerNew/shop.png",
+    "/images/bannerNew/shopArabicShop.png",
+    "/images/bannerNew/shopArbaic.png",
+    "/images/bannerNew/shopShop.png",
+    "/images/bannerNew/sodaMakerBanner.png",
+    "/images/bannerNew/sodamaker.png",
+    "/images/bannerNew/sodamakerArabic.png",
+    "/images/co2-cylinder-single.png",
+    "/images/co2-cylinder.png",
+    "/images/co2-refill-premium.jpg",
+    "/images/co2-refill-standard.jpg",
+    "/images/cylinders/drinkmate-130l.png",
+    "/images/cylinders/drinkmate-60l.png",
+    "/images/cylinders/universal-60l.png",
+    "/images/default-blog.jpg",
+    "/images/default-product.jpg",
+    "/images/delivery-logos/aramex-seeklogo.png",
+    "/images/drink-recipes.png",
+    "/images/drinkmate-logo.png",
+    "/images/drinkmate-machine-black-small.png",
+    "/images/drinkmate-machine-blue.png",
+    "/images/drinkmate-machine-hero.png",
+    "/images/drinkmate-machine-red.png",
+    "/images/drinkmate-machine.png",
+    "/images/drinkmate-og-image.jpg",
+    "/images/drinkmate-twitter-image.jpg",
+    "/images/empty-drinkmate-bottle.png",
+    "/images/flavors/cola.png",
+    "/images/flavors/lemon-lime.png",
+    "/images/flavors/strawberry.png",
+    "/images/food-grade-co2-text.png",
+    "/images/health-benefits.png",
+    "/images/how-to-use-drinkmate.png",
+    "/images/italian-strawberry-lemon-syrup.png",
+    "/images/madiaterPage/bottelIcon.svg",
+    "/images/madiaterPage/clockIcon.svg",
+    "/images/madiaterPage/exchangeBottels.svg",
+    "/images/madiaterPage/newSelenders.svg",
+    "/images/madiaterPage/recycleIcon.svg",
+    "/images/madiaterPage/refillSelenders.svg",
+    "/images/madiaterPage/verifiedIcon.svg",
+    "/images/miscellaneous/hide.png",
+    "/images/miscellaneous/view.png",
+    "/images/natural-flavors.png",
+    "/images/payment-logos/american-express.png",
+    "/images/payment-logos/apple-pay.svg",
+    "/images/payment-logos/arb-payment.png",
+    "/images/payment-logos/mada.svg",
+    "/images/payment-logos/mastercard.png",
+    "/images/payment-logos/mastercard.svg",
+    "/images/payment-logos/tabby.png",
+    "/images/payment-logos/tap-logo.svg",
+    "/images/payment-logos/urways-logo.svg",
+    "/images/payment-logos/visa.png",
+    "/images/payment-logos/visa.svg",
+    "/images/placeholder-product.jpg",
+    "/images/placeholder-recipe.jpg",
+    "/images/placeholder.jpg",
+    "/images/placeholder.png",
+    "/images/plastic-impact.png",
+    "/images/premium-italian-flavors.png",
+    "/images/products/accessories-bundle-1.jpg",
+    "/images/products/accessories-bundle-2.jpg",
+    "/images/products/bottle-1.jpg",
+    "/images/products/bottle-2.jpg",
+    "/images/products/brush-1.jpg",
+    "/images/products/cap-1.jpg",
+    "/images/products/dispenser-1.jpg",
+    "/images/products/drinkmate-carbonator.png",
+    "/images/products/glass-bottle.png",
+    "/images/products/maintenance-1.jpg",
+    "/images/products/measure-1.jpg",
+    "/images/products/storage-1.jpg",
+    "/images/refillPage/drinkmateCard.svg",
+    "/images/refillPage/drinkmateRefill.svg",
+    "/images/refillPage/nonDrinkmateCard.svg",
+    "/images/refillPage/quick-co2.png",
+    "/images/refillPage/screw-co2.png",
+    "/images/saudi-arabia-flag.png",
+    "/images/screenshot-desktop.png",
+    "/images/screenshot-mobile.png",
+    "/images/us-flag.png"
+  ],
+  "bannerKeysUsed": [
+    "refill",
+    "co2",
+    "shop",
+    "accessories",
+    "italianSyrup",
+    "flavour",
+    "sodamaker"
+  ],
+  "filesOnDisk": [
+    "/public/images/01 - Flavors/Cola-Flavor.png",
+    "/public/images/01 - Flavors/Cola-Pack-of-4.png",
+    "/public/images/01 - Flavors/Mojito-Mocktails.png",
+    "/public/images/01 - Flavors/Strawberry-Lemon-Flavor.png",
+    "/public/images/01 - Flavors/strawberry-group.png",
+    "/public/images/02 - Soda Makers/Artic-Black-Machine---Front.png",
+    "/public/images/02 - Soda Makers/Artic-Blue-Machine---Front.png",
+    "/public/images/02 - Soda Makers/Banner-Luxe-Machine.png",
+    "/public/images/02 - Soda Makers/Banner-Omni-Fiz.png",
+    "/public/images/02 - Soda Makers/Purple-Machine---Front.png",
+    "/public/images/02 - Soda Makers/black-sodaamachine.png",
+    "/public/images/03 - CO2/CO2---Filled.png",
+    "/public/images/03 - CO2/co2-group-cylinder.png",
+    "/public/images/04 - Kits/Starter-Kit---Example---Do-Not-Use.png",
+    "/public/images/05 - Accessories-20250824T073107Z-1-001/05 - Accessories/Black-Bottle---500-ML-Bundle.png",
+    "/public/images/05 - Accessories-20250824T073107Z-1-001/05 - Accessories/Black-Bottle---500-ML.png",
+    "/public/images/05 - Accessories-20250824T073107Z-1-001/05 - Accessories/empty-bottle-group.png",
+    "/public/images/05 - Accessories-20250824T073107Z-1-001/05 - Accessories/group-bottle.png",
+    "/public/images/06 - Animations -20250824T073107Z-1-001/06 - Animations/01 - Cylinders Animation.webm",
+    "/public/images/06 - Animations -20250824T073107Z-1-001/06 - Animations/01 - Cylinders Animation.webm.xmp",
+    "/public/images/banner/README.md",
+    "/public/images/banner/Shop-Banner-4-re.png",
+    "/public/images/banner/Shop-Banner-4.png",
+    "/public/images/banner/Web--Cylinder--Page (1).png",
+    "/public/images/banner/WhatsApp Image 2025-08-27 at 7.09.32 PM (1).webp",
+    "/public/images/banner/WhatsApp Image 2025-08-27 at 7.09.32 PM (2).webp",
+    "/public/images/banner/WhatsApp Image 2025-08-27 at 7.09.32 PM.webp",
+    "/public/images/banner/WhatsApp Image 2025-08-27 at 7.09.33 PM (1).webp",
+    "/public/images/banner/WhatsApp Image 2025-08-27 at 7.09.33 PM.webp",
+    "/public/images/banner/flavor banner.webp",
+    "/public/images/banner/flavor mobile.webp",
+    "/public/images/banner/flavors3-banner-check.jpg",
+    "/public/images/banner/flavors3-banner-re.jpg",
+    "/public/images/banner/flavors3-banner-resized.jpg",
+    "/public/images/banner/flavors3-banner-theresult.jpg",
+    "/public/images/banner/flavors3-banner.jpg",
+    "/public/images/banner/flavorsbanner1_page-0001.jpg",
+    "/public/images/banner/flavorsbanner2.jpg",
+    "/public/images/banner/flvrs2.jpg",
+    "/public/images/banner/luxe.jpg",
+    "/public/images/banner/omnifizz.jpg",
+    "/public/images/bannerNew/accessorice.png",
+    "/public/images/bannerNew/accessoriceArabic.png",
+    "/public/images/bannerNew/accessoriceArabicshop.png",
+    "/public/images/bannerNew/accessoriceShop.png",
+    "/public/images/bannerNew/co2.png",
+    "/public/images/bannerNew/co2Arabic.png",
+    "/public/images/bannerNew/flavour.png",
+    "/public/images/bannerNew/flavourArabic.png",
+    "/public/images/bannerNew/italianSyrpArabic.png",
+    "/public/images/bannerNew/italianSyrup.png",
+    "/public/images/bannerNew/italianSyrupShop.png",
+    "/public/images/bannerNew/italianSyrupShopArabic.png",
+    "/public/images/bannerNew/recipes.png",
+    "/public/images/bannerNew/refill.png",
+    "/public/images/bannerNew/refillShop.png",
+    "/public/images/bannerNew/shop.png",
+    "/public/images/bannerNew/shopArabicShop.png",
+    "/public/images/bannerNew/shopArbaic.png",
+    "/public/images/bannerNew/shopShop.png",
+    "/public/images/bannerNew/sodaMakerBanner.png",
+    "/public/images/bannerNew/sodamaker.png",
+    "/public/images/bannerNew/sodamakerArabic.png",
+    "/public/images/co2-cylinder-new.png",
+    "/public/images/co2-cylinder-single.png",
+    "/public/images/co2-cylinder.png",
+    "/public/images/co2-cylinders.png",
+    "/public/images/default-avatar.png",
+    "/public/images/delivery-logos/aramex-seeklogo.png",
+    "/public/images/delivery-logos/logo_green.png",
+    "/public/images/delivery-logos/urwaypayment.png",
+    "/public/images/drink-recipes.png",
+    "/public/images/drinkmate-logo.png",
+    "/public/images/drinkmate-machine-black-small.png",
+    "/public/images/drinkmate-machine-blue.png",
+    "/public/images/drinkmate-machine-hero.png",
+    "/public/images/drinkmate-machine-red.png",
+    "/public/images/drinkmate-machine.png",
+    "/public/images/drinkmatelogo.png",
+    "/public/images/empty-drinkmate-bottle.png",
+    "/public/images/energy-cola-flavors.png",
+    "/public/images/flavor-section-background.png",
+    "/public/images/food-grade-co2-text.png",
+    "/public/images/health-benefits.png",
+    "/public/images/how-to-use-drinkmate.png",
+    "/public/images/italian-strawberry-lemon-syrup.png",
+    "/public/images/italian-strawberry-lemon.png",
+    "/public/images/madiaterPage/bottelIcon.svg",
+    "/public/images/madiaterPage/clockIcon.svg",
+    "/public/images/madiaterPage/exchangeBottels.svg",
+    "/public/images/madiaterPage/newSelenders.svg",
+    "/public/images/madiaterPage/recycleIcon.svg",
+    "/public/images/madiaterPage/refillSelenders.svg",
+    "/public/images/madiaterPage/verifiedIcon.svg",
+    "/public/images/miscellaneous/hide.png",
+    "/public/images/miscellaneous/view.png",
+    "/public/images/natural-flavors.png",
+    "/public/images/payment-logos/Mada Logo Vector.svg",
+    "/public/images/payment-logos/american-express.png",
+    "/public/images/payment-logos/apple-pay.png",
+    "/public/images/payment-logos/apple-pay.svg",
+    "/public/images/payment-logos/aramex-logo.svg",
+    "/public/images/payment-logos/google-pay.png",
+    "/public/images/payment-logos/mada.svg",
+    "/public/images/payment-logos/mastercard.png",
+    "/public/images/payment-logos/mastercard.svg",
+    "/public/images/payment-logos/samsung-pay.svg",
+    "/public/images/payment-logos/tabby.png",
+    "/public/images/payment-logos/tabby.svg",
+    "/public/images/payment-logos/tap-logo.svg",
+    "/public/images/payment-logos/visa.png",
+    "/public/images/payment-logos/visa.svg",
+    "/public/images/plastic-impact.png",
+    "/public/images/premium-italian-flavors.png",
+    "/public/images/products/flavor-pack-1.jpg",
+    "/public/images/products/soda-maker-1.jpg",
+    "/public/images/refillPage/drinkmateCard.svg",
+    "/public/images/refillPage/drinkmateRefill.svg",
+    "/public/images/refillPage/nonDrinkmateCard.svg",
+    "/public/images/refillPage/quick-co2.png",
+    "/public/images/refillPage/quickConnectRefill.jpeg",
+    "/public/images/refillPage/screw-co2.png",
+    "/public/images/refillPage/standardThreadedRefill.jpeg",
+    "/public/images/saudi-arabia-flag.png",
+    "/public/images/soda-maker-black.png",
+    "/public/images/soda-maker-with-blue-liquid.png",
+    "/public/images/step-1-fill-bottle.png",
+    "/public/images/step-2-carbonate.png",
+    "/public/images/step-3-press-to-carbonate.png",
+    "/public/images/step/step 1.webp",
+    "/public/images/step/step 2.webp",
+    "/public/images/step/step 3.webp",
+    "/public/images/step/step 4.webp",
+    "/public/images/strawberry-lemon-flavor-bottle.png",
+    "/public/images/strawberry-lemon-flavor.png",
+    "/public/images/testimonial-avatar-1.jpg",
+    "/public/images/testimonial-avatar-2.jpg",
+    "/public/images/testimonial-video-poster.jpg",
+    "/public/images/us-flag.png"
+  ],
+  "filesOnDiskCount": 139,
+  "missing": [
+    "/images/placeholder-product.jpg",
+    "/images/placeholder.jpg",
+    "/images/${categoryName}.png",
+    "/images/co2-refill-standard.jpg",
+    "/images/co2-refill-premium.jpg",
+    "/images/payment-logos/arb-payment.png",
+    "/images/payment-logos/urways-logo.svg",
+    "/images/drinkmate-og-image.jpg",
+    "/images/drinkmate-twitter-image.jpg",
+    "/images/placeholder-recipe.jpg",
+    "/images/products/accessories-bundle-1.jpg",
+    "/images/products/accessories-bundle-2.jpg",
+    "/images/products/bottle-1.jpg",
+    "/images/products/bottle-2.jpg",
+    "/images/products/cap-1.jpg",
+    "/images/products/brush-1.jpg",
+    "/images/products/measure-1.jpg",
+    "/images/products/storage-1.jpg",
+    "/images/products/dispenser-1.jpg",
+    "/images/products/maintenance-1.jpg",
+    "/images/placeholder.png",
+    "/images/cylinders/drinkmate-60l.png",
+    "/images/cylinders/drinkmate-130l.png",
+    "/images/cylinders/universal-60l.png",
+    "/images/flavors/strawberry.png",
+    "/images/flavors/cola.png",
+    "/images/flavors/lemon-lime.png",
+    "/images/products/drinkmate-carbonator.png",
+    "/images/products/glass-bottle.png",
+    "/images/default-product.jpg",
+    "/images/default-blog.jpg",
+    "/images/screenshot-desktop.png",
+    "/images/screenshot-mobile.png"
+  ]
+}

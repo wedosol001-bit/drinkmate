@@ -9,8 +9,9 @@ import { ArrowRight } from "lucide-react"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import QualitySlideshow from "@/components/ui/quality-slideshow"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
-/** Asset paths for the cylinders mediator page - all under public/images/madiaterPage */
+/** Asset paths for the cylinders mediator page - resolved via getAppImageUrl (Cloudinary or local fallback) */
 const ASSETS = {
   newCylinders: "/images/madiaterPage/newSelenders.svg",
   refillCylinders: "/images/madiaterPage/refillSelenders.svg",
@@ -62,7 +63,7 @@ export default function CylindersMediatorPage() {
             <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-[#12d6fa]/30 group">
               <div className="relative h-48 md:h-56 bg-slate-50 flex items-center justify-center p-6">
                 <Image
-                  src={ASSETS.newCylinders}
+                  src={getAppImageUrl(ASSETS.newCylinders)}
                   alt={t("cylinders.cardNew.imageAlt")}
                   width={220}
                   height={180}
@@ -96,7 +97,7 @@ export default function CylindersMediatorPage() {
             <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-[#12d6fa]/30 group">
               <div className="relative h-48 md:h-56 bg-slate-50 flex items-center justify-center p-6">
                 <Image
-                  src={ASSETS.refillCylinders}
+                  src={getAppImageUrl(ASSETS.refillCylinders)}
                   alt={t("cylinders.cardRefill.imageAlt")}
                   width={220}
                   height={180}
@@ -140,7 +141,7 @@ export default function CylindersMediatorPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-4">
-                <Image src={ASSETS.clockIcon} alt="" width={64} height={64} className="object-contain text-[#12d6fa]" role="presentation" />
+                <Image src={getAppImageUrl(ASSETS.clockIcon)} alt="" width={64} height={64} className="object-contain text-[#12d6fa]" role="presentation" />
               </div>
               <p className={`text-sm md:text-base text-gray-700 font-medium ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
                 {t("cylinders.effortless.quickRefill")}
@@ -148,7 +149,7 @@ export default function CylindersMediatorPage() {
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-4">
-                <Image src={ASSETS.bottleIcon} alt="" width={64} height={64} className="object-contain" role="presentation" />
+                <Image src={getAppImageUrl(ASSETS.bottleIcon)} alt="" width={64} height={64} className="object-contain" role="presentation" />
               </div>
               <p className={`text-sm md:text-base text-gray-700 font-medium ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
                 {t("cylinders.effortless.spareCylinder")}
@@ -156,7 +157,7 @@ export default function CylindersMediatorPage() {
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-4">
-                <Image src={ASSETS.verifiedIcon} alt="" width={64} height={64} className="object-contain" role="presentation" />
+                <Image src={getAppImageUrl(ASSETS.verifiedIcon)} alt="" width={64} height={64} className="object-contain" role="presentation" />
               </div>
               <p className={`text-sm md:text-base text-gray-700 font-medium ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
                 {t("cylinders.effortless.foodGrade")}
@@ -164,7 +165,7 @@ export default function CylindersMediatorPage() {
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-4">
-                <Image src={ASSETS.recycleIcon} alt="" width={64} height={64} className="object-contain" role="presentation" />
+                <Image src={getAppImageUrl(ASSETS.recycleIcon)} alt="" width={64} height={64} className="object-contain" role="presentation" />
               </div>
               <p className={`text-sm md:text-base text-gray-700 font-medium ${isRTL ? "font-noto-arabic" : "font-noto-sans"}`}>
                 {t("cylinders.effortless.ecoFriendly")}
@@ -198,7 +199,7 @@ export default function CylindersMediatorPage() {
             </div>
             <div className={`flex items-center justify-center ${isRTL ? "lg:order-1" : "lg:order-2"}`}>
               <Image
-                src={ASSETS.exchangeBottles}
+                src={getAppImageUrl(ASSETS.exchangeBottles)}
                 alt={t("cylinders.exchangeBanner.imageAlt")}
                 width={400}
                 height={280}

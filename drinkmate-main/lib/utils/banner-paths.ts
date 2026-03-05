@@ -3,7 +3,10 @@
  * - Default variant: static banner; switch EN/AR by language.
  * - Shop variant: clickable banner for home/shop sliders; links to relevant shop page.
  * Uses exact filenames as on disk (including existing typos).
+ * When Cloudinary map is populated (via upload script), returns Cloudinary URL; otherwise local path (fallback).
  */
+
+import { getAppImageUrl } from './app-images'
 
 const BASE = "/images/bannerNew"
 
@@ -79,6 +82,7 @@ const MAP: Record<
 
 /**
  * Returns the full banner image path for a given key, language, and variant.
+ * Uses getAppImageUrl so Cloudinary URL is used when available, else local path.
  */
 export function getBannerSrc(
   key: BannerKey,
@@ -86,8 +90,8 @@ export function getBannerSrc(
 ): string {
   const { lang, variant = "default" } = options
   const entry = MAP[key]
-  if (!entry) return `${BASE}/shop.png`
+  if (!entry) return getAppImageUrl(`${BASE}/shop.png`)
   const variantEntry = variant === "shop" && entry.shop ? entry.shop : entry.default
   const filename = variantEntry[lang] ?? variantEntry.EN
-  return `${BASE}/${filename}`
+  return getAppImageUrl(`${BASE}/${filename}`)
 }
