@@ -9,22 +9,33 @@ const Bundle = require('../Models/bundle-model');
 exports.getAllCategories = async (req, res) => {
     try {
         const categories = await Category.find({ isActive: true })
-            .sort({ sortOrder: 1, name: 1 });
+            .sort({ sortOrder: 1, name: 1 })
+            .lean();
 
-        // Fetch subcategories separately to avoid circular dependency
-        const categoriesWithSubs = await Promise.all(
-            categories.map(async (category) => {
-                const subcategories = await Subcategory.find({ 
-                    category: category._id, 
-                    isActive: true 
-                }).sort({ sortOrder: 1, name: 1 });
-                
-                return {
-                    ...category.toObject(),
-                    subcategories
-                };
-            })
-        );
+        if (categories.length === 0) {
+            return res.status(200).json({
+                success: true,
+                categories: []
+            });
+        }
+
+        const categoryIds = categories.map(c => c._id);
+        const allSubcategories = await Subcategory.find({
+            category: { $in: categoryIds },
+            isActive: true
+        }).sort({ sortOrder: 1, name: 1 }).lean();
+
+        const subcategoriesByCategory = new Map();
+        for (const sub of allSubcategories) {
+            const key = sub.category.toString();
+            if (!subcategoriesByCategory.has(key)) subcategoriesByCategory.set(key, []);
+            subcategoriesByCategory.get(key).push(sub);
+        }
+
+        const categoriesWithSubs = categories.map(category => ({
+            ...category,
+            subcategories: subcategoriesByCategory.get(category._id.toString()) || []
+        }));
 
         res.status(200).json({
             success: true,
@@ -43,21 +54,32 @@ exports.getAllCategories = async (req, res) => {
 exports.getAdminCategories = async (req, res) => {
     try {
         const categories = await Category.find()
-            .sort({ sortOrder: 1, name: 1 });
+            .sort({ sortOrder: 1, name: 1 })
+            .lean();
 
-        // Fetch subcategories separately to avoid circular dependency
-        const categoriesWithSubs = await Promise.all(
-            categories.map(async (category) => {
-                const subcategories = await Subcategory.find({ 
-                    category: category._id 
-                }).sort({ sortOrder: 1, name: 1 });
-                
-                return {
-                    ...category.toObject(),
-                    subcategories
-                };
-            })
-        );
+        if (categories.length === 0) {
+            return res.status(200).json({
+                success: true,
+                categories: []
+            });
+        }
+
+        const categoryIds = categories.map(c => c._id);
+        const allSubcategories = await Subcategory.find({
+            category: { $in: categoryIds }
+        }).sort({ sortOrder: 1, name: 1 }).lean();
+
+        const subcategoriesByCategory = new Map();
+        for (const sub of allSubcategories) {
+            const key = sub.category.toString();
+            if (!subcategoriesByCategory.has(key)) subcategoriesByCategory.set(key, []);
+            subcategoriesByCategory.get(key).push(sub);
+        }
+
+        const categoriesWithSubs = categories.map(category => ({
+            ...category,
+            subcategories: subcategoriesByCategory.get(category._id.toString()) || []
+        }));
 
         res.status(200).json({
             success: true,
@@ -640,35 +662,88 @@ exports.toggleSubcategoryStatus = async (req, res) => {
 
 // ==================== UTILITY FUNCTIONS ====================
 
-// Update product and bundle counts for categories and subcategories
+// Update product and bundle counts for categories and subcategories (aggregation + bulkWrite)
 exports.updateItemCounts = async () => {
     try {
-        // Update category counts
-        const categories = await Category.find();
-        for (const category of categories) {
-            const productCount = await Product.countDocuments({ category: category._id });
-            const bundleCount = await Bundle.countDocuments({ 
-                category: { $in: [category.slug, category.name, category._id.toString()] }
-            });
-            
-            await Category.findByIdAndUpdate(category._id, {
-                productCount,
-                bundleCount
-            });
+        // Aggregate product counts by category (category can be ObjectId or string)
+        const productCategoryGroups = await Product.aggregate([
+            { $group: { _id: '$category', count: { $sum: 1 } } }
+        ]);
+        const productCategoryMap = new Map();
+        productCategoryGroups.forEach(({ _id, count }) => {
+            const key = _id != null ? String(_id) : '';
+            productCategoryMap.set(key, (productCategoryMap.get(key) || 0) + count);
+        });
+
+        // Aggregate bundle counts by category (Bundle.category is string)
+        const bundleCategoryGroups = await Bundle.aggregate([
+            { $group: { _id: { $ifNull: ['$category', ''] }, count: { $sum: 1 } } }
+        ]);
+        const bundleCategoryMap = new Map();
+        bundleCategoryGroups.forEach(({ _id, count }) => {
+            const key = _id != null ? String(_id) : '';
+            bundleCategoryMap.set(key, (bundleCategoryMap.get(key) || 0) + count);
+        });
+
+        const categories = await Category.find().lean();
+        const categoryBulkOps = categories.map(cat => ({
+            updateOne: {
+                filter: { _id: cat._id },
+                update: {
+                    $set: {
+                        productCount: [cat._id, cat._id.toString(), cat.slug, cat.name].reduce(
+                            (sum, k) => sum + (productCategoryMap.get(String(k)) || 0), 0
+                        ),
+                        bundleCount: [cat.slug, cat.name, cat._id.toString()].reduce(
+                            (sum, k) => sum + (bundleCategoryMap.get(String(k)) || 0), 0
+                        )
+                    }
+                }
+            }
+        }));
+
+        if (categoryBulkOps.length > 0) {
+            await Category.bulkWrite(categoryBulkOps);
         }
 
-        // Update subcategory counts
-        const subcategories = await Subcategory.find();
-        for (const subcategory of subcategories) {
-            const productCount = await Product.countDocuments({ subcategory: subcategory._id });
-            const bundleCount = await Bundle.countDocuments({ 
-                subcategory: { $in: [subcategory.slug, subcategory.name, subcategory._id.toString()] }
-            });
-            
-            await Subcategory.findByIdAndUpdate(subcategory._id, {
-                productCount,
-                bundleCount
-            });
+        // Aggregate product and bundle counts by subcategory
+        const productSubcategoryGroups = await Product.aggregate([
+            { $group: { _id: { $ifNull: ['$subcategory', ''] }, count: { $sum: 1 } } }
+        ]);
+        const productSubcategoryMap = new Map();
+        productSubcategoryGroups.forEach(({ _id, count }) => {
+            const key = _id != null ? String(_id) : '';
+            productSubcategoryMap.set(key, (productSubcategoryMap.get(key) || 0) + count);
+        });
+
+        const bundleSubcategoryGroups = await Bundle.aggregate([
+            { $group: { _id: { $ifNull: ['$subcategory', ''] }, count: { $sum: 1 } } }
+        ]);
+        const bundleSubcategoryMap = new Map();
+        bundleSubcategoryGroups.forEach(({ _id, count }) => {
+            const key = _id != null ? String(_id) : '';
+            bundleSubcategoryMap.set(key, (bundleSubcategoryMap.get(key) || 0) + count);
+        });
+
+        const subcategories = await Subcategory.find().lean();
+        const subcategoryBulkOps = subcategories.map(sub => ({
+            updateOne: {
+                filter: { _id: sub._id },
+                update: {
+                    $set: {
+                        productCount: (productSubcategoryMap.get(sub._id.toString()) || 0) +
+                            (productSubcategoryMap.get(sub.slug) || 0) +
+                            (productSubcategoryMap.get(sub.name) || 0),
+                        bundleCount: (bundleSubcategoryMap.get(sub.slug) || 0) +
+                            (bundleSubcategoryMap.get(sub.name) || 0) +
+                            (bundleSubcategoryMap.get(sub._id.toString()) || 0)
+                    }
+                }
+            }
+        }));
+
+        if (subcategoryBulkOps.length > 0) {
+            await Subcategory.bulkWrite(subcategoryBulkOps);
         }
 
         console.log('Item counts updated successfully');

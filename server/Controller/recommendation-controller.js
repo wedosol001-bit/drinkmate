@@ -29,9 +29,10 @@ exports.getPersonalizedRecommendations = async (req, res) => {
             const lastOrder = recentOrders[0];
             const lastOrderCategories = getCategoriesFromOrder(lastOrder);
             
-            const bestSellers = await getBestSellingProducts(1);
-            const categoryProducts = await getProductsByCategories(lastOrderCategories, 2);
-            
+            const [bestSellers, categoryProducts] = await Promise.all([
+                getBestSellingProducts(1),
+                getProductsByCategories(lastOrderCategories, 2)
+            ]);
             recommendations = [...bestSellers, ...categoryProducts];
         } else {
             // Multiple purchases - show 1 from second last + 1 best seller + 1 from last purchase
@@ -41,10 +42,11 @@ exports.getPersonalizedRecommendations = async (req, res) => {
             const lastOrderCategories = getCategoriesFromOrder(lastOrder);
             const secondLastOrderCategories = getCategoriesFromOrder(secondLastOrder);
             
-            const secondLastProducts = await getProductsByCategories(secondLastOrderCategories, 1);
-            const bestSellers = await getBestSellingProducts(1);
-            const lastProducts = await getProductsByCategories(lastOrderCategories, 1);
-            
+            const [secondLastProducts, bestSellers, lastProducts] = await Promise.all([
+                getProductsByCategories(secondLastOrderCategories, 1),
+                getBestSellingProducts(1),
+                getProductsByCategories(lastOrderCategories, 1)
+            ]);
             recommendations = [...secondLastProducts, ...bestSellers, ...lastProducts];
         }
         

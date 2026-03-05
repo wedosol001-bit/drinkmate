@@ -441,15 +441,31 @@ const syncCart = async (req, res) => {
       });
     }
     
+    // Collect all product IDs from localStorage items
+    const productIds = [];
+    for (const localItem of items) {
+      const productId = localItem.productId || localItem.id;
+      if (productId) productIds.push(productId);
+    }
+
+    // Batch fetch all products in one query
+    const productMap = new Map();
+    if (productIds.length > 0) {
+      const products = await Product.find({
+        _id: { $in: productIds },
+        status: 'active'
+      }).select('name nameAr sku price images stock').lean();
+      products.forEach(p => productMap.set(p._id.toString(), p));
+    }
+
     // Process each item from localStorage
     for (const localItem of items) {
       try {
         const productId = localItem.productId || localItem.id;
         if (!productId) continue;
-        
-        // Get product details
-        const product = await Product.findById(productId);
-        if (!product || product.status !== 'active') continue;
+
+        const product = productMap.get(String(productId));
+        if (!product) continue;
         
         // Check if item already exists in DB cart
         const existingItemIndex = cart.items.findIndex(item => 

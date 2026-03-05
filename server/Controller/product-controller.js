@@ -3,8 +3,92 @@ const Category = require('../Models/category-model');
 const Subcategory = require('../Models/subcategory-model');
 const Bundle = require('../Models/bundle-model');
 const Review = require('../Models/review-model');
+const mongoose = require('mongoose');
 
-// Get all products for admin with all fields
+/** Batch-resolve category and subcategory for a list of products (avoids N+1). */
+async function batchPopulateCategoriesAndSubcategories(products) {
+    if (!products || products.length === 0) return products;
+    const categoryIds = [];
+    const categorySlugsOrNames = [];
+    const subcategoryIds = [];
+    const subcategorySlugsOrNames = [];
+    const seenCatId = new Set();
+    const seenCatStr = new Set();
+    const seenSubId = new Set();
+    const seenSubStr = new Set();
+    for (const p of products) {
+        if (p.category) {
+            const raw = p.category;
+            const str = String(raw);
+            if (mongoose.Types.ObjectId.isValid(str) && str.length === 24) {
+                if (!seenCatId.has(str)) { seenCatId.add(str); categoryIds.push(raw); }
+            } else if (typeof raw === 'string' && !seenCatStr.has(raw)) {
+                seenCatStr.add(raw);
+                categorySlugsOrNames.push(raw);
+            }
+        }
+        if (p.subcategory && typeof p.subcategory === 'string') {
+            const raw = p.subcategory;
+            if (mongoose.Types.ObjectId.isValid(raw) && raw.length === 24) {
+                if (!seenSubId.has(raw)) { seenSubId.add(raw); subcategoryIds.push(raw); }
+            } else if (!seenSubStr.has(raw)) {
+                seenSubStr.add(raw);
+                subcategorySlugsOrNames.push(raw);
+            }
+        }
+    }
+    const categoryOr = [];
+    if (categoryIds.length) categoryOr.push({ _id: { $in: categoryIds } });
+    if (categorySlugsOrNames.length) categoryOr.push({ slug: { $in: categorySlugsOrNames } }, { name: { $in: categorySlugsOrNames } });
+    const subcategoryOr = [];
+    if (subcategoryIds.length) subcategoryOr.push({ _id: { $in: subcategoryIds } });
+    if (subcategorySlugsOrNames.length) subcategoryOr.push({ slug: { $in: subcategorySlugsOrNames } }, { name: { $in: subcategorySlugsOrNames } });
+
+    const [categories, subcategories] = await Promise.all([
+        categoryOr.length ? Category.find({ $or: categoryOr }).select('name slug').lean() : [],
+        subcategoryOr.length ? Subcategory.find({ $or: subcategoryOr }).select('name slug').lean() : []
+    ]);
+
+    const categoryById = new Map();
+    const categoryBySlug = new Map();
+    const categoryByName = new Map();
+    categories.forEach(c => {
+        categoryById.set(c._id.toString(), c);
+        categoryBySlug.set((c.slug || '').toLowerCase(), c);
+        categoryByName.set(c.name, c);
+    });
+    const subcategoryById = new Map();
+    const subcategoryBySlug = new Map();
+    const subcategoryByName = new Map();
+    subcategories.forEach(s => {
+        subcategoryById.set(s._id.toString(), s);
+        subcategoryBySlug.set((s.slug || '').toLowerCase(), s);
+        subcategoryByName.set(s.name, s);
+    });
+
+    for (const p of products) {
+        if (p.category) {
+            let c = null;
+            const str = String(p.category);
+            if (mongoose.Types.ObjectId.isValid(str) && str.length === 24) {
+                c = categoryById.get(str);
+            } else if (typeof p.category === 'string') {
+                c = categoryBySlug.get(p.category.toLowerCase()) || categoryByName.get(p.category);
+            }
+            if (c) p.category = { _id: c._id, name: c.name, slug: c.slug };
+        }
+        if (p.subcategory && typeof p.subcategory === 'string') {
+            let s = null;
+            if (mongoose.Types.ObjectId.isValid(p.subcategory) && p.subcategory.length === 24) {
+                s = subcategoryById.get(p.subcategory);
+            } else {
+                s = subcategoryBySlug.get(p.subcategory.toLowerCase()) || subcategoryByName.get(p.subcategory);
+            }
+            if (s) p.subcategory = { _id: s._id, name: s.name, slug: s.slug };
+        }
+    }
+    return products;
+}
 exports.getAdminProducts = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -164,36 +248,38 @@ exports.getAllProducts = async (req, res) => {
                 : req.query.subcategory.split(',').map(s => s.trim()).filter(Boolean);
             
             if (subcategoryParams.length > 0) {
-                // Find all matching subcategories by slug, ID, or name
-                const subcategoryMatches = [];
-                
+                // Batch find all matching subcategories in one query
+                const subcategoryOr = [];
+                const objectIds = [];
+                const slugsAndNames = [];
                 for (const subParam of subcategoryParams) {
-                    // Check if it's a valid ObjectId
                     const isObjectId = /^[0-9a-fA-F]{24}$/.test(subParam);
-                    
-                    let subcategory;
                     if (isObjectId) {
-                        subcategory = await Subcategory.findById(subParam);
+                        objectIds.push(subParam);
                     } else {
-                        // Try to find by slug or name
-                        subcategory = await Subcategory.findOne({
-                            $or: [
-                                { slug: subParam },
-                                { name: subParam },
-                                { slug: subParam.toLowerCase() },
-                                { name: { $regex: new RegExp(`^${subParam}$`, 'i') } }
-                            ]
-                        });
+                        slugsAndNames.push(subParam);
                     }
-                    
-                    if (subcategory) {
-                        // Support products where subcategory is stored as ObjectId, stringified id, slug, or name
-                        subcategoryMatches.push(
-                            subcategory._id,
-                            subcategory._id.toString(),
-                            subcategory.slug,
-                            subcategory.name
-                        );
+                }
+                if (objectIds.length) subcategoryOr.push({ _id: { $in: objectIds } });
+                if (slugsAndNames.length) {
+                    const allSlugs = [...new Set([...slugsAndNames, ...slugsAndNames.map(s => s.toLowerCase())])];
+                    subcategoryOr.push({ slug: { $in: allSlugs } });
+                    if (slugsAndNames.length === 1) {
+                        subcategoryOr.push({ name: { $regex: new RegExp(`^${slugsAndNames[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } });
+                    } else {
+                        subcategoryOr.push({ name: { $regex: new RegExp('^(' + slugsAndNames.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')$', 'i') } });
+                    }
+                }
+                const subcategories = subcategoryOr.length
+                    ? await Subcategory.find({ $or: subcategoryOr }).lean()
+                    : [];
+                const subcategoryMatches = [];
+                const seen = new Set();
+                for (const sub of subcategories) {
+                    const idStr = sub._id.toString();
+                    if (!seen.has(idStr)) {
+                        seen.add(idStr);
+                        subcategoryMatches.push(sub._id, idStr, sub.slug, sub.name);
                     }
                 }
                 
@@ -229,17 +315,17 @@ exports.getAllProducts = async (req, res) => {
         
         // Featured products filter
         if (req.query.featured === 'true') {
-            filter.isFeatured = true;
+            filter.featured = true;
         }
         
         // Best sellers filter
         if (req.query.bestSeller === 'true') {
-            filter.isBestSeller = true;
+            filter.bestSeller = true;
         }
         
         // New arrivals filter
         if (req.query.newArrival === 'true') {
-            filter.isNewArrival = true;
+            filter.newArrival = true;
         }
         
         // Search query
@@ -269,77 +355,33 @@ exports.getAllProducts = async (req, res) => {
                 sort = { createdAt: -1 };
         }
         
-        // Execute query with pagination
-        const products = await Product.find(filter)
-            .select('name nameAr slug price originalPrice images averageRating reviewCount category subcategory shortDescription shortDescriptionAr hasVariants variants.price variants.originalPrice variants.stock variants.sku variants.name variants.nameAr variants.image')
-            .sort(sort)
-            .skip(skip)
-            .limit(limit)
-            .lean();
+        // Execute query with pagination (list + count in one round-trip via $facet)
+        const pipeline = [
+            { $match: filter },
+            { $facet: {
+                list: [
+                    { $sort: sort },
+                    { $skip: skip },
+                    { $limit: limit },
+                    { $project: {
+                        name: 1, nameAr: 1, slug: 1, price: 1, originalPrice: 1, images: 1,
+                        averageRating: 1, reviewCount: 1, category: 1, subcategory: 1,
+                        shortDescription: 1, shortDescriptionAr: 1, hasVariants: 1,
+                        'variants.price': 1, 'variants.originalPrice': 1, 'variants.stock': 1,
+                        'variants.sku': 1, 'variants.name': 1, 'variants.nameAr': 1, 'variants.image': 1
+                    } }
+                ],
+                total: [
+                    { $count: 'total' }
+                ]
+            } }
+        ];
+        const aggResult = await Product.aggregate(pipeline);
+        const products = (aggResult[0] && aggResult[0].list) ? aggResult[0].list : [];
+        const totalProducts = (aggResult[0] && aggResult[0].total && aggResult[0].total[0]) ? aggResult[0].total[0].total : 0;
+
+        await batchPopulateCategoriesAndSubcategories(products);
             
-        // Manually populate category and subcategory fields for products
-        for (let product of products) {
-            // Populate category
-            if (product.category && typeof product.category === 'string') {
-                // Check if it's a valid ObjectId first
-                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.category);
-                
-                let category;
-                if (isObjectId) {
-                    // If it's a valid ObjectId, try to find by _id
-                    category = await Category.findById(product.category);
-                } else {
-                    // If it's not an ObjectId, try to find by slug or name
-                    category = await Category.findOne({
-                        $or: [
-                            { slug: product.category },
-                            { name: product.category }
-                        ]
-                    });
-                }
-                
-                if (category) {
-                    product.category = {
-                        _id: category._id,
-                        name: category.name,
-                        slug: category.slug
-                    };
-                }
-            }
-            
-            // Populate subcategory if it exists and is a string
-            if (product.subcategory && typeof product.subcategory === 'string') {
-                const Subcategory = require('../Models/subcategory-model');
-                // Check if it's a valid ObjectId first
-                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.subcategory);
-                
-                let subcategoryObj;
-                if (isObjectId) {
-                    // If it's a valid ObjectId, try to find by _id
-                    subcategoryObj = await Subcategory.findById(product.subcategory);
-                } else {
-                    // If it's not an ObjectId, try to find by slug or name
-                    subcategoryObj = await Subcategory.findOne({
-                        $or: [
-                            { slug: product.subcategory },
-                            { name: product.subcategory }
-                        ]
-                    });
-                }
-                
-                if (subcategoryObj) {
-                    product.subcategory = {
-                        _id: subcategoryObj._id,
-                        name: subcategoryObj.name,
-                        slug: subcategoryObj.slug
-                    };
-                }
-            }
-        }
-            
-        // Get total count for pagination
-        const totalProducts = await Product.countDocuments(filter);
-        
         // Calculate total pages
         const totalPages = Math.ceil(totalProducts / limit);
         
@@ -883,9 +925,7 @@ exports.getProductsByCategory = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
         
-        // Get products in this category
-        // Include nameAr, hasVariants, and variants to match getAllProducts behavior
-        const products = await Product.find({ 
+        const categoryProductFilter = {
             status: 'active',
             $or: [
                 { category: category._id },
@@ -893,82 +933,34 @@ exports.getProductsByCategory = async (req, res) => {
                 { category: category.slug },
                 { category: category.name }
             ]
-        })
-        .select('name nameAr slug price originalPrice images averageRating reviewCount shortDescription shortDescriptionAr subcategory category hasVariants variants.price variants.originalPrice variants.stock variants.sku variants.name variants.nameAr variants.image variants._id')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .lean();
+        };
         
-        // Manually populate category and subcategory fields for products
-        for (let product of products) {
-            // Populate category if it's a string
-            if (product.category && typeof product.category === 'string') {
-                // Check if it's a valid ObjectId first
-                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.category);
-                
-                let categoryObj;
-                if (isObjectId) {
-                    // If it's a valid ObjectId, try to find by _id
-                    categoryObj = await Category.findById(product.category);
-                } else {
-                    // If it's not an ObjectId, try to find by slug or name
-                    categoryObj = await Category.findOne({
-                        $or: [
-                            { slug: product.category },
-                            { name: product.category }
-                        ]
-                    });
-                }
-                
-                if (categoryObj) {
-                    product.category = {
-                        _id: categoryObj._id,
-                        name: categoryObj.name,
-                        slug: categoryObj.slug
-                    };
-                }
-            }
-            
-            // Populate subcategory if it exists and is a string
-            if (product.subcategory && typeof product.subcategory === 'string') {
-                // Check if it's a valid ObjectId first
-                const isObjectId = /^[0-9a-fA-F]{24}$/.test(product.subcategory);
-                
-                let subcategoryObj;
-                if (isObjectId) {
-                    // If it's a valid ObjectId, try to find by _id
-                    subcategoryObj = await Subcategory.findById(product.subcategory);
-                } else {
-                    // If it's not an ObjectId, try to find by slug or name
-                    subcategoryObj = await Subcategory.findOne({
-                        $or: [
-                            { slug: product.subcategory },
-                            { name: product.subcategory }
-                        ]
-                    });
-                }
-                
-                if (subcategoryObj) {
-                    product.subcategory = {
-                        _id: subcategoryObj._id,
-                        name: subcategoryObj.name,
-                        slug: subcategoryObj.slug
-                    };
-                }
-            }
-        }
-        
-        // Get total count for pagination
-        const totalProducts = await Product.countDocuments({ 
-            status: 'active',
-            $or: [
-                { category: category._id },
-                { category: category._id.toString() },
-                { category: category.slug },
-                { category: category.name }
-            ]
-        });
+        // List + count in one round-trip
+        const pipeline = [
+            { $match: categoryProductFilter },
+            { $facet: {
+                list: [
+                    { $sort: { createdAt: -1 } },
+                    { $skip: skip },
+                    { $limit: limit },
+                    { $project: {
+                        name: 1, nameAr: 1, slug: 1, price: 1, originalPrice: 1, images: 1,
+                        averageRating: 1, reviewCount: 1, category: 1, subcategory: 1,
+                        shortDescription: 1, shortDescriptionAr: 1, hasVariants: 1,
+                        'variants.price': 1, 'variants.originalPrice': 1, 'variants.stock': 1,
+                        'variants.sku': 1, 'variants.name': 1, 'variants.nameAr': 1, 'variants.image': 1, 'variants._id': 1
+                    } }
+                ],
+                total: [
+                    { $count: 'total' }
+                ]
+            } }
+        ];
+        const aggResult = await Product.aggregate(pipeline);
+        const products = (aggResult[0] && aggResult[0].list) ? aggResult[0].list : [];
+        const totalProducts = (aggResult[0] && aggResult[0].total && aggResult[0].total[0]) ? aggResult[0].total[0].total : 0;
+
+        await batchPopulateCategoriesAndSubcategories(products);
         
         // Calculate total pages
         const totalPages = Math.ceil(totalProducts / limit);
