@@ -37,12 +37,14 @@ export default function ProductGrid({
   dir = "ltr",
   className = "",
   loading = false,
+  viewMode = "grid",
   onAddToWishlist,
   onAddToComparison,
   onProductView,
   wishlist = [],
   comparisonList = []
 }: ProductGridProps & {
+  viewMode?: 'grid' | 'list'
   onAddToWishlist?: (product: Product) => void
   onAddToComparison?: (product: Product) => void
   onProductView?: (product: Product) => void
@@ -223,13 +225,18 @@ export default function ProductGrid({
     <>
       <div
         dir={dir}
-        className={`grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch ${className}`}
+        className={
+          viewMode === 'list'
+            ? `flex flex-col gap-4 ${className}`
+            : `grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch ${className}`
+        }
       >
         {convertedProducts.map((product, index) => (
           <BundleStyleProductCard
             key={product.id || `product-${index}`}
             product={product}
             dir={dir}
+            viewMode={viewMode}
             onAddToCart={handleAddToCart}
             onAddToWishlist={onAddToWishlist}
             onAddToComparison={onAddToComparison}

@@ -448,7 +448,7 @@ export default function FlavorPage() {
   return (
     <PageLayout currentPage="shop-flavor">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
 
         {/* Flavors / Italian Syrups banner - simple image only, no overlay, language-aware; height consistent with other category pages */}
         <div
@@ -555,7 +555,7 @@ export default function FlavorPage() {
             {/* Product Sections */}
             {subcategorySections.filter(section => section.products.length > 0).map((section) => (
               <div key={section._id} className="mb-12 sm:mb-16">
-                <h2 className="text-lg sm:text-xl font-medium mb-4 sm:mb-6 text-gray-900">{isRTL && section.name === 'Premium Flavors' ? 'النكهات الفاخرة' : section.name}</h2>
+                <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-gray-900">{isRTL && section.name === 'Premium Flavors' ? 'النكهات الفاخرة' : section.name}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                   {section.products.map((product) => renderProductCard(product))}
                 </div>

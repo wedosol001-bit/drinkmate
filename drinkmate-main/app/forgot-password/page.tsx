@@ -4,12 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/contexts/auth-context";
+import { useTranslation } from "@/lib/contexts/translation-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Mail, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Loader2, Mail, AlertCircle, CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { getAppImageUrl } from "@/lib/utils/app-images";
 
@@ -21,6 +22,7 @@ export default function ForgotPasswordPage() {
   const [emailSent, setEmailSent] = useState(false);
   
   const { forgotPassword } = useAuth();
+  const { isRTL } = useTranslation();
 
   // Email validation function
   const isValidEmail = (email: string) => {
@@ -65,8 +67,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <PageLayout currentPage="forgot-password">
-      <div className="container max-w-md mx-auto py-12 px-4">
-        <Card className="border-[#12d6fa]/20 shadow-lg">
+      <div className="container max-w-md mx-auto py-12 px-4" dir={isRTL ? "rtl" : "ltr"}>
+        <Card className={`border-[#12d6fa]/20 shadow-lg ${isRTL ? 'font-cairo' : 'font-montserrat'}`}>
           <CardHeader className="space-y-2 pb-6">
             <div className="mx-auto mb-2">
               <Image 
@@ -78,23 +80,25 @@ export default function ForgotPasswordPage() {
                 className="h-10 w-auto"
               />
             </div>
-            <CardTitle className="text-2xl font-bold text-center text-gray-800">Forgot Password</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-gray-800">
+              {isRTL ? "نسيت كلمة المرور" : "Forgot Password"}
+            </CardTitle>
             <CardDescription className="text-center text-gray-600">
               {!emailSent 
-                ? "Enter your email and we'll send you a link to reset your password" 
-                : "Check your inbox for the password reset link"}
+                ? (isRTL ? "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور" : "Enter your email and we'll send you a link to reset your password")
+                : (isRTL ? "تحقق من صندوق الوارد لرابط إعادة تعيين كلمة المرور" : "Check your inbox for the password reset link")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
               <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 mr-2" />
+                <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             {success && (
               <Alert className="mb-6 bg-green-50 text-green-800 border-green-200">
-                <CheckCircle2 className="h-4 w-4 mr-2" />
+                <CheckCircle2 className="h-4 w-4" />
                 <AlertDescription>{success}</AlertDescription>
               </Alert>
             )}
@@ -103,23 +107,28 @@ export default function ForgotPasswordPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700">Email Address</Label>
+                    <Label htmlFor="email" className="text-gray-700">
+                      {isRTL ? "البريد الإلكتروني" : "Email Address"}
+                    </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                      <Mail className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                       <Input
                         id="email"
                         type="email"
-                        placeholder="name@example.com"
+                        placeholder={isRTL ? "example@domain.com" : "name@example.com"}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         disabled={isLoading}
                         required
-                        className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                        dir="ltr"
+                        className={`${isRTL ? 'pr-10' : 'pl-10'} border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors`}
                         autoComplete="email"
                       />
                     </div>
                     {email && !isValidEmail(email) && (
-                      <p className="text-xs text-red-500 mt-1">Please enter a valid email address</p>
+                      <p className="text-xs text-red-500 mt-1">
+                        {isRTL ? "يرجى إدخال بريد إلكتروني صحيح" : "Please enter a valid email address"}
+                      </p>
                     )}
                   </div>
                   <Button 
@@ -128,12 +137,12 @@ export default function ForgotPasswordPage() {
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Sending...
-                      </>
+                      <span className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        {isRTL ? "جارٍ الإرسال..." : "Sending..."}
+                      </span>
                     ) : (
-                      "Send Reset Link"
+                      isRTL ? "إرسال رابط الإعادة" : "Send Reset Link"
                     )}
                   </Button>
                 </div>
@@ -144,26 +153,28 @@ export default function ForgotPasswordPage() {
                   <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                     <Mail className="h-8 w-8 text-[#12d6fa]" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-2">Check Your Email</h3>
+                  <h3 className="text-lg font-medium text-gray-800 mb-2">
+                    {isRTL ? "تحقق من بريدك الإلكتروني" : "Check Your Email"}
+                  </h3>
                   <p className="text-gray-600 mb-2">
-                    We've sent a password reset link to:
+                    {isRTL ? "لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى:" : "We've sent a password reset link to:"}
                   </p>
-                  <p className="font-medium text-gray-800 mb-4">{email}</p>
+                  <p className="font-medium text-gray-800 mb-4" dir="ltr">{email}</p>
                   <p className="text-sm text-gray-600">
-                    If you don't see it, please check your spam folder or
+                    {isRTL ? "إذا لم تجده، تحقق من مجلد الرسائل غير المرغوب فيها أو" : "If you don't see it, please check your spam folder or"}
                   </p>
                   <Button 
                     variant="link" 
                     className="text-[#12d6fa] hover:text-[#0fb8d9] p-0 h-auto text-sm"
                     onClick={() => setEmailSent(false)}
                   >
-                    try another email address
+                    {isRTL ? "جرّب عنوان بريد آخر" : "try another email address"}
                   </Button>
                 </div>
                 
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-2">
-                    Didn't receive the email?
+                    {isRTL ? "لم تستلم البريد الإلكتروني؟" : "Didn't receive the email?"}
                   </p>
                   <Button 
                     variant="outline" 
@@ -172,12 +183,12 @@ export default function ForgotPasswordPage() {
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Resending...
-                      </>
+                      <span className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {isRTL ? "جارٍ الإعادة..." : "Resending..."}
+                      </span>
                     ) : (
-                      "Resend Email"
+                      isRTL ? "إعادة الإرسال" : "Resend Email"
                     )}
                   </Button>
                 </div>
@@ -187,10 +198,10 @@ export default function ForgotPasswordPage() {
           <CardFooter className="flex flex-col border-t border-gray-200 pt-6">
             <Link 
               href="/login" 
-              className="text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center transition-colors"
+              className={`text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center gap-1 transition-colors`}
             >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back to login
+              {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+              {isRTL ? "العودة إلى تسجيل الدخول" : "Back to login"}
             </Link>
           </CardFooter>
         </Card>

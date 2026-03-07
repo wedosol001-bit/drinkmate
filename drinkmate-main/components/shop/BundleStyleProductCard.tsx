@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import { getProductImageUrl } from "@/lib/utils/image-utils"
 import styles from "@/components/ui/product-image-zoom.module.css"
+import { useWishlist } from "@/hooks/use-wishlist"
+import { toast } from "sonner"
 
 // Helper function to generate correct product URL based on category
 import { getProductUrl as getProductUrlFromUtils } from '@/lib/utils/product-url'
@@ -34,6 +36,7 @@ const getProductUrl = (product: Product): string => {
 export default function BundleStyleProductCard({
   product,
   dir = "ltr",
+  viewMode = "grid",
   onAddToCart,
   className,
   onAddToWishlist,
@@ -43,6 +46,7 @@ export default function BundleStyleProductCard({
   isInComparison = false,
   buttonClassName,
 }: ProductCardProps & {
+  viewMode?: 'grid' | 'list'
   onAddToWishlist?: (product: Product) => void
   onAddToComparison?: (product: Product) => void
   onProductView?: (product: Product) => void
@@ -52,11 +56,37 @@ export default function BundleStyleProductCard({
 }) {
   const router = useRouter()
   const { isRTL: isRTLFromContext, t } = useTranslation()
+  const { isInWishlist: checkWishlist, toggleWishlist } = useWishlist()
   const hasVariants = (product.variants?.length ?? 0) > 0
   const [isHovered, setIsHovered] = useState(false)
   const [imageLoadError, setImageLoadError] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
+  const [isTogglingWishlist, setIsTogglingWishlist] = useState(false)
+
+  const productId = String(product._id || product.id || '')
+  const inWishlist = checkWishlist(productId)
+
+  const handleWishlistClick = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!productId || isTogglingWishlist) return
+    setIsTogglingWishlist(true)
+    try {
+      const added = await toggleWishlist(productId)
+      // Call parent handler if provided (e.g. for shop page wishlist state)
+      onAddToWishlist?.(product as Product)
+      if (inWishlist) {
+        toast.success(t('product.removedFromWishlist') || 'Removed from favorites')
+      } else {
+        toast.success(t('product.addedToWishlist') || 'Added to favorites')
+      }
+    } catch {
+      toast.error(t('product.wishlistError') || 'Failed to update favorites')
+    } finally {
+      setIsTogglingWishlist(false)
+    }
+  }
   
   // Use dir prop if provided, otherwise use context
   const isRTL = dir === "rtl" || isRTLFromContext
@@ -150,13 +180,200 @@ export default function BundleStyleProductCard({
   const minVariantPrice = hasVariants && variantPrices.length > 0 ? Math.min(...variantPrices) : undefined
   const maxVariantPrice = hasVariants && variantPrices.length > 0 ? Math.max(...variantPrices) : undefined
 
-  const isInStock = product.inStock
-  
-  console.log('BundleStyleProductCard - product:', product)
-  console.log('BundleStyleProductCard - isInStock:', isInStock)
-  console.log('BundleStyleProductCard - isAddingToCart:', isAddingToCart)
-  console.log('BundleStyleProductCard - button disabled:', !isInStock || isAddingToCart)
+  // Treat undefined inStock as in stock so "Add to cart" works when API doesn't send stock
+  const isInStock = product.inStock !== false
 
+  // Shared badge renderer
+  const renderBadges = () => {
+    if (!product.badges || product.badges.length === 0) return null
+    return product.badges.map((badge, index) => {
+      const lowerBadge = badge.toLowerCase()
+      let bg = "bg-gradient-to-r from-cyan-500 to-cyan-400"
+      let icon = <Award className="w-3 h-3" />
+      if (lowerBadge.includes('bestseller')) { bg = "bg-gradient-to-r from-amber-500 to-yellow-500" }
+      else if (lowerBadge.includes('featured')) { bg = "bg-gradient-to-r from-cyan-500 to-blue-500" }
+      else if (lowerBadge.includes('new')) { bg = "bg-gradient-to-r from-green-500 to-emerald-500"; icon = <Zap className="w-3 h-3" /> }
+      else if (lowerBadge.includes('limited')) { bg = "bg-gradient-to-r from-purple-500 to-violet-500" }
+      else if (lowerBadge.includes('premium')) { bg = "bg-gradient-to-r from-rose-500 to-pink-500" }
+      else if (lowerBadge.includes('sale') || lowerBadge.includes('off')) { bg = "bg-gradient-to-r from-red-500 to-pink-500"; icon = <Zap className="w-3 h-3" /> }
+      return (
+        <div key={index} className={cn("rounded-full text-white text-[10px] px-2 py-1 font-bold shadow-lg flex items-center gap-1", bg)}>
+          {icon}
+          <span className="truncate">{badge}</span>
+        </div>
+      )
+    })
+  }
+
+  // Shared add-to-cart button
+  const AddToCartButton = ({ className: btnCls }: { className?: string }) => (
+    <button
+      onClick={onAdd}
+      disabled={!isInStock || isAddingToCart}
+      className={cn(
+        "bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-500 hover:from-cyan-600 hover:via-cyan-500 hover:to-cyan-600",
+        "text-white rounded-full px-4 py-2.5 text-xs font-bold",
+        "transition-all duration-300 transform hover:scale-105 hover:shadow-xl",
+        "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none",
+        "flex items-center justify-center gap-1.5 shadow-md border border-cyan-300/20",
+        "relative overflow-hidden whitespace-nowrap cursor-pointer",
+        btnCls,
+        buttonClassName
+      )}
+    >
+      {hasVariants ? (
+        <span>{isRTL ? 'عرض الخيارات' : 'View Options'}</span>
+      ) : isAddingToCart ? (
+        <>
+          <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <span>{isRTL ? 'جاري الإضافة...' : 'Adding...'}</span>
+        </>
+      ) : (
+        <>
+          <ShoppingCart className="w-3.5 h-3.5" />
+          <span>{isRTL ? 'أضف إلى السلة' : 'Add to Cart'}</span>
+        </>
+      )}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+    </button>
+  )
+
+  // Shared price display
+  const PriceDisplay = () => (
+    <div className="flex items-center gap-2 flex-wrap">
+      {hasVariants ? (
+        <span className="font-bold text-gray-900 tracking-tight">
+          {minVariantPrice !== undefined && maxVariantPrice !== undefined && minVariantPrice !== maxVariantPrice ? (
+            <>
+              <SaudiRiyal amount={minVariantPrice} size="responsive" />
+              <span className="mx-1">-</span>
+              <SaudiRiyal amount={maxVariantPrice} size="responsive" />
+            </>
+          ) : (
+            <SaudiRiyal amount={minVariantPrice ?? 0} size="responsive" />
+          )}
+        </span>
+      ) : (
+        <>
+          {product.compareAtPrice && (
+            <span className="text-gray-400 text-sm line-through font-medium">
+              <SaudiRiyal amount={product.compareAtPrice} size="sm" />
+            </span>
+          )}
+          <span className="font-bold text-gray-900 tracking-tight">
+            <SaudiRiyal amount={product.price} size="responsive" />
+          </span>
+          {percentOff > 0 && (
+            <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {percentOff}% {isRTL ? 'خصم' : 'OFF'}
+            </span>
+          )}
+        </>
+      )}
+    </div>
+  )
+
+  // Shared rating row
+  const RatingRow = () => {
+    const rating = typeof product.rating === 'number' ? product.rating :
+      typeof product.rating === 'object' && (product.rating as any)?.average ? (product.rating as any).average : 0
+    return (
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className={cn("w-3.5 h-3.5", i < Math.floor(rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300")} />
+          ))}
+        </div>
+        <span className="text-xs text-gray-500">({product.reviewCount || 0})</span>
+      </div>
+    )
+  }
+
+  // ── LIST LAYOUT ──────────────────────────────────────────────────────────────
+  if (viewMode === 'list') {
+    return (
+      <div
+        dir={dir}
+        className={cn(
+          "group bg-white rounded-2xl border border-gray-100/80 shadow-md hover:shadow-xl hover:border-cyan-200/60",
+          "transition-all duration-300 flex flex-row gap-0 overflow-hidden relative",
+          className
+        )}
+        role="article"
+        aria-labelledby={`product-title-${product.id}`}
+      >
+        {/* Image */}
+        <Link href={getProductUrl(product)} className="flex-shrink-0 w-36 sm:w-52 relative bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="relative w-full h-full min-h-[140px] sm:min-h-[180px]">
+            <Image
+              src={getBestImage()}
+              alt={product.title || product.name || 'Product image'}
+              fill
+              className="object-contain p-3 sm:p-4 transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 640px) 144px, 208px"
+              onError={() => setImageLoadError(true)}
+              onLoad={() => setImageLoadError(false)}
+            />
+          </div>
+          {/* Badges */}
+          {product.badges && product.badges.length > 0 && (
+            <div className="absolute top-2 left-2 flex flex-col gap-1">
+              {renderBadges()}
+            </div>
+          )}
+        </Link>
+
+        {/* Content */}
+        <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
+          <div>
+            {/* Name */}
+            <Link href={getProductUrl(product)}>
+              <h3
+                id={`product-title-${product.id}`}
+                className={cn(
+                  "font-bold text-base sm:text-lg text-gray-900 hover:text-cyan-600 transition-colors leading-snug line-clamp-2 mb-1",
+                  dir === "rtl" ? "font-cairo" : "font-montserrat"
+                )}
+              >
+                {displayName}
+              </h3>
+            </Link>
+
+            {/* Rating */}
+            <div className="mb-2"><RatingRow /></div>
+
+            {/* Description */}
+            {product.description && (
+              <p className="text-sm text-gray-500 line-clamp-2 mb-3">{product.description}</p>
+            )}
+          </div>
+
+          {/* Price + Actions */}
+          <div className="flex items-center justify-between gap-3 flex-wrap mt-2">
+            <PriceDisplay />
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className={cn(
+                  "rounded-full h-9 w-9 p-0 border-gray-200 hover:border-red-300 transition-colors",
+                  isTogglingWishlist ? "opacity-60 cursor-not-allowed" : ""
+                )}
+                onClick={handleWishlistClick}
+                disabled={isTogglingWishlist}
+                aria-label={inWishlist ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Heart className={cn("w-4 h-4 transition-colors", inWishlist ? "fill-red-500 text-red-500" : "text-gray-500")} />
+              </Button>
+              <AddToCartButton className="min-w-[130px]" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── GRID LAYOUT (default) ────────────────────────────────────────────────────
   return (
     <div
       dir={dir}
@@ -167,14 +384,8 @@ export default function BundleStyleProductCard({
         "relative",
         className
       )}
-      onMouseEnter={() => {
-        setIsHovered(true)
-        setShowOverlay(true)
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false)
-        setShowOverlay(false)
-      }}
+      onMouseEnter={() => { setIsHovered(true); setShowOverlay(true) }}
+      onMouseLeave={() => { setIsHovered(false); setShowOverlay(false) }}
       role="article"
       aria-labelledby={`product-title-${product.id}`}
     >
@@ -201,70 +412,9 @@ export default function BundleStyleProductCard({
             {/* Product Badges */}
             {product.badges && product.badges.length > 0 && (
               <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex flex-col gap-1 sm:gap-2">
-                {product.badges.map((badge, index) => {
-                  const getBadgeStyle = (badgeText: string) => {
-                    const lowerBadge = badgeText.toLowerCase()
-                    if (lowerBadge.includes('bestseller')) {
-                      return {
-                        bg: "bg-gradient-to-r from-amber-500 to-yellow-500",
-                        icon: <Award className="w-3 h-3" />
-                      }
-                    }
-                    if (lowerBadge.includes('featured')) {
-                      return {
-                        bg: "bg-gradient-to-r from-cyan-500 to-blue-500",
-                        icon: <Award className="w-3 h-3" />
-                      }
-                    }
-                    if (lowerBadge.includes('new')) {
-                      return {
-                        bg: "bg-gradient-to-r from-green-500 to-emerald-500",
-                        icon: <Zap className="w-3 h-3" />
-                      }
-                    }
-                    if (lowerBadge.includes('limited')) {
-                      return {
-                        bg: "bg-gradient-to-r from-purple-500 to-violet-500",
-                        icon: <Award className="w-3 h-3" />
-                      }
-                    }
-                    if (lowerBadge.includes('premium')) {
-                      return {
-                        bg: "bg-gradient-to-r from-rose-500 to-pink-500",
-                        icon: <Award className="w-3 h-3" />
-                      }
-                    }
-                    if (lowerBadge.includes('sale') || lowerBadge.includes('off')) {
-                      return {
-                        bg: "bg-gradient-to-r from-red-500 to-pink-500",
-                        icon: <Zap className="w-3 h-3" />
-                      }
-                    }
-                    // Default style
-                    return {
-                      bg: "bg-gradient-to-r from-cyan-500 to-cyan-400",
-                      icon: <Award className="w-3 h-3" />
-                    }
-                  }
-                  
-                  const badgeStyle = getBadgeStyle(badge)
-                  
-                  return (
-                    <div
-                      key={index}
-                      className={cn(
-                        "rounded-full text-white text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 font-bold shadow-lg sm:shadow-xl backdrop-blur-sm border border-white/20 flex items-center gap-0.5 sm:gap-1",
-                        badgeStyle.bg
-                      )}
-                    >
-                      {badgeStyle.icon}
-                      <span className="truncate">{badge}</span>
-                    </div>
-                  )
-                })}
+                {renderBadges()}
               </div>
             )}
-
           </div>
         </Link>
 
@@ -277,14 +427,15 @@ export default function BundleStyleProductCard({
           <Button
             size="sm"
             variant="secondary"
-            className="bg-white/90 hover:bg-white text-gray-900 rounded-full p-1.5 sm:p-3 shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 min-w-0 h-8 w-8 sm:h-10 sm:w-10 sm:min-w-[2.5rem]"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onAddToWishlist?.(product as Product)
-            }}
+            className={cn(
+              "bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-3 shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 min-w-0 h-8 w-8 sm:h-10 sm:w-10 sm:min-w-[2.5rem]",
+              isTogglingWishlist ? "opacity-60 cursor-not-allowed" : ""
+            )}
+            onClick={handleWishlistClick}
+            disabled={isTogglingWishlist}
+            aria-label={inWishlist ? "Remove from favorites" : "Add to favorites"}
           >
-            <Heart className={cn("w-3.5 h-3.5 sm:w-5 sm:h-5", isInWishlist ? "fill-red-500 text-red-500" : "text-gray-700")} />
+            <Heart className={cn("w-3.5 h-3.5 sm:w-5 sm:h-5 transition-colors", inWishlist ? "fill-red-500 text-red-500" : "text-gray-700")} />
           </Button>
           <Button
             size="sm"
@@ -318,7 +469,7 @@ export default function BundleStyleProductCard({
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => {
               const rating = typeof product.rating === 'number' ? product.rating : 
-                           typeof product.rating === 'object' && product.rating?.average ? product.rating.average : 0
+                           typeof product.rating === 'object' && (product.rating as any)?.average ? (product.rating as any).average : 0
               return (
                 <Star
                   key={i}
@@ -343,35 +494,31 @@ export default function BundleStyleProductCard({
 
         {/* Description/Tagline */}
         {product.description && (
-          <p 
-            className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 leading-snug sm:leading-relaxed line-clamp-2"
-          >
+          <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 leading-snug sm:leading-relaxed line-clamp-2">
             {product.description}
           </p>
         )}
 
-        {/* Spacer to distribute gaps */}
+        {/* Spacer */}
         <div className="flex-1 min-h-[8px] sm:min-h-[20px]"></div>
 
-                    {/* Pricing and Add Button - Fixed position with distributed spacing */}
-                    <div className="pt-1 sm:pt-2">
-                      {/* Price Section */}
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4 flex-wrap">
-                        {!hasVariants && product.compareAtPrice && (
-                          <>
-                            <span className="text-gray-400 text-sm line-through font-medium whitespace-nowrap">
-                              <SaudiRiyal amount={product.compareAtPrice} size="sm" />
-                            </span>
-                            {percentOff > 0 && (
-                              <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
-                                {percentOff}% {isRTL ? 'خصم' : 'OFF'}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
+        {/* Pricing and Add Button */}
+        <div className="pt-1 sm:pt-2">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4 flex-wrap">
+            {!hasVariants && product.compareAtPrice && (
+              <>
+                <span className="text-gray-400 text-sm line-through font-medium whitespace-nowrap">
+                  <SaudiRiyal amount={product.compareAtPrice} size="sm" />
+                </span>
+                {percentOff > 0 && (
+                  <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">
+                    {percentOff}% {isRTL ? 'خصم' : 'OFF'}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
 
-          {/* Current Price and Add Button */}
           <div className="flex items-center justify-between gap-2 sm:gap-3">
             <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
               {hasVariants ? (
@@ -425,7 +572,6 @@ export default function BundleStyleProductCard({
           </div>
         </div>
       </div>
-
     </div>
   )
 }

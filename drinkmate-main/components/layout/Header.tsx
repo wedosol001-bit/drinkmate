@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, User, Menu, X, ChevronDown, LogOut, ArrowLeft, LayoutDashboard, Loader2 } from "lucide-react"
+import { ShoppingCart, User, Menu, X, ChevronDown, LogOut, ArrowLeft, ArrowRight, LayoutDashboard, Loader2 } from "lucide-react"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { useState, useEffect, Suspense } from "react"
 import { useCart } from "@/lib/contexts/cart-context"
@@ -405,8 +405,8 @@ function HeaderInner({ currentPage }: HeaderProps) {
                     onClick={handleBackToMenu}
                     className="flex items-center text-slate-600 hover:text-slate-900 mb-4 transition-colors duration-200"
                   >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    <span className={`text-sm font-medium ${isRTL ? "font-cairo" : "font-montserrat"}`}>{t("common.back")}</span>
+                    {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
+                    <span className={`text-sm font-medium ${isRTL ? "font-cairo ms-2" : "font-montserrat ml-2"}`}>{t("common.back")}</span>
                   </button>
                   <h2 className={`text-lg font-bold text-slate-900 mb-2 ${isRTL ? "font-cairo" : "font-montserrat"}`}>
                     Shop Categories

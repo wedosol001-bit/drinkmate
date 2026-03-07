@@ -107,16 +107,16 @@ export default function ShopToolbar({
                 relative transition-all duration-300
                 ${isSearchFocused ? 'scale-105' : 'scale-100'}
               `}>
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors duration-200" />
+                <Search className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors duration-200`} />
                 <Input
                   type="text"
-                  placeholder="Search for products, brands, or categories..."
+                  placeholder={isRTL ? "ابحث عن المنتجات، الماركات، أو الفئات..." : "Search for products, brands, or categories..."}
                   value={localSearchQuery}
                   onChange={(e) => setLocalSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   className={`
-                    pl-12 pr-4 py-3 h-12 text-base
+                    ${isRTL ? 'pr-12 pl-10' : 'pl-12 pr-10'} py-3 h-12 text-base
                     border-2 border-gray-200 rounded-xl
                     focus:border-brand-500 focus:ring-4 focus:ring-brand-100
                     transition-all duration-300
@@ -128,8 +128,8 @@ export default function ShopToolbar({
                 {localSearchQuery && (
                   <button
                     onClick={() => setLocalSearchQuery('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                    aria-label="Clear search"
+                    className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200`}
+                    aria-label={isRTL ? "مسح البحث" : "Clear search"}
                   >
                     <X className="w-4 h-4" />
                   </button>

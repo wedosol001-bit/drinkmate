@@ -212,7 +212,7 @@ export default function Footer() {
           </nav>
 
           {/* Information - Desktop */}
-          <nav className="hidden md:block md:col-span-3" aria-labelledby="f-info">
+          <nav className="hidden md:block md:col-span-2" aria-labelledby="f-info">
             <h3 id="f-info" className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.information.title")}
             </h3>
@@ -256,7 +256,7 @@ export default function Footer() {
           </nav>
 
           {/* Newsletter */}
-          <section className="md:col-span-2 min-w-0">
+          <section className="md:col-span-3 min-w-0">
             <h3 className={`font-semibold mb-3 ${isHydrated && isRTL ? 'font-cairo' : 'font-montserrat text-start'}`}>
               {t("footer.newsletter.title")}
             </h3>
@@ -277,7 +277,7 @@ export default function Footer() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleNewsletterSubmit} noValidate className="w-full max-w-sm grid grid-cols-1 gap-2 mt-3">
+              <form onSubmit={handleNewsletterSubmit} noValidate className="w-full grid grid-cols-1 gap-2 mt-3">
                 <label htmlFor="nl-email" className="sr-only">Email address</label>
                 <input
                   id="nl-email"
@@ -286,7 +286,7 @@ export default function Footer() {
                   required
                   placeholder="Enter your email"
                   aria-describedby="nl-help"
-                  className={`h-10 w-full rounded-lg border px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}
+                  className={`h-10 w-full rounded-lg border border-gray-200 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -295,7 +295,7 @@ export default function Footer() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="h-10 w-full rounded-lg bg-emerald-600 text-white text-sm font-semibold disabled:opacity-50 hover:bg-emerald-700 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+                  className="min-h-[48px] w-full rounded-lg bg-emerald-600 text-white text-sm font-semibold px-6 py-3 whitespace-nowrap disabled:opacity-50 hover:bg-emerald-700 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
                 >
                   {loading ? 'Subscribing…' : 'Subscribe to Newsletter'}
                 </button>

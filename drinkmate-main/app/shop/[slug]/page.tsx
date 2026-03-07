@@ -87,7 +87,7 @@ const COLOR_NAME_TO_HEX: Record<string, string> = {
   red: "#DC2626", blue: "#2563EB", black: "#171717", white: "#FAFAFA", cyan: "#0891B2",
   purple: "#7C3AED", pink: "#DB2777", green: "#16A34A", yellow: "#CA8A04", orange: "#EA580C",
   gray: "#6B7280", grey: "#6B7280", silver: "#A8A29E", gold: "#D97706", navy: "#1E3A8A",
-  lightBlue: "#BAE6FD",
+  lightBlue: "#BAE6FD", lavender: "#E6E6FA",
 }
 
 function getVariantSwatchHex(variant: any): string {
@@ -307,7 +307,7 @@ export default function ShopProductDetail() {
       reviewCount: product.reviewsCount || product.reviewCount || product.reviews || 0,
       price: product.price || product.salePrice || 0,
       compareAtPrice: product.compareAtPrice || product.originalPrice,
-      inStock: product.inStock !== false && (product.stock ?? 0) > 0,
+      inStock: product.inStock !== false && (product.stock == null || product.stock > 0),
       badges: product.badges || [],
       variants: product.variants?.map((v: any) => {
         // Get variant image using the utility function
@@ -378,6 +378,42 @@ export default function ShopProductDetail() {
       setLoadingRelated(false)
     }
   }, [convertProduct])
+
+  // Stable handler for "You May Also Like" add to cart (so button works and toast shows)
+  const handleRelatedAddToCart = useCallback(
+    async (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
+      const product = relatedProducts.find(
+        (p) => p.id === payload.productId || p._id === payload.productId
+      )
+      if (!product) {
+        console.error('Product not found with ID:', payload.productId)
+        toast.error(t('product.addToCartError') || 'Product not found')
+        return
+      }
+      const displayImage = getProductImageUrl(product, '/placeholder-product.jpg')
+      const isBundle = payload.isBundle || (product as any).isBundle || false
+      const cartItemId = payload.productId
+      const categoryName = getCategoryName(product.category, false)
+      const categoryNameAr = getCategoryName(product.category, true)
+      const cartItem = {
+        id: cartItemId,
+        name: product.title || product.name || '',
+        nameAr: (product as any)?.nameAr || undefined,
+        price: product.price,
+        quantity: payload.qty,
+        image: displayImage,
+        category: categoryName,
+        categoryAr: categoryNameAr,
+        productId: isBundle ? undefined : payload.productId,
+        bundleId: isBundle ? payload.productId : undefined,
+        productType: isBundle ? ('bundle' as const) : ('product' as const),
+        isBundle,
+      }
+      await addItem(cartItem)
+      toast.success(t('product.addedToCart') || 'Added to cart')
+    },
+    [relatedProducts, addItem, t]
+  )
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -1354,7 +1390,7 @@ export default function ShopProductDetail() {
                               <div className="flex flex-wrap gap-2">
                                 {product.colors.map((color, index) => {
                                   const colorName = typeof color === 'string' ? color : color.name
-                                  const colorHex = typeof color === 'object' ? color.hexCode : undefined
+                                  const colorHex = (typeof color === 'object' ? color.hexCode : undefined) ?? (colorName ? COLOR_NAME_TO_HEX[colorName.toLowerCase().trim()] : undefined)
                                   return (
                                     <button
                                       key={index}
@@ -2245,54 +2281,15 @@ export default function ShopProductDetail() {
                   </div>
                 ) : relatedProducts.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 items-stretch">
-                    {relatedProducts.map((relatedProduct, index) => {
-                      // Handler for add to cart - same logic as ProductGrid
-                      const handleAddToCart = (payload: { productId: string; variantId?: string; qty: number; isBundle?: boolean }) => {
-                        const product = relatedProducts.find(p => p.id === payload.productId || p._id === payload.productId)
-                        if (!product) {
-                          console.error('Product not found with ID:', payload.productId)
-                          return
-                        }
-
-                        // Use the same image URL that's displayed on the shop page
-                        const displayImage = getProductImageUrl(product, '/placeholder-product.jpg')
-
-                        const isBundle = payload.isBundle || (product as any).isBundle || false
-                        // Use stable productId as cart item ID so same products combine in cart
-                        const cartItemId = payload.productId
-
-                        // Get category names in both languages
-                        const categoryName = getCategoryName(product.category, false)
-                        const categoryNameAr = getCategoryName(product.category, true)
-
-                        const cartItem = {
-                          id: cartItemId,
-                          name: product.title || product.name || '',
-                          nameAr: (product as any)?.nameAr || undefined,
-                          price: product.price,
-                          quantity: payload.qty,
-                          image: displayImage,
-                          category: categoryName,
-                          categoryAr: categoryNameAr,
-                          productId: isBundle ? undefined : payload.productId,
-                          bundleId: isBundle ? payload.productId : undefined,
-                          productType: isBundle ? 'bundle' as const : 'product' as const,
-                          isBundle: isBundle
-                        }
-
-                        addItem(cartItem)
-                      }
-
-                      return (
-                        <BundleStyleProductCard
-                          key={relatedProduct.id || relatedProduct._id || `related-${index}`}
-                          product={relatedProduct}
-                          dir={isRTL ? "rtl" : "ltr"}
-                          onAddToCart={handleAddToCart}
-                          isInWishlist={false}
-                        />
-                      )
-                    })}
+                    {relatedProducts.map((relatedProduct, index) => (
+                      <BundleStyleProductCard
+                        key={relatedProduct.id || relatedProduct._id || `related-${index}`}
+                        product={relatedProduct}
+                        dir={isRTL ? "rtl" : "ltr"}
+                        onAddToCart={handleRelatedAddToCart}
+                        isInWishlist={false}
+                      />
+                    ))}
                   </div>
                 ) : (
                   <div className="text-center py-10 bg-gray-50 rounded-lg">

@@ -111,7 +111,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-4 min-w-0">
       <span className="text-sm sm:text-base text-ink-700 truncate min-w-0 shrink">{label}</span>
-      <span className="text-sm sm:text-base text-ink-900 font-medium whitespace-nowrap flex-shrink-0 ml-2">{value}</span>
+      <span className="text-sm sm:text-base text-ink-900 font-medium whitespace-nowrap flex-shrink-0 ms-2">{value}</span>
     </div>
   )
 }

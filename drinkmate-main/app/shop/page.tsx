@@ -1356,6 +1356,7 @@ function ShopPageContentInner() {
                     products={paginatedProducts}
                     loading={false}
                     dir={isRTL ? "rtl" : "ltr"}
+                    viewMode={viewMode}
                     onAddToWishlist={handleAddToWishlist}
                     onAddToComparison={handleAddToComparison}
                     onProductView={handleProductView}

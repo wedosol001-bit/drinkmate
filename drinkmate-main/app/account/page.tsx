@@ -1005,13 +1005,14 @@ export default function AccountDashboard() {
                           type={showPasswords.current ? "text" : "password"}
                           value={passwordData.currentPassword}
                           onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                          className="pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                          className={`${isRTL ? 'pl-10' : 'pr-10'} border-gray-300 focus:border-purple-500 focus:ring-purple-500`}
                           disabled={isChangingPasswordLoading}
+                          dir="ltr"
                         />
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('current')}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600`}
                           disabled={isChangingPasswordLoading}
                         >
                           {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -1028,13 +1029,14 @@ export default function AccountDashboard() {
                           type={showPasswords.new ? "text" : "password"}
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                          className="pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                          className={`${isRTL ? 'pl-10' : 'pr-10'} border-gray-300 focus:border-purple-500 focus:ring-purple-500`}
                           disabled={isChangingPasswordLoading}
+                          dir="ltr"
                         />
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('new')}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600`}
                           disabled={isChangingPasswordLoading}
                         >
                           {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -1051,13 +1053,14 @@ export default function AccountDashboard() {
                           type={showPasswords.confirm ? "text" : "password"}
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                          className="pr-10 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                          className={`${isRTL ? 'pl-10' : 'pr-10'} border-gray-300 focus:border-purple-500 focus:ring-purple-500`}
                           disabled={isChangingPasswordLoading}
+                          dir="ltr"
                         />
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('confirm')}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600`}
                           disabled={isChangingPasswordLoading}
                         >
                           {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

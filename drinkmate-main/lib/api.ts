@@ -438,6 +438,7 @@ export const shopAPI = {
   },
   
   getProduct: async (idOrSlug: string) => {
+    console.log(idOrSlug,"Product id or slug");
     const cacheKey = `product-${idOrSlug}`;
     
     return retryRequest(async () => {

@@ -29,7 +29,7 @@ import { getAppImageUrl } from "@/lib/utils/app-images";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
-  const { t } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -220,8 +220,8 @@ export default function RegisterPage() {
 
   return (
     <PageLayout currentPage="register">
-      <div className="container max-w-md mx-auto py-12 px-4">
-        <Card className="border-[#12d6fa]/20 shadow-lg">
+      <div className="container max-w-md mx-auto py-12 px-4" dir={isRTL ? "rtl" : "ltr"}>
+        <Card className={`border-[#12d6fa]/20 shadow-lg ${isRTL ? 'font-cairo' : 'font-montserrat'}`}>
           <CardHeader className="space-y-2 pb-6">
             <div className="mx-auto mb-2">
               <Image 
@@ -241,48 +241,65 @@ export default function RegisterPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-4">
+                {/* Full Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-gray-700">Full Name</Label>
+                  <Label htmlFor="fullName" className="text-gray-700">
+                    {isRTL ? "الاسم الكامل" : "Full Name"}
+                  </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                    <User className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                     <Input
                       id="fullName"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder={isRTL ? "محمد أحمد" : "John Doe"}
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       disabled={isLoading}
                       required
-                      className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                      dir={isRTL ? "rtl" : "ltr"}
+                      className={`${isRTL ? 'pr-10' : 'pl-10'} border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors`}
                     />
                   </div>
                   {fullName && fullName.length < 2 && (
-                    <p className="text-xs text-red-500 mt-1">Full name must be at least 2 characters</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {isRTL ? "يجب أن يكون الاسم الكامل حرفين على الأقل" : "Full name must be at least 2 characters"}
+                    </p>
                   )}
                 </div>
+
+                {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700">Email Address</Label>
+                  <Label htmlFor="email" className="text-gray-700">
+                    {isRTL ? "البريد الإلكتروني" : "Email Address"}
+                  </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                    <Mail className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="name@example.com"
+                      placeholder={isRTL ? "example@domain.com" : "name@example.com"}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={isLoading}
                       required
-                      className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                      dir="ltr"
+                      className={`${isRTL ? 'pr-10' : 'pl-10'} border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors`}
                     />
                   </div>
                   {email && !isValidEmail(email) && (
-                    <p className="text-xs text-red-500 mt-1">Please enter a valid email address</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {isRTL ? "يرجى إدخال بريد إلكتروني صحيح" : "Please enter a valid email address"}
+                    </p>
                   )}
                 </div>
+
+                {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700">Password</Label>
+                  <Label htmlFor="password" className="text-gray-700">
+                    {isRTL ? "كلمة المرور" : "Password"}
+                  </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                    <Lock className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
@@ -291,12 +308,14 @@ export default function RegisterPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
                       required
-                      className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                      dir="ltr"
+                      className={`px-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors`}
                     />
                     <button 
                       type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                      className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-500`}
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? (isRTL ? "إخفاء كلمة المرور" : "Hide password") : (isRTL ? "إظهار كلمة المرور" : "Show password")}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -307,15 +326,15 @@ export default function RegisterPage() {
                     <div className="mt-2 space-y-2">
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-600">Password strength:</span>
+                          <span className="text-gray-600">{isRTL ? "قوة كلمة المرور:" : "Password strength:"}</span>
                           <span className={
                             passwordStrength < 50 ? "text-red-500" : 
                             passwordStrength < 75 ? "text-yellow-500" : 
                             "text-green-500"
                           }>
-                            {passwordStrength < 50 ? "Weak" : 
-                             passwordStrength < 75 ? "Medium" : 
-                             "Strong"}
+                            {passwordStrength < 50 ? (isRTL ? "ضعيفة" : "Weak") : 
+                             passwordStrength < 75 ? (isRTL ? "متوسطة" : "Medium") : 
+                             (isRTL ? "قوية" : "Strong")}
                           </span>
                         </div>
                         <div className="relative h-1 w-full overflow-hidden rounded-full bg-gray-200">
@@ -328,41 +347,33 @@ export default function RegisterPage() {
                       
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="flex items-center gap-1">
-                          {password.length >= 8 ? 
-                            <Check className="h-3 w-3 text-green-500" /> : 
-                            <X className="h-3 w-3 text-red-500" />
-                          }
-                          <span>8+ characters</span>
+                          {password.length >= 8 ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                          <span>{isRTL ? "٨+ أحرف" : "8+ characters"}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          {/[A-Z]/.test(password) ? 
-                            <Check className="h-3 w-3 text-green-500" /> : 
-                            <X className="h-3 w-3 text-red-500" />
-                          }
-                          <span>Uppercase letter</span>
+                          {/[A-Z]/.test(password) ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                          <span>{isRTL ? "حرف كبير" : "Uppercase letter"}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          {/[0-9]/.test(password) ? 
-                            <Check className="h-3 w-3 text-green-500" /> : 
-                            <X className="h-3 w-3 text-red-500" />
-                          }
-                          <span>Number</span>
+                          {/[0-9]/.test(password) ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                          <span>{isRTL ? "رقم" : "Number"}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          {/[^A-Za-z0-9]/.test(password) ? 
-                            <Check className="h-3 w-3 text-green-500" /> : 
-                            <X className="h-3 w-3 text-red-500" />
-                          }
-                          <span>Special character</span>
+                          {/[^A-Za-z0-9]/.test(password) ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                          <span>{isRTL ? "رمز خاص" : "Special character"}</span>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
+
+                {/* Confirm Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-gray-700">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-gray-700">
+                    {isRTL ? "تأكيد كلمة المرور" : "Confirm Password"}
+                  </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                    <Lock className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
@@ -371,41 +382,48 @@ export default function RegisterPage() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       disabled={isLoading}
                       required
-                      className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                      dir="ltr"
+                      className="px-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
                     />
                     <button 
                       type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                      className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-500`}
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? (isRTL ? "إخفاء" : "Hide password") : (isRTL ? "إظهار" : "Show password")}
                     >
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                   {password && confirmPassword && password !== confirmPassword && (
-                    <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {isRTL ? "كلمتا المرور غير متطابقتين" : "Passwords do not match"}
+                    </p>
                   )}
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="terms" 
-                    checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
-                    required
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600"
-                  >
-                    I agree to the{" "}
-                    <Link href="/terms-of-service" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">
-                      Terms of Service
-                    </Link>
-                    {" "}and{" "}
-                    <Link href="/privacy-policy" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">
-                      Privacy Policy
-                    </Link>
-                  </label>
+                {/* Terms checkbox */}
+                <div className="flex items-center gap-2">
+                  {isRTL ? (
+                    <>
+                      <label htmlFor="terms" className="text-sm leading-snug peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600 cursor-pointer">
+                        أوافق على{" "}
+                        <Link href="/terms-of-service" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">شروط الخدمة</Link>
+                        {" "}و{" "}
+                        <Link href="/privacy-policy" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">سياسة الخصوصية</Link>
+                      </label>
+                      <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(checked === true)} required />
+                    </>
+                  ) : (
+                    <>
+                      <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(checked === true)} required />
+                      <label htmlFor="terms" className="text-sm leading-snug peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600 cursor-pointer">
+                        I agree to the{" "}
+                        <Link href="/terms-of-service" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">Terms of Service</Link>
+                        {" "}and{" "}
+                        <Link href="/privacy-policy" className="text-[#12d6fa] hover:text-[#0fb8d9] underline">Privacy Policy</Link>
+                      </label>
+                    </>
+                  )}
                 </div>
                 
                 <Button 
@@ -414,10 +432,10 @@ export default function RegisterPage() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      {t("common.loading")}
-                    </>
+                    <span className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      {isRTL ? "جارٍ الإنشاء..." : t("common.loading")}
+                    </span>
                   ) : (
                     t("auth.createAccount")
                   )}
@@ -427,9 +445,9 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col border-t border-gray-200 pt-6">
             <div className="text-center text-sm text-gray-600">
-              Already have an account?{" "}
+              {t("auth.alreadyHaveAccount") || (isRTL ? "لديك حساب بالفعل؟" : "Already have an account?")}{" "}
               <Link href="/login" className="text-[#12d6fa] hover:text-[#0fb8d9] font-medium transition-colors">
-                Sign in
+                {t("auth.signIn") || (isRTL ? "تسجيل الدخول" : "Sign in")}
               </Link>
             </div>
           </CardFooter>

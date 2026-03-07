@@ -35,7 +35,7 @@ export default function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isAuthenticated } = useAuth();
-  const { isRTL } = useTranslation();
+  const { isRTL, t } = useTranslation();
   
   // Safely get search params
   useEffect(() => {
@@ -95,9 +95,10 @@ export default function LoginPageContent() {
     setMessageType("");
 
     if (!email || !password) {
-      setErrorMessage("Please fill in all fields");
+      const msg = isRTL ? "يرجى ملء جميع الحقول" : "Please fill in all fields";
+      setErrorMessage(msg);
       setMessageType("error");
-      toast.error("Please fill in all fields", {
+      toast.error(msg, {
         duration: 5000,
         icon: <AlertCircle className="h-5 w-5" />
       });
@@ -119,9 +120,10 @@ export default function LoginPageContent() {
           localStorage.removeItem("rememberedEmail");
         }
         
-        setStatusMessage("Login successful! Redirecting...");
+        const successMsg = isRTL ? "تم تسجيل الدخول بنجاح! جارٍ التحويل..." : "Login successful! Redirecting...";
+        setStatusMessage(successMsg);
         setMessageType("success");
-        toast.success("Login successful! Redirecting...", {
+        toast.success(successMsg, {
           duration: 3000,
           icon: <CheckCircle2 className="h-5 w-5" />
         });
@@ -129,7 +131,7 @@ export default function LoginPageContent() {
         console.log('Immediate redirect to:', redirectPath);
         router.push(redirectPath);
       } else {
-        setErrorMessage(result.message || "Invalid email or password");
+        setErrorMessage(result.message || (isRTL ? "البريد الإلكتروني أو كلمة المرور غير صحيحة" : "Invalid email or password"));
         setMessageType("error");
         toast.error(result.message, {
           duration: 5000,
@@ -137,7 +139,7 @@ export default function LoginPageContent() {
         });
       }
     } catch (err: any) {
-      const errorMsg = err.message || "An unexpected error occurred";
+      const errorMsg = err.message || (isRTL ? "حدث خطأ غير متوقع" : "An unexpected error occurred");
       setErrorMessage(errorMsg);
       setMessageType("error");
       toast.error(errorMsg, {
@@ -162,7 +164,7 @@ export default function LoginPageContent() {
   return (
     <Suspense fallback={null}>
       <PageLayout currentPage="login">
-        <div className="container max-w-md mx-auto py-12 px-4">
+        <div className="container max-w-md mx-auto py-12 px-4" dir={isRTL ? "rtl" : "ltr"}>
           <Card className={`border-[#12d6fa]/20 shadow-lg ${isRTL ? 'font-cairo' : 'font-montserrat'}`}>
           <CardHeader className="space-y-2 pb-6">
             <div className="mx-auto mb-2">
@@ -175,9 +177,11 @@ export default function LoginPageContent() {
                 className="h-10 w-auto"
               />
             </div>
-            <CardTitle className="text-2xl font-bold text-center text-gray-800">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-gray-800">
+              {isRTL ? "مرحباً بعودتك" : "Welcome Back"}
+            </CardTitle>
             <CardDescription className="text-center text-gray-600">
-              Sign in to your account to continue
+              {isRTL ? "سجّل الدخول إلى حسابك للمتابعة" : "Sign in to your account to continue"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -185,7 +189,7 @@ export default function LoginPageContent() {
             {messageType === "error" && errorMessage && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
+                <AlertTitle>{isRTL ? "خطأ" : "Error"}</AlertTitle>
                 <AlertDescription>{errorMessage}</AlertDescription>
               </Alert>
             )}
@@ -193,7 +197,7 @@ export default function LoginPageContent() {
             {messageType === "success" && statusMessage && (
               <Alert className="mb-6 bg-green-50 border-green-200 text-green-800">
                 <CheckCircle2 className="h-4 w-4" />
-                <AlertTitle>Success</AlertTitle>
+                <AlertTitle>{isRTL ? "نجاح" : "Success"}</AlertTitle>
                 <AlertDescription>{statusMessage}</AlertDescription>
               </Alert>
             )}
@@ -201,7 +205,7 @@ export default function LoginPageContent() {
             {messageType === "info" && errorMessage && (
               <Alert className="mb-6 bg-blue-50 border-blue-200 text-blue-800">
                 <Info className="h-4 w-4" />
-                <AlertTitle>Information</AlertTitle>
+                <AlertTitle>{isRTL ? "معلومة" : "Information"}</AlertTitle>
                 <AlertDescription>{errorMessage}</AlertDescription>
               </Alert>
             )}
@@ -209,33 +213,38 @@ export default function LoginPageContent() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700">Email Address</Label>
+                  <Label htmlFor="email" className="text-gray-700">
+                    {isRTL ? "البريد الإلكتروني" : "Email Address"}
+                  </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                    <Mail className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="name@example.com"
+                      placeholder={isRTL ? "example@domain.com" : "name@example.com"}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={isLoading}
                       required
-                      className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                      dir={isRTL ? "rtl" : "ltr"}
+                      className={`${isRTL ? 'pr-10 text-right' : 'pl-10'} border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors`}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-gray-700">Password</Label>
+                  <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''} justify-between`}>
+                    <Label htmlFor="password" className="text-gray-700">
+                      {isRTL ? "كلمة المرور" : "Password"}
+                    </Label>
                     <Link
                       href="/forgot-password"
                       className="text-sm text-[#12d6fa] hover:text-[#0fb8d9] transition-colors"
                     >
-                      Forgot password?
+                      {t("auth.forgotPassword") || (isRTL ? "نسيت كلمة المرور؟" : "Forgot password?")}
                     </Link>
                   </div>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                    <Lock className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
@@ -244,18 +253,18 @@ export default function LoginPageContent() {
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}
                       required
-                      className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                      dir="ltr"
+                      className="px-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
                     />
                     <button 
                       type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors`}
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                      title={showPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? (isRTL ? "إخفاء كلمة المرور" : "Hide password") : (isRTL ? "إظهار كلمة المرور" : "Show password")}
                     >
                       <Image
                         src={showPassword ? getAppImageUrl("/images/miscellaneous/hide.png") : getAppImageUrl("/images/miscellaneous/view.png")}
-                        alt={showPassword ? "Hide password" : "Show password"}
+                        alt={showPassword ? (isRTL ? "إخفاء" : "Hide password") : (isRTL ? "إظهار" : "Show password")}
                         width={20}
                         height={20}
                         className="opacity-70 hover:opacity-100 transition-opacity"
@@ -263,18 +272,36 @@ export default function LoginPageContent() {
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="remember" 
-                    checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked === true)}
-                  />
-                  <label
-                    htmlFor="remember"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600"
-                  >
-                    Remember me
-                  </label>
+                <div className="flex items-center gap-2">
+                  {isRTL ? (
+                    <>
+                      <label
+                        htmlFor="remember"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600 cursor-pointer"
+                      >
+                        تذكّرني
+                      </label>
+                      <Checkbox
+                        id="remember"
+                        checked={rememberMe}
+                        onCheckedChange={(checked) => setRememberMe(checked === true)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Checkbox
+                        id="remember"
+                        checked={rememberMe}
+                        onCheckedChange={(checked) => setRememberMe(checked === true)}
+                      />
+                      <label
+                        htmlFor="remember"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600 cursor-pointer"
+                      >
+                        Remember me
+                      </label>
+                    </>
+                  )}
                 </div>
                 <Button 
                   type="submit" 
@@ -282,12 +309,12 @@ export default function LoginPageContent() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Signing in...
-                    </>
+                    <span className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      {isRTL ? "جارٍ تسجيل الدخول..." : "Signing in..."}
+                    </span>
                   ) : (
-                    "Sign In"
+                    t("auth.signIn") || (isRTL ? "تسجيل الدخول" : "Sign In")
                   )}
                 </Button>
               </div>
@@ -295,9 +322,9 @@ export default function LoginPageContent() {
           </CardContent>
           <CardFooter className="flex flex-col border-t border-gray-200 pt-6">
             <div className="text-center text-sm text-gray-600">
-              Don&apos;t have an account?{" "}
+              {t("auth.dontHaveAccount") || (isRTL ? "ليس لديك حساب؟" : "Don't have an account?")}{" "}
               <Link href="/register" className="text-[#12d6fa] hover:text-[#0fb8d9] font-medium transition-colors">
-                Create an account
+                {t("auth.createAccount") || (isRTL ? "إنشاء حساب" : "Create an account")}
               </Link>
             </div>
           </CardFooter>

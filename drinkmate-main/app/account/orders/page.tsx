@@ -459,12 +459,13 @@ export default function OrdersPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className={`absolute ${language === 'AR' ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`} />
                 <Input
                   placeholder={language === 'AR' ? 'البحث برقم الطلب...' : 'Search by order number...'}
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                  className="pl-10 border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                  dir={language === 'AR' ? 'rtl' : 'ltr'}
+                  className={`${language === 'AR' ? 'pr-10' : 'pl-10'} border-gray-300 focus:border-orange-500 focus:ring-orange-500`}
                 />
               </div>
 

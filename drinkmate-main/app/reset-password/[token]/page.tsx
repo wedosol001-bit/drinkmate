@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/contexts/auth-context";
+import { useTranslation } from "@/lib/contexts/translation-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,7 @@ import {
   Check,
   X,
   ArrowLeft,
+  ArrowRight,
   ShieldCheck
 } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
@@ -42,6 +44,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
   
   const router = useRouter();
   const { resetPassword } = useAuth();
+  const { isRTL } = useTranslation();
   
   // Extract token from params when component mounts
   useEffect(() => {
@@ -161,8 +164,8 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
 
   return (
     <PageLayout currentPage="reset-password">
-      <div className="container max-w-md mx-auto py-12 px-4">
-        <Card className="border-[#12d6fa]/20 shadow-lg">
+      <div className="container max-w-md mx-auto py-12 px-4" dir={isRTL ? "rtl" : "ltr"}>
+        <Card className={`border-[#12d6fa]/20 shadow-lg ${isRTL ? 'font-cairo' : 'font-montserrat'}`}>
           <CardHeader className="space-y-2 pb-6">
             <div className="mx-auto mb-2">
               <Image 
@@ -175,24 +178,26 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
               />
             </div>
             <CardTitle className="text-2xl font-bold text-center text-gray-800">
-              {isResetComplete ? "Password Reset Complete" : "Reset Password"}
+              {isResetComplete
+                ? (isRTL ? "اكتملت إعادة تعيين كلمة المرور" : "Password Reset Complete")
+                : (isRTL ? "إعادة تعيين كلمة المرور" : "Reset Password")}
             </CardTitle>
             <CardDescription className="text-center text-gray-600">
               {isResetComplete 
-                ? "Your password has been successfully reset" 
-                : "Create a new secure password for your account"}
+                ? (isRTL ? "تمت إعادة تعيين كلمة المرور بنجاح" : "Your password has been successfully reset")
+                : (isRTL ? "أنشئ كلمة مرور جديدة وآمنة لحسابك" : "Create a new secure password for your account")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
               <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 mr-2" />
+                <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             {success && (
               <Alert className="mb-6 bg-green-50 text-green-800 border-green-200">
-                <CheckCircle2 className="h-4 w-4 mr-2" />
+                <CheckCircle2 className="h-4 w-4" />
                 <AlertDescription>{success}</AlertDescription>
               </Alert>
             )}
@@ -202,15 +207,17 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
                 <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
                   <AlertCircle className="h-8 w-8 text-red-500" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-800 mb-2">Invalid Reset Link</h3>
+                <h3 className="text-lg font-medium text-gray-800 mb-2">
+                  {isRTL ? "رابط إعادة التعيين غير صالح" : "Invalid Reset Link"}
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  This password reset link is invalid or has expired. Please request a new one.
+                  {isRTL ? "رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد." : "This password reset link is invalid or has expired. Please request a new one."}
                 </p>
                 <Button 
                   className="bg-[#12d6fa] hover:bg-[#0fb8d9] text-white transition-colors"
                   onClick={() => router.push("/forgot-password")}
                 >
-                  Request New Link
+                  {isRTL ? "طلب رابط جديد" : "Request New Link"}
                 </Button>
               </div>
             ) : isResetComplete ? (
@@ -218,24 +225,28 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                   <ShieldCheck className="h-8 w-8 text-green-500" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-800 mb-2">Password Reset Successful</h3>
+                <h3 className="text-lg font-medium text-gray-800 mb-2">
+                  {isRTL ? "تمت إعادة تعيين كلمة المرور بنجاح" : "Password Reset Successful"}
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Your password has been successfully reset. You can now log in with your new password.
+                  {isRTL ? "تمت إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة." : "Your password has been successfully reset. You can now log in with your new password."}
                 </p>
                 <Button 
                   className="bg-[#12d6fa] hover:bg-[#0fb8d9] text-white transition-colors"
                   onClick={() => router.push("/login")}
                 >
-                  Go to Login
+                  {isRTL ? "الذهاب إلى تسجيل الدخول" : "Go to Login"}
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-gray-700">New Password</Label>
+                    <Label htmlFor="password" className="text-gray-700">
+                      {isRTL ? "كلمة المرور الجديدة" : "New Password"}
+                    </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                      <Lock className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
@@ -244,73 +255,57 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isLoading}
                         required
-                        className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                        dir="ltr"
+                        className="px-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
                       />
                       <button 
                         type="button"
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-500`}
                         onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? (isRTL ? "إخفاء" : "Hide") : (isRTL ? "إظهار" : "Show")}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                     
-                    {/* Password strength indicator */}
                     {password && (
                       <div className="mt-2 space-y-2">
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Password strength:</span>
-                            <span className={
-                              passwordStrength < 50 ? "text-red-500" : 
-                              passwordStrength < 75 ? "text-yellow-500" : 
-                              "text-green-500"
-                            }>
-                              {passwordStrength < 50 ? "Weak" : 
-                               passwordStrength < 75 ? "Medium" : 
-                               "Strong"}
+                            <span className="text-gray-600">{isRTL ? "قوة كلمة المرور:" : "Password strength:"}</span>
+                            <span className={passwordStrength < 50 ? "text-red-500" : passwordStrength < 75 ? "text-yellow-500" : "text-green-500"}>
+                              {passwordStrength < 50 ? (isRTL ? "ضعيفة" : "Weak") : passwordStrength < 75 ? (isRTL ? "متوسطة" : "Medium") : (isRTL ? "قوية" : "Strong")}
                             </span>
                           </div>
                           <Progress value={passwordStrength} className="h-1" />
                         </div>
-                        
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div className="flex items-center gap-1">
-                            {password.length >= 8 ? 
-                              <Check className="h-3 w-3 text-green-500" /> : 
-                              <X className="h-3 w-3 text-red-500" />
-                            }
-                            <span>8+ characters</span>
+                            {password.length >= 8 ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                            <span>{isRTL ? "٨+ أحرف" : "8+ characters"}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            {/[A-Z]/.test(password) ? 
-                              <Check className="h-3 w-3 text-green-500" /> : 
-                              <X className="h-3 w-3 text-red-500" />
-                            }
-                            <span>Uppercase letter</span>
+                            {/[A-Z]/.test(password) ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                            <span>{isRTL ? "حرف كبير" : "Uppercase letter"}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            {/[0-9]/.test(password) ? 
-                              <Check className="h-3 w-3 text-green-500" /> : 
-                              <X className="h-3 w-3 text-red-500" />
-                            }
-                            <span>Number</span>
+                            {/[0-9]/.test(password) ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                            <span>{isRTL ? "رقم" : "Number"}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            {/[^A-Za-z0-9]/.test(password) ? 
-                              <Check className="h-3 w-3 text-green-500" /> : 
-                              <X className="h-3 w-3 text-red-500" />
-                            }
-                            <span>Special character</span>
+                            {/[^A-Za-z0-9]/.test(password) ? <Check className="h-3 w-3 text-green-500" /> : <X className="h-3 w-3 text-red-500" />}
+                            <span>{isRTL ? "رمز خاص" : "Special character"}</span>
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-gray-700">Confirm New Password</Label>
+                    <Label htmlFor="confirmPassword" className="text-gray-700">
+                      {isRTL ? "تأكيد كلمة المرور الجديدة" : "Confirm New Password"}
+                    </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+                      <Lock className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5`} />
                       <Input
                         id="confirmPassword"
                         type={showConfirmPassword ? "text" : "password"}
@@ -319,18 +314,22 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         disabled={isLoading}
                         required
-                        className="pl-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
+                        dir="ltr"
+                        className="px-10 border-gray-300 focus:border-[#12d6fa] focus:ring-[#12d6fa] transition-colors"
                       />
                       <button 
                         type="button"
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-500`}
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        aria-label={showConfirmPassword ? (isRTL ? "إخفاء" : "Hide") : (isRTL ? "إظهار" : "Show")}
                       >
                         {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                     {password && confirmPassword && password !== confirmPassword && (
-                      <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
+                      <p className="text-xs text-red-500 mt-1">
+                        {isRTL ? "كلمتا المرور غير متطابقتين" : "Passwords do not match"}
+                      </p>
                     )}
                   </div>
                   <Button 
@@ -339,12 +338,12 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Resetting password...
-                      </>
+                      <span className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        {isRTL ? "جارٍ الإعادة..." : "Resetting password..."}
+                      </span>
                     ) : (
-                      "Reset Password"
+                      isRTL ? "إعادة تعيين كلمة المرور" : "Reset Password"
                     )}
                   </Button>
                 </div>
@@ -354,10 +353,10 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
           <CardFooter className="flex flex-col border-t border-gray-200 pt-6">
             <Link 
               href="/login" 
-              className="text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center transition-colors"
+              className="text-sm text-gray-600 hover:text-gray-800 flex items-center justify-center gap-1 transition-colors"
             >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Back to login
+              {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+              {isRTL ? "العودة إلى تسجيل الدخول" : "Back to login"}
             </Link>
           </CardFooter>
         </Card>
