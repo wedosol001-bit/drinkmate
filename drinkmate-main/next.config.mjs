@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Standalone output for deployment (e.g. Contabo tarball + pm2)
+  output: 'standalone',
+
   // Security: Enable strict mode
   reactStrictMode: true,
 

@@ -1,152 +1,136 @@
 #!/bin/bash
-
-# DrinkMate Deployment Script
-# This script deploys the application to the production server
+# DrinkMate Full Deploy Script for Contabo
+# Run as root on the server: bash deploy.sh
 
 set -e
 
-echo "🚀 Starting DrinkMate Deployment..."
-
-# Configuration
-APP_DIR="/var/www/drinkmate"
-BACKUP_DIR="/var/backups/drinkmate"
-LOG_DIR="/var/log/drinkmate"
-REPO_URL="https://github.com/your-username/drinkmates.git"  # Replace with your actual repo
-BRANCH="main"
-
-# Colors for output
-RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+RED='\033[0;31m'
+NC='\033[0m'
 
-# Function to print colored output
-print_status() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
+ok()   { echo -e "${GREEN}[✓]${NC} $1"; }
+warn() { echo -e "${YELLOW}[!]${NC} $1"; }
+fail() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
+APP_DIR="/var/www/drinkmate"
+LOG_DIR="/var/log/drinkmate"
+REPO_URL="https://github.com/wedosol001-bit/drinkmate.git"
+BRANCH="main"
 
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+echo ""
+echo "🚀 DrinkMate Deployment Starting..."
+echo ""
 
-# Check if running as correct user
-if [ "$USER" != "drinkmate" ]; then
-    print_error "This script must be run as the 'drinkmate' user"
-    exit 1
+# ── 1. SYSTEM SETUP ──────────────────────────────────────────────────────────
+ok "Setting up directories..."
+mkdir -p $APP_DIR $LOG_DIR
+
+ok "Installing system dependencies..."
+apt update -qq
+apt install -y nginx certbot python3-certbot-nginx git curl
+
+ok "Installing Node.js 20..."
+if ! command -v node &> /dev/null; then
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  apt install -y nodejs
 fi
+node -v && npm -v
 
-# Create backup
-print_status "Creating backup..."
-sudo mkdir -p $BACKUP_DIR
-BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
-sudo mkdir -p "$BACKUP_DIR/$BACKUP_NAME"
+ok "Installing PM2..."
+npm install -g pm2 2>/dev/null || true
 
-if [ -d "$APP_DIR" ]; then
-    print_status "Backing up current application..."
-    sudo cp -r $APP_DIR "$BACKUP_DIR/$BACKUP_NAME/"
-    
-    # Backup MongoDB
-    print_status "Backing up MongoDB..."
-    mongodump --db drinkmate_prod --out "$BACKUP_DIR/$BACKUP_NAME/mongodb"
-fi
-
-# Clone or update repository
-print_status "Updating application code..."
-if [ -d "$APP_DIR" ]; then
-    cd $APP_DIR
-    git fetch origin
-    git reset --hard origin/$BRANCH
-    git clean -fd
+# ── 2. CLONE / UPDATE REPO ───────────────────────────────────────────────────
+ok "Cloning/updating repository..."
+if [ -d "$APP_DIR/.git" ]; then
+  cd $APP_DIR
+  git fetch origin
+  git reset --hard origin/$BRANCH
+  git clean -fd
 else
-    sudo mkdir -p $APP_DIR
-    sudo chown drinkmate:drinkmate $APP_DIR
-    git clone -b $BRANCH $REPO_URL $APP_DIR
-    cd $APP_DIR
+  git clone -b $BRANCH $REPO_URL $APP_DIR
+  cd $APP_DIR
 fi
+ok "Repo ready at $APP_DIR"
 
-# Install backend dependencies
-print_status "Installing backend dependencies..."
+# ── 3. BACKEND SETUP ─────────────────────────────────────────────────────────
+ok "Installing backend dependencies..."
 cd $APP_DIR/server
-npm ci --production
+npm install --production
+ok "Backend dependencies installed"
 
-# Install frontend dependencies and build
-print_status "Installing frontend dependencies and building..."
+# ── 4. FRONTEND SETUP ────────────────────────────────────────────────────────
+ok "Installing frontend dependencies..."
 cd $APP_DIR/drinkmate-main
-npm ci --production
+npm install
+
+ok "Building frontend (standalone)..."
+export NEXT_PUBLIC_API_URL="https://drinkmate.sa/api"
+export NEXT_PUBLIC_FRONTEND_URL="https://drinkmate.sa"
+export NEXT_PUBLIC_API_RETRY_ATTEMPTS="3"
+export NEXT_PUBLIC_API_RETRY_DELAY="1000"
+export NEXT_PUBLIC_API_TIMEOUT="30000"
+export NEXT_PUBLIC_MAX_CONCURRENT_CHATS="10"
+export NEXT_PUBLIC_MAX_FILE_SIZE_MB="10"
 npm run build
 
-# Set proper permissions
-print_status "Setting permissions..."
-sudo chown -R drinkmate:drinkmate $APP_DIR
-sudo chmod -R 755 $APP_DIR
+ok "Copying static assets into standalone..."
+cp -r public .next/standalone/public
+mkdir -p .next/standalone/.next
+cp -r .next/static .next/standalone/.next/static
+ok "Frontend built successfully"
 
-# Copy environment files if they don't exist
-if [ ! -f "$APP_DIR/server/.env" ]; then
-    print_warning "Environment file not found. Please create $APP_DIR/server/.env"
-    print_warning "You can copy from $APP_DIR/server/env-template.txt"
-fi
-
-# Restart services with PM2
-print_status "Restarting services..."
+# ── 5. PM2 ───────────────────────────────────────────────────────────────────
+ok "Starting services with PM2..."
 cd $APP_DIR
 pm2 delete all 2>/dev/null || true
-pm2 start ecosystem.config.js --env production
-
-# Save PM2 configuration
+pm2 start deployment/ecosystem.config.js
 pm2 save
-pm2 startup
+pm2 startup | tail -1 | bash 2>/dev/null || warn "Run 'pm2 startup' manually if needed"
+ok "PM2 services started"
 
-# Test the deployment
-print_status "Testing deployment..."
-sleep 10
+# ── 6. NGINX ─────────────────────────────────────────────────────────────────
+ok "Configuring Nginx..."
+cp deployment/nginx.conf /etc/nginx/sites-available/drinkmate.sa
+ln -sf /etc/nginx/sites-available/drinkmate.sa /etc/nginx/sites-enabled/drinkmate.sa
+rm -f /etc/nginx/sites-enabled/default
 
-# Check if services are running
-if pm2 list | grep -q "drinkmate-backend.*online"; then
-    print_status "Backend service is running"
-else
-    print_error "Backend service failed to start"
-    pm2 logs drinkmate-backend --lines 20
-    exit 1
-fi
+nginx -t && systemctl reload nginx
+ok "Nginx configured"
 
-if pm2 list | grep -q "drinkmate-frontend.*online"; then
-    print_status "Frontend service is running"
-else
-    print_error "Frontend service failed to start"
-    pm2 logs drinkmate-frontend --lines 20
-    exit 1
-fi
+# ── 7. SSL ───────────────────────────────────────────────────────────────────
+warn "SSL setup — make sure DNS is pointed to 45.151.122.20 first!"
+echo ""
+echo "When DNS is ready, run:"
+echo "  certbot --nginx -d drinkmate.sa -d www.drinkmate.sa -d api.drinkmate.sa"
+echo ""
 
-# Test endpoints
-print_status "Testing endpoints..."
-if curl -f -s http://localhost:3000/health > /dev/null; then
-    print_status "Backend health check passed"
-else
-    print_warning "Backend health check failed"
-fi
+# ── 8. HEALTH CHECK ──────────────────────────────────────────────────────────
+ok "Waiting for services to start..."
+sleep 8
 
-if curl -f -s http://localhost:3001 > /dev/null; then
-    print_status "Frontend is accessible"
-else
-    print_warning "Frontend accessibility check failed"
-fi
-
-# Reload Nginx
-print_status "Reloading Nginx..."
-sudo nginx -t && sudo systemctl reload nginx
-
-print_status "✅ Deployment completed successfully!"
-print_status "Application is now running at: https://drinkmate.sa"
-print_status "Backup created at: $BACKUP_DIR/$BACKUP_NAME"
-
-# Show PM2 status
-print_status "Current PM2 status:"
+echo ""
+echo "── PM2 Status ──────────────────────────────"
 pm2 list
+echo ""
 
-# Show recent logs
-print_status "Recent logs:"
-pm2 logs --lines 10
+if curl -sf http://localhost:3000/health > /dev/null; then
+  ok "Backend is healthy on :3000"
+else
+  warn "Backend health check failed — check: pm2 logs drinkmate-backend"
+fi
+
+if curl -sf http://localhost:3001 > /dev/null; then
+  ok "Frontend is healthy on :3001"
+else
+  warn "Frontend health check failed — check: pm2 logs drinkmate-frontend"
+fi
+
+echo ""
+echo "✅ Deployment complete!"
+echo ""
+echo "  Frontend:  http://45.151.122.20:3001 (or https://drinkmate.sa after SSL)"
+echo "  Backend:   http://45.151.122.20:3000 (or https://api.drinkmate.sa after SSL)"
+echo "  Logs:      pm2 logs"
+echo "  Status:    pm2 list"
+echo ""
