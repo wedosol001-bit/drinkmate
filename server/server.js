@@ -31,7 +31,7 @@ try {
 } catch (e) {
   console.log('morgan module not installed; skipping request logger. Run: npm i morgan');
 }
-require('dotenv').config({ path: './.env' });
+require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
 
 const { connect } = require('./Utils/db');
 const authRouter = require('./Router/auth-router');
