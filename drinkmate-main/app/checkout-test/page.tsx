@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
 
-export default function CheckoutTestPage() {
+function CheckoutTestContent() {
   const router = useRouter()
   const { state, clearCart, removeItem } = useCart()
   const { user } = useAuth()
@@ -621,5 +621,17 @@ export default function CheckoutTestPage() {
       
       <Footer />
     </div>
+  )
+}
+
+export default function CheckoutTestPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#12d6fa]" />
+      </div>
+    }>
+      <CheckoutTestContent />
+    </Suspense>
   )
 }
