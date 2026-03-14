@@ -33,6 +33,22 @@ try {
 }
 require('dotenv').config({ path: path.join(__dirname, '.env'), override: false });
 
+// Log env state for deployment debugging (secrets masked)
+(function logEnvState() {
+  const mongoUri = process.env.MONGODB_URI || '(not set)';
+  const mongoDisplay = mongoUri.includes('@') ? mongoUri.replace(/:([^@]*)@/, ':****@') : mongoUri;
+  const jwtLen = process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0;
+  const jwtOk = jwtLen >= 32 ? 'OK' : `TOO SHORT (${jwtLen} chars, need 32+)`;
+  console.log('📋 [ENV] process.cwd:', process.cwd());
+  console.log('📋 [ENV] __dirname:', __dirname);
+  console.log('📋 [ENV] NODE_ENV:', process.env.NODE_ENV || '(not set)');
+  console.log('📋 [ENV] PORT:', process.env.PORT || '(not set)');
+  console.log('📋 [ENV] MONGODB_URI:', mongoDisplay);
+  console.log('📋 [ENV] JWT_SECRET:', jwtOk);
+  console.log('📋 [ENV] CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME ? 'set' : '(not set)');
+  console.log('📋 [ENV] FRONTEND_URL:', process.env.FRONTEND_URL || '(not set)');
+})();
+
 const { connect } = require('./Utils/db');
 const authRouter = require('./Router/auth-router');
 const serviceRouter = require('./Router/service-router');
