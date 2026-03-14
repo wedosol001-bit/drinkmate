@@ -23,6 +23,7 @@ out/
 .env.test.local
 .env.production.local
 server/.env
+/server/.env
 drinkmate-main/.env.local
 drinkmate-main/.env.railway
 
