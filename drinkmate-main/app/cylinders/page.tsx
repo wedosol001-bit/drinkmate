@@ -13,8 +13,8 @@ import { getAppImageUrl } from "@/lib/utils/app-images"
 
 /** Asset paths for the cylinders mediator page - resolved via getAppImageUrl (Cloudinary or local fallback) */
 const ASSETS = {
-  newCylinders: "/images/madiaterPage/newSelenders.svg",
-  refillCylinders: "/images/madiaterPage/refillSelenders.svg",
+  newCylinders: "/images/madiaterPage/newSelenders.png",
+  refillCylinders: "/images/madiaterPage/refillSelenders.png",
   clockIcon: "/images/madiaterPage/clockIcon.svg",
   bottleIcon: "/images/madiaterPage/bottelIcon.svg",
   verifiedIcon: "/images/madiaterPage/verifiedIcon.svg",

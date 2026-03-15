@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-05T17:22:01.814Z",
+  "generatedAt": "2026-03-15T10:57:26.875Z",
   "cloudName": "da6dzmflp",
   "map": {
     "/images/01 - Flavors/Cola-Flavor.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731133/drinkmate/images/01---Flavors/Cola-Flavor.png",
@@ -89,7 +89,8 @@
     "/images/madiaterPage/bottelIcon.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731239/drinkmate/images/madiaterPage/bottelIcon.svg",
     "/images/madiaterPage/clockIcon.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731243/drinkmate/images/madiaterPage/clockIcon.svg",
     "/images/madiaterPage/exchangeBottels.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731247/drinkmate/images/madiaterPage/exchangeBottels.svg",
-    "/images/madiaterPage/newSelenders.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731250/drinkmate/images/madiaterPage/newSelenders.svg",
+    "/images/madiaterPage/newSelenders.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572176/drinkmate/images/madiaterPage/newSelenders.png",
+    "/images/madiaterPage/newSelenders.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572178/drinkmate/images/madiaterPage/newSelenders.svg",
     "/images/madiaterPage/recycleIcon.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731253/drinkmate/images/madiaterPage/recycleIcon.svg",
     "/images/madiaterPage/refillSelenders.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731256/drinkmate/images/madiaterPage/refillSelenders.svg",
     "/images/madiaterPage/verifiedIcon.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731258/drinkmate/images/madiaterPage/verifiedIcon.svg",
@@ -98,19 +99,19 @@
     "/images/natural-flavors.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731263/drinkmate/images/natural-flavors.png",
     "/images/payment-logos/Mada Logo Vector.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731264/drinkmate/images/payment-logos/Mada-Logo-Vector.svg",
     "/images/payment-logos/american-express.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731266/drinkmate/images/payment-logos/american-express.png",
-    "/images/payment-logos/apple-pay.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731267/drinkmate/images/payment-logos/apple-pay.png",
-    "/images/payment-logos/apple-pay.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731268/drinkmate/images/payment-logos/apple-pay.svg",
+    "/images/payment-logos/apple-pay.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572194/drinkmate/images/payment-logos/apple-pay.png",
+    "/images/payment-logos/apple-pay.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572195/drinkmate/images/payment-logos/apple-pay.svg",
     "/images/payment-logos/aramex-logo.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731270/drinkmate/images/payment-logos/aramex-logo.svg",
     "/images/payment-logos/google-pay.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731272/drinkmate/images/payment-logos/google-pay.png",
     "/images/payment-logos/mada.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731273/drinkmate/images/payment-logos/mada.svg",
-    "/images/payment-logos/mastercard.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731276/drinkmate/images/payment-logos/mastercard.png",
-    "/images/payment-logos/mastercard.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731276/drinkmate/images/payment-logos/mastercard.svg",
+    "/images/payment-logos/mastercard.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572201/drinkmate/images/payment-logos/mastercard.png",
+    "/images/payment-logos/mastercard.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572202/drinkmate/images/payment-logos/mastercard.svg",
     "/images/payment-logos/samsung-pay.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731278/drinkmate/images/payment-logos/samsung-pay.svg",
-    "/images/payment-logos/tabby.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731282/drinkmate/images/payment-logos/tabby.png",
-    "/images/payment-logos/tabby.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731283/drinkmate/images/payment-logos/tabby.svg",
+    "/images/payment-logos/tabby.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572205/drinkmate/images/payment-logos/tabby.png",
+    "/images/payment-logos/tabby.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572206/drinkmate/images/payment-logos/tabby.svg",
     "/images/payment-logos/tap-logo.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731285/drinkmate/images/payment-logos/tap-logo.svg",
-    "/images/payment-logos/visa.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731287/drinkmate/images/payment-logos/visa.png",
-    "/images/payment-logos/visa.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731288/drinkmate/images/payment-logos/visa.svg",
+    "/images/payment-logos/visa.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572209/drinkmate/images/payment-logos/visa.png",
+    "/images/payment-logos/visa.svg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1773572210/drinkmate/images/payment-logos/visa.svg",
     "/images/plastic-impact.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731291/drinkmate/images/plastic-impact.png",
     "/images/premium-italian-flavors.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731292/drinkmate/images/premium-italian-flavors.png",
     "/images/products/flavor-pack-1.jpg": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731293/drinkmate/images/products/flavor-pack-1.png",
@@ -136,5 +137,5 @@
     "/images/strawberry-lemon-flavor.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731318/drinkmate/images/strawberry-lemon-flavor.png",
     "/images/us-flag.png": "https://res.cloudinary.com/da6dzmflp/image/upload/v1772731321/drinkmate/images/us-flag.png"
   },
-  "count": 133
+  "count": 135
 }
