@@ -1376,67 +1376,6 @@ export default function ShopProductDetail() {
                   {localizedProduct?.shortDescription && (
                     <p className="text-sm sm:text-base text-gray-700 mb-4">{localizedProduct.shortDescription}</p>
                   )}
-                  {(product.colors || product.sizes) && (
-                    <Card className="border-l-4 border-l-[#12d6fa]">
-                      <CardContent className="p-3 sm:p-4">
-                        <h3 className="font-semibold mb-3 flex items-center text-sm sm:text-base">
-                          <Settings className="w-4 h-4 mr-2 text-[#12d6fa] flex-shrink-0" />
-                          {t("product.options") || "Product Options"}
-                        </h3>
-                        <div className="space-y-4">
-                          {product.colors && Array.isArray(product.colors) && product.colors.length > 0 && (
-                            <div>
-                              <label className="text-sm font-medium mb-2 block">Color</label>
-                              <div className="flex flex-wrap gap-2">
-                                {product.colors.map((color, index) => {
-                                  const colorName = typeof color === 'string' ? color : color.name
-                                  const colorHex = (typeof color === 'object' ? color.hexCode : undefined) ?? (colorName ? COLOR_NAME_TO_HEX[colorName.toLowerCase().trim()] : undefined)
-                                  return (
-                                    <button
-                                      key={index}
-                                      onClick={() => setSelectedColor(colorName)}
-                                      className={`px-3 py-1 rounded border text-sm transition-colors flex items-center gap-2 ${selectedColor === colorName
-                                          ? "border-[#12d6fa] bg-[#12d6fa] text-white"
-                                          : "border-gray-300 hover:border-[#12d6fa]"
-                                        }`}
-                                    >
-                                      {colorHex && (
-                                        <div
-                                          className={`color-swatch ${styles.colorSwatch}`}
-                                          style={{ '--color-hex': colorHex } as React.CSSProperties}
-                                        />
-                                      )}
-                                      {colorName}
-                                    </button>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                          )}
-                          {product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0 && (
-                            <div>
-                              <label className="text-sm font-medium mb-2 block">Size</label>
-                              <div className="flex flex-wrap gap-2">
-                                {product.sizes.map((size) => (
-                                  <button
-                                    key={size}
-                                    onClick={() => setSelectedSize(size)}
-                                    className={`px-3 py-1 rounded border text-sm transition-colors ${selectedSize === size
-                                        ? "border-[#12d6fa] bg-[#12d6fa] text-white"
-                                        : "border-gray-300 hover:border-[#12d6fa]"
-                                      }`}
-                                  >
-                                    {size}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
                   {/* Product Variants Selector - Color palette list */}
                   {localizedProduct?.hasVariants && Array.isArray(localizedProduct?.variants) && localizedProduct.variants.length > 0 && (
                     <div className="space-y-4 mb-6 overflow-visible">

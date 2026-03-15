@@ -104,10 +104,26 @@ async function uploadOne(filePath) {
 }
 
 async function main() {
-  const files = walkDir(PUBLIC_IMAGES);
-  console.log('Uploading', files.length, 'files from public/images...');
+  const onlyPaths = process.argv.slice(2).filter((a) => a.startsWith('/images/'));
+  let files = walkDir(PUBLIC_IMAGES);
+  if (onlyPaths.length > 0) {
+    const pathSet = new Set(onlyPaths);
+    files = files.filter((f) => {
+      const p = toPublicPath(f);
+      return p && pathSet.has(p);
+    });
+    console.log('Uploading', files.length, 'specific file(s)...');
+  } else {
+    console.log('Uploading', files.length, 'files from public/images...');
+  }
 
-  const map = {};
+  let map = {};
+  if (onlyPaths.length > 0 && fs.existsSync(OUT_MAP)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(OUT_MAP, 'utf8'));
+      map = existing.map || {};
+    } catch (_) {}
+  }
   let ok = 0;
   let skip = 0;
   let err = 0;

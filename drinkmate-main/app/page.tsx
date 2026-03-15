@@ -18,6 +18,7 @@ import { useAutoPlayOnView } from "@/hooks/use-auto-play-on-view"
 import { useLatestBlogs } from "@/hooks/use-latest-blogs"
 import QualitySlideshow from "@/components/ui/quality-slideshow"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
 // StepCard component for mobile-optimized cards
 function StepCard({ 
@@ -1281,7 +1282,7 @@ export default function Home() {
               >
                 <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
                   <Image
-                    src="/images/how-to-use-drinkmate.png"
+                    src={getAppImageUrl("/images/how-to-use-drinkmate.png")}
                     alt="How to Use Drinkmate"
                     width={280}
                     height={200}
@@ -1309,7 +1310,7 @@ export default function Home() {
               >
                 <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
                   <Image
-                    src="/images/drink-recipes.png"
+                    src={getAppImageUrl("/images/drink-recipes.png")}
                     alt="Drink Recipes"
                     width={342.8571472167969}
                     height={270}
@@ -1337,7 +1338,7 @@ export default function Home() {
               >
                 <div className="bg-gradient-to-b from-white to-[#f3f3f3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 h-[280px] min-h-[280px]">
                   <Image
-                    src="/images/premium-italian-flavors.png"
+                    src={getAppImageUrl("/images/premium-italian-flavors.png")}
                     alt="Premium Italian Flavors"
                     width={342}
                     height={251}
@@ -1412,7 +1413,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src="/images/plastic-impact.png"
+                      src={getAppImageUrl("/images/plastic-impact.png")}
                       alt="Our impact on One time plastic use"
                       width={300}
                       height={280}
@@ -1433,7 +1434,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src="/images/natural-flavors.png"
+                      src={getAppImageUrl("/images/natural-flavors.png")}
                       alt="How our natural flavors are made"
                       width={300}
                       height={280}
@@ -1455,7 +1456,7 @@ export default function Home() {
                     <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <Image
-                        src="/images/health-benefits.png"
+                        src={getAppImageUrl("/images/health-benefits.png")}
                         alt="Health Benefits of sparkling water"
                         width={300}
                         height={280}
@@ -1490,7 +1491,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src="/images/plastic-impact.png"
+                      src={getAppImageUrl("/images/plastic-impact.png")}
                       alt="Our impact on One time plastic use"
                       width={300}
                       height={280}
@@ -1511,7 +1512,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src="/images/natural-flavors.png"
+                      src={getAppImageUrl("/images/natural-flavors.png")}
                       alt="How our natural flavors are made"
                       width={300}
                       height={280}
@@ -1533,7 +1534,7 @@ export default function Home() {
                     <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <Image
-                        src="/images/health-benefits.png"
+                        src={getAppImageUrl("/images/health-benefits.png")}
                         alt="Health Benefits of sparkling water"
                         width={300}
                         height={280}
