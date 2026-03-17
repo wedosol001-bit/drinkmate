@@ -575,10 +575,26 @@ function ShopPageContentInner() {
       })
     }
 
-    // Sort products
-    filtered.sort((a, b) => {
-      let aValue: any, bValue: any
+    // Category display order: Soda Makers first, then Flavors, then others (Accessories, CO2, etc.)
+    const getCategorySortIndex = (product: Product) => {
+      const raw = (product as any)?.category
+      const slug = typeof raw === 'object' && raw?.slug ? raw.slug.toLowerCase() : (typeof raw === 'string' ? raw.toLowerCase() : '')
+      const name = typeof raw === 'object' && raw?.name ? raw.name.toLowerCase() : ''
+      if (!slug && !name) return 4
+      if (slug.includes('sodamaker') || slug.includes('soda-maker') || name.includes('soda')) return 0
+      if (slug.includes('flavor') || name.includes('flavor')) return 1
+      if (slug.includes('accessor') || name.includes('accessor')) return 2
+      if (slug.includes('co2') || name.includes('co2') || slug.includes('cylinder') || name.includes('cylinder')) return 3
+      return 4
+    }
 
+    // Sort products: first by category order (soda → flavors → others), then by selected sort
+    filtered.sort((a, b) => {
+      const aCat = getCategorySortIndex(a)
+      const bCat = getCategorySortIndex(b)
+      if (aCat !== bCat) return aCat - bCat
+
+      let aValue: any, bValue: any
       switch (sortBy) {
         case 'name':
           aValue = (a?.title || (a as any)?.name || '').toLowerCase()

@@ -367,7 +367,7 @@ function HeaderInner({ currentPage }: HeaderProps) {
             {!isAdminPage && (
               <Link href="/refill-cylinder">
                 <Button
-                  className={`bg-[#a8f387] hover:bg-[#96e075] text-slate-900 font-semibold px-3 sm:px-4 md:px-8 py-2 sm:py-2.5 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 text-xs md:text-sm ${isRTL ? "font-cairo" : "font-montserrat"}`}
+                  className={`flex items-center justify-center bg-[#a8f387] hover:bg-[#96e075] text-slate-900 font-semibold px-3 sm:px-4 md:px-8 py-2 sm:py-2.5 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 text-xs md:text-sm ${isRTL ? "font-cairo" : "font-montserrat"}`}
                 >
                   <span className="hidden sm:inline">{t("header.refillCylinder")}</span>
                   <span className="sm:hidden">{t("header.refill")}</span>
