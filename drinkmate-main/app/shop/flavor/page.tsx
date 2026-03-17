@@ -22,6 +22,7 @@ import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_STATIC_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 // Define product types
 interface Product {
@@ -447,12 +448,12 @@ export default function FlavorPage() {
 
   return (
     <PageLayout currentPage="shop-flavor">
-      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+      <div className={`${BANNER_CONTAINER_CLASS} ${BANNER_SECTION_CLASS}`}>
         <h1 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.flavors.title")}</h1>
 
-        {/* Flavors / Italian Syrups banner - simple image only, no overlay, language-aware; height consistent with other category pages */}
+        {/* Flavors / Italian Syrups banner - consistent padding and height with rest of site */}
         <div
-          className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+          className={`w-full mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover ${BANNER_STATIC_HEIGHT_CLASS}`}
           style={{
             backgroundImage: `url(${getBannerSrc("italianSyrup", { lang: language })})`,
             backgroundRepeat: 'no-repeat',

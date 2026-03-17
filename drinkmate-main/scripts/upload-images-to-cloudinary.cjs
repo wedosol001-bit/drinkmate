@@ -4,6 +4,10 @@
  * Uses Cloudinary keys from server/.env (run from drinkmate-main: node scripts/upload-images-to-cloudinary.cjs).
  * Keeps local images as backup; map is used for Cloudinary URLs with local fallback in app.
  * Output: lib/constants/cloudinary-image-map.json
+ *
+ * If you get "Stale request" (clock/signing): set CLOUDINARY_UPLOAD_PRESET in server/.env
+ * to an unsigned preset name from Cloudinary Dashboard > Settings > Upload. The script will
+ * use unsigned upload for that run and avoid signed request timestamp errors.
  */
 
 const fs = require('fs');
@@ -42,13 +46,18 @@ loadEnv(SERVER_ENV);
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const apiKey = process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUDINARY_API_SECRET;
+const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET; // optional: use unsigned upload to avoid "Stale request"
 
-if (!cloudName || !apiKey || !apiSecret) {
-  console.error('Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in server/.env');
+if (!cloudName || !apiKey) {
+  console.error('Set CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY in server/.env');
+  process.exit(1);
+}
+if (!uploadPreset && !apiSecret) {
+  console.error('Set either CLOUDINARY_API_SECRET (signed upload) or CLOUDINARY_UPLOAD_PRESET (unsigned) in server/.env');
   process.exit(1);
 }
 
-cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
+if (apiSecret) cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
 
 const SKIP_EXT = new Set(['.md', '.xmp', '.json']);
 const UPLOAD_EXT = new Set([
@@ -79,6 +88,28 @@ function toPublicPath(absPath) {
   return '/' + afterPublic;
 }
 
+async function uploadOneSigned(filePath, publicPath, publicId, resourceType) {
+  const result = await cloudinary.uploader.upload(filePath, {
+    public_id: publicId,
+    overwrite: true,
+    resource_type: resourceType,
+  });
+  return { publicPath, url: result.secure_url, publicId: result.public_id };
+}
+
+async function uploadOneUnsigned(filePath, publicPath, publicId, resourceType) {
+  const buf = fs.readFileSync(filePath);
+  const form = new FormData();
+  form.append('file', new Blob([buf]), path.basename(filePath));
+  form.append('upload_preset', uploadPreset);
+  form.append('public_id', publicId);
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+  const res = await fetch(url, { method: 'POST', body: form });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  return { publicPath, url: data.secure_url, publicId: data.public_id };
+}
+
 async function uploadOne(filePath) {
   const publicPath = toPublicPath(filePath);
   if (!publicPath || !publicPath.startsWith('/images/')) return null;
@@ -86,19 +117,20 @@ async function uploadOne(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   if (!UPLOAD_EXT.has(ext)) return { publicPath, skip: true, reason: 'unsupported type' };
 
-  // public_id: drinkmate/images/payment-logos/visa (no leading slash, no extension for Cloudinary)
-  const relative = publicPath.slice(1); // images/payment-logos/visa.svg
+  const relative = publicPath.slice(1);
   const publicId = 'drinkmate/' + relative.replace(/\.[a-z0-9]+$/i, '').replace(/\s+/g, '-');
+  const resourceType = /\.(webm|mp4|mov)$/i.test(path.basename(filePath)) ? 'video' : 'image';
 
   try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      public_id: publicId,
-      overwrite: true,
-      resource_type: /\.(webm|mp4|mov)$/i.test(path.basename(filePath)) ? 'video' : 'image',
-    });
-    return { publicPath, url: result.secure_url, publicId: result.public_id };
+    const out = uploadPreset
+      ? await uploadOneUnsigned(filePath, publicPath, publicId, resourceType)
+      : await uploadOneSigned(filePath, publicPath, publicId, resourceType);
+    return out;
   } catch (err) {
     console.error('Upload failed', publicPath, err.message);
+    if (!uploadPreset && /stale request/i.test(err.message)) {
+      console.error('  → To fix: set CLOUDINARY_UPLOAD_PRESET in server/.env to an unsigned preset name (Cloudinary Dashboard > Settings > Upload), then re-run.');
+    }
     return { publicPath, error: err.message };
   }
 }

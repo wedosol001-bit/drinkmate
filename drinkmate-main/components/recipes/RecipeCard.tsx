@@ -1,8 +1,14 @@
+"use client"
+
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import StatPill from "./StatPill"
 import { isValidImageUrl } from '@/lib/utils'
+import { getAppImageUrl } from "@/lib/utils/app-images"
+
+const RECIPE_PLACEHOLDER = "/images/drink-recipes.png"
 
 interface Recipe {
   id: string
@@ -24,18 +30,28 @@ interface RecipeCardProps {
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
   const { t, isRTL, isHydrated } = useTranslation()
+  const [imgError, setImgError] = useState(false)
+
+  const rawSrc = recipe.image?.trim()
+  const usePlaceholder = !rawSrc || /via\.placeholder\.com/i.test(rawSrc) || imgError
+  const resolvedSrc = usePlaceholder
+    ? getAppImageUrl(RECIPE_PLACEHOLDER) || RECIPE_PLACEHOLDER
+    : rawSrc.startsWith("http")
+      ? rawSrc
+      : getAppImageUrl(rawSrc) || rawSrc
 
   return (
     <article className="group rounded-2xl border border-black/10 bg-white overflow-hidden shadow-[0_6px_20px_rgba(0,0,0,.04)] h-full flex flex-col">
       <div className="relative aspect-[4/3]">
-        {isValidImageUrl(recipe.image) ? (
+        {isValidImageUrl(resolvedSrc) ? (
           <Image
-            src={recipe.image}
+            src={resolvedSrc}
             alt={recipe.title}
             fill
             className="object-cover"
             loading="lazy"
             sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_STATIC_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 const faqCards = [
   {
@@ -96,11 +97,11 @@ export default function CO2() {
 
   return (
     <PageLayout currentPage="shop">
-      {/* CO2 banner - containerized like refill and other category pages */}
-      <section className="py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+      {/* CO2 banner - consistent padding and height with rest of site */}
+      <section className={BANNER_SECTION_CLASS}>
+        <div className={BANNER_CONTAINER_CLASS}>
           <div
-            className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px] overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+            className={`relative w-full overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover ${BANNER_STATIC_HEIGHT_CLASS}`}
             style={{
               backgroundImage: `url(${getBannerSrc("co2", { lang: language })})`,
               backgroundRepeat: 'no-repeat',

@@ -20,6 +20,7 @@ import { toast } from "sonner"
 import styles from "./refill-cylinder.module.css"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
 import { getAppImageUrl } from "@/lib/utils/app-images"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_STATIC_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 export default function CO2() {
   const { t, isRTL, language } = useTranslation()
@@ -420,11 +421,11 @@ export default function CO2() {
 
   return (
     <PageLayout currentPage="refill-cylinder">
-      {/* Refill banner - refill.png, one version; containerized like other category pages */}
-      <section className="py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+      {/* Refill banner - consistent padding and height with rest of site */}
+      <section className={BANNER_SECTION_CLASS}>
+        <div className={BANNER_CONTAINER_CLASS}>
           <div
-            className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
+            className={`relative w-full overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover ${BANNER_STATIC_HEIGHT_CLASS}`}
             style={{
               backgroundImage: `url(${getBannerSrc("refill", { lang: language })})`,
               backgroundRepeat: 'no-repeat',

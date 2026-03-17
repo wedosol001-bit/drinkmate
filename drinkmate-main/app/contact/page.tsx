@@ -8,6 +8,7 @@ import Footer from '@/components/layout/Footer'
 import { ContactProvider, useContactSettings } from '@/lib/contexts/contact-settings-context'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_STATIC_HEIGHT_CLASS } from '@/lib/constants/banner-styles'
 import { useChatStatus } from '@/lib/contexts/chat-status-context'
 import { contactAPI } from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -729,10 +730,10 @@ function ContactPageContent() {
       <Header currentPage="contact" />
       
       <main className="min-h-screen bg-surface-50">
-        {/* Top banner - containerized like refill, co2-cylinders and other routes */}
-        <section className="py-6 sm:py-8">
-          <div className="max-w-7xl mx-auto px-3 sm:px-4">
-            <div className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px] overflow-hidden shadow-xl bg-no-repeat bg-center bg-cover">
+        {/* Top banner - consistent padding and height with rest of site */}
+        <section className={BANNER_SECTION_CLASS}>
+          <div className={BANNER_CONTAINER_CLASS}>
+            <div className={`relative w-full overflow-hidden shadow-xl bg-no-repeat bg-center bg-cover ${BANNER_STATIC_HEIGHT_CLASS}`}>
               <Image
                 src="https://res.cloudinary.com/dw2h8hejn/image/upload/v1757238970/background-6556413_1920_rlwos5.jpg"
                 alt="Contact us background"

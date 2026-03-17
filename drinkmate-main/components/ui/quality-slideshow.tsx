@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { BANNER_SLIDER_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 interface QualitySlideshowItem {
   id: number
@@ -30,7 +31,7 @@ export default function QualitySlideshow({
   autoPlay = true, 
   autoPlayInterval = 5000,
   className = "",
-  containerHeight = "h-[300px] md:h-[400px] lg:h-[450px]",
+  containerHeight = BANNER_SLIDER_HEIGHT_CLASS,
   mobileContain = false,
 }: QualitySlideshowProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
