@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import QualitySlideshow from '@/components/ui/quality-slideshow'
 import { getBannerSrc } from '@/lib/utils/banner-paths'
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_SLIDER_HEIGHT_CLASS } from '@/lib/constants/banner-styles'
 import { useCart } from '@/lib/contexts/cart-context'
 import { useTranslation } from '@/lib/contexts/translation-context'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -1085,9 +1086,9 @@ function ShopPageContentInner() {
 
   return (
     <PageLayout>
-      {/* Shop banner slider - contained mobile style (aspect + contain) like other banner sections */}
-      <section className="relative overflow-hidden w-full">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4">
+      {/* Shop banner slider - consistent padding and height with rest of site */}
+      <section className={`relative overflow-hidden w-full ${BANNER_SECTION_CLASS}`}>
+        <div className={BANNER_CONTAINER_CLASS}>
           <QualitySlideshow
             items={[
               {
@@ -1112,7 +1113,7 @@ function ShopPageContentInner() {
             autoPlay={true}
             autoPlayInterval={5000}
             className="w-full overflow-hidden"
-            containerHeight="min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[360px]"
+            containerHeight={BANNER_SLIDER_HEIGHT_CLASS}
             mobileContain={true}
           />
         </div>

@@ -5,6 +5,8 @@ import Image from "next/image"
 import { useTranslation } from "@/lib/contexts/translation-context"
 import PageLayout from "@/components/layout/PageLayout"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { getAppImageUrl } from "@/lib/utils/app-images"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_STATIC_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 import RecipeCard from "@/components/recipes/RecipeCard"
 import RecipeCardSkeleton from "@/components/recipes/RecipeCardSkeleton"
 import FilterBar from "@/components/recipes/FilterBar"
@@ -194,7 +196,9 @@ export default function Recipes() {
             id: recipe._id,
             title: recipe.title,
             slug: recipe.slug,
-            image: recipe.images && recipe.images.length > 0 ? recipe.images[0].url : 'https://via.placeholder.com/400x300?text=No+Image',
+            image: (recipe.images && recipe.images.length > 0 && recipe.images[0].url?.trim())
+              ? recipe.images[0].url
+              : '/images/drink-recipes.png',
             category: recipe.category,
             rating: recipe.rating?.average || 0,
             prepTime: recipe.prepTime,
@@ -290,17 +294,19 @@ export default function Recipes() {
   return (
     <PageLayout currentPage="recipes">
       <div dir={isRTL ? "rtl" : "ltr"}>
-        {/* Recipes banner - same styling as flavor / category pages */}
-        <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-          <div
-            className="w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover"
-            style={{
-              backgroundImage: `url(${getBannerSrc("flavour", { lang: language })})`,
-              backgroundRepeat: "no-repeat",
-            }}
-            role="img"
-            aria-label={isRTL ? "الوصفات" : "Recipes"}
-          />
+        {/* Recipes banner - consistent padding and height with rest of site */}
+        <section className={BANNER_SECTION_CLASS}>
+          <div className={BANNER_CONTAINER_CLASS}>
+            <div
+              className={`w-full mb-8 sm:mb-12 relative overflow-hidden shadow-xl bg-no-repeat bg-center bg-contain sm:bg-cover ${BANNER_STATIC_HEIGHT_CLASS}`}
+              style={{
+                backgroundImage: `url(${getBannerSrc("flavour", { lang: language })})`,
+                backgroundRepeat: "no-repeat",
+              }}
+              role="img"
+              aria-label={isRTL ? "الوصفات" : "Recipes"}
+            />
+          </div>
         </section>
 
         {/* Featured Recipe Section - Temporarily disabled */}
@@ -311,7 +317,11 @@ export default function Recipes() {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="relative aspect-[4/3]">
                     <Image
-                      src={currentRecipe?.image || '/images/placeholder-recipe.jpg'}
+                      src={
+                        currentRecipe?.image?.startsWith("http")
+                          ? currentRecipe.image
+                          : getAppImageUrl(currentRecipe?.image || "/images/placeholder-recipe.jpg")
+                      }
                       alt={currentRecipe?.title || 'Recipe'}
                       fill
                       className="object-cover"

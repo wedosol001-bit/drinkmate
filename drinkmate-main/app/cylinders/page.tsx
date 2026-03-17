@@ -2,14 +2,16 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import PageLayout from "@/components/layout/PageLayout"
 import { useTranslation } from "@/lib/contexts/translation-context"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ArrowLeft } from "lucide-react"
 import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import QualitySlideshow from "@/components/ui/quality-slideshow"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
 import { getAppImageUrl } from "@/lib/utils/app-images"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_SLIDER_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 /** Asset paths for the cylinders mediator page - resolved via getAppImageUrl (Cloudinary or local fallback) */
 const ASSETS = {
@@ -23,14 +25,32 @@ const ASSETS = {
 } as const
 
 export default function CylindersMediatorPage() {
+  const router = useRouter()
   const { isRTL, language, t } = useTranslation()
   const prefix = language === "AR" ? "/ar" : ""
 
   return (
     <PageLayout>
-      {/* Top Banner - Slider: refill (shop) + co2 (shop, EN/AR) */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
+      {/* Back button - goes to previous page in history */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-3">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => router.back()}
+            className={`text-gray-600 hover:text-gray-900 hover:bg-gray-100 ${isRTL ? "font-cairo" : "font-montserrat"}`}
+            aria-label={language === "AR" ? "العودة" : "Back"}
+          >
+            <ArrowLeft className={`h-4 w-4 ${isRTL ? "ml-2 rotate-180" : "mr-2"}`} />
+            {language === "AR" ? "العودة" : "Back"}
+          </Button>
+        </div>
+      </section>
+
+      {/* Top Banner - Slider: refill (shop) + co2 (shop, EN/AR); consistent padding and height */}
+      <section className={`bg-white border-b border-gray-200 ${BANNER_SECTION_CLASS}`}>
+        <div className={BANNER_CONTAINER_CLASS}>
           <QualitySlideshow
             items={[
               {
@@ -49,7 +69,7 @@ export default function CylindersMediatorPage() {
             autoPlay={true}
             autoPlayInterval={5000}
             className="w-full overflow-hidden shadow-xl"
-            containerHeight="min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px]"
+            containerHeight={BANNER_SLIDER_HEIGHT_CLASS}
             mobileContain={true}
           />
         </div>

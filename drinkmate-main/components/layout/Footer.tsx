@@ -199,11 +199,6 @@ export default function Footer() {
                 </LoadingLink>
               </li>
               <li>
-                <Link href={(language === 'AR' ? '/ar' : '') + "/shop/bundles"} className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
-                  {t("footer.products.giftBundles")}
-                </Link>
-              </li>
-              <li>
                 <Link href="/contact" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.products.bulkOrders")}
                 </Link>
@@ -240,11 +235,6 @@ export default function Footer() {
               <li>
                 <Link href="/recipes" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                   {t("footer.information.drinkmateRecipe")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className={`text-black/70 hover:text-black transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
-                  {t("footer.information.blogs")}
                 </Link>
               </li>
               {/* <li>
@@ -338,11 +328,6 @@ export default function Footer() {
                   </LoadingLink>
                 </li>
                 <li>
-                  <Link href={(language === 'AR' ? '/ar' : '') + "/shop/bundles"} className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
-                    {t("footer.products.giftBundles")}
-                  </Link>
-                </li>
-                <li>
                   <Link href="/contact" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.products.bulkOrders")}
                   </Link>
@@ -383,11 +368,6 @@ export default function Footer() {
                 <li>
                   <Link href="/recipes" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
                     {t("footer.information.drinkmateRecipe")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className={`text-black/70 hover:text-black transition-colors duration-200 ${isHydrated && isRTL ? 'font-cairo text-end' : 'font-montserrat text-start'}`}>
-                    {t("footer.information.blogs")}
                   </Link>
                 </li>
                 {/* <li>

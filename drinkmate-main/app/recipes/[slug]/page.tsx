@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Heart, Share2, Copy, Clock, Star, Utensils } from "lucide-react"
 import { toast } from "sonner"
 import { recipeAPI } from "@/lib/api/recipe-api"
+import { getAppImageUrl } from "@/lib/utils/app-images"
 
 interface Recipe {
   _id: string
@@ -310,7 +311,10 @@ export default function RecipeDetail() {
               {recipe.images && recipe.images.length > 0 ? (
                 <div className="relative group">
                   <Image
-                    src={recipe.images.find(img => img.isPrimary)?.url || recipe.images[0].url}
+                    src={(() => {
+                      const url = recipe.images.find(img => img.isPrimary)?.url || recipe.images[0].url
+                      return url?.startsWith("http") ? url : getAppImageUrl(url || "") || url
+                    })()}
                     alt={recipe.images.find(img => img.isPrimary)?.alt || recipe.title}
                     width={600}
                     height={450}

@@ -21,6 +21,7 @@ import { getProductImageUrl } from "@/lib/utils/image-utils"
 import { getCategoryName } from "@/lib/utils/category-utils"
 import { useCartAnimations } from "@/hooks/use-cart-animations"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_STATIC_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 // Define product types
 interface Product {
@@ -576,10 +577,10 @@ export default function SodamakersPage() {
 
   return (
     <PageLayout currentPage="shop-sodamakers">
-      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        {/* Top banner - soda maker (image only, no text/overlay), language-aware */}
+      <div className={`${BANNER_CONTAINER_CLASS} ${BANNER_SECTION_CLASS}`}>
+        {/* Top banner - consistent padding and height with rest of site */}
         <div
-          className="relative w-full min-h-[120px] aspect-[3/1] sm:aspect-auto sm:min-h-[200px] sm:h-[260px] md:h-[300px] lg:h-[320px] max-h-[320px] overflow-hidden shadow-xl mb-6 sm:mb-8 bg-no-repeat bg-center bg-contain sm:bg-cover"
+          className={`relative w-full overflow-hidden shadow-xl mb-6 sm:mb-8 bg-no-repeat bg-center bg-contain sm:bg-cover ${BANNER_STATIC_HEIGHT_CLASS}`}
           style={{
             backgroundImage: `url(${getBannerSrc("sodamaker", { lang: language })})`,
             backgroundRepeat: 'no-repeat',

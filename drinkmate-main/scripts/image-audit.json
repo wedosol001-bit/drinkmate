@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-05T17:10:14.362Z",
+  "generatedAt": "2026-03-17T13:07:44.549Z",
   "publicImagesRoot": "/images",
   "referencedPaths": {
     "/images/placeholder-product.jpg": [
@@ -79,7 +79,7 @@
       },
       {
         "file": "app/page.tsx",
-        "line": 107,
+        "line": 108,
         "snippet": "src={blog.image || \"/images/placeholder.jpg\"}"
       },
       {
@@ -134,8 +134,8 @@
       },
       {
         "file": "components/layout/Footer.tsx",
-        "line": 440,
-        "snippet": "src=\"/images/payment-logos/tabby.png\""
+        "line": 441,
+        "snippet": "src={getAppImageUrl(\"/images/payment-logos/tabby.png\")}"
       }
     ],
     "/images/payment-logos/mada.svg": [
@@ -158,8 +158,8 @@
       },
       {
         "file": "components/layout/Footer.tsx",
-        "line": 416,
-        "snippet": "src=\"/images/payment-logos/visa.png\""
+        "line": 417,
+        "snippet": "src={getAppImageUrl(\"/images/payment-logos/visa.png\")}"
       }
     ],
     "/images/payment-logos/mastercard.png": [
@@ -170,8 +170,8 @@
       },
       {
         "file": "components/layout/Footer.tsx",
-        "line": 424,
-        "snippet": "src=\"/images/payment-logos/mastercard.png\""
+        "line": 425,
+        "snippet": "src={getAppImageUrl(\"/images/payment-logos/mastercard.png\")}"
       }
     ],
     "/images/payment-logos/urways-logo.svg": [
@@ -188,100 +188,105 @@
         "snippet": "src=\"/images/payment-logos/tap-logo.svg\""
       }
     ],
-    "/images/madiaterPage/newSelenders.svg": [
-      {
-        "file": "app/cylinders/page.tsx",
-        "line": 15,
-        "snippet": "newCylinders: \"/images/madiaterPage/newSelenders.svg\","
-      }
-    ],
-    "/images/madiaterPage/refillSelenders.svg": [
+    "/images/madiaterPage/newSelenders.png": [
       {
         "file": "app/cylinders/page.tsx",
         "line": 16,
-        "snippet": "refillCylinders: \"/images/madiaterPage/refillSelenders.svg\","
+        "snippet": "newCylinders: \"/images/madiaterPage/newSelenders.png\","
+      }
+    ],
+    "/images/madiaterPage/refillSelenders.png": [
+      {
+        "file": "app/cylinders/page.tsx",
+        "line": 17,
+        "snippet": "refillCylinders: \"/images/madiaterPage/refillSelenders.png\","
       }
     ],
     "/images/madiaterPage/clockIcon.svg": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 17,
+        "line": 18,
         "snippet": "clockIcon: \"/images/madiaterPage/clockIcon.svg\","
       }
     ],
     "/images/madiaterPage/bottelIcon.svg": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 18,
+        "line": 19,
         "snippet": "bottleIcon: \"/images/madiaterPage/bottelIcon.svg\","
       }
     ],
     "/images/madiaterPage/verifiedIcon.svg": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 19,
+        "line": 20,
         "snippet": "verifiedIcon: \"/images/madiaterPage/verifiedIcon.svg\","
       }
     ],
     "/images/madiaterPage/recycleIcon.svg": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 20,
+        "line": 21,
         "snippet": "recycleIcon: \"/images/madiaterPage/recycleIcon.svg\","
       }
     ],
     "/images/madiaterPage/exchangeBottels.svg": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 21,
+        "line": 22,
         "snippet": "exchangeBottles: \"/images/madiaterPage/exchangeBottels.svg\","
       }
     ],
     "/images/drinkmate-logo.png": [
       {
         "file": "app/forgot-password/page.tsx",
-        "line": 72,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 75,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "app/login/LoginPageContent.tsx",
-        "line": 169,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 172,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "app/register/page.tsx",
-        "line": 227,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 228,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "app/reset-password/[token]/page.tsx",
-        "line": 168,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 172,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "components/layout/AdminLayout.tsx",
-        "line": 335,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 336,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "components/layout/AdminLayout.tsx",
-        "line": 695,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 696,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "components/layout/Footer.tsx",
-        "line": 134,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 135,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "components/layout/Header.tsx",
-        "line": 145,
-        "snippet": "src=\"/images/drinkmate-logo.png\""
+        "line": 146,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-logo.png\")}"
       },
       {
         "file": "lib/performance.ts",
         "line": 106,
         "snippet": "'/images/drinkmate-logo.png',"
+      },
+      {
+        "file": "lib/utils/app-images.ts",
+        "line": 21,
+        "snippet": "* @param pathOrKey - Local path (e.g. \"/images/drinkmate-logo.png\") or key"
       },
       {
         "file": "public/sw.js",
@@ -326,130 +331,130 @@
     "/images/miscellaneous/hide.png": [
       {
         "file": "app/login/LoginPageContent.tsx",
-        "line": 256,
-        "snippet": "src={showPassword ? \"/images/miscellaneous/hide.png\" : \"/images/miscellaneous/view.png\"}"
+        "line": 266,
+        "snippet": "src={showPassword ? getAppImageUrl(\"/images/miscellaneous/hide.png\") : getAppImageUrl(\"/images/miscellaneous/view.png\")}"
       }
     ],
     "/images/miscellaneous/view.png": [
       {
         "file": "app/login/LoginPageContent.tsx",
-        "line": 256,
-        "snippet": "src={showPassword ? \"/images/miscellaneous/hide.png\" : \"/images/miscellaneous/view.png\"}"
+        "line": 266,
+        "snippet": "src={showPassword ? getAppImageUrl(\"/images/miscellaneous/hide.png\") : getAppImageUrl(\"/images/miscellaneous/view.png\")}"
       }
     ],
     "/images/drinkmate-machine.png": [
       {
         "file": "app/not-found.tsx",
-        "line": 35,
-        "snippet": "src=\"/images/drinkmate-machine.png\""
+        "line": 36,
+        "snippet": "src={getAppImageUrl(\"/images/drinkmate-machine.png\")}"
       }
     ],
     "/images/food-grade-co2-text.png": [
       {
         "file": "app/page.tsx",
-        "line": 1002,
+        "line": 1003,
         "snippet": "src=\"/images/food-grade-co2-text.png\""
       },
       {
         "file": "app/page.tsx",
-        "line": 1090,
+        "line": 1091,
         "snippet": "src=\"/images/food-grade-co2-text.png\""
       },
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 941,
-        "snippet": "src=\"/images/food-grade-co2-text.png\""
+        "line": 942,
+        "snippet": "src={getAppImageUrl(\"/images/food-grade-co2-text.png\")}"
       }
     ],
     "/images/how-to-use-drinkmate.png": [
       {
         "file": "app/page.tsx",
-        "line": 1284,
-        "snippet": "src=\"/images/how-to-use-drinkmate.png\""
+        "line": 1285,
+        "snippet": "src={getAppImageUrl(\"/images/how-to-use-drinkmate.png\")}"
       }
     ],
     "/images/drink-recipes.png": [
       {
         "file": "app/page.tsx",
-        "line": 1312,
-        "snippet": "src=\"/images/drink-recipes.png\""
+        "line": 1313,
+        "snippet": "src={getAppImageUrl(\"/images/drink-recipes.png\")}"
       }
     ],
     "/images/premium-italian-flavors.png": [
       {
         "file": "app/page.tsx",
-        "line": 1340,
-        "snippet": "src=\"/images/premium-italian-flavors.png\""
+        "line": 1341,
+        "snippet": "src={getAppImageUrl(\"/images/premium-italian-flavors.png\")}"
       }
     ],
     "/images/plastic-impact.png": [
       {
         "file": "app/page.tsx",
-        "line": 1415,
-        "snippet": "src=\"/images/plastic-impact.png\""
+        "line": 1416,
+        "snippet": "src={getAppImageUrl(\"/images/plastic-impact.png\")}"
       },
       {
         "file": "app/page.tsx",
-        "line": 1493,
-        "snippet": "src=\"/images/plastic-impact.png\""
+        "line": 1494,
+        "snippet": "src={getAppImageUrl(\"/images/plastic-impact.png\")}"
       }
     ],
     "/images/natural-flavors.png": [
       {
         "file": "app/page.tsx",
-        "line": 1436,
-        "snippet": "src=\"/images/natural-flavors.png\""
+        "line": 1437,
+        "snippet": "src={getAppImageUrl(\"/images/natural-flavors.png\")}"
       },
       {
         "file": "app/page.tsx",
-        "line": 1514,
-        "snippet": "src=\"/images/natural-flavors.png\""
+        "line": 1515,
+        "snippet": "src={getAppImageUrl(\"/images/natural-flavors.png\")}"
       }
     ],
     "/images/health-benefits.png": [
       {
         "file": "app/page.tsx",
-        "line": 1458,
-        "snippet": "src=\"/images/health-benefits.png\""
+        "line": 1459,
+        "snippet": "src={getAppImageUrl(\"/images/health-benefits.png\")}"
       },
       {
         "file": "app/page.tsx",
-        "line": 1536,
-        "snippet": "src=\"/images/health-benefits.png\""
+        "line": 1537,
+        "snippet": "src={getAppImageUrl(\"/images/health-benefits.png\")}"
       }
     ],
     "/images/placeholder-recipe.jpg": [
       {
         "file": "app/recipes/page.tsx",
-        "line": 314,
-        "snippet": "src={currentRecipe?.image || '/images/placeholder-recipe.jpg'}"
+        "line": 318,
+        "snippet": ": getAppImageUrl(currentRecipe?.image || \"/images/placeholder-recipe.jpg\")"
       }
     ],
     "/images/refillPage/drinkmateRefill.svg": [
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 262,
+        "line": 263,
         "snippet": "drinkmate: \"/images/refillPage/drinkmateRefill.svg\","
       }
     ],
     "/images/refillPage/quick-co2.png": [
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 263,
+        "line": 264,
         "snippet": "quickConnect: \"/images/refillPage/quick-co2.png\","
       }
     ],
     "/images/refillPage/screw-co2.png": [
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 264,
+        "line": 265,
         "snippet": "standardThreaded: \"/images/refillPage/screw-co2.png\","
       }
     ],
     "/images/co2-cylinder-single.png": [
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 329,
+        "line": 330,
         "snippet": "image: selectedCylinderData.image || \"/images/co2-cylinder-single.png\","
       },
       {
@@ -461,15 +466,15 @@
     "/images/refillPage/drinkmateCard.svg": [
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 522,
-        "snippet": "<Image src=\"/images/refillPage/drinkmateCard.svg\" alt=\"Drinkmate\" width={56} height={56} className=\"object-contain\" />"
+        "line": 523,
+        "snippet": "<Image src={getAppImageUrl(\"/images/refillPage/drinkmateCard.svg\")} alt=\"Drinkmate\" width={56} height={56} className=\"ob"
       }
     ],
     "/images/refillPage/nonDrinkmateCard.svg": [
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 533,
-        "snippet": "<Image src=\"/images/refillPage/nonDrinkmateCard.svg\" alt=\"Non-Drinkmate\" width={56} height={56} className=\"object-contai"
+        "line": 534,
+        "snippet": "<Image src={getAppImageUrl(\"/images/refillPage/nonDrinkmateCard.svg\")} alt=\"Non-Drinkmate\" width={56} height={56} classN"
       }
     ],
     "/images/products/accessories-bundle-1.jpg": [
@@ -648,29 +653,29 @@
     "/images/payment-logos/american-express.png": [
       {
         "file": "components/layout/Footer.tsx",
-        "line": 432,
-        "snippet": "src=\"/images/payment-logos/american-express.png\""
+        "line": 433,
+        "snippet": "src={getAppImageUrl(\"/images/payment-logos/american-express.png\")}"
       }
     ],
     "/images/delivery-logos/aramex-seeklogo.png": [
       {
         "file": "components/layout/Footer.tsx",
-        "line": 450,
-        "snippet": "src=\"/images/delivery-logos/aramex-seeklogo.png\""
+        "line": 451,
+        "snippet": "src={getAppImageUrl(\"/images/delivery-logos/aramex-seeklogo.png\")}"
       }
     ],
     "/images/us-flag.png": [
       {
         "file": "components/layout/Header.tsx",
-        "line": 243,
-        "snippet": "src={language === \"EN\" ? \"/images/us-flag.png\" : \"/images/saudi-arabia-flag.png\"}"
+        "line": 244,
+        "snippet": "src={getAppImageUrl(language === \"EN\" ? \"/images/us-flag.png\" : \"/images/saudi-arabia-flag.png\")}"
       }
     ],
     "/images/saudi-arabia-flag.png": [
       {
         "file": "components/layout/Header.tsx",
-        "line": 243,
-        "snippet": "src={language === \"EN\" ? \"/images/us-flag.png\" : \"/images/saudi-arabia-flag.png\"}"
+        "line": 244,
+        "snippet": "src={getAppImageUrl(language === \"EN\" ? \"/images/us-flag.png\" : \"/images/saudi-arabia-flag.png\")}"
       }
     ],
     "/images/placeholder.png": [
@@ -739,7 +744,7 @@
     "/images/bannerNew": [
       {
         "file": "lib/utils/banner-paths.ts",
-        "line": 8,
+        "line": 11,
         "snippet": "const BASE = \"/images/bannerNew\""
       }
     ],
@@ -774,41 +779,41 @@
     "/images/bannerNew/refill.png": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 37,
+        "line": 38,
         "snippet": "getBannerSrc(\"refill\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 651,
+        "line": 652,
         "snippet": "getBannerSrc(\"refill\", ...)"
       },
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 428,
+        "line": 429,
         "snippet": "getBannerSrc(\"refill\", ...)"
       }
     ],
     "/images/bannerNew/refillShop.png": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 37,
+        "line": 38,
         "snippet": "getBannerSrc(\"refill\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 651,
+        "line": 652,
         "snippet": "getBannerSrc(\"refill\", ...)"
       },
       {
         "file": "app/refill-cylinder/page.tsx",
-        "line": 428,
+        "line": 429,
         "snippet": "getBannerSrc(\"refill\", ...)"
       }
     ],
     "/images/bannerNew/co2.png": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 43,
+        "line": 44,
         "snippet": "getBannerSrc(\"co2\", ...)"
       },
       {
@@ -820,7 +825,7 @@
     "/images/bannerNew/co2Arabic.png": [
       {
         "file": "app/cylinders/page.tsx",
-        "line": 43,
+        "line": 44,
         "snippet": "getBannerSrc(\"co2\", ...)"
       },
       {
@@ -832,80 +837,80 @@
     "/images/bannerNew/shop.png": [
       {
         "file": "app/page.tsx",
-        "line": 657,
+        "line": 658,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1244,
+        "line": 1245,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1079,
+        "line": 1095,
         "snippet": "getBannerSrc(\"shop\", ...)"
       }
     ],
     "/images/bannerNew/shopArbaic.png": [
       {
         "file": "app/page.tsx",
-        "line": 657,
+        "line": 658,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1244,
+        "line": 1245,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1079,
+        "line": 1095,
         "snippet": "getBannerSrc(\"shop\", ...)"
       }
     ],
     "/images/bannerNew/shopShop.png": [
       {
         "file": "app/page.tsx",
-        "line": 657,
+        "line": 658,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1244,
+        "line": 1245,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1079,
+        "line": 1095,
         "snippet": "getBannerSrc(\"shop\", ...)"
       }
     ],
     "/images/bannerNew/shopArabicShop.png": [
       {
         "file": "app/page.tsx",
-        "line": 657,
+        "line": 658,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1244,
+        "line": 1245,
         "snippet": "getBannerSrc(\"shop\", ...)"
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1079,
+        "line": 1095,
         "snippet": "getBannerSrc(\"shop\", ...)"
       }
     ],
     "/images/bannerNew/accessorice.png": [
       {
         "file": "app/page.tsx",
-        "line": 663,
+        "line": 664,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1250,
+        "line": 1251,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
@@ -915,19 +920,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1085,
+        "line": 1101,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       }
     ],
     "/images/bannerNew/accessoriceArabic.png": [
       {
         "file": "app/page.tsx",
-        "line": 663,
+        "line": 664,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1250,
+        "line": 1251,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
@@ -937,19 +942,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1085,
+        "line": 1101,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       }
     ],
     "/images/bannerNew/accessoriceShop.png": [
       {
         "file": "app/page.tsx",
-        "line": 663,
+        "line": 664,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1250,
+        "line": 1251,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
@@ -959,19 +964,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1085,
+        "line": 1101,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       }
     ],
     "/images/bannerNew/accessoriceArabicshop.png": [
       {
         "file": "app/page.tsx",
-        "line": 663,
+        "line": 664,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1250,
+        "line": 1251,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       },
       {
@@ -981,19 +986,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1085,
+        "line": 1101,
         "snippet": "getBannerSrc(\"accessories\", ...)"
       }
     ],
     "/images/bannerNew/italianSyrup.png": [
       {
         "file": "app/page.tsx",
-        "line": 669,
+        "line": 670,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1256,
+        "line": 1257,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
@@ -1003,19 +1008,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1091,
+        "line": 1107,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       }
     ],
     "/images/bannerNew/italianSyrpArabic.png": [
       {
         "file": "app/page.tsx",
-        "line": 669,
+        "line": 670,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1256,
+        "line": 1257,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
@@ -1025,19 +1030,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1091,
+        "line": 1107,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       }
     ],
     "/images/bannerNew/italianSyrupShop.png": [
       {
         "file": "app/page.tsx",
-        "line": 669,
+        "line": 670,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1256,
+        "line": 1257,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
@@ -1047,19 +1052,19 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1091,
+        "line": 1107,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       }
     ],
     "/images/bannerNew/italianSyrupShopArabic.png": [
       {
         "file": "app/page.tsx",
-        "line": 669,
+        "line": 670,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
         "file": "app/page.tsx",
-        "line": 1256,
+        "line": 1257,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       },
       {
@@ -1069,21 +1074,21 @@
       },
       {
         "file": "app/shop/page.tsx",
-        "line": 1091,
+        "line": 1107,
         "snippet": "getBannerSrc(\"italianSyrup\", ...)"
       }
     ],
     "/images/bannerNew/flavour.png": [
       {
         "file": "app/recipes/page.tsx",
-        "line": 298,
+        "line": 299,
         "snippet": "getBannerSrc(\"flavour\", ...)"
       }
     ],
     "/images/bannerNew/flavourArabic.png": [
       {
         "file": "app/recipes/page.tsx",
-        "line": 298,
+        "line": 299,
         "snippet": "getBannerSrc(\"flavour\", ...)"
       }
     ],
@@ -1163,9 +1168,9 @@
     "/images/madiaterPage/bottelIcon.svg",
     "/images/madiaterPage/clockIcon.svg",
     "/images/madiaterPage/exchangeBottels.svg",
-    "/images/madiaterPage/newSelenders.svg",
+    "/images/madiaterPage/newSelenders.png",
     "/images/madiaterPage/recycleIcon.svg",
-    "/images/madiaterPage/refillSelenders.svg",
+    "/images/madiaterPage/refillSelenders.png",
     "/images/madiaterPage/verifiedIcon.svg",
     "/images/miscellaneous/hide.png",
     "/images/miscellaneous/view.png",
@@ -1302,6 +1307,7 @@
     "/public/images/energy-cola-flavors.png",
     "/public/images/flavor-section-background.png",
     "/public/images/food-grade-co2-text.png",
+    "/public/images/health-benefits.jpg",
     "/public/images/health-benefits.png",
     "/public/images/how-to-use-drinkmate.png",
     "/public/images/italian-strawberry-lemon-syrup.png",
@@ -1309,12 +1315,15 @@
     "/public/images/madiaterPage/bottelIcon.svg",
     "/public/images/madiaterPage/clockIcon.svg",
     "/public/images/madiaterPage/exchangeBottels.svg",
+    "/public/images/madiaterPage/newSelenders.png",
     "/public/images/madiaterPage/newSelenders.svg",
     "/public/images/madiaterPage/recycleIcon.svg",
+    "/public/images/madiaterPage/refillSelenders.png",
     "/public/images/madiaterPage/refillSelenders.svg",
     "/public/images/madiaterPage/verifiedIcon.svg",
     "/public/images/miscellaneous/hide.png",
     "/public/images/miscellaneous/view.png",
+    "/public/images/natural-flavors.jpg",
     "/public/images/natural-flavors.png",
     "/public/images/payment-logos/Mada Logo Vector.svg",
     "/public/images/payment-logos/american-express.png",
@@ -1331,6 +1340,7 @@
     "/public/images/payment-logos/tap-logo.svg",
     "/public/images/payment-logos/visa.png",
     "/public/images/payment-logos/visa.svg",
+    "/public/images/plastic-impact.jpg",
     "/public/images/plastic-impact.png",
     "/public/images/premium-italian-flavors.png",
     "/public/images/products/flavor-pack-1.jpg",
@@ -1359,7 +1369,7 @@
     "/public/images/testimonial-video-poster.jpg",
     "/public/images/us-flag.png"
   ],
-  "filesOnDiskCount": 139,
+  "filesOnDiskCount": 144,
   "missing": [
     "/images/placeholder-product.jpg",
     "/images/placeholder.jpg",

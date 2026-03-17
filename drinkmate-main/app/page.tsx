@@ -19,6 +19,7 @@ import { useLatestBlogs } from "@/hooks/use-latest-blogs"
 import QualitySlideshow from "@/components/ui/quality-slideshow"
 import { getBannerSrc } from "@/lib/utils/banner-paths"
 import { getAppImageUrl } from "@/lib/utils/app-images"
+import { BANNER_CONTAINER_CLASS, BANNER_SECTION_CLASS, BANNER_SLIDER_HEIGHT_CLASS } from "@/lib/constants/banner-styles"
 
 // StepCard component for mobile-optimized cards
 function StepCard({ 
@@ -587,7 +588,9 @@ export default function Home() {
       
       <PageLayout currentPage="home">
       <HydrationBoundary>
-      {/* Hero Section - first banner only, no slider; 6|6 grid: image + content */}
+      {/* Hero Section - first banner only, no slider; 6|6 grid: image + content
+          Mobile banner size for asset prep: content width ~320–390px (with px-8), height 500px.
+          Recommended image size: 1080×1350px (4:5) for high-DPI mobile. */}
       <section className="py-6 lg:py-16 px-8 lg:px-20 xl:px-24 2xl:px-32 relative z-30 overflow-x-hidden" suppressHydrationWarning>
         <div className="w-full max-w-full rounded-b-3xl overflow-hidden shadow-2xl shadow-gray-200/50 border border-white/20 bg-gradient-to-br from-[#f8fafc] via-[#f3f3f3] to-[#f1f5f9] min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] flex items-center">
           <div className={`relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full min-h-[500px] lg:min-h-[550px] xl:min-h-[600px] p-6 lg:p-10 xl:p-12 ${isRTL ? "lg:grid-flow-dense" : ""}`}>
@@ -642,9 +645,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2nd section - shop variant banners slider; same width as hero; tight gap from section 1 */}
-      <section className="pt-3 pb-6 lg:pb-16 px-8 lg:px-20 xl:px-24 2xl:px-32 animate-fade-in-up overflow-x-hidden">
-        <div className="w-full max-w-full">
+      {/* 2nd section - shop variant banners slider; no top/bottom padding on mobile to avoid grey strips */}
+      <section className="py-0 md:py-8 animate-fade-in-up overflow-x-hidden">
+        <div className={BANNER_CONTAINER_CLASS}>
           <QualitySlideshow
             items={[
               {
@@ -674,8 +677,8 @@ export default function Home() {
             ]}
             autoPlay={true}
             autoPlayInterval={5000}
-            className="w-full overflow-hidden shadow-xl"
-            containerHeight="min-h-[140px] aspect-[3/1] sm:aspect-auto sm:min-h-[240px] sm:h-[300px] md:h-[340px] lg:h-[380px] max-h-[400px]"
+            className="w-full overflow-hidden"
+            containerHeight={BANNER_SLIDER_HEIGHT_CLASS}
             mobileContain={true}
           />
         </div>
@@ -698,10 +701,10 @@ export default function Home() {
             {/* Soda Makers */}
             <Link
               href={(language === 'AR' ? '/ar' : '') + "/shop/sodamakers"}
-              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up block"
+              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-transform duration-300 ease-out hover:-translate-y-3 animate-slide-in-up block"
               dir={isRTL ? "rtl" : "ltr"}
             >
-              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 backdrop-blur-sm border border-white/40 group-hover:border-white/60">
+              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 ease-in-out backdrop-blur-sm border border-white/40 group-hover:border-white/60">
                 {/* Multiple Machine Images in Row */}
                 <div className="flex justify-center items-end space-x-2 h-full">
                   <ImageWithFallback
@@ -709,7 +712,7 @@ export default function Home() {
                     alt="Soda Makers"
                     width={180}
                     height={225}
-                    className="object-contain transition-all duration-500 ease-out translate-y-[120px] group-hover:translate-y-0 scale-102 group-hover:scale-105 hover:scale-108 animate-pop-up drop-shadow-2xl"
+                    className="object-contain transition-transform duration-700 ease-in-out translate-y-0 md:translate-y-[120px] md:group-hover:translate-y-0 scale-105 md:scale-102 md:group-hover:scale-105 drop-shadow-2xl"
                     style={{ width: "auto", height: "auto" }}
                     priority={true}
                     quality={85}
@@ -726,10 +729,10 @@ export default function Home() {
             {/* CO2 - mediator page first */}
             <Link
               href={(language === 'AR' ? '/ar' : '') + "/cylinders"}
-              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-200 block"
+              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-transform duration-300 ease-out hover:-translate-y-3 animate-slide-in-up delay-200 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
-              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 backdrop-blur-sm border border-white/40 group-hover:border-white/60">
+              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 ease-in-out backdrop-blur-sm border border-white/40 group-hover:border-white/60">
                 {/* Multiple CO2 Images in Row */}
                 <div className="flex justify-center items-end space-x-2 h-full">
                   <ImageWithFallback
@@ -737,7 +740,7 @@ export default function Home() {
                     alt="CO2"
                     width={180}
                     height={225}
-                    className="object-contain transition-all duration-500 ease-out translate-y-[120px] group-hover:translate-y-0 scale-102 group-hover:scale-105 hover:scale-108 animate-pop-up drop-shadow-2xl"
+                    className="object-contain transition-transform duration-700 ease-in-out translate-y-0 md:translate-y-[120px] md:group-hover:translate-y-0 scale-105 md:scale-102 md:group-hover:scale-105 drop-shadow-2xl"
                     style={{ width: "auto", height: "auto" }}
                     priority={true}
                     quality={85}
@@ -754,10 +757,10 @@ export default function Home() {
             {/* Premium Italian Flavors */}
             <Link
               href={(language === 'AR' ? '/ar' : '') + "/shop/flavor"}
-              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-300 block"
+              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-transform duration-300 ease-out hover:-translate-y-3 animate-slide-in-up delay-300 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
-              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 backdrop-blur-sm border border-white/40 group-hover:border-white/60">
+              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 ease-in-out backdrop-blur-sm border border-white/40 group-hover:border-white/60">
                 {/* Multiple Flavor Images from Flavors Folder in Row */}
                 <div className="flex justify-center items-end space-x-2 h-full">
                   <ImageWithFallback
@@ -765,7 +768,7 @@ export default function Home() {
                     alt="Premium Italian Flavors"
                     width={180}
                     height={225}
-                    className="object-contain transition-all duration-500 ease-out translate-y-[120px] group-hover:translate-y-0 scale-102 group-hover:scale-105 hover:scale-108 animate-pop-up drop-shadow-2xl"
+                    className="object-contain transition-transform duration-700 ease-in-out translate-y-0 md:translate-y-[120px] md:group-hover:translate-y-0 scale-105 md:scale-102 md:group-hover:scale-105 drop-shadow-2xl"
                     style={{ width: "auto", height: "auto" }}
                     priority={true}
                     quality={85}
@@ -782,10 +785,10 @@ export default function Home() {
             {/* Accessories */}
             <LoadingLink
               href={(language === 'AR' ? '/ar' : '') + "/shop/accessories"}
-              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-3 animate-slide-in-up delay-500 block"
+              className="text-center space-y-3 md:space-y-4 group cursor-pointer transition-transform duration-300 ease-out hover:-translate-y-3 animate-slide-in-up delay-500 block"
               dir={isRTL ? "rtl" : "ltr"}
             >
-              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 backdrop-blur-sm border border-white/40 group-hover:border-white/60">
+              <div className="bg-gradient-to-b from-white via-white/95 to-[#f8fafc] rounded-2xl p-4 md:p-8 relative overflow-hidden h-[200px] md:h-[270px] group shadow-xl shadow-gray-200/30 group-hover:shadow-2xl group-hover:shadow-gray-200/40 transition-all duration-500 ease-in-out backdrop-blur-sm border border-white/40 group-hover:border-white/60">
                 {/* Multiple Accessory Images in Row */}
                 <div className="flex justify-center items-end space-x-2 h-full">
                   <ImageWithFallback
@@ -793,7 +796,7 @@ export default function Home() {
                     alt="Accessories"
                     width={180}
                     height={225}
-                    className="object-contain transition-all duration-500 ease-out translate-y-[120px] group-hover:translate-y-0 scale-102 group-hover:scale-105 hover:scale-108 animate-pop-up drop-shadow-2xl"
+                    className="object-contain transition-transform duration-700 ease-in-out translate-y-0 md:translate-y-[120px] md:group-hover:translate-y-0 scale-105 md:scale-102 md:group-hover:scale-105 drop-shadow-2xl"
                     style={{ width: "auto", height: "auto" }}
                     priority={true}
                     quality={85}
@@ -974,7 +977,7 @@ export default function Home() {
                 >
                   <StepCard 
                     title={step.title}
-                    videoSrc={step.img || "/placeholder.svg"}
+                    videoSrc={getAppImageUrl(step.img) || "/placeholder.svg"}
                     step={step.id}
                     description={step.description}
                     alt={step.alt}
@@ -1212,58 +1215,60 @@ export default function Home() {
         <hr className="border-gray-200" />
       </div>
 
-      {/* Flavor Section */}
-      <section className="px-6 md:px-20 lg:px-24 xl:px-32 2xl:px-40">
-        {/* Header */}
-        <div className="text-center mb-6 md:mb-8 py-6 md:py-8" dir={isRTL ? "rtl" : "ltr"}>
-          <div className="flex justify-center mb-4 md:mb-6">
-            <div className="bg-[#12d6fa] bg-clip-text">
-              <p
-                className={`text-lg md:text-xl lg:text-2xl font-semibold mb-4 md:mb-6 text-transparent bg-clip-text bg-[#12d6fa] text-center leading-loose pb-2 ${
-                  isRTL ? "font-cairo" : "font-montserrat"
-                }`}
-              >
-                {t("home.flavorSection.subtitle")}
-              </p>
+      {/* Flavor Section - same container padding as other banners */}
+      <section className={BANNER_SECTION_CLASS}>
+        <div className={BANNER_CONTAINER_CLASS}>
+          {/* Header */}
+          <div className="text-center mb-6 md:mb-8 py-6 md:py-8 overflow-visible" dir={isRTL ? "rtl" : "ltr"}>
+            <div className="flex justify-center mb-4 md:mb-6 overflow-visible">
+              <div className="bg-[#12d6fa] bg-clip-text pt-1">
+                <p
+                  className={`text-lg md:text-xl lg:text-2xl font-semibold mb-4 md:mb-6 text-transparent bg-clip-text bg-[#12d6fa] text-center leading-loose pt-2 pb-2 ${
+                    isRTL ? "font-cairo" : "font-montserrat"
+                  }`}
+                >
+                  {t("home.flavorSection.subtitle")}
+                </p>
+              </div>
             </div>
+            <h2
+              className={`text-3xl md:text-5xl lg:text-7xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 bg-clip-text text-transparent mb-6 md:mb-8 text-center leading-tight pt-2 pb-3 ${
+                isRTL ? "font-cairo" : "font-montserrat"
+              }`}
+            >
+              {t("home.flavorSection.title")}
+            </h2>
+            <div className="w-20 md:w-32 h-1.5 bg-[#12d6fa] mx-auto rounded-full shadow-lg"></div>
           </div>
-          <h2
-            className={`text-3xl md:text-5xl lg:text-7xl font-bold bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 bg-clip-text text-transparent mb-6 md:mb-8 text-center leading-normal pb-3 ${
-              isRTL ? "font-cairo" : "font-montserrat"
-            }`}
-          >
-            {t("home.flavorSection.title")}
-          </h2>
-          <div className="w-20 md:w-32 h-1.5 bg-[#12d6fa] mx-auto rounded-full shadow-lg"></div>
-        </div>
 
-        {/* Flavor / shop banners slider - all shop variants, language-aware, clickable; contained in section padding */}
-        <QualitySlideshow
-          items={[
-            {
-              id: 1,
-              src: getBannerSrc("shop", { lang: language, variant: "shop" }),
-              alt: t("shop.categoryPages.shopAllProducts"),
-              href: (language === "AR" ? "/ar" : "") + "/shop",
-            },
-            {
-              id: 2,
-              src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
-              alt: t("shop.categoryPages.accessories.title"),
-              href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
-            },
-            {
-              id: 3,
-              src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
-              alt: t("shop.categoryPages.flavors.title"),
-              href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
-            },
-          ]}
-          autoPlay={true}
-          autoPlayInterval={5000}
-          className="w-full overflow-hidden"
-          containerHeight="h-[340px] sm:h-[400px] md:h-[450px] lg:h-[520px]"
-        />
+          {/* Flavor / shop banners slider */}
+          <QualitySlideshow
+            items={[
+              {
+                id: 1,
+                src: getBannerSrc("shop", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.shopAllProducts"),
+                href: (language === "AR" ? "/ar" : "") + "/shop",
+              },
+              {
+                id: 2,
+                src: getBannerSrc("accessories", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.accessories.title"),
+                href: (language === "AR" ? "/ar" : "") + "/shop/accessories",
+              },
+              {
+                id: 3,
+                src: getBannerSrc("italianSyrup", { lang: language, variant: "shop" }),
+                alt: t("shop.categoryPages.flavors.title"),
+                href: (language === "AR" ? "/ar" : "") + "/shop/flavor",
+              },
+            ]}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            className="w-full overflow-hidden"
+            containerHeight={BANNER_SLIDER_HEIGHT_CLASS}
+          />
+        </div>
       </section>
 
       {/* Horizontal Border */}
@@ -1413,7 +1418,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src={getAppImageUrl("/images/plastic-impact.png")}
+                      src={getAppImageUrl("/images/plastic-impact.jpg")}
                       alt="Our impact on One time plastic use"
                       width={300}
                       height={280}
@@ -1434,7 +1439,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src={getAppImageUrl("/images/natural-flavors.png")}
+                      src={getAppImageUrl("/images/natural-flavors.jpg")}
                       alt="How our natural flavors are made"
                       width={300}
                       height={280}
@@ -1456,7 +1461,7 @@ export default function Home() {
                     <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <Image
-                        src={getAppImageUrl("/images/health-benefits.png")}
+                        src={getAppImageUrl("/images/health-benefits.jpg")}
                         alt="Health Benefits of sparkling water"
                         width={300}
                         height={280}
@@ -1491,7 +1496,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src={getAppImageUrl("/images/plastic-impact.png")}
+                      src={getAppImageUrl("/images/plastic-impact.jpg")}
                       alt="Our impact on One time plastic use"
                       width={300}
                       height={280}
@@ -1512,7 +1517,7 @@ export default function Home() {
                   <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Image
-                      src={getAppImageUrl("/images/natural-flavors.png")}
+                      src={getAppImageUrl("/images/natural-flavors.jpg")}
                       alt="How our natural flavors are made"
                       width={300}
                       height={280}
@@ -1534,7 +1539,7 @@ export default function Home() {
                     <div className="bg-white rounded-3xl overflow-hidden mb-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/50 backdrop-blur-sm relative group-hover:border-[#12d6fa]/20">
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#12d6fa]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <Image
-                        src={getAppImageUrl("/images/health-benefits.png")}
+                        src={getAppImageUrl("/images/health-benefits.jpg")}
                         alt="Health Benefits of sparkling water"
                         width={300}
                         height={280}

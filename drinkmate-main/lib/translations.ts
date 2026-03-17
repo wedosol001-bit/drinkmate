@@ -2674,7 +2674,7 @@ export const translations: Record<Language, Translations> = {
       additionalSections: {
         howToUse: {
           title: "How to Use",
-          description: "Learn how to make perfect drinks every-time using drinkmate's premium Italian syrups."
+          description: "Learn how to make perfect drinks every-time using 60 – 65 ml of drinkmate's premium Italian syrups."
         },
         recipes: {
           title: "Recipes",
@@ -5515,7 +5515,7 @@ export const translations: Record<Language, Translations> = {
       additionalSections: {
         howToUse: {
           title: "كيفية الاستخدام",
-          description: "تعلم كيفية صنع مشروبات مثالية في كل مرة باستخدام سيروبات درينك ميت الإيطالية عالية الجودة."
+          description: "تعلم كيفية صنع مشروبات مثالية في كل مرة باستخدام 60 – 65 مل من سيروبات درينك ميت الإيطالية عالية الجودة."
         },
         recipes: {
           title: "الوصفات",
