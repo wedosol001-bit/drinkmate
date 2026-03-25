@@ -34,9 +34,7 @@ export default function CO2() {
   // New state for button functionality (Drinkmate default so mobile UI is always active)
   const [showBlocks, setShowBlocks] = useState(true)
   const [cylinderType, setCylinderType] = useState("drinkmate") // "drinkmate" or "non-drinkmate"
-  const [nonDrinkmateBrand, setNonDrinkmateBrand] = useState("")
-  const [threadType, setThreadType] = useState<"standard-threaded" | "quick-connect" | "">("") // Thread type for non-drinkmate
-  const [customBrandName, setCustomBrandName] = useState("") // Custom brand name for standard threaded
+  const [customBrandName, setCustomBrandName] = useState("") // Non-Drinkmate: user-entered brand (standard threaded only)
 
   // State for cylinders from API
   const [cylinderBrands, setCylinderBrands] = useState<any[]>([])
@@ -120,22 +118,7 @@ export default function CO2() {
 
   // Get selected cylinder data
   const getCylinderData = (cylinderId: string) => {
-    // Handle Quick connect
-    if (cylinderId === "quick-connect") {
-      return {
-        id: "quick-connect",
-        name: "Quick connect",
-        price: 99,
-        originalPrice: 99,
-        discount: 0,
-        description: "Quick connect CO2 cylinder refill",
-        brand: "Quick connect",
-        type: "refill",
-        capacity: "60L"
-      }
-    }
-
-    // Handle custom brand name for standard threaded
+    // Handle custom brand name for non-Drinkmate (standard threaded)
     if (cylinderId === "custom-brand" && customBrandName.trim()) {
       return {
         id: "custom-brand",
@@ -259,24 +242,19 @@ export default function CO2() {
 
   const selectedCylinderData = getCylinderData(selectedCylinder)
 
-  /** Main hero image: switches by variant — Drinkmate (svg), Non-Drinkmate quick-connect or standard-threaded (jpeg) */
+  /** Main hero image: Drinkmate (svg) vs non-Drinkmate standard-threaded (jpeg) */
   const REFILL_MAIN_IMAGES = {
     drinkmate: "/images/refillPage/drinkmateRefill.svg",
-    quickConnect: "/images/refillPage/quick-co2.png",
     standardThreaded: "/images/refillPage/screw-co2.png",
   } as const
   const mainImageSrc =
     cylinderType === "drinkmate"
       ? REFILL_MAIN_IMAGES.drinkmate
-      : threadType === "quick-connect"
-        ? REFILL_MAIN_IMAGES.quickConnect
-        : threadType === "standard-threaded"
-          ? REFILL_MAIN_IMAGES.standardThreaded
-          : cylinderType === "non-drinkmate"
-            ? REFILL_MAIN_IMAGES.standardThreaded
-            : REFILL_MAIN_IMAGES.drinkmate
+      : cylinderType === "non-drinkmate"
+        ? REFILL_MAIN_IMAGES.standardThreaded
+        : REFILL_MAIN_IMAGES.drinkmate
 
-  /** Free delivery when subtotal >= 150 SAR (dynamic: 3 for Drinkmate @ 65, 2 for non-Drinkmate @ 75/99) */
+  /** Free delivery when subtotal >= 150 SAR (dynamic min qty by unit price, e.g. Drinkmate @ 65, non-Drinkmate @ 75) */
   const FREE_DELIVERY_THRESHOLD = 150
 
   // Dynamic pricing based on quantity and brand
@@ -317,7 +295,6 @@ export default function CO2() {
           "bubble-bro": 1008,
           "yoco-cosa": 1009,
           "other-brand": 1010,
-          "quick-connect": 1011,
           "custom-brand": 1012
         }
         return idMap[cylinderId] || 9999
@@ -345,35 +322,15 @@ export default function CO2() {
   const handleDrinkmateClick = () => {
     setCylinderType("drinkmate")
     setSelectedCylinder("drinkmate")
-    setThreadType("")
     setCustomBrandName("")
-    setNonDrinkmateBrand("")
     setShowBlocks(true)
   }
 
   const handleNonDrinkmateClick = () => {
     setCylinderType("non-drinkmate")
-    setThreadType("")
     setCustomBrandName("")
-    setNonDrinkmateBrand("")
     setSelectedCylinder("")
-    setShowBlocks(false) // Don't show blocks until thread type is selected
-  }
-
-  const handleThreadTypeChange = (type: "standard-threaded" | "quick-connect") => {
-    setThreadType(type)
-    if (type === "quick-connect") {
-      setSelectedCylinder("quick-connect")
-      setCustomBrandName("")
-      setNonDrinkmateBrand("")
-      setShowBlocks(true)
-    } else {
-      // Standard threaded - reset and wait for brand input
-      setSelectedCylinder("")
-      setCustomBrandName("")
-      setNonDrinkmateBrand("")
-      setShowBlocks(false)
-    }
+    setShowBlocks(false) // Until brand name is entered
   }
 
   const handleCustomBrandChange = (brandName: string) => {
@@ -512,6 +469,7 @@ export default function CO2() {
                   {t('refill.choose.needHelp')}
                 </a>
               </div>
+              <p className="text-sm font-semibold text-gray-700">{t('refill.choose.subheading')}</p>
 
               {/* Two cylinder type cards - select UI (images clipped to card) */}
               <div className="grid grid-cols-2 gap-3">
@@ -535,39 +493,24 @@ export default function CO2() {
                     <Image src={getAppImageUrl("/images/refillPage/nonDrinkmateCard.svg")} alt="Non-Drinkmate" width={56} height={56} className="object-contain" />
                   </div>
                   <span className="font-bold text-gray-900 text-sm">{t('refill.choose.nonDrinkmate')}</span>
-                  <span className="text-sm font-semibold text-[#12d6fa] mt-0.5">
-                    {cylinderType === "non-drinkmate" && threadType === "quick-connect"
-                      ? "99.00 SAR"
-                      : cylinderType === "non-drinkmate" && threadType === "standard-threaded"
-                        ? "75.00 SAR"
-                        : "75.00 - 99.00 SAR"}
-                  </span>
+                  <span className="text-sm font-semibold text-[#12d6fa] mt-0.5">75.00 SAR</span>
                 </button>
               </div>
 
-              {/* Non-Drinkmate: thread type + brand */}
+              {/* Non-Drinkmate: brand name */}
               {cylinderType === "non-drinkmate" && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="thread-type" checked={threadType === "standard-threaded"} onChange={() => handleThreadTypeChange("standard-threaded")} className="w-4 h-4 text-[#12d6fa]" />
-                      <span className="text-sm font-semibold text-gray-900">{t('refill.choose.standardThreaded')}</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="thread-type" checked={threadType === "quick-connect"} onChange={() => handleThreadTypeChange("quick-connect")} className="w-4 h-4 text-[#12d6fa]" />
-                      <span className="text-sm font-semibold text-gray-900">Quick connect</span>
-                    </label>
-                  </div>
-                  {threadType === "standard-threaded" && (
-                    <Input
-                      id="custom-brand"
-                      type="text"
-                      value={customBrandName}
-                      onChange={(e) => handleCustomBrandChange(e.target.value)}
-                      placeholder="Enter your brand name"
-                      className="w-full h-10 border border-gray-300 rounded-xl focus:border-[#12d6fa] focus:ring-2 focus:ring-[#12d6fa]/20 text-sm"
-                    />
-                  )}
+                <div className="space-y-2">
+                  <label htmlFor="custom-brand" className="block text-sm font-bold text-gray-900 uppercase tracking-wide">
+                    {t('refill.choose.brandLabel')}
+                  </label>
+                  <Input
+                    id="custom-brand"
+                    type="text"
+                    value={customBrandName}
+                    onChange={(e) => handleCustomBrandChange(e.target.value)}
+                    placeholder={t('refill.choose.brandPlaceholder')}
+                    className="w-full h-10 border border-gray-300 rounded-xl focus:border-[#12d6fa] focus:ring-2 focus:ring-[#12d6fa]/20 text-sm"
+                  />
                 </div>
               )}
 

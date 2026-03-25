@@ -155,14 +155,6 @@ export default function AccessoriesPage() {
 
         console.log("Accessories category:", accessoriesCategory)
 
-        // Fetch all products and filter by category
-        const allProductsResponse = await shopAPI.getProducts({
-          limit: 50,
-        })
-
-        console.log("All products response:", allProductsResponse)
-
-        // Instead of filtering locally, fetch by category using slug (ensures subcategory field present)
         const byCategoryResp = await shopAPI.getProductsByCategory('accessories', { limit: 100 })
         let accessoriesProducts = byCategoryResp.products || []
         
@@ -480,7 +472,7 @@ export default function AccessoriesPage() {
   return (
     <PageLayout currentPage="shop-accessories">
       <div className={`${BANNER_CONTAINER_CLASS} ${BANNER_SECTION_CLASS}`}>
-        <h1 className="text-xl sm:text-2xl font-medium mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.accessories.title")}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-gray-900">{t("shop.categoryPages.accessories.title")}</h1>
 
         {/* Accessories banner - consistent padding and height with rest of site */}
         <div
@@ -499,15 +491,8 @@ export default function AccessoriesPage() {
         {/* Loading state */}
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-16">
-            <div className="relative">
-              <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 animate-spin text-[#12d6fa] mb-3 sm:mb-4" />
-              <div className="absolute inset-0 rounded-full border-2 border-[#12d6fa]/20"></div>
-            </div>
-            <p className="text-sm sm:text-base text-gray-600 font-medium mb-2">{t("shop.categoryPages.loadingProducts")}</p>
-            <div className="w-64 bg-gray-200 rounded-full h-2">
-              <div className="bg-gradient-to-r from-[#12d6fa] to-blue-500 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">{t("shop.categoryPages.loadingProducts")}</p>
+            <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 animate-spin text-[#12d6fa] mb-3 sm:mb-4" />
+            <p className="text-sm sm:text-base text-gray-600 font-medium">{t("shop.categoryPages.loadingProducts")}</p>
           </div>
         ) : (
           <>

@@ -1772,7 +1772,7 @@ export interface Translations {
     errorTitle: string
     retry: string
     carousel: { goTo: string }
-    choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandPlaceholder: string; standardThreaded: string }
+    choose: { heading: string; subheading: string; needHelp: string; drinkmate: string; nonDrinkmate: string; brandLabel: string; brandPlaceholder: string; standardThreaded: string }
     qty: { title: string; subtitle: string; label: string; returnNote: string; deliveryInfo: string; deliveryTime: string; freeDeliveryNote: string; freeDeliveryNote2Plus: string; cylinder: string; emptyCylinders: string }
     discounts: { twoPlus: string; twoPlusLabel: string; threePlus: string; threePlusLabel: string; fourPlus: string; fourPlusLabel: string; active: string }
     offers: { heading: string; buy3FreeDelivery: string; buyXFreeDelivery: string; buy4PriceEach: string; addOneMoreForOffer: string; addMoreForFreeDelivery: string; returnNoteShort: string }
@@ -4904,7 +4904,7 @@ export const translations: Record<Language, Translations> = {
       errorTitle: "Unable to load cylinder data",
       retry: "Retry",
       carousel: { goTo: "Go to slide" },
-      choose: { heading: "Choose your cylinder", subheading: "Select cylinder type", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandPlaceholder: "Select your brand", standardThreaded: "Standard threaded" },
+      choose: { heading: "PLEASE CHOOSE YOUR CYLINDER", subheading: "PLEASE SELECT CYLINDER TYPE", needHelp: "Need Help?", drinkmate: "Drinkmate", nonDrinkmate: "Non-Drinkmate", brandLabel: "WRITE YOUR CYLINDER BRAND NAME", brandPlaceholder: "Enter your cylinder brand name", standardThreaded: "Standard threaded" },
       qty: { title: "Quantity", subtitle: "Choose the number of cylinders to refill/exchange", label: "Number of cylinders to refill/exchange", returnNote: "Please return {{count}} empty cylinder(s)", deliveryInfo: "Estimated delivery time:", deliveryTime: "3-5 business days", freeDeliveryNote: "Free delivery for 3+ cylinders", freeDeliveryNote2Plus: "Order 2+ cylinders for free delivery", cylinder: "cylinder", emptyCylinders: "empty cylinders" },
       discounts: { twoPlus: "5% OFF", twoPlusLabel: "2+ cylinders", threePlus: "10% OFF", threePlusLabel: "3+ cylinders", fourPlus: "15% OFF", fourPlusLabel: "+ Free delivery", active: "Active" },
       offers: { heading: "Unlock the opportunity now", buy3FreeDelivery: "BUY 2+ FREE DELIVERY", buyXFreeDelivery: "BUY {{count}}+ FREE DELIVERY", buy4PriceEach: "BUY 4 59/- EACH", addOneMoreForOffer: "Add {{count}} more cylinder(s) to get this offer", addMoreForFreeDelivery: "Add {{count}} more cylinder(s) to get free delivery", returnNoteShort: "Please make sure to return {{count}} cylinder(s)" },
@@ -7540,7 +7540,7 @@ export const translations: Record<Language, Translations> = {
       errorTitle: "تعذر تحميل بيانات الأسطوانات",
       retry: "إعادة المحاولة",
       carousel: { goTo: "اذهب إلى الشريحة" },
-      choose: { heading: "اختر أسطوانتك", subheading: "اختر نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "ليست درينك ميت", brandPlaceholder: "اختر علامتك التجارية", standardThreaded: "مدخل لولي" },
+      choose: { heading: "يرجى اختيار أسطوانتك", subheading: "يرجى اختيار نوع الأسطوانة", needHelp: "تحتاج مساعدة؟", drinkmate: "درينك ميت", nonDrinkmate: "ليست درينك ميت", brandLabel: "اكتب اسم علامة أسطوانتك", brandPlaceholder: "أدخل اسم علامة الأسطوانة", standardThreaded: "مدخل لولي" },
       qty: { title: "الكمية", subtitle: "اختر عدد الأسطوانات لإعادة التعبئة/التبديل", label: "عدد الأسطوانات لإعادة التعبئة/التبديل", returnNote: "يرجى إرجاع {{count}} أسطوانة فارغة", deliveryInfo: "وقت التسليم المتوقع:", deliveryTime: "3-5 أيام عمل", freeDeliveryNote: "توصيل مجاني لـ 3 أسطوانات أو أكثر", freeDeliveryNote2Plus: "اطلب 2 أسطوانة أو أكثر للحصول على توصيل مجاني", cylinder: "أسطوانة", emptyCylinders: "أسطوانة فارغة" },
       discounts: { twoPlus: "خصم 5%", twoPlusLabel: "2+ أسطوانات", threePlus: "خصم 10%", threePlusLabel: "3+ أسطوانات", fourPlus: "خصم 15%", fourPlusLabel: "+ تسليم مجاني", active: "✓ نشط" },
       offers: { heading: "استفد من الفرصة الآن", buy3FreeDelivery: "اشترِ 2+ توصيل مجاني", buyXFreeDelivery: "اشترِ {{count}}+ توصيل مجاني", buy4PriceEach: "اشترِ 4 بسعر 59/- لكل واحدة", addOneMoreForOffer: "أضف {{count}} أسطوانة أخرى للحصول على هذا العرض", addMoreForFreeDelivery: "أضف {{count}} أسطوانة أخرى للحصول على توصيل مجاني", returnNoteShort: "يرجى إرجاع {{count}} أسطوانة" },

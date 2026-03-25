@@ -12,13 +12,13 @@ const faqCards = [
     id: 1,
     question: "How do I exchange my empty CO2 cylinder?",
     answer:
-      "Simply bring your empty cylinder to one of our partner locations or order an exchange online. You'll receive a full one instantly.",
+      "Order an exchange online. You'll receive a full cylinder when your refilled cylinders are delivered.",
   },
   {
     id: 2,
     question: "How long does delivery take?",
     answer:
-      "Delivery typically takes 1–2 business days depending on your location. Same-day service is available in select areas.",
+      "Delivery takes 3–5 business days all over the Kingdom.",
   },
   {
     id: 3,
