@@ -16,7 +16,8 @@
     "test-integration": "node tests/integration/test-frontend-integration.js",
     "migrate:products": "node scripts/migrateProducts.js",
     "seed:products": "node scripts/seedProducts.js",
-    "seed:recipes": "node scripts/seedRecipes.js"
+    "seed:recipes": "node scripts/seedRecipes.js",
+    "create:admin": "node scripts/create-admin-user.js"
   },
   "keywords": [],
   "author": "",
