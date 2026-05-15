@@ -114,8 +114,11 @@ class ImprovedSocketService {
       timestamp: new Date().toISOString()
     };
 
-    console.log('📊 Socket connection stats:', stats);
-    
+    // Optional: set SOCKET_STATS_LOGGING=true to log every 30s (noisy in production)
+    if (process.env.SOCKET_STATS_LOGGING === 'true') {
+      console.log('📊 Socket connection stats:', stats);
+    }
+
     // Emit stats to admin users
     this.adminSockets.forEach(socketId => {
       this.io.to(socketId).emit('connection_stats', stats);

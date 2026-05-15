@@ -18,19 +18,51 @@ const createPayment = async (req, res) => {
   try {
     console.log('🚀 Creating ARB payment request...');
     console.log('🚀 Request body:', req.body);
-    console.log('💳 ARB ENV CHECK:', {
-      ARB_TRANPORTAL_ID: process.env.ARB_TRANPORTAL_ID || '❌ MISSING',
-      ARB_TRANPORTAL_PASSWORD: process.env.ARB_TRANPORTAL_PASSWORD ? '✅ SET' : '❌ MISSING',
-      ARB_RESOURCE_KEY: process.env.ARB_RESOURCE_KEY
-        ? `✅ SET (${process.env.ARB_RESOURCE_KEY.length} chars)`
-        : '❌ MISSING',
-      ARB_ENVIRONMENT: process.env.ARB_ENVIRONMENT || '❌ MISSING (defaults to test)',
-      ARB_BASE_URL: process.env.ARB_BASE_URL || '❌ MISSING',
-      ARB_API_URL: process.env.ARB_API_URL || '❌ MISSING',
-      PAYMENT_CALLBACK_URL: process.env.PAYMENT_CALLBACK_URL || '❌ MISSING',
-      BACKEND_URL: process.env.BACKEND_URL || '❌ MISSING (falls back to localhost:3000)',
-      API_URL: process.env.API_URL || '❌ MISSING',
-      FRONTEND_URL: process.env.FRONTEND_URL || '❌ MISSING',
+
+    const paymentRelatedEnvKeys = Object.keys(process.env).filter((k) => {
+      return (
+        k.startsWith('ARB_') ||
+        k === 'PAYMENT_CALLBACK_URL' ||
+        k === 'BACKEND_URL' ||
+        k === 'API_URL' ||
+        k === 'FRONTEND_URL'
+      );
+    });
+    const paymentEnvDump = {};
+    for (const k of paymentRelatedEnvKeys.sort()) {
+      paymentEnvDump[k] = process.env[k];
+    }
+    console.log('[createPayment] PAYMENT process.env snapshot (ARB_ + callback/URL vars, raw values):', paymentEnvDump);
+
+    console.log('[createPayment] Resolved arb-service fields (secrets included, matches constructor fallbacks):', {
+      tranportalId: arbService.tranportalId,
+      tranportalPassword: arbService.tranportalPassword,
+      resourceKey: arbService.resourceKey,
+      environment: arbService.environment,
+      apiBaseUrl: arbService.apiBaseUrl,
+      paymentPageBaseUrl: arbService.paymentPageBaseUrl,
+      tokenEndpointPath: arbService.tokenEndpointPath
+    });
+
+    console.log('[createPayment] Explicit env duplicates (easier grep in logs — raw):', {
+      ARB_TRANPORTAL_ID: process.env.ARB_TRANPORTAL_ID,
+      ARB_MERCHANT_ID: process.env.ARB_MERCHANT_ID,
+      ARB_TRANPORTAL_PASSWORD: process.env.ARB_TRANPORTAL_PASSWORD,
+      ARB_PASSWORD: process.env.ARB_PASSWORD,
+      ARB_RESOURCE_KEY: process.env.ARB_RESOURCE_KEY,
+      ARB_ENVIRONMENT: process.env.ARB_ENVIRONMENT,
+      ARB_BASE_URL: process.env.ARB_BASE_URL,
+      ARB_API_URL: process.env.ARB_API_URL,
+      ARB_SANDBOX_URL: process.env.ARB_SANDBOX_URL,
+      ARB_CERTIFICATION_URL: process.env.ARB_CERTIFICATION_URL,
+      ARB_PAYMENT_PAGE_URL: process.env.ARB_PAYMENT_PAGE_URL,
+      ARB_TOKEN_ENDPOINT_PATH: process.env.ARB_TOKEN_ENDPOINT_PATH,
+      ARB_TOKEN_GEN_ENDPOINT: process.env.ARB_TOKEN_GEN_ENDPOINT,
+      ARB_SUPPORTING_TRANSACTIONS_ENDPOINT: process.env.ARB_SUPPORTING_TRANSACTIONS_ENDPOINT,
+      PAYMENT_CALLBACK_URL: process.env.PAYMENT_CALLBACK_URL,
+      BACKEND_URL: process.env.BACKEND_URL,
+      API_URL: process.env.API_URL,
+      FRONTEND_URL: process.env.FRONTEND_URL
     });
 
     const {
