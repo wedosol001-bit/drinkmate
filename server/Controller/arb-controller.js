@@ -18,7 +18,21 @@ const createPayment = async (req, res) => {
   try {
     console.log('🚀 Creating ARB payment request...');
     console.log('🚀 Request body:', req.body);
-    
+    console.log('💳 ARB ENV CHECK:', {
+      ARB_TRANPORTAL_ID: process.env.ARB_TRANPORTAL_ID || '❌ MISSING',
+      ARB_TRANPORTAL_PASSWORD: process.env.ARB_TRANPORTAL_PASSWORD ? '✅ SET' : '❌ MISSING',
+      ARB_RESOURCE_KEY: process.env.ARB_RESOURCE_KEY
+        ? `✅ SET (${process.env.ARB_RESOURCE_KEY.length} chars)`
+        : '❌ MISSING',
+      ARB_ENVIRONMENT: process.env.ARB_ENVIRONMENT || '❌ MISSING (defaults to test)',
+      ARB_BASE_URL: process.env.ARB_BASE_URL || '❌ MISSING',
+      ARB_API_URL: process.env.ARB_API_URL || '❌ MISSING',
+      PAYMENT_CALLBACK_URL: process.env.PAYMENT_CALLBACK_URL || '❌ MISSING',
+      BACKEND_URL: process.env.BACKEND_URL || '❌ MISSING (falls back to localhost:3000)',
+      API_URL: process.env.API_URL || '❌ MISSING',
+      FRONTEND_URL: process.env.FRONTEND_URL || '❌ MISSING',
+    });
+
     const {
       amount,
       currency = 'SAR',
