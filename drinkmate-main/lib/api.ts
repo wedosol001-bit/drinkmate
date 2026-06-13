@@ -863,14 +863,28 @@ export const shopAPI = {
 export const orderAPI = {
   // Create order (authenticated users)
   createOrder: async (orderData: any) => {
-    const response = await api.post('/checkout/orders', orderData);
-    return response.data;
+    try {
+      const response = await api.post('/checkout/orders', orderData);
+      return response.data;
+    } catch (error: any) {
+      return error.response?.data || {
+        success: false,
+        message: error.message || 'Failed to create order',
+      };
+    }
   },
-  
+
   // Create guest order (no authentication required)
   createGuestOrder: async (orderData: any) => {
-    const response = await api.post('/checkout/guest-orders', orderData);
-    return response.data;
+    try {
+      const response = await api.post('/checkout/guest-orders', orderData);
+      return response.data;
+    } catch (error: any) {
+      return error.response?.data || {
+        success: false,
+        message: error.message || 'Failed to create guest order',
+      };
+    }
   },
   
   // Get user orders

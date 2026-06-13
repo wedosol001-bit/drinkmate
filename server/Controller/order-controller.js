@@ -10,11 +10,27 @@ exports.createGuestOrder = async (req, res) => {
     try {
         const { items, shippingAddress, billingAddress, paymentMethod, couponCode, packingInstructions, isGift, giftMessage, guestEmail, guestName } = req.body;
 
+        console.log('Creating guest order:', {
+            itemCount: items?.length,
+            guestEmail,
+            guestName,
+            paymentMethod,
+            items: items?.map((item) => ({
+                name: item.name,
+                product: item.product,
+                bundle: item.bundle,
+                productType: item.productType,
+                id: item.id,
+                quantity: item.quantity
+            }))
+        });
+
         // Validate required fields
         if (!items || items.length === 0 || !shippingAddress || !paymentMethod) {
             return res.status(400).json({
                 success: false,
-                message: 'Missing required fields'
+                message: 'Missing required fields',
+                code: 'MISSING_REQUIRED_FIELDS'
             });
         }
 
@@ -22,7 +38,8 @@ exports.createGuestOrder = async (req, res) => {
         if (!guestEmail || !guestName) {
             return res.status(400).json({
                 success: false,
-                message: 'Guest email and name are required'
+                message: 'Guest email and name are required',
+                code: 'GUEST_INFO_REQUIRED'
             });
         }
 
@@ -34,11 +51,20 @@ exports.createGuestOrder = async (req, res) => {
         // Process each item in the order
         for (const item of items) {
             let itemData = null;
+            const quantity = Number(item.quantity);
+            if (isNaN(quantity) || quantity <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid quantity for item: ${item.name || 'Unknown'}`,
+                    code: 'INVALID_QUANTITY'
+                });
+            }
 
             // Check if this is a CO2 cylinder (has productType: 'cylinder' or numeric ID)
-            const isCylinder = item.productType === 'cylinder' || 
+            const isCylinder = item.productType === 'cylinder' ||
+                               item.category === 'co2' ||
                                (typeof item.id === 'number' && item.id >= 1000 && item.id < 2000) ||
-                               item.category === 'co2';
+                               (typeof item.id === 'string' && /^\d+$/.test(item.id) && Number(item.id) >= 1000 && Number(item.id) < 2000);
 
             if (isCylinder) {
                 // Handle CO2 cylinder items - they use numeric IDs, not MongoDB ObjectIds
@@ -76,19 +102,22 @@ exports.createGuestOrder = async (req, res) => {
                     });
                 }
 
-                if (product.stock < item.quantity) {
+                if (product.trackInventory !== false && (product.stock ?? 0) < quantity) {
                     return res.status(400).json({
                         success: false,
-                        message: `Not enough stock for product: ${product.name}`
+                        message: `Not enough stock for product: ${product.name}`,
+                        code: 'INSUFFICIENT_STOCK'
                     });
                 }
 
                 // Update stock
-                product.stock -= item.quantity;
-                await product.save();
+                if (product.trackInventory !== false) {
+                    product.stock -= quantity;
+                    await product.save();
+                }
 
                 // Calculate item total
-                const itemTotal = product.price * item.quantity;
+                const itemTotal = product.price * quantity;
                 subtotal += itemTotal;
 
                 // Add to processed items
@@ -96,7 +125,7 @@ exports.createGuestOrder = async (req, res) => {
                     product: product._id,
                     name: product.name,
                     price: product.price,
-                    quantity: item.quantity,
+                    quantity: quantity,
                     color: item.color,
                     image: (product.images && Array.isArray(product.images)) ? (product.images.find(img => img.isPrimary)?.url || product.images[0]?.url) : null,
                     sku: product.sku
@@ -132,6 +161,14 @@ exports.createGuestOrder = async (req, res) => {
             if (itemData) {
                 processedItems.push(itemData);
             }
+        }
+
+        if (processedItems.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No valid items in order. Cart items may have invalid product or bundle IDs — try clearing your cart and adding items again.',
+                code: 'INVALID_ORDER_ITEMS'
+            });
         }
 
         // Apply coupon if provided (simplified for guest orders)
