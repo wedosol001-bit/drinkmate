@@ -661,29 +661,45 @@ export default function CheckoutPage() {
         return
       }
 
+      const isMongoObjectId = (value: string) => /^[0-9a-fA-F]{24}$/.test(value)
+
       // Create the order
       const orderData = {
         items: state.items.map((item: CartItem) => {
-          // Map cart items to the format expected by the backend
           const orderItem: any = {
             name: item.name,
             price: item.price,
             quantity: item.quantity,
             image: item.image,
             color: item.color,
-            sku: item.sku
+            sku: item.sku,
+            productType: item.productType,
+            category: item.category,
+            id: item.id,
           }
 
-          // Add either product or bundle ID based on item type
-          if (item.productId && item.productType === 'product') {
-            orderItem.product = item.productId
-          } else if (item.bundleId && item.productType === 'bundle') {
-            orderItem.bundle = item.bundleId
-          } else if (item.id) {
-            // Extract the actual product ID from the cart item ID
-            // Cart item IDs are formatted as: ${productId}-${timestamp}-${random}
-            const actualProductId = String(item.id).split('-')[0]
-            orderItem.product = actualProductId
+          const isCylinder = item.productType === 'cylinder' || item.category === 'co2'
+          if (isCylinder) {
+            return orderItem
+          }
+
+          const isBundle = item.productType === 'bundle' || item.isBundle === true
+          if (isBundle) {
+            const bundleId = item.bundleId || (typeof item.id === 'string' && isMongoObjectId(item.id) ? item.id : undefined)
+            if (bundleId) {
+              orderItem.bundle = bundleId
+            }
+            return orderItem
+          }
+
+          // Prefer productId even when productType is missing (legacy cart items)
+          let productId = item.productId
+          if (!productId && item.id != null) {
+            const idStr = String(item.id)
+            productId = isMongoObjectId(idStr) ? idStr : idStr.split('-')[0]
+          }
+          if (productId) {
+            orderItem.product = productId
           }
 
           return orderItem
@@ -716,6 +732,8 @@ export default function CheckoutPage() {
         orderResponse = await orderAPI.createGuestOrder(guestOrderData)
       }
 
+      console.log('Order API response:', orderResponse)
+
       if (!orderResponse.success) {
         console.error('Order creation failed:', orderResponse)
 
@@ -731,6 +749,16 @@ export default function CheckoutPage() {
           toast.error(`Bundle is no longer available. Please refresh your cart and try again.`)
           // Refresh the page to reload cart data
           window.location.reload()
+          return
+        }
+
+        if (orderResponse.code === 'INVALID_ORDER_ITEMS') {
+          toast.error(orderResponse.message || 'Invalid cart items. Please clear your cart and add products again.')
+          return
+        }
+
+        if (orderResponse.code === 'INSUFFICIENT_STOCK') {
+          toast.error(orderResponse.message || 'One or more items are out of stock.')
           return
         }
 
@@ -869,9 +897,13 @@ export default function CheckoutPage() {
         }
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Payment error:", error)
-      toast.error("Payment failed. Please try again.")
+      const apiMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message
+      toast.error(apiMessage || "Payment failed. Please try again.")
     } finally {
       setIsProcessing(false)
     }
