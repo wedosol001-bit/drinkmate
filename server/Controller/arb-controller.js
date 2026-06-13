@@ -18,6 +18,7 @@ const createPayment = async (req, res) => {
   try {
     console.log('🚀 Creating ARB payment request...');
     console.log('🚀 Request body:', req.body);
+    console.log('🚀 Request body:', req.body);
 
     const paymentRelatedEnvKeys = Object.keys(process.env).filter((k) => {
       return (
