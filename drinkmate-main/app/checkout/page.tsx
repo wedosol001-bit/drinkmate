@@ -15,7 +15,6 @@ import SaudiRiyal from "@/components/ui/SaudiRiyal"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
 import { getImageUrl } from "@/lib/utils/image-utils"
-import TabbyInfoDialog from "@/components/checkout/TabbyInfoDialog"
 
 interface DeliveryAddress {
   fullName: string
@@ -46,7 +45,6 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [isPageLoading, setIsPageLoading] = useState(true)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
-  const [showTabbyDialog, setShowTabbyDialog] = useState(false)
 
   // Delivery options state
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState("standard")
@@ -457,12 +455,6 @@ export default function CheckoutPage() {
       gateway: "arb"
     },
 
-    tabby: {
-      name: "tabby",
-      description: "Divide it by 4. Without any interest or fees.",
-      logo: "/images/payment-logos/tabby.png",
-      gateway: "tabby"
-    }
   }
 
   // Validation functions
@@ -841,17 +833,6 @@ export default function CheckoutPage() {
         })
 
         console.log('🚀 ARB payment response status:', paymentResponse.status, paymentResponse.statusText)
-      } else if (selectedGateway === "tabby") {
-        // Call backend API for Tabby
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
-        paymentResponse = await fetch(`${backendUrl}/payments/tabby`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null}`
-          },
-          body: JSON.stringify(paymentRequest)
-        })
       } else if (selectedGateway === "tap") {
         // Call backend API for Tap
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
@@ -1406,80 +1387,6 @@ export default function CheckoutPage() {
                     </p>
                   </div>
                 </div>
-
-
-
-                {/* Tabby Payment Option - Second */}
-                <div
-                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 relative ${selectedPaymentMethod === "tabby"
-                    ? "border-[#12d6fa] bg-[#12d6fa]/5"
-                    : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  onClick={() => setSelectedPaymentMethod("tabby")}
-                >
-                  {/* New Badge */}
-                  <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    {t("checkout.newBadge")}
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="radio"
-                          name="payment"
-                          value="tabby"
-                          aria-label="Tabby payment method"
-                          checked={selectedPaymentMethod === "tabby"}
-                          onChange={() => setSelectedPaymentMethod("tabby")}
-                          className="w-4 h-4 text-[#12d6fa] border-gray-300 focus:ring-[#12d6fa]"
-                        />
-                        <div className="flex items-center space-x-2">
-                          <div className="w-24 h-8 bg-white rounded flex items-center justify-center border border-gray-200">
-                            <Image
-                              src={paymentProviders.tabby.logo}
-                              alt="Tabby"
-                              width={70}
-                              height={28}
-                              className="object-contain"
-                            />
-                          </div>
-                          <span className="text-lg font-semibold text-gray-900">{t("checkout.tabby.name")}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-600 font-medium">{t("checkout.tabby.tagline")}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setShowTabbyDialog(true)
-                          }}
-                          className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
-                        >
-                          <span className="text-white text-xs font-bold">i</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tabby Benefits */}
-                  <div className="mt-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                    <div className="flex items-center space-x-4 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-green-700 font-medium">{t("checkout.tabby.benefits.noInterest")}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-green-700 font-medium">{t("checkout.tabby.benefits.noFees")}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-green-700 font-medium">{t("checkout.tabby.benefits.payLater")}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -1556,12 +1463,6 @@ export default function CheckoutPage() {
 
       <Footer />
 
-      {/* Tabby Info Dialog */}
-      <TabbyInfoDialog
-        isOpen={showTabbyDialog}
-        onClose={() => setShowTabbyDialog(false)}
-        orderTotal={total}
-      />
     </div>
   )
 }
