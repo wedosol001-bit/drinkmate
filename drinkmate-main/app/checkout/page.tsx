@@ -1430,7 +1430,7 @@ export default function CheckoutPage() {
                         {t("checkout.login")}
                       </button>{" "}
                       {t("checkout.guestSuffix")}
-                    </span>
+                    </span> 
                   </div>
                 </div>
               ) : (
